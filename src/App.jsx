@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { ChevronDown, ChevronRight, Plus, Trash2, Download, AlertTriangle, Clock, CheckCircle, XCircle, Pause, FlaskConical, BarChart3, Calendar, Edit3, Save, X, User, Server, Shield, Monitor, Headphones, Layers } from "lucide-react";
+import { ChevronDown, ChevronRight, Plus, Trash2, Download, AlertTriangle, Clock, CheckCircle, XCircle, Pause, FlaskConical, BarChart3, Calendar, Edit3, Save, X, User, Server, Shield, Monitor, Headphones, Layers, FileText, ExternalLink, RefreshCw, DollarSign, Building2, Hash, MessageSquare } from "lucide-react";
+import { Clock as ClockIcon } from "lucide-react";
 
 const STATUS_OPTIONS = ["Not Started", "In Progress", "Testing in Lab", "Done", "On Hold", "Blocked"];
 const PRIORITY_OPTIONS = ["High", "Medium", "Low"];
@@ -340,6 +341,159 @@ function AreaSection({ area, projects, onUpdate, onDelete, onAdd }) {
   );
 }
 
+/* ─── AP Approvals Component ─── */
+
+function APApprovals() {
+  const recentApprovals = [
+    { date: "3/28/2026", vendor: "SHI International", docNum: "INV-45821", amount: "$3,850.00", store: "HQ", status: "Approved" },
+    { date: "3/27/2026", vendor: "Toshiba Financial", docNum: "INV-98734", amount: "$2,125.50", store: "Store #5", status: "Approved" },
+    { date: "3/26/2026", vendor: "Walker Group", docNum: "INV-67234", amount: "$1,250.00", store: "Store #12", status: "Approved" },
+    { date: "3/25/2026", vendor: "Insight Enterprises", docNum: "INV-34892", amount: "$4,500.00", store: "HQ", status: "Approved" },
+  ];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-blue-50">
+      <div className="max-w-7xl mx-auto px-6 py-6">
+        {/* Header Section */}
+        <div className="mb-8">
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center shadow-sm">
+              <DollarSign size={24} className="text-white" />
+            </div>
+            <div className="flex-1">
+              <h1 className="text-2xl font-bold text-gray-900">AP Invoice Approvals</h1>
+              <p className="text-sm text-gray-500 mt-1">Jiffy.ai Invoice Processing Queue</p>
+              <p className="text-xs text-gray-400 mt-2">Automated workflow processes invoices and sends approval requests every 30 minutes</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Action Button */}
+        <div className="mb-8">
+          <a href="https://aubuchon.saas-1.jiffy.ai/docube/presentation/f62195c5-5605-44dd-9a36-3eb2a73d6654?path=/AP%20Processing/Invoice%20Processing" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white px-5 py-2.5 rounded-lg font-medium hover:from-emerald-600 hover:to-teal-700 transition-all shadow-sm">
+            <ExternalLink size={16} />
+            Open Jiffy.ai Queue
+          </a>
+        </div>
+
+        {/* How It Works Info Section */}
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-8">
+          <h3 className="text-sm font-semibold text-blue-900 flex items-center gap-2">
+            <MessageSquare size={16} className="text-blue-600" />
+            How It Works
+          </h3>
+          <p className="text-xs text-blue-700 mt-2 leading-relaxed">
+            A scheduled task checks Gmail every 30 minutes for Jiffy.ai invoice notifications. When invoices are found, the system collects invoice data and OCR details, then sends an approval email to Scott with an embedded approval form. Approved invoices are automatically processed back into Jiffy.ai.
+          </p>
+        </div>
+
+        {/* Status Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+          <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+            <p className="text-xs text-gray-500 font-medium">Task Status</p>
+            <p className="text-sm font-bold mt-2 text-emerald-600">Active — Every 30 min</p>
+          </div>
+          <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+            <p className="text-xs text-gray-500 font-medium">Last Run</p>
+            <p className="text-sm font-bold mt-2 text-gray-600">Check Cowork for details</p>
+          </div>
+          <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+            <p className="text-xs text-gray-500 font-medium">Next Run</p>
+            <p className="text-sm font-bold mt-2 text-gray-600">~30 min cycle</p>
+          </div>
+          <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+            <p className="text-xs text-gray-500 font-medium">Processing</p>
+            <p className="text-sm font-bold mt-2 text-gray-600">Automated via Jiffy.ai</p>
+          </div>
+        </div>
+
+        {/* Workflow Steps */}
+        <div className="mb-8">
+          <h2 className="text-lg font-bold text-gray-900 mb-4">Invoice Workflow</h2>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {[
+              { step: 1, title: "Notification", desc: "Jiffy.ai sends invoice email" },
+              { step: 2, title: "Collection", desc: "System collects invoice data + OCR" },
+              { step: 3, title: "Approval", desc: "Email sent with approval form" },
+              { step: 4, title: "Processing", desc: "Approved invoices processed in Jiffy.ai" },
+            ].map((item, idx) => (
+              <div key={idx}>
+                <div className="bg-white border border-gray-200 rounded-xl p-4 h-full">
+                  <div className="w-8 h-8 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center text-white font-bold text-sm mb-3">
+                    {item.step}
+                  </div>
+                  <h4 className="font-semibold text-gray-900 text-sm">{item.title}</h4>
+                  <p className="text-xs text-gray-500 mt-1">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div className="mb-8">
+          <h2 className="text-lg font-bold text-gray-900 mb-4">Quick Actions</h2>
+          <div className="flex flex-wrap gap-3">
+            <a href="https://aubuchon.saas-1.jiffy.ai/docube/presentation/f62195c5-5605-44dd-9a36-3eb2a73d6654?path=/AP%20Processing/Invoice%20Processing" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-white border border-gray-200 text-gray-700 px-4 py-2.5 rounded-lg font-medium hover:bg-gray-50 transition-all shadow-sm">
+              <ExternalLink size={14} />
+              Open Jiffy.ai Queue
+            </a>
+            <a href="https://docs.google.com/spreadsheets/d/1XuVFSq24zgsUBnaR643OzKTfEajbhDtJPQgUxQ9ShSw" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-white border border-gray-200 text-gray-700 px-4 py-2.5 rounded-lg font-medium hover:bg-gray-50 transition-all shadow-sm">
+              <FileText size={14} />
+              View Approval Sheet
+            </a>
+            <a href="https://mail.google.com/mail/#search/from%3Ajiffy" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 bg-white border border-gray-200 text-gray-700 px-4 py-2.5 rounded-lg font-medium hover:bg-gray-50 transition-all shadow-sm">
+              <MessageSquare size={14} />
+              Check Gmail for Invoices
+            </a>
+          </div>
+        </div>
+
+        {/* Recent Activity */}
+        <div>
+          <h2 className="text-lg font-bold text-gray-900 mb-4">Recent Activity</h2>
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="text-left px-4 py-3 font-semibold text-gray-600">Date</th>
+                    <th className="text-left px-4 py-3 font-semibold text-gray-600">Vendor</th>
+                    <th className="text-left px-4 py-3 font-semibold text-gray-600">Doc #</th>
+                    <th className="text-right px-4 py-3 font-semibold text-gray-600">Amount</th>
+                    <th className="text-left px-4 py-3 font-semibold text-gray-600">Store</th>
+                    <th className="text-center px-4 py-3 font-semibold text-gray-600">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {recentApprovals.map((row, idx) => (
+                    <tr key={idx} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                      <td className="px-4 py-3 text-gray-600">{row.date}</td>
+                      <td className="px-4 py-3 text-gray-900 font-medium">{row.vendor}</td>
+                      <td className="px-4 py-3 text-gray-600 font-mono">{row.docNum}</td>
+                      <td className="px-4 py-3 text-right text-gray-900 font-semibold">{row.amount}</td>
+                      <td className="px-4 py-3 text-gray-600">{row.store}</td>
+                      <td className="px-4 py-3 text-center">
+                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 font-medium">
+                          <CheckCircle size={10} />
+                          {row.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="px-4 py-3 bg-gray-50 border-t border-gray-200">
+              <p className="text-xs text-gray-500 italic">Live data coming soon — currently pulls from scheduled task history</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ─── Main Dashboard ─── */
 
 export default function Dashboard() {
@@ -347,6 +501,7 @@ export default function Dashboard() {
   const [nextId, setNextId] = useState(100);
   const [exportMsg, setExportMsg] = useState("");
   const [filterOwner, setFilterOwner] = useState("All");
+  const [activeTab, setActiveTab] = useState("projects");
 
   const allProjects = Object.values(data).flatMap((a) => a.projects);
   const filteredData = filterOwner === "All"
@@ -423,35 +578,65 @@ export default function Dashboard() {
       {/* Header */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm">
         <div className="max-w-7xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-4">
               <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center shadow-sm">
                 <BarChart3 size={20} className="text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">Aubuchon IT Project Dashboard</h1>
-                <p className="text-xs text-gray-500">Week of March 30, 2026 — Senior Team Review</p>
+                <h1 className="text-xl font-bold text-gray-900">Aubuchon IT Command Center</h1>
+                <p className="text-xs text-gray-500">IT Department Operations Hub</p>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              {/* Owner Filter */}
-              <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-1.5 border border-gray-200">
-                <User size={12} className="text-gray-400" />
-                <select value={filterOwner} onChange={(e) => setFilterOwner(e.target.value)} className="text-xs font-medium text-gray-700 bg-transparent border-none focus:outline-none cursor-pointer">
-                  <option value="All">All Owners</option>
-                  {OWNER_OPTIONS.filter((o) => o !== "Unassigned").map((o) => <option key={o} value={o}>{o}</option>)}
-                </select>
+            {activeTab === "projects" && (
+              <div className="flex items-center gap-3">
+                {/* Owner Filter */}
+                <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-1.5 border border-gray-200">
+                  <User size={12} className="text-gray-400" />
+                  <select value={filterOwner} onChange={(e) => setFilterOwner(e.target.value)} className="text-xs font-medium text-gray-700 bg-transparent border-none focus:outline-none cursor-pointer">
+                    <option value="All">All Owners</option>
+                    {OWNER_OPTIONS.filter((o) => o !== "Unassigned").map((o) => <option key={o} value={o}>{o}</option>)}
+                  </select>
+                </div>
+                <button onClick={handleExport} className="flex items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors shadow-sm">
+                  <Download size={14} />
+                  {exportMsg || "Export CSV"}
+                </button>
               </div>
-              <button onClick={handleExport} className="flex items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors shadow-sm">
-                <Download size={14} />
-                {exportMsg || "Export CSV"}
-              </button>
-            </div>
+            )}
+          </div>
+
+          {/* Tab Navigation */}
+          <div className="flex items-center gap-2 border-t border-gray-100 pt-3">
+            <button
+              onClick={() => setActiveTab("projects")}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                activeTab === "projects"
+                  ? "bg-blue-100 text-blue-700 border border-blue-300"
+                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+              }`}
+            >
+              <BarChart3 size={14} />
+              Projects
+            </button>
+            <button
+              onClick={() => setActiveTab("approvals")}
+              className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                activeTab === "approvals"
+                  ? "bg-blue-100 text-blue-700 border border-blue-300"
+                  : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
+              }`}
+            >
+              <DollarSign size={14} />
+              AP Approvals
+            </button>
           </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-6">
+        {activeTab === "projects" && (
+          <>
         {/* Summary Cards */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-8">
           {[
@@ -508,6 +693,10 @@ export default function Dashboard() {
         <div className="text-center py-8 text-xs text-gray-400 border-t border-gray-200 mt-4">
           Aubuchon Hardware — IT Department Project Tracker — Click any field to edit
         </div>
+          </>
+        )}
+
+        {activeTab === "approvals" && <APApprovals />}
       </div>
     </div>
   );
