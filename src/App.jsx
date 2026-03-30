@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { ChevronDown, ChevronRight, Plus, Trash2, Download, AlertTriangle, Clock, CheckCircle, XCircle, Pause, FlaskConical, BarChart3, Calendar, Edit3, Save, X, User, Server, Shield, Monitor, Headphones, Layers, FileText, ExternalLink, RefreshCw, DollarSign, Building2, Hash, MessageSquare, Wrench } from "lucide-react";
+import { ChevronDown, ChevronRight, Plus, Trash2, Download, AlertTriangle, Clock, CheckCircle, XCircle, Pause, FlaskConical, BarChart3, Calendar, Edit3, Save, X, User, Server, Shield, Monitor, Headphones, Layers, FileText, ExternalLink, RefreshCw, DollarSign, Building2, Hash, MessageSquare, Wrench, LogOut } from "lucide-react";
+import { auth, signOut } from "./firebase";
 import { Clock as ClockIcon } from "lucide-react";
 
 const STATUS_OPTIONS = ["Not Started", "In Progress", "Testing in Lab", "Done", "On Hold", "Blocked"];
@@ -589,22 +590,27 @@ export default function Dashboard() {
                 <p className="text-xs text-gray-500">Aubuchon IT Operations Hub</p>
               </div>
             </div>
-            {activeTab === "projects" && (
-              <div className="flex items-center gap-3">
-                {/* Owner Filter */}
-                <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-1.5 border border-gray-200">
-                  <User size={12} className="text-gray-400" />
-                  <select value={filterOwner} onChange={(e) => setFilterOwner(e.target.value)} className="text-xs font-medium text-gray-700 bg-transparent border-none focus:outline-none cursor-pointer">
-                    <option value="All">All Owners</option>
-                    {OWNER_OPTIONS.filter((o) => o !== "Unassigned").map((o) => <option key={o} value={o}>{o}</option>)}
-                  </select>
-                </div>
-                <button onClick={handleExport} className="flex items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors shadow-sm">
-                  <Download size={14} />
-                  {exportMsg || "Export CSV"}
-                </button>
-              </div>
-            )}
+            <div className="flex items-center gap-3">
+              {activeTab === "projects" && (
+                <>
+                  {/* Owner Filter */}
+                  <div className="flex items-center gap-2 bg-gray-50 rounded-lg px-3 py-1.5 border border-gray-200">
+                    <User size={12} className="text-gray-400" />
+                    <select value={filterOwner} onChange={(e) => setFilterOwner(e.target.value)} className="text-xs font-medium text-gray-700 bg-transparent border-none focus:outline-none cursor-pointer">
+                      <option value="All">All Owners</option>
+                      {OWNER_OPTIONS.filter((o) => o !== "Unassigned").map((o) => <option key={o} value={o}>{o}</option>)}
+                    </select>
+                  </div>
+                  <button onClick={handleExport} className="flex items-center gap-2 bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors shadow-sm">
+                    <Download size={14} />
+                    {exportMsg || "Export CSV"}
+                  </button>
+                </>
+              )}
+              <button onClick={() => signOut(auth)} className="flex items-center gap-1.5 text-gray-400 hover:text-gray-600 px-2 py-1.5 rounded-lg hover:bg-gray-100 transition-colors" title="Sign out">
+                <LogOut size={14} />
+              </button>
+            </div>
           </div>
 
           {/* Tab Navigation */}
