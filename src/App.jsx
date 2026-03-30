@@ -1,16 +1,17 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import {
   ChevronDown, ChevronRight, Plus, Trash2, Download, AlertTriangle, Clock,
   CheckCircle, XCircle, Pause, FlaskConical, BarChart3, Calendar, Edit3,
   Save, X, User, Server, Shield, Monitor, Headphones, Layers, Search,
   List, LayoutGrid, ArrowRight, GripVertical, Square, CheckSquare,
-  FolderOpen, Filter, ChevronUp, Zap, MoveRight, LogOut
+  FolderOpen, Filter, ChevronUp, Zap, MoveRight, LogOut, Users,
+  Building2, History, FileText, Tag, Eye, Briefcase, Archive, Inbox
 } from "lucide-react";
 import { auth, signOut } from "./firebase";
 
-/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+/* =====================================================================
    CONFIGURATION
-   âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+   ===================================================================== */
 
 const STATUS_OPTIONS = ["Not Started", "In Progress", "Testing in Lab", "Done", "On Hold", "Blocked"];
 const PRIORITY_OPTIONS = ["High", "Medium", "Low"];
@@ -31,7 +32,7 @@ const PRIORITY_CONFIG = {
   Low: { color: "text-green-700 bg-green-50", dot: "bg-green-500", border: "border-green-200" },
 };
 
-const AREAS = [
+const DEPARTMENTS = [
   "Enterprise Systems",
   "Infrastructure & Cyber Security",
   "POS & Store Technology",
@@ -39,57 +40,73 @@ const AREAS = [
   "Resource Center & Support",
 ];
 
-const AREA_CONFIG = {
-  "Enterprise Systems":              { icon: Server,     gradient: "from-blue-600 to-indigo-600",  bg: "bg-blue-50",    border: "border-blue-200",    text: "text-blue-700",    light: "bg-blue-100" },
-  "Infrastructure & Cyber Security": { icon: Shield,     gradient: "from-emerald-600 to-teal-600", bg: "bg-emerald-50", border: "border-emerald-200", text: "text-emerald-700", light: "bg-emerald-100" },
-  "POS & Store Technology":          { icon: Monitor,    gradient: "from-violet-600 to-purple-600",bg: "bg-violet-50",  border: "border-violet-200",  text: "text-violet-700",  light: "bg-violet-100" },
-  "Store Expansion":                 { icon: Layers,     gradient: "from-orange-500 to-amber-600", bg: "bg-orange-50",  border: "border-orange-200",  text: "text-orange-700",  light: "bg-orange-100" },
-  "Resource Center & Support":       { icon: Headphones, gradient: "from-rose-500 to-pink-600",    bg: "bg-rose-50",    border: "border-rose-200",    text: "text-rose-700",    light: "bg-rose-100" },
+const DEPT_CONFIG = {
+  "Enterprise Systems":              { icon: Server,     gradient: "from-blue-600 to-indigo-600",  bg: "bg-blue-50",    border: "border-blue-200",    text: "text-blue-700",    light: "bg-blue-100",    chip: "bg-blue-50 text-blue-700 border-blue-200" },
+  "Infrastructure & Cyber Security": { icon: Shield,     gradient: "from-emerald-600 to-teal-600", bg: "bg-emerald-50", border: "border-emerald-200", text: "text-emerald-700", light: "bg-emerald-100", chip: "bg-emerald-50 text-emerald-700 border-emerald-200" },
+  "POS & Store Technology":          { icon: Monitor,    gradient: "from-violet-600 to-purple-600",bg: "bg-violet-50",  border: "border-violet-200",  text: "text-violet-700",  light: "bg-violet-100",  chip: "bg-violet-50 text-violet-700 border-violet-200" },
+  "Store Expansion":                 { icon: Layers,     gradient: "from-orange-500 to-amber-600", bg: "bg-orange-50",  border: "border-orange-200",  text: "text-orange-700",  light: "bg-orange-100",  chip: "bg-orange-50 text-orange-700 border-orange-200" },
+  "Resource Center & Support":       { icon: Headphones, gradient: "from-rose-500 to-pink-600",    bg: "bg-rose-50",    border: "border-rose-200",    text: "text-rose-700",    light: "bg-rose-100",    chip: "bg-rose-50 text-rose-700 border-rose-200" },
 };
 
-/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+const DEPT_SHORT = {
+  "Enterprise Systems": "Enterprise",
+  "Infrastructure & Cyber Security": "Infra/Cyber",
+  "POS & Store Technology": "POS/Store",
+  "Store Expansion": "Expansion",
+  "Resource Center & Support": "Support",
+};
+
+const VIEWS = [
+  { id: "projects", label: "All Projects", icon: Briefcase },
+  { id: "owner",    label: "By Owner",     icon: Users },
+  { id: "dept",     label: "By Dept",      icon: Building2 },
+  { id: "inbox",    label: "Inbox",        icon: Inbox },
+  { id: "history",  label: "History",       icon: Archive },
+];
+
+/* =====================================================================
    INITIAL PROJECT DATA  (updated March 30 2026 from Notion / Asana / 1:1s)
-   âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+   ===================================================================== */
 
 const initialProjects = [
-  // ââ Enterprise Systems ââ
-  { id: 1,  area: "Enterprise Systems", name: "E-Commerce Migration (Magento â Easy Commerce)", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 25, date: "9/30/2026", roadblocks: "", milestones: "", nextSteps: "", notes: "Migration from Magento platform to Easy Commerce" },
-  { id: 2,  area: "Enterprise Systems", name: "YODA (Power BI Analytics)", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "", roadblocks: "", milestones: "Basket Builders report redesign; AR aging report in dev", nextSteps: "Matillion upgrade (time-sensitive)", notes: "Business intelligence and analytics platform" },
-  { id: 3,  area: "Enterprise Systems", name: "Power BI / Fabric (Presidio)", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Data platform modernization with Presidio" },
-  { id: 4,  area: "Enterprise Systems", name: "In-house A/R Module", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 50, date: "6/30/2026", roadblocks: "", milestones: "", nextSteps: "", notes: "Custom accounts receivable module development" },
-  { id: 7,  area: "Enterprise Systems", name: "Ideal Software Integration", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Ideal software system integration" },
-  { id: 8,  area: "Enterprise Systems", name: "Mi9 Bug Fixes & Enhancements", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Ongoing Mi9 retail system maintenance" },
-  { id: 6,  area: "Enterprise Systems", name: "Sport 2.0", owner: "Dave Faucher", status: "Not Started", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Next generation sporting goods system" },
-  { id: 30, area: "Enterprise Systems", name: "Matillion Upgrade", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "", roadblocks: "Time-sensitive â due within 1-2 weeks", milestones: "", nextSteps: "Complete upgrade ASAP", notes: "ETL platform upgrade â flagged in YODA review 3/13" },
-  { id: 31, area: "Enterprise Systems", name: "OpenFlow Migration POC", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "Evaluating proof of concept", nextSteps: "", notes: "From YODA review â evaluating migration path" },
+  // Enterprise Systems
+  { id: 1,  departments: ["Enterprise Systems"], name: "E-Commerce Migration (Magento to Easy Commerce)", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 25, date: "9/30/2026", roadblocks: "", milestones: "", nextSteps: "", notes: "Migration from Magento platform to Easy Commerce", completedDate: "" },
+  { id: 2,  departments: ["Enterprise Systems"], name: "YODA (Power BI Analytics)", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "", roadblocks: "", milestones: "Basket Builders report redesign; AR aging report in dev", nextSteps: "Matillion upgrade (time-sensitive)", notes: "Business intelligence and analytics platform", completedDate: "" },
+  { id: 3,  departments: ["Enterprise Systems"], name: "Power BI / Fabric (Presidio)", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Data platform modernization with Presidio", completedDate: "" },
+  { id: 4,  departments: ["Enterprise Systems"], name: "In-house A/R Module", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 50, date: "6/30/2026", roadblocks: "", milestones: "", nextSteps: "", notes: "Custom accounts receivable module development", completedDate: "" },
+  { id: 7,  departments: ["Enterprise Systems"], name: "Ideal Software Integration", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Ideal software system integration", completedDate: "" },
+  { id: 8,  departments: ["Enterprise Systems"], name: "Mi9 Bug Fixes & Enhancements", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Ongoing Mi9 retail system maintenance", completedDate: "" },
+  { id: 6,  departments: ["Enterprise Systems"], name: "Sport 2.0", owner: "Dave Faucher", status: "Not Started", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Next generation sporting goods system", completedDate: "" },
+  { id: 30, departments: ["Enterprise Systems"], name: "Matillion Upgrade", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "", roadblocks: "Time-sensitive -- due within 1-2 weeks", milestones: "", nextSteps: "Complete upgrade ASAP", notes: "ETL platform upgrade -- flagged in YODA review 3/13", completedDate: "" },
+  { id: 31, departments: ["Enterprise Systems"], name: "OpenFlow Migration POC", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "Evaluating proof of concept", nextSteps: "", notes: "From YODA review -- evaluating migration path", completedDate: "" },
 
-  // ââ Infrastructure & Cyber Security ââ
-  { id: 9,  area: "Infrastructure & Cyber Security", name: "Windows 11 Upgrade", owner: "Craig Renaud", status: "In Progress", priority: "High", pct: 0, date: "", roadblocks: "", milestones: "Weekly status meetings Wed 1pm", nextSteps: "", notes: "Enterprise-wide Windows 11 migration before end of support" },
-  { id: 10, area: "Infrastructure & Cyber Security", name: "Cybersecurity Program", owner: "Craig Renaud", status: "In Progress", priority: "High", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "PCI compliance, CrowdStrike, Sophos, Mimecast, KnowBe4, Keeper" },
-  { id: 11, area: "Infrastructure & Cyber Security", name: "Store Conversions / IT Alignment", owner: "Craig Renaud", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "Aggressive 6-week timelines; vendor scheduling issues with IW", milestones: "73-75 store projects completed successfully", nextSteps: "Low-voltage cabling SOP to Mark; pre-project meetings for next 3-4 projects; floor plan markups for APs and Cat5 drops", notes: "IT infrastructure for store conversions â process significantly improved" },
-  { id: 12, area: "Infrastructure & Cyber Security", name: "Delivery Pilot (IT Component)", owner: "Craig Renaud", status: "In Progress", priority: "High", pct: 0, date: "4/7/2026", roadblocks: "DMS vendor lacks bulk import; daily product data updates difficult", milestones: "Store 218 South Burlington â 5,000 sq ft warehouse space secured", nextSteps: "Set up separate VLAN; order 2 PCs, 2 phones, label printers; WorkWave driver login setup", notes: "Soft launch early April â starting with 6 stores, could scale to 50" },
-  { id: 32, area: "Infrastructure & Cyber Security", name: "WiFi Speaker Evaluation", owner: "Craig Renaud", status: "Not Started", priority: "Low", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "Craig & Evan to investigate WiFi speakers vs. wired; review IW bills to separate speaker wiring costs", notes: "Cost-effective alternative to wired audio â from store alignment 1:1" },
+  // Infrastructure & Cyber Security
+  { id: 9,  departments: ["Infrastructure & Cyber Security"], name: "Windows 11 Upgrade", owner: "Craig Renaud", status: "In Progress", priority: "High", pct: 0, date: "", roadblocks: "", milestones: "Weekly status meetings Wed 1pm", nextSteps: "", notes: "Enterprise-wide Windows 11 migration before end of support", completedDate: "" },
+  { id: 10, departments: ["Infrastructure & Cyber Security"], name: "Cybersecurity Program", owner: "Craig Renaud", status: "In Progress", priority: "High", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "PCI compliance, CrowdStrike, Sophos, Mimecast, KnowBe4, Keeper", completedDate: "" },
+  { id: 11, departments: ["Infrastructure & Cyber Security", "Store Expansion"], name: "Store Conversions / IT Alignment", owner: "Craig Renaud", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "Aggressive 6-week timelines; vendor scheduling issues with IW", milestones: "73-75 store projects completed successfully", nextSteps: "Low-voltage cabling SOP to Mark; pre-project meetings for next 3-4 projects; floor plan markups for APs and Cat5 drops", notes: "IT infrastructure for store conversions -- process significantly improved", completedDate: "" },
+  { id: 12, departments: ["Infrastructure & Cyber Security", "POS & Store Technology"], name: "Delivery Pilot (IT Component)", owner: "Craig Renaud", status: "In Progress", priority: "High", pct: 0, date: "4/7/2026", roadblocks: "DMS vendor lacks bulk import; daily product data updates difficult", milestones: "Store 218 South Burlington -- 5,000 sq ft warehouse space secured", nextSteps: "Set up separate VLAN; order 2 PCs, 2 phones, label printers; WorkWave driver login setup", notes: "Soft launch early April -- starting with 6 stores, could scale to 50", completedDate: "" },
+  { id: 32, departments: ["Infrastructure & Cyber Security"], name: "WiFi Speaker Evaluation", owner: "Craig Renaud", status: "Not Started", priority: "Low", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "Craig & Evan to investigate WiFi speakers vs. wired; review IW bills to separate speaker wiring costs", notes: "Cost-effective alternative to wired audio -- from store alignment 1:1", completedDate: "" },
 
-  // ââ POS & Store Technology ââ
-  { id: 17, area: "POS & Store Technology", name: "Tokenization", owner: "Eric Handley", status: "In Progress", priority: "High", pct: 75, date: "3/31/2026", roadblocks: "", milestones: "", nextSteps: "", notes: "Payment tokenization â CRITICAL DEADLINE" },
-  { id: 18, area: "POS & Store Technology", name: "B2B Features & Employee Discount", owner: "Eric Handley", status: "In Progress", priority: "High", pct: 75, date: "3/31/2026", roadblocks: "", milestones: "", nextSteps: "", notes: "B2B functionality â CRITICAL DEADLINE" },
-  { id: 19, area: "POS & Store Technology", name: "Mobile POS", owner: "Eric Handley", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Mobile point of sale deployment" },
-  { id: 20, area: "POS & Store Technology", name: "Theatro (Motorola Solutions)", owner: "Eric Handley", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "In-store communication platform" },
-  { id: 5,  area: "POS & Store Technology", name: "EZAD TV (Digital Signage)", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Digital signage rollout across stores" },
+  // POS & Store Technology
+  { id: 17, departments: ["POS & Store Technology"], name: "Tokenization", owner: "Eric Handley", status: "In Progress", priority: "High", pct: 75, date: "3/31/2026", roadblocks: "", milestones: "", nextSteps: "", notes: "Payment tokenization -- CRITICAL DEADLINE", completedDate: "" },
+  { id: 18, departments: ["POS & Store Technology"], name: "B2B Features & Employee Discount", owner: "Eric Handley", status: "In Progress", priority: "High", pct: 75, date: "3/31/2026", roadblocks: "", milestones: "", nextSteps: "", notes: "B2B functionality -- CRITICAL DEADLINE", completedDate: "" },
+  { id: 19, departments: ["POS & Store Technology"], name: "Mobile POS", owner: "Eric Handley", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Mobile point of sale deployment", completedDate: "" },
+  { id: 20, departments: ["POS & Store Technology"], name: "Theatro (Motorola Solutions)", owner: "Eric Handley", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "In-store communication platform", completedDate: "" },
+  { id: 5,  departments: ["POS & Store Technology", "Enterprise Systems"], name: "EZAD TV (Digital Signage)", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Digital signage rollout across stores", completedDate: "" },
 
-  // ââ Store Expansion ââ
-  { id: 13, area: "Store Expansion", name: "237 Cumberland RI", owner: "Craig Renaud", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "Completing smoothly per 1:1", nextSteps: "", notes: "New store acquisition â IT setup and integration" },
-  { id: 14, area: "Store Expansion", name: "233 Ithaca Downtown", owner: "Craig Renaud", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "New store acquisition â POS equipment installation" },
-  { id: 15, area: "Store Expansion", name: "234 Ithaca Triphammer", owner: "Craig Renaud", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "New store acquisition â IT setup and integration" },
-  { id: 16, area: "Store Expansion", name: "236 Dover PA", owner: "Craig Renaud", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "New store acquisition â IT setup and integration" },
+  // Store Expansion
+  { id: 13, departments: ["Store Expansion", "Infrastructure & Cyber Security"], name: "237 Cumberland RI", owner: "Craig Renaud", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "Completing smoothly per 1:1", nextSteps: "", notes: "New store acquisition -- IT setup and integration", completedDate: "" },
+  { id: 14, departments: ["Store Expansion"], name: "233 Ithaca Downtown", owner: "Craig Renaud", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "New store acquisition -- POS equipment installation", completedDate: "" },
+  { id: 15, departments: ["Store Expansion"], name: "234 Ithaca Triphammer", owner: "Craig Renaud", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "New store acquisition -- IT setup and integration", completedDate: "" },
+  { id: 16, departments: ["Store Expansion"], name: "236 Dover PA", owner: "Craig Renaud", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "New store acquisition -- IT setup and integration", completedDate: "" },
 
-  // ââ Resource Center & Support ââ
-  { id: 21, area: "Resource Center & Support", name: "Resource Center / Help Desk Operations", owner: "Suzanne Fleury", status: "In Progress", priority: "High", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Help desk management and improvements" },
-  { id: 22, area: "Resource Center & Support", name: "POS Team Support", owner: "Suzanne Fleury", status: "In Progress", priority: "High", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "POS system support for stores" },
+  // Resource Center & Support
+  { id: 21, departments: ["Resource Center & Support"], name: "Resource Center / Help Desk Operations", owner: "Suzanne Fleury", status: "In Progress", priority: "High", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Help desk management and improvements", completedDate: "" },
+  { id: 22, departments: ["Resource Center & Support", "POS & Store Technology"], name: "POS Team Support", owner: "Suzanne Fleury", status: "In Progress", priority: "High", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "POS system support for stores", completedDate: "" },
 ];
 
 const initialQuickTasks = [
-  { id: 501, text: "Texting to Store Phones â evaluate options", done: false, owner: "Unassigned", source: "Asana Intake" },
+  { id: 501, text: "Texting to Store Phones -- evaluate options", done: false, owner: "Unassigned", source: "Asana Intake" },
   { id: 502, text: "WiFi registers setup for new locations", done: false, owner: "Craig Renaud", source: "Asana Intake" },
   { id: 503, text: "Stop Key Entry on Credit Cards", done: false, owner: "Eric Handley", source: "Asana Intake" },
   { id: 504, text: "WorldPay / Authorize.net / Apple Pay / Google Pay integration", done: false, owner: "Eric Handley", source: "Asana Intake" },
@@ -99,9 +116,9 @@ const initialQuickTasks = [
   { id: 508, text: "Craig to introduce Mark to IW vendor", done: false, owner: "Craig Renaud", source: "1:1 3/4" },
 ];
 
-/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+/* =====================================================================
    SMALL REUSABLE COMPONENTS
-   âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+   ===================================================================== */
 
 function Dropdown({ value, options, onChange, renderOption, renderTrigger }) {
   const [open, setOpen] = useState(false);
@@ -175,25 +192,53 @@ function OwnerBadge({ owner, onChange, size = "sm" }) {
   );
 }
 
-function MoveToArea({ currentArea, onMove }) {
+function DeptChips({ departments, size = "sm" }) {
+  return (
+    <div className="flex flex-wrap gap-1">
+      {departments.map(d => {
+        const cfg = DEPT_CONFIG[d];
+        if (!cfg) return null;
+        const short = DEPT_SHORT[d] || d;
+        return (
+          <span key={d} className={`inline-flex items-center gap-1 ${size === "xs" ? "px-1.5 py-0 text-[9px]" : "px-2 py-0.5 text-[10px]"} rounded-full font-medium border ${cfg.chip}`}>
+            {short}
+          </span>
+        );
+      })}
+    </div>
+  );
+}
+
+function DeptMultiSelect({ selected, onChange }) {
   const [open, setOpen] = useState(false);
-  const otherAreas = AREAS.filter(a => a !== currentArea);
+  const toggle = (dept) => {
+    if (selected.includes(dept)) {
+      if (selected.length > 1) onChange(selected.filter(d => d !== dept));
+    } else {
+      onChange([...selected, dept]);
+    }
+  };
   return (
     <div className="relative inline-block">
-      <button onClick={() => setOpen(!open)} className="text-gray-300 hover:text-blue-500 transition-colors" title="Move to another area">
-        <MoveRight size={14} />
+      <button onClick={() => setOpen(!open)} className="flex items-center gap-1 text-gray-400 hover:text-blue-500 transition-colors" title="Edit departments">
+        <Tag size={12} /><ChevronDown size={9} className="opacity-50" />
       </button>
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 z-50 mt-1 bg-white rounded-lg shadow-xl border border-gray-200 py-1 min-w-[200px]">
-            <div className="px-3 py-1.5 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Move toâ¦</div>
-            {otherAreas.map(a => {
-              const cfg = AREA_CONFIG[a];
+          <div className="absolute z-50 mt-1 bg-white rounded-lg shadow-xl border border-gray-200 py-1 min-w-[220px] right-0">
+            <div className="px-3 py-1.5 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Departments</div>
+            {DEPARTMENTS.map(d => {
+              const cfg = DEPT_CONFIG[d];
               const Icon = cfg.icon;
+              const isOn = selected.includes(d);
               return (
-                <button key={a} onClick={() => { onMove(a); setOpen(false); }} className="w-full text-left px-3 py-2 text-xs hover:bg-gray-50 flex items-center gap-2 transition-colors">
-                  <Icon size={14} className={cfg.text} />{a}
+                <button key={d} onClick={() => toggle(d)} className={`w-full text-left px-3 py-2 text-xs flex items-center gap-2 transition-colors ${isOn ? "bg-blue-50" : "hover:bg-gray-50"}`}>
+                  <span className={`w-4 h-4 rounded border flex items-center justify-center ${isOn ? "bg-blue-600 border-blue-600 text-white" : "border-gray-300"}`}>
+                    {isOn && <CheckCircle size={10} />}
+                  </span>
+                  <Icon size={13} className={cfg.text} />
+                  <span className="truncate">{d}</span>
                 </button>
               );
             })}
@@ -253,9 +298,9 @@ function InlineEdit({ value, onChange, placeholder, multiline = false, className
   );
 }
 
-/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+/* =====================================================================
    SUMMARY CARD
-   âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+   ===================================================================== */
 
 function SummaryCard({ label, value, icon: Icon, color, bg }) {
   return (
@@ -269,145 +314,9 @@ function SummaryCard({ label, value, icon: Icon, color, bg }) {
   );
 }
 
-/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-   PROJECT CARD VIEW
-   âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
-
-function ProjectCard({ project, onUpdate, onDelete, onMove }) {
-  const [expanded, setExpanded] = useState(false);
-  const isAlert = project.priority === "High" && project.pct < 100 && project.date && project.date.includes("3/31");
-
-  return (
-    <div className={`bg-white rounded-xl border ${isAlert ? "border-red-300 ring-1 ring-red-100" : "border-gray-200/80"} hover:shadow-md hover:border-gray-300 transition-all duration-200 group`}>
-      {isAlert && (
-        <div className="flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-red-50 to-red-100/50 rounded-t-xl border-b border-red-100">
-          <AlertTriangle size={11} className="text-red-500" />
-          <span className="text-[10px] font-bold text-red-600 uppercase tracking-wide">Due 3/31 â Critical</span>
-        </div>
-      )}
-      <div className="p-4">
-        {/* Header row */}
-        <div className="flex items-start justify-between gap-2 mb-3">
-          <div className="flex-1 min-w-0">
-            <InlineEdit value={project.name} onChange={(v) => onUpdate(project.id, "name", v)} placeholder="Project name" className="font-semibold text-sm text-gray-900" />
-            {project.notes && <p className="text-[11px] text-gray-400 mt-0.5 line-clamp-1">{project.notes}</p>}
-          </div>
-          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-            <MoveToArea currentArea={project.area} onMove={(a) => onMove(project.id, a)} />
-            <button onClick={() => onDelete(project.id)} className="text-gray-300 hover:text-red-400 transition-colors" title="Remove"><Trash2 size={13} /></button>
-          </div>
-        </div>
-
-        {/* Badges */}
-        <div className="flex flex-wrap items-center gap-1.5 mb-3">
-          <StatusBadge status={project.status} onChange={(v) => onUpdate(project.id, "status", v)} size="xs" />
-          <PriorityBadge priority={project.priority} onChange={(v) => onUpdate(project.id, "priority", v)} size="xs" />
-          <OwnerBadge owner={project.owner} onChange={(v) => onUpdate(project.id, "owner", v)} size="xs" />
-          {project.date && (
-            <span className="inline-flex items-center gap-1 text-[10px] text-gray-500 bg-gray-50 px-2 py-0.5 rounded-full border border-gray-100">
-              <Calendar size={9} />{project.date}
-            </span>
-          )}
-        </div>
-
-        {/* Progress */}
-        <ProgressBar value={project.pct} onChange={(v) => onUpdate(project.id, "pct", v)} />
-
-        {/* Expand toggle */}
-        <button onClick={() => setExpanded(!expanded)} className="flex items-center gap-1 mt-2.5 text-[11px] text-gray-400 hover:text-gray-600 transition-colors">
-          {expanded ? <ChevronDown size={11} /> : <ChevronRight size={11} />}
-          {expanded ? "Less" : "Details"}
-        </button>
-
-        {expanded && (
-          <div className="mt-3 space-y-2 pt-3 border-t border-gray-100">
-            {[
-              ["Go-Live Date", "date", "Target date...", false],
-              ["Roadblocks", "roadblocks", "Any blockers or risks...", true],
-              ["Milestones", "milestones", "What was accomplished...", true],
-              ["Next Steps", "nextSteps", "Planned actions...", true],
-              ["Notes", "notes", "Additional notes...", true],
-            ].map(([label, field, ph, multi]) => (
-              <div key={field}>
-                <label className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">{label}</label>
-                <InlineEdit value={project[field]} onChange={(v) => onUpdate(project.id, field, v)} placeholder={ph} multiline={multi} />
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-   LIST VIEW ROW
-   âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
-
-function ProjectRow({ project, onUpdate, onDelete, onMove, showArea = false }) {
-  const [expanded, setExpanded] = useState(false);
-  const isAlert = project.priority === "High" && project.pct < 100 && project.date && project.date.includes("3/31");
-  const areaCfg = AREA_CONFIG[project.area];
-
-  return (
-    <>
-      <tr className={`group border-b border-gray-100 hover:bg-gray-50/50 transition-colors ${isAlert ? "bg-red-50/30" : ""}`}>
-        <td className="py-2.5 px-3 w-8">
-          <button onClick={() => setExpanded(!expanded)} className="text-gray-300 hover:text-gray-500">
-            {expanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
-          </button>
-        </td>
-        {showArea && (
-          <td className="py-2.5 px-2">
-            <span className={`inline-flex items-center gap-1 text-[10px] font-medium ${areaCfg.text} ${areaCfg.bg} px-2 py-0.5 rounded-full`}>
-              {project.area.split(" ")[0]}
-            </span>
-          </td>
-        )}
-        <td className="py-2.5 px-3">
-          <div className="flex items-center gap-2">
-            {isAlert && <AlertTriangle size={12} className="text-red-500 flex-shrink-0" />}
-            <span className="text-sm font-medium text-gray-900 truncate max-w-xs">{project.name}</span>
-          </div>
-        </td>
-        <td className="py-2.5 px-2"><StatusBadge status={project.status} onChange={(v) => onUpdate(project.id, "status", v)} size="xs" /></td>
-        <td className="py-2.5 px-2"><PriorityBadge priority={project.priority} onChange={(v) => onUpdate(project.id, "priority", v)} size="xs" /></td>
-        <td className="py-2.5 px-2"><OwnerBadge owner={project.owner} onChange={(v) => onUpdate(project.id, "owner", v)} size="xs" /></td>
-        <td className="py-2.5 px-2 w-32"><ProgressBar value={project.pct} onChange={(v) => onUpdate(project.id, "pct", v)} /></td>
-        <td className="py-2.5 px-2 text-xs text-gray-500 whitespace-nowrap">{project.date || "â"}</td>
-        <td className="py-2.5 px-2">
-          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-            <MoveToArea currentArea={project.area} onMove={(a) => onMove(project.id, a)} />
-            <button onClick={() => onDelete(project.id)} className="text-gray-300 hover:text-red-400"><Trash2 size={12} /></button>
-          </div>
-        </td>
-      </tr>
-      {expanded && (
-        <tr className="bg-gray-50/50">
-          <td colSpan={showArea ? 9 : 8} className="px-12 py-3">
-            <div className="grid grid-cols-2 gap-3 max-w-3xl">
-              {[
-                ["Roadblocks", "roadblocks", true],
-                ["Milestones", "milestones", true],
-                ["Next Steps", "nextSteps", true],
-                ["Notes", "notes", true],
-              ].map(([label, field, multi]) => (
-                <div key={field}>
-                  <label className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">{label}</label>
-                  <InlineEdit value={project[field]} onChange={(v) => onUpdate(project.id, field, v)} placeholder={`Add ${label.toLowerCase()}...`} multiline={multi} />
-                </div>
-              ))}
-            </div>
-          </td>
-        </tr>
-      )}
-    </>
-  );
-}
-
-/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-   QUICK TASKS SECTION
-   âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+/* =====================================================================
+   QUICK TASKS
+   ===================================================================== */
 
 function QuickTasks({ tasks, setTasks }) {
   const [newText, setNewText] = useState("");
@@ -434,7 +343,7 @@ function QuickTasks({ tasks, setTasks }) {
           </div>
           <div className="text-left">
             <h3 className="font-bold text-gray-900 text-sm">Quick Tasks & One-offs</h3>
-            <p className="text-[11px] text-gray-400">{pending.length} pending Â· {done.length} done</p>
+            <p className="text-[11px] text-gray-400">{pending.length} pending, {done.length} done</p>
           </div>
         </div>
         {collapsed ? <ChevronRight size={16} className="text-gray-400" /> : <ChevronDown size={16} className="text-gray-400" />}
@@ -442,20 +351,15 @@ function QuickTasks({ tasks, setTasks }) {
 
       {!collapsed && (
         <div className="border-t border-gray-100">
-          {/* Add new */}
           <div className="px-5 py-3 bg-gray-50/50 flex items-center gap-2">
             <Plus size={14} className="text-gray-400" />
             <input value={newText} onChange={(e) => setNewText(e.target.value)} onKeyDown={(e) => e.key === "Enter" && addTask()} className="flex-1 bg-transparent text-sm placeholder-gray-300 focus:outline-none" placeholder="Add a quick task..." />
             {newText && <button onClick={addTask} className="text-xs font-medium text-blue-600 hover:text-blue-800">Add</button>}
           </div>
-
-          {/* Pending tasks */}
           <div className="divide-y divide-gray-50">
             {pending.map(task => (
               <div key={task.id} className="flex items-center gap-3 px-5 py-2.5 group hover:bg-gray-50/50 transition-colors">
-                <button onClick={() => toggleTask(task.id)} className="text-gray-300 hover:text-emerald-500 transition-colors flex-shrink-0">
-                  <Square size={16} />
-                </button>
+                <button onClick={() => toggleTask(task.id)} className="text-gray-300 hover:text-emerald-500 transition-colors flex-shrink-0"><Square size={16} /></button>
                 <span className="flex-1 text-sm text-gray-700">{task.text}</span>
                 <span className="text-[10px] text-gray-300 font-medium">{task.source}</span>
                 <span className="text-[10px] text-gray-400">{task.owner !== "Unassigned" ? task.owner.split(" ")[1] : ""}</span>
@@ -463,8 +367,6 @@ function QuickTasks({ tasks, setTasks }) {
               </div>
             ))}
           </div>
-
-          {/* Done tasks */}
           {done.length > 0 && (
             <div className="border-t border-gray-100">
               <div className="px-5 py-1.5 bg-gray-50/50">
@@ -485,23 +387,317 @@ function QuickTasks({ tasks, setTasks }) {
   );
 }
 
-/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
-   AREA SECTION (Card View)
-   âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+/* =====================================================================
+   PROJECT CARD (used in card views)
+   ===================================================================== */
 
-function AreaSection({ area, projects, onUpdate, onDelete, onAdd, onMove }) {
-  const [collapsed, setCollapsed] = useState(false);
-  const cfg = AREA_CONFIG[area];
-  const Icon = cfg.icon;
-  const totalPct = projects.length ? Math.round(projects.reduce((s, p) => s + p.pct, 0) / projects.length) : 0;
-  const counts = {
-    high: projects.filter(p => p.priority === "High").length,
-    blocked: projects.filter(p => p.status === "Blocked" || p.status === "On Hold").length,
-    done: projects.filter(p => p.status === "Done").length,
-  };
+function ProjectCard({ project, onUpdate, onDelete }) {
+  const [expanded, setExpanded] = useState(false);
+  const isAlert = project.priority === "High" && project.pct < 100 && project.date && project.date.includes("3/31");
 
   return (
-    <div className="mb-6">
+    <div className={`bg-white rounded-xl border ${isAlert ? "border-red-300 ring-1 ring-red-100" : "border-gray-200/80"} hover:shadow-md hover:border-gray-300 transition-all duration-200 group`}>
+      {isAlert && (
+        <div className="flex items-center gap-2 px-4 py-1.5 bg-gradient-to-r from-red-50 to-red-100/50 rounded-t-xl border-b border-red-100">
+          <AlertTriangle size={11} className="text-red-500" />
+          <span className="text-[10px] font-bold text-red-600 uppercase tracking-wide">Due 3/31 -- Critical</span>
+        </div>
+      )}
+      <div className="p-4">
+        <div className="flex items-start justify-between gap-2 mb-2">
+          <div className="flex-1 min-w-0">
+            <InlineEdit value={project.name} onChange={(v) => onUpdate(project.id, "name", v)} placeholder="Project name" className="font-semibold text-sm text-gray-900" />
+          </div>
+          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <DeptMultiSelect selected={project.departments} onChange={(d) => onUpdate(project.id, "departments", d)} />
+            <button onClick={() => onDelete(project.id)} className="text-gray-300 hover:text-red-400 transition-colors" title="Remove"><Trash2 size={13} /></button>
+          </div>
+        </div>
+
+        {/* Department chips */}
+        <div className="mb-2.5">
+          <DeptChips departments={project.departments} size="xs" />
+        </div>
+
+        {/* Badges */}
+        <div className="flex flex-wrap items-center gap-1.5 mb-3">
+          <StatusBadge status={project.status} onChange={(v) => onUpdate(project.id, "status", v)} size="xs" />
+          <PriorityBadge priority={project.priority} onChange={(v) => onUpdate(project.id, "priority", v)} size="xs" />
+          <OwnerBadge owner={project.owner} onChange={(v) => onUpdate(project.id, "owner", v)} size="xs" />
+          {project.date && (
+            <span className="inline-flex items-center gap-1 text-[10px] text-gray-500 bg-gray-50 px-2 py-0.5 rounded-full border border-gray-100">
+              <Calendar size={9} />{project.date}
+            </span>
+          )}
+        </div>
+
+        <ProgressBar value={project.pct} onChange={(v) => onUpdate(project.id, "pct", v)} />
+
+        <button onClick={() => setExpanded(!expanded)} className="flex items-center gap-1 mt-2.5 text-[11px] text-gray-400 hover:text-gray-600 transition-colors">
+          {expanded ? <ChevronDown size={11} /> : <ChevronRight size={11} />}
+          {expanded ? "Less" : "Details"}
+        </button>
+
+        {expanded && (
+          <div className="mt-3 space-y-2 pt-3 border-t border-gray-100">
+            {[
+              ["Go-Live Date", "date", "Target date...", false],
+              ["Roadblocks", "roadblocks", "Any blockers or risks...", true],
+              ["Milestones", "milestones", "What was accomplished...", true],
+              ["Next Steps", "nextSteps", "Planned actions...", true],
+              ["Notes", "notes", "Additional notes...", true],
+            ].map(([label, field, ph, multi]) => (
+              <div key={field}>
+                <label className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">{label}</label>
+                <InlineEdit value={project[field]} onChange={(v) => onUpdate(project.id, field, v)} placeholder={ph} multiline={multi} />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* =====================================================================
+   PROJECT TABLE ROW (list views)
+   ===================================================================== */
+
+function ProjectRow({ project, onUpdate, onDelete, showDepts = true, showOwner = true }) {
+  const [expanded, setExpanded] = useState(false);
+  const isAlert = project.priority === "High" && project.pct < 100 && project.date && project.date.includes("3/31");
+  const colCount = 6 + (showDepts ? 1 : 0) + (showOwner ? 1 : 0);
+
+  return (
+    <>
+      <tr className={`group border-b border-gray-100 hover:bg-gray-50/50 transition-colors ${isAlert ? "bg-red-50/30" : ""}`}>
+        <td className="py-2.5 px-3 w-8">
+          <button onClick={() => setExpanded(!expanded)} className="text-gray-300 hover:text-gray-500">
+            {expanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
+          </button>
+        </td>
+        <td className="py-2.5 px-3">
+          <div className="flex items-center gap-2">
+            {isAlert && <AlertTriangle size={12} className="text-red-500 flex-shrink-0" />}
+            <span className="text-sm font-medium text-gray-900 truncate max-w-xs">{project.name}</span>
+          </div>
+        </td>
+        {showDepts && (
+          <td className="py-2.5 px-2"><DeptChips departments={project.departments} size="xs" /></td>
+        )}
+        <td className="py-2.5 px-2"><StatusBadge status={project.status} onChange={(v) => onUpdate(project.id, "status", v)} size="xs" /></td>
+        <td className="py-2.5 px-2"><PriorityBadge priority={project.priority} onChange={(v) => onUpdate(project.id, "priority", v)} size="xs" /></td>
+        {showOwner && (
+          <td className="py-2.5 px-2"><OwnerBadge owner={project.owner} onChange={(v) => onUpdate(project.id, "owner", v)} size="xs" /></td>
+        )}
+        <td className="py-2.5 px-2 w-32"><ProgressBar value={project.pct} onChange={(v) => onUpdate(project.id, "pct", v)} /></td>
+        <td className="py-2.5 px-2 text-xs text-gray-500 whitespace-nowrap">{project.date || "--"}</td>
+        <td className="py-2.5 px-2">
+          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <DeptMultiSelect selected={project.departments} onChange={(d) => onUpdate(project.id, "departments", d)} />
+            <button onClick={() => onDelete(project.id)} className="text-gray-300 hover:text-red-400"><Trash2 size={12} /></button>
+          </div>
+        </td>
+      </tr>
+      {expanded && (
+        <tr className="bg-gray-50/50">
+          <td colSpan={colCount + 2} className="px-12 py-3">
+            <div className="grid grid-cols-2 gap-3 max-w-3xl">
+              {[
+                ["Roadblocks", "roadblocks", true],
+                ["Milestones", "milestones", true],
+                ["Next Steps", "nextSteps", true],
+                ["Notes", "notes", true],
+              ].map(([label, field, multi]) => (
+                <div key={field}>
+                  <label className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">{label}</label>
+                  <InlineEdit value={project[field]} onChange={(v) => onUpdate(project.id, field, v)} placeholder={`Add ${label.toLowerCase()}...`} multiline={multi} />
+                </div>
+              ))}
+            </div>
+          </td>
+        </tr>
+      )}
+    </>
+  );
+}
+
+/* =====================================================================
+   VIEW: ALL PROJECTS (default -- flat project list)
+   ===================================================================== */
+
+function AllProjectsView({ projects, onUpdate, onDelete, onAdd }) {
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <table className="w-full">
+        <thead>
+          <tr className="bg-gray-50 border-b border-gray-200 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
+            <th className="py-2.5 px-3 w-8"></th>
+            <th className="py-2.5 px-3 text-left">Project</th>
+            <th className="py-2.5 px-2 text-left">Departments</th>
+            <th className="py-2.5 px-2 text-left">Status</th>
+            <th className="py-2.5 px-2 text-left">Priority</th>
+            <th className="py-2.5 px-2 text-left">Owner</th>
+            <th className="py-2.5 px-2 text-left w-32">Progress</th>
+            <th className="py-2.5 px-2 text-left">Date</th>
+            <th className="py-2.5 px-2 w-16"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {projects.map(p => (
+            <ProjectRow key={p.id} project={p} onUpdate={onUpdate} onDelete={onDelete} />
+          ))}
+        </tbody>
+      </table>
+      <button onClick={() => onAdd()} className="w-full text-left px-6 py-3 text-xs text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors border-t border-gray-100 flex items-center gap-2">
+        <Plus size={12} /> Add project
+      </button>
+    </div>
+  );
+}
+
+/* =====================================================================
+   VIEW: BY OWNER (for 1:1 meetings)
+   ===================================================================== */
+
+function ByOwnerView({ projects, onUpdate, onDelete, onAdd, quickTasks, setQuickTasks }) {
+  const ownerGroups = useMemo(() => {
+    const groups = {};
+    for (const o of OWNER_OPTIONS.filter(o => o !== "Unassigned")) groups[o] = [];
+    for (const p of projects) {
+      if (groups[p.owner]) groups[p.owner].push(p);
+    }
+    const unassigned = projects.filter(p => p.owner === "Unassigned");
+    if (unassigned.length) groups["Unassigned"] = unassigned;
+    return groups;
+  }, [projects]);
+
+  return (
+    <div className="space-y-6">
+      {Object.entries(ownerGroups).filter(([, ps]) => ps.length > 0).map(([owner, ps]) => {
+        const initials = owner === "Unassigned" ? "?" : owner.split(" ").map(n => n[0]).join("");
+        const ownerTasks = quickTasks.filter(t => t.owner === owner && !t.done);
+        const highCount = ps.filter(p => p.priority === "High").length;
+        const blockedCount = ps.filter(p => p.status === "Blocked" || p.status === "On Hold").length;
+
+        return (
+          <OwnerSection key={owner} owner={owner} initials={initials} projects={ps}
+            ownerTasks={ownerTasks} highCount={highCount} blockedCount={blockedCount}
+            onUpdate={onUpdate} onDelete={onDelete} onAdd={onAdd} />
+        );
+      })}
+    </div>
+  );
+}
+
+function OwnerSection({ owner, initials, projects, ownerTasks, highCount, blockedCount, onUpdate, onDelete, onAdd }) {
+  const [collapsed, setCollapsed] = useState(false);
+
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <button onClick={() => setCollapsed(!collapsed)} className="w-full flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition-colors">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-gray-700 to-gray-900 flex items-center justify-center text-white font-bold text-sm shadow-sm">
+            {initials}
+          </div>
+          <div className="text-left">
+            <h3 className="font-bold text-gray-900 text-[15px]">{owner}</h3>
+            <p className="text-[11px] text-gray-400">{projects.length} project{projects.length !== 1 ? "s" : ""}{ownerTasks.length > 0 ? `, ${ownerTasks.length} task${ownerTasks.length !== 1 ? "s" : ""}` : ""}</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {highCount > 0 && <span className="bg-red-50 text-red-600 text-[10px] px-2 py-1 rounded-lg font-semibold">{highCount} high</span>}
+          {blockedCount > 0 && <span className="bg-amber-50 text-amber-600 text-[10px] px-2 py-1 rounded-lg font-semibold">{blockedCount} blocked</span>}
+          {collapsed ? <ChevronRight size={16} className="text-gray-400" /> : <ChevronDown size={16} className="text-gray-400" />}
+        </div>
+      </button>
+
+      {!collapsed && (
+        <div className="border-t border-gray-100">
+          {/* Owner's quick tasks */}
+          {ownerTasks.length > 0 && (
+            <div className="px-5 py-2 bg-amber-50/50 border-b border-amber-100/50">
+              <p className="text-[10px] font-semibold text-amber-700 uppercase tracking-wider mb-1">Open Tasks</p>
+              {ownerTasks.map(t => (
+                <div key={t.id} className="flex items-center gap-2 py-0.5 text-xs text-amber-800">
+                  <span className="w-1 h-1 rounded-full bg-amber-400" />
+                  <span>{t.text}</span>
+                  <span className="text-[9px] text-amber-500 ml-auto">{t.source}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <table className="w-full">
+            <thead>
+              <tr className="bg-gray-50 border-b border-gray-200 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
+                <th className="py-2 px-3 w-8"></th>
+                <th className="py-2 px-3 text-left">Project</th>
+                <th className="py-2 px-2 text-left">Departments</th>
+                <th className="py-2 px-2 text-left">Status</th>
+                <th className="py-2 px-2 text-left">Priority</th>
+                <th className="py-2 px-2 text-left w-32">Progress</th>
+                <th className="py-2 px-2 text-left">Date</th>
+                <th className="py-2 px-2 w-16"></th>
+              </tr>
+            </thead>
+            <tbody>
+              {projects.map(p => (
+                <ProjectRow key={p.id} project={p} onUpdate={onUpdate} onDelete={onDelete} showOwner={false} />
+              ))}
+            </tbody>
+          </table>
+          <button onClick={() => onAdd(owner)} className="w-full text-left px-6 py-2 text-xs text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors border-t border-gray-50 flex items-center gap-2">
+            <Plus size={12} /> Add project for {owner.split(" ")[0]}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* =====================================================================
+   VIEW: BY DEPARTMENT
+   ===================================================================== */
+
+function ByDeptView({ projects, onUpdate, onDelete, onAdd }) {
+  const deptGroups = useMemo(() => {
+    const groups = {};
+    for (const d of DEPARTMENTS) groups[d] = [];
+    for (const p of projects) {
+      for (const d of p.departments) {
+        if (groups[d]) groups[d].push(p);
+      }
+    }
+    return groups;
+  }, [projects]);
+
+  return (
+    <div className="space-y-6">
+      {DEPARTMENTS.map(dept => {
+        const ps = deptGroups[dept] || [];
+        if (ps.length === 0) return null;
+        const cfg = DEPT_CONFIG[dept];
+        const Icon = cfg.icon;
+        const highCount = ps.filter(p => p.priority === "High").length;
+        const totalPct = ps.length ? Math.round(ps.reduce((s, p) => s + p.pct, 0) / ps.length) : 0;
+
+        return (
+          <DeptSection key={dept} dept={dept} cfg={cfg} Icon={Icon} projects={ps}
+            highCount={highCount} totalPct={totalPct}
+            onUpdate={onUpdate} onDelete={onDelete} onAdd={() => onAdd(null, dept)} />
+        );
+      })}
+    </div>
+  );
+}
+
+function DeptSection({ dept, cfg, Icon, projects, highCount, totalPct, onUpdate, onDelete, onAdd }) {
+  const [collapsed, setCollapsed] = useState(false);
+  const [viewMode, setViewMode] = useState("cards");
+
+  return (
+    <div className="mb-2">
       <div className="flex items-center justify-between mb-3">
         <button onClick={() => setCollapsed(!collapsed)} className="flex items-center gap-3 group">
           <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${cfg.gradient} flex items-center justify-center text-white shadow-sm`}>
@@ -509,30 +705,61 @@ function AreaSection({ area, projects, onUpdate, onDelete, onAdd, onMove }) {
           </div>
           <div>
             <h3 className="font-bold text-gray-900 flex items-center gap-2 text-[15px]">
-              {area}
+              {dept}
               {collapsed ? <ChevronRight size={14} className="text-gray-400" /> : <ChevronDown size={14} className="text-gray-400" />}
             </h3>
             <p className="text-[11px] text-gray-400">{projects.length} project{projects.length !== 1 ? "s" : ""}</p>
           </div>
         </button>
         <div className="flex items-center gap-2">
-          {counts.high > 0 && <span className="bg-red-50 text-red-600 text-[10px] px-2 py-1 rounded-lg font-semibold">{counts.high} high</span>}
-          {counts.blocked > 0 && <span className="bg-amber-50 text-amber-600 text-[10px] px-2 py-1 rounded-lg font-semibold">{counts.blocked} blocked</span>}
+          {highCount > 0 && <span className="bg-red-50 text-red-600 text-[10px] px-2 py-1 rounded-lg font-semibold">{highCount} high</span>}
           <div className="flex items-center gap-2 bg-gray-50 px-2.5 py-1.5 rounded-lg">
             <div className="w-16 h-1.5 bg-gray-200 rounded-full overflow-hidden">
               <div className="h-full bg-blue-500 rounded-full transition-all" style={{ width: `${totalPct}%` }} />
             </div>
             <span className="text-[11px] font-bold text-gray-600 tabular-nums">{totalPct}%</span>
           </div>
+          {!collapsed && (
+            <div className="flex bg-gray-100 rounded-lg p-0.5">
+              <button onClick={() => setViewMode("cards")} className={`p-1 rounded-md transition-all ${viewMode === "cards" ? "bg-white shadow-sm text-gray-900" : "text-gray-400"}`}>
+                <LayoutGrid size={13} />
+              </button>
+              <button onClick={() => setViewMode("list")} className={`p-1 rounded-md transition-all ${viewMode === "list" ? "bg-white shadow-sm text-gray-900" : "text-gray-400"}`}>
+                <List size={13} />
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
       {!collapsed && (
         <>
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-            {projects.map(p => <ProjectCard key={p.id} project={p} onUpdate={onUpdate} onDelete={onDelete} onMove={onMove} />)}
-          </div>
-          <button onClick={() => onAdd(area)} className="mt-2.5 flex items-center gap-2 text-xs text-gray-400 hover:text-blue-600 transition-colors px-3 py-2 rounded-lg hover:bg-blue-50 border border-dashed border-gray-200 hover:border-blue-300 w-full justify-center">
+          {viewMode === "cards" ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+              {projects.map(p => <ProjectCard key={p.id} project={p} onUpdate={onUpdate} onDelete={onDelete} />)}
+            </div>
+          ) : (
+            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-gray-50 border-b border-gray-200 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
+                    <th className="py-2 px-3 w-8"></th>
+                    <th className="py-2 px-3 text-left">Project</th>
+                    <th className="py-2 px-2 text-left">Status</th>
+                    <th className="py-2 px-2 text-left">Priority</th>
+                    <th className="py-2 px-2 text-left">Owner</th>
+                    <th className="py-2 px-2 text-left w-32">Progress</th>
+                    <th className="py-2 px-2 text-left">Date</th>
+                    <th className="py-2 px-2 w-16"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {projects.map(p => <ProjectRow key={p.id} project={p} onUpdate={onUpdate} onDelete={onDelete} showDepts={false} />)}
+                </tbody>
+              </table>
+            </div>
+          )}
+          <button onClick={onAdd} className="mt-2.5 flex items-center gap-2 text-xs text-gray-400 hover:text-blue-600 transition-colors px-3 py-2 rounded-lg hover:bg-blue-50 border border-dashed border-gray-200 hover:border-blue-300 w-full justify-center">
             <Plus size={13} /> Add project
           </button>
         </>
@@ -541,68 +768,255 @@ function AreaSection({ area, projects, onUpdate, onDelete, onAdd, onMove }) {
   );
 }
 
-/* âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ
+/* =====================================================================
+   VIEW: HISTORY (completed projects)
+   ===================================================================== */
+
+function HistoryView({ completedProjects, onUpdate }) {
+  if (completedProjects.length === 0) {
+    return (
+      <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+        <Archive size={40} className="text-gray-200 mx-auto mb-3" />
+        <h3 className="font-bold text-gray-400 text-lg">No Completed Projects Yet</h3>
+        <p className="text-sm text-gray-300 mt-1">When you mark projects as Done, they will appear here with their completion dates.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="px-5 py-3 bg-gray-50 border-b border-gray-200 flex items-center gap-2">
+        <CheckCircle size={14} className="text-emerald-500" />
+        <span className="text-sm font-bold text-gray-700">{completedProjects.length} Completed Project{completedProjects.length !== 1 ? "s" : ""}</span>
+      </div>
+      <table className="w-full">
+        <thead>
+          <tr className="bg-gray-50/50 border-b border-gray-200 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
+            <th className="py-2.5 px-3 text-left">Project</th>
+            <th className="py-2.5 px-2 text-left">Departments</th>
+            <th className="py-2.5 px-2 text-left">Owner</th>
+            <th className="py-2.5 px-2 text-left">Priority</th>
+            <th className="py-2.5 px-2 text-left">Completed</th>
+            <th className="py-2.5 px-2 text-left">Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          {completedProjects.map(p => (
+            <tr key={p.id} className="border-b border-gray-50 hover:bg-gray-50/50 transition-colors">
+              <td className="py-3 px-3">
+                <span className="text-sm font-medium text-gray-700">{p.name}</span>
+              </td>
+              <td className="py-3 px-2"><DeptChips departments={p.departments} size="xs" /></td>
+              <td className="py-3 px-2 text-xs text-gray-600">{p.owner}</td>
+              <td className="py-3 px-2"><PriorityBadge priority={p.priority} onChange={(v) => onUpdate(p.id, "priority", v)} size="xs" /></td>
+              <td className="py-3 px-2 text-xs text-gray-500">{p.completedDate || "--"}</td>
+              <td className="py-3 px-2 text-xs text-gray-400 max-w-xs truncate">{p.notes || p.milestones || "--"}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+/* =====================================================================
+   VIEW: INBOX (triage area for new requests & unassigned items)
+   ===================================================================== */
+
+function InboxView({ inboxItems, setInboxItems, onPromote }) {
+  const [newText, setNewText] = useState("");
+
+  const addItem = () => {
+    if (!newText.trim()) return;
+    setInboxItems(prev => [...prev, {
+      id: Date.now(),
+      text: newText.trim(),
+      source: "Manual",
+      owner: "Unassigned",
+      priority: "Medium",
+      addedDate: new Date().toLocaleDateString("en-US"),
+      notes: "",
+    }]);
+    setNewText("");
+  };
+
+  const removeItem = (id) => setInboxItems(prev => prev.filter(i => i.id !== id));
+  const updateItem = (id, field, value) => setInboxItems(prev => prev.map(i => i.id === id ? { ...i, [field]: value } : i));
+
+  return (
+    <div className="space-y-4">
+      {/* Add new inbox item */}
+      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="px-5 py-3 bg-gradient-to-r from-indigo-50 to-blue-50 border-b border-indigo-100 flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-blue-600 flex items-center justify-center">
+            <Inbox size={16} className="text-white" />
+          </div>
+          <div>
+            <h3 className="font-bold text-gray-900 text-sm">Inbox</h3>
+            <p className="text-[11px] text-gray-400">New ideas, requests, and items waiting to be triaged into projects</p>
+          </div>
+        </div>
+
+        <div className="px-5 py-3 bg-gray-50/50 flex items-center gap-2 border-b border-gray-100">
+          <Plus size={14} className="text-gray-400" />
+          <input value={newText} onChange={(e) => setNewText(e.target.value)} onKeyDown={(e) => e.key === "Enter" && addItem()}
+            className="flex-1 bg-transparent text-sm placeholder-gray-300 focus:outline-none" placeholder="Add a new request, idea, or task..." />
+          {newText && <button onClick={addItem} className="text-xs font-medium text-blue-600 hover:text-blue-800 px-2 py-1 bg-blue-50 rounded-md">Add</button>}
+        </div>
+
+        {inboxItems.length === 0 ? (
+          <div className="px-5 py-8 text-center">
+            <Inbox size={32} className="text-gray-200 mx-auto mb-2" />
+            <p className="text-sm text-gray-400">Inbox is empty -- nice work!</p>
+            <p className="text-xs text-gray-300 mt-1">Add new requests here, then promote them to full projects when ready.</p>
+          </div>
+        ) : (
+          <div className="divide-y divide-gray-50">
+            {inboxItems.map(item => (
+              <div key={item.id} className="px-5 py-3 group hover:bg-gray-50/50 transition-colors">
+                <div className="flex items-start gap-3">
+                  <div className="flex-1">
+                    <InlineEdit value={item.text} onChange={(v) => updateItem(item.id, "text", v)} placeholder="Description..." className="font-medium text-sm text-gray-800" />
+                    <div className="flex items-center gap-2 mt-1.5">
+                      <PriorityBadge priority={item.priority} onChange={(v) => updateItem(item.id, "priority", v)} size="xs" />
+                      <OwnerBadge owner={item.owner} onChange={(v) => updateItem(item.id, "owner", v)} size="xs" />
+                      <span className="text-[10px] text-gray-300">{item.source}</span>
+                      <span className="text-[10px] text-gray-300">Added {item.addedDate}</span>
+                    </div>
+                    {item.notes && <p className="text-xs text-gray-400 mt-1">{item.notes}</p>}
+                  </div>
+                  <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity mt-1">
+                    <button onClick={() => onPromote(item)} className="flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-2.5 py-1.5 rounded-lg transition-colors" title="Promote to project">
+                      <ArrowRight size={12} />Project
+                    </button>
+                    <button onClick={() => removeItem(item.id)} className="text-gray-300 hover:text-red-400 p-1.5 transition-colors" title="Remove">
+                      <Trash2 size={12} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* =====================================================================
    MAIN DASHBOARD
-   âââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââââ */
+   ===================================================================== */
 
 export default function Dashboard() {
   const [projects, setProjects] = useState(initialProjects);
   const [quickTasks, setQuickTasks] = useState(initialQuickTasks);
+  const [inboxItems, setInboxItems] = useState([]);
   const [nextId, setNextId] = useState(200);
-  const [view, setView] = useState("cards"); // "cards" | "list"
+  const [activeView, setActiveView] = useState("projects");
   const [filterOwner, setFilterOwner] = useState("All");
   const [filterStatus, setFilterStatus] = useState("All");
   const [filterPriority, setFilterPriority] = useState("All");
+  const [filterDept, setFilterDept] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [exportMsg, setExportMsg] = useState("");
 
-  // ââ Derived data ââ
+  // Derived data
+  const activeProjects = useMemo(() => projects.filter(p => p.status !== "Done"), [projects]);
+  const completedProjects = useMemo(() => projects.filter(p => p.status === "Done"), [projects]);
+
   const filtered = useMemo(() => {
-    return projects.filter(p => {
+    return activeProjects.filter(p => {
       if (filterOwner !== "All" && p.owner !== filterOwner) return false;
       if (filterStatus !== "All" && p.status !== filterStatus) return false;
       if (filterPriority !== "All" && p.priority !== filterPriority) return false;
+      if (filterDept !== "All" && !p.departments.includes(filterDept)) return false;
       if (searchQuery && !p.name.toLowerCase().includes(searchQuery.toLowerCase()) && !p.notes.toLowerCase().includes(searchQuery.toLowerCase())) return false;
       return true;
     });
-  }, [projects, filterOwner, filterStatus, filterPriority, searchQuery]);
-
-  const grouped = useMemo(() => {
-    const g = {};
-    for (const a of AREAS) g[a] = [];
-    for (const p of filtered) {
-      if (g[p.area]) g[p.area].push(p);
-    }
-    return g;
-  }, [filtered]);
+  }, [activeProjects, filterOwner, filterStatus, filterPriority, filterDept, searchQuery]);
 
   const stats = useMemo(() => {
-    const all = projects;
+    const all = activeProjects;
     return {
       total: all.length,
       inProgress: all.filter(p => p.status === "In Progress").length,
       highPriority: all.filter(p => p.priority === "High").length,
       avgProgress: all.length ? Math.round(all.reduce((s, p) => s + p.pct, 0) / all.length) : 0,
       blocked: all.filter(p => p.status === "Blocked" || p.status === "On Hold").length,
-      done: all.filter(p => p.status === "Done").length,
+      done: completedProjects.length,
     };
-  }, [projects]);
+  }, [activeProjects, completedProjects]);
 
-  const alerts = projects.filter(p => p.priority === "High" && p.pct < 100 && p.date && p.date.includes("3/31"));
-  const hasFilters = filterOwner !== "All" || filterStatus !== "All" || filterPriority !== "All" || searchQuery;
+  const alerts = activeProjects.filter(p => p.priority === "High" && p.pct < 100 && p.date && p.date.includes("3/31"));
+  const hasFilters = filterOwner !== "All" || filterStatus !== "All" || filterPriority !== "All" || filterDept !== "All" || searchQuery;
 
-  // ââ Handlers ââ
-  const handleUpdate = (id, field, value) => setProjects(prev => prev.map(p => p.id === id ? { ...p, [field]: value } : p));
-  const handleDelete = (id) => setProjects(prev => prev.filter(p => p.id !== id));
-  const handleMove = (id, newArea) => setProjects(prev => prev.map(p => p.id === id ? { ...p, area: newArea } : p));
-  const handleAdd = (area) => {
-    setProjects(prev => [...prev, { id: nextId, area, name: "New Project", owner: "Unassigned", status: "Not Started", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "" }]);
+  // Handlers
+  const handleUpdate = useCallback((id, field, value) => {
+    setProjects(prev => prev.map(p => {
+      if (p.id !== id) return p;
+      const updated = { ...p, [field]: value };
+      // Auto-capture completion date when status changes to Done
+      if (field === "status" && value === "Done" && !p.completedDate) {
+        updated.completedDate = new Date().toLocaleDateString("en-US");
+        updated.pct = 100;
+      }
+      // Clear completion date if un-done
+      if (field === "status" && value !== "Done" && p.status === "Done") {
+        updated.completedDate = "";
+      }
+      return updated;
+    }));
+  }, []);
+
+  const handleDelete = useCallback((id) => setProjects(prev => prev.filter(p => p.id !== id)), []);
+
+  const handleAddProject = useCallback((ownerOrNull, deptOrNull) => {
+    const newP = {
+      id: nextId,
+      departments: deptOrNull ? [deptOrNull] : ["Enterprise Systems"],
+      name: "New Project",
+      owner: ownerOrNull || "Unassigned",
+      status: "Not Started",
+      priority: "Medium",
+      pct: 0,
+      date: "",
+      roadblocks: "",
+      milestones: "",
+      nextSteps: "",
+      notes: "",
+      completedDate: "",
+    };
+    setProjects(prev => [...prev, newP]);
     setNextId(n => n + 1);
-  };
+  }, [nextId]);
 
-  const handleExport = () => {
-    const rows = [["Area", "Project", "Owner", "Status", "Priority", "% Complete", "Date", "Roadblocks", "Milestones", "Next Steps", "Notes"]];
-    for (const p of projects) rows.push([p.area, p.name, p.owner, p.status, p.priority, p.pct + "%", p.date, p.roadblocks, p.milestones, p.nextSteps, p.notes]);
+  const handlePromoteInbox = useCallback((item) => {
+    const newP = {
+      id: nextId,
+      departments: ["Enterprise Systems"],
+      name: item.text,
+      owner: item.owner || "Unassigned",
+      status: "Not Started",
+      priority: item.priority || "Medium",
+      pct: 0,
+      date: "",
+      roadblocks: "",
+      milestones: "",
+      nextSteps: "",
+      notes: item.notes || `Promoted from Inbox (${item.source}, added ${item.addedDate})`,
+      completedDate: "",
+    };
+    setProjects(prev => [...prev, newP]);
+    setInboxItems(prev => prev.filter(i => i.id !== item.id));
+    setNextId(n => n + 1);
+  }, [nextId]);
+
+  // Export handlers
+  const handleExportCSV = () => {
+    const rows = [["Project", "Departments", "Owner", "Status", "Priority", "% Complete", "Date", "Roadblocks", "Milestones", "Next Steps", "Notes"]];
+    for (const p of projects) {
+      rows.push([p.name, p.departments.join("; "), p.owner, p.status, p.priority, p.pct + "%", p.date, p.roadblocks, p.milestones, p.nextSteps, p.notes]);
+    }
     const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
@@ -611,11 +1025,54 @@ export default function Dashboard() {
     setExportMsg("Done!"); setTimeout(() => setExportMsg(""), 2000);
   };
 
-  const clearFilters = () => { setFilterOwner("All"); setFilterStatus("All"); setFilterPriority("All"); setSearchQuery(""); };
+  const handleExportSummary = () => {
+    let md = `# IT Project Dashboard -- Executive Summary\n`;
+    md += `**Week of ${new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}**\n\n`;
+    md += `**Active Projects:** ${stats.total} | **In Progress:** ${stats.inProgress} | **High Priority:** ${stats.highPriority} | **Avg Progress:** ${stats.avgProgress}%\n\n`;
+
+    if (alerts.length > 0) {
+      md += `## Critical This Week\n`;
+      for (const a of alerts) md += `- **${a.name}** (${a.owner}) -- ${a.pct}% complete, due ${a.date}\n`;
+      md += `\n`;
+    }
+
+    const blocked = activeProjects.filter(p => p.status === "Blocked" || p.status === "On Hold");
+    if (blocked.length > 0) {
+      md += `## Blocked / On Hold\n`;
+      for (const b of blocked) md += `- **${b.name}** (${b.owner}): ${b.roadblocks || "No details"}\n`;
+      md += `\n`;
+    }
+
+    md += `## By Owner\n`;
+    for (const owner of OWNER_OPTIONS.filter(o => o !== "Unassigned")) {
+      const ownerPs = activeProjects.filter(p => p.owner === owner);
+      if (ownerPs.length === 0) continue;
+      md += `\n### ${owner} (${ownerPs.length} projects)\n`;
+      for (const p of ownerPs) {
+        md += `- ${p.name} [${p.status}] ${p.priority === "High" ? "HIGH" : ""} ${p.pct}%${p.nextSteps ? " -- Next: " + p.nextSteps : ""}\n`;
+      }
+    }
+
+    if (completedProjects.length > 0) {
+      md += `\n## Recently Completed\n`;
+      for (const p of completedProjects) md += `- ${p.name} (${p.owner}) -- completed ${p.completedDate || "N/A"}\n`;
+    }
+
+    const blob = new Blob([md], { type: "text/markdown" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href = url; a.download = `IT_Summary_${new Date().toISOString().slice(0, 10)}.md`; a.click();
+    URL.revokeObjectURL(url);
+    setExportMsg("Done!"); setTimeout(() => setExportMsg(""), 2000);
+  };
+
+  const clearFilters = () => { setFilterOwner("All"); setFilterStatus("All"); setFilterPriority("All"); setFilterDept("All"); setSearchQuery(""); };
+
+  // Active status options (exclude Done for filter in non-history views)
+  const activeStatusOptions = STATUS_OPTIONS.filter(s => s !== "Done");
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* ââ HEADER ââ */}
+      {/* HEADER */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-6 py-3">
           <div className="flex items-center justify-between">
@@ -625,136 +1082,157 @@ export default function Dashboard() {
               </div>
               <div>
                 <h1 className="text-lg font-bold text-gray-900">IT Project Dashboard</h1>
-                <p className="text-[11px] text-gray-400">Aubuchon Hardware Â· Week of March 30, 2026</p>
+                <p className="text-[11px] text-gray-400">Aubuchon Hardware -- Week of March 30, 2026</p>
               </div>
             </div>
 
             <div className="flex items-center gap-2">
-              {/* View toggle */}
-              <div className="flex bg-gray-100 rounded-lg p-0.5">
-                <button onClick={() => setView("cards")} className={`p-1.5 rounded-md transition-all ${view === "cards" ? "bg-white shadow-sm text-gray-900" : "text-gray-400 hover:text-gray-600"}`} title="Card view">
-                  <LayoutGrid size={15} />
+              {/* Export dropdown */}
+              <div className="relative group">
+                <button className="flex items-center gap-1.5 bg-gray-900 text-white px-3.5 py-2 rounded-lg text-xs font-medium hover:bg-gray-800 transition-colors shadow-sm">
+                  <Download size={13} />{exportMsg || "Export"}
                 </button>
-                <button onClick={() => setView("list")} className={`p-1.5 rounded-md transition-all ${view === "list" ? "bg-white shadow-sm text-gray-900" : "text-gray-400 hover:text-gray-600"}`} title="List view">
-                  <List size={15} />
-                </button>
+                <div className="absolute right-0 mt-1 bg-white rounded-lg shadow-xl border border-gray-200 py-1 min-w-[180px] hidden group-hover:block z-50">
+                  <button onClick={handleExportCSV} className="w-full text-left px-3 py-2 text-xs hover:bg-gray-50 flex items-center gap-2">
+                    <Download size={12} className="text-gray-400" />CSV (Full Data)
+                  </button>
+                  <button onClick={handleExportSummary} className="w-full text-left px-3 py-2 text-xs hover:bg-gray-50 flex items-center gap-2">
+                    <FileText size={12} className="text-gray-400" />Executive Summary
+                  </button>
+                </div>
               </div>
-
-              <button onClick={handleExport} className="flex items-center gap-1.5 bg-gray-900 text-white px-3.5 py-2 rounded-lg text-xs font-medium hover:bg-gray-800 transition-colors shadow-sm">
-                <Download size={13} />{exportMsg || "Export"}
-              </button>
               <button onClick={() => signOut(auth)} className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors" title="Sign out">
                 <LogOut size={15} />
               </button>
             </div>
           </div>
+
+          {/* View tabs */}
+          <div className="flex items-center gap-1 mt-3 -mb-px">
+            {VIEWS.map(v => {
+              const Icon = v.icon;
+              const isActive = activeView === v.id;
+              return (
+                <button key={v.id} onClick={() => setActiveView(v.id)}
+                  className={`flex items-center gap-1.5 px-4 py-2 text-xs font-medium rounded-t-lg border-b-2 transition-all ${isActive ? "border-blue-600 text-blue-700 bg-blue-50/50" : "border-transparent text-gray-400 hover:text-gray-600 hover:bg-gray-50"}`}>
+                  <Icon size={14} />{v.label}
+                  {v.id === "inbox" && inboxItems.length > 0 && (
+                    <span className="bg-indigo-100 text-indigo-700 text-[9px] px-1.5 py-0.5 rounded-full font-bold">{inboxItems.length}</span>
+                  )}
+                  {v.id === "history" && completedProjects.length > 0 && (
+                    <span className="bg-emerald-100 text-emerald-700 text-[9px] px-1.5 py-0.5 rounded-full font-bold">{completedProjects.length}</span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-5">
-        {/* ââ SUMMARY CARDS ââ */}
+        {/* SUMMARY CARDS */}
         <div className="grid grid-cols-3 md:grid-cols-6 gap-3 mb-5">
-          <SummaryCard label="Total" value={stats.total} icon={FolderOpen} color="text-gray-900" bg="bg-white" />
+          <SummaryCard label="Active" value={stats.total} icon={FolderOpen} color="text-gray-900" bg="bg-white" />
           <SummaryCard label="In Progress" value={stats.inProgress} icon={BarChart3} color="text-blue-600" bg="bg-white" />
           <SummaryCard label="High Priority" value={stats.highPriority} icon={AlertTriangle} color="text-red-600" bg="bg-white" />
           <SummaryCard label="Avg Progress" value={stats.avgProgress + "%"} icon={BarChart3} color="text-indigo-600" bg="bg-white" />
           <SummaryCard label="Blocked" value={stats.blocked} icon={XCircle} color="text-amber-600" bg="bg-white" />
-          <SummaryCard label="Done" value={stats.done} icon={CheckCircle} color="text-emerald-600" bg="bg-white" />
+          <SummaryCard label="Completed" value={stats.done} icon={CheckCircle} color="text-emerald-600" bg="bg-white" />
         </div>
 
-        {/* ââ ALERTS ââ */}
-        {alerts.length > 0 && (
+        {/* ALERTS */}
+        {alerts.length > 0 && activeView !== "history" && (
           <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-5 flex items-start gap-3">
             <AlertTriangle size={16} className="text-red-500 mt-0.5 flex-shrink-0" />
             <div>
               <h4 className="text-sm font-bold text-red-800">Critical Deadlines This Week</h4>
-              <p className="text-xs text-red-600 mt-0.5">{alerts.map(p => `${p.name} (${p.owner})`).join("  Â·  ")} â due 3/31/2026</p>
+              <p className="text-xs text-red-600 mt-0.5">{alerts.map(p => `${p.name} (${p.owner})`).join("  |  ")} -- due 3/31/2026</p>
             </div>
           </div>
         )}
 
-        {/* ââ FILTERS ââ */}
-        <div className="flex items-center gap-2 mb-5 flex-wrap">
-          <div className="flex items-center gap-1.5 bg-white rounded-lg px-3 py-2 border border-gray-200 flex-1 max-w-xs">
-            <Search size={14} className="text-gray-400" />
-            <input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="text-xs bg-transparent focus:outline-none w-full" placeholder="Search projects..." />
-            {searchQuery && <button onClick={() => setSearchQuery("")} className="text-gray-300 hover:text-gray-500"><X size={12} /></button>}
-          </div>
+        {/* FILTERS (hidden on history view) */}
+        {activeView !== "history" && (
+          <div className="flex items-center gap-2 mb-5 flex-wrap">
+            <div className="flex items-center gap-1.5 bg-white rounded-lg px-3 py-2 border border-gray-200 flex-1 max-w-xs">
+              <Search size={14} className="text-gray-400" />
+              <input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="text-xs bg-transparent focus:outline-none w-full" placeholder="Search projects..." />
+              {searchQuery && <button onClick={() => setSearchQuery("")} className="text-gray-300 hover:text-gray-500"><X size={12} /></button>}
+            </div>
 
-          <div className="flex items-center gap-1.5 bg-white rounded-lg px-2.5 py-2 border border-gray-200">
-            <User size={12} className="text-gray-400" />
-            <select value={filterOwner} onChange={(e) => setFilterOwner(e.target.value)} className="text-xs text-gray-700 bg-transparent border-none focus:outline-none cursor-pointer">
-              <option value="All">All Owners</option>
-              {OWNER_OPTIONS.filter(o => o !== "Unassigned").map(o => <option key={o} value={o}>{o}</option>)}
-            </select>
-          </div>
+            <div className="flex items-center gap-1.5 bg-white rounded-lg px-2.5 py-2 border border-gray-200">
+              <User size={12} className="text-gray-400" />
+              <select value={filterOwner} onChange={(e) => setFilterOwner(e.target.value)} className="text-xs text-gray-700 bg-transparent border-none focus:outline-none cursor-pointer">
+                <option value="All">All Owners</option>
+                {OWNER_OPTIONS.filter(o => o !== "Unassigned").map(o => <option key={o} value={o}>{o}</option>)}
+              </select>
+            </div>
 
-          <div className="flex items-center gap-1.5 bg-white rounded-lg px-2.5 py-2 border border-gray-200">
-            <Filter size={12} className="text-gray-400" />
-            <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="text-xs text-gray-700 bg-transparent border-none focus:outline-none cursor-pointer">
-              <option value="All">All Statuses</option>
-              {STATUS_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
-            </select>
-          </div>
+            <div className="flex items-center gap-1.5 bg-white rounded-lg px-2.5 py-2 border border-gray-200">
+              <Filter size={12} className="text-gray-400" />
+              <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="text-xs text-gray-700 bg-transparent border-none focus:outline-none cursor-pointer">
+                <option value="All">All Statuses</option>
+                {activeStatusOptions.map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
 
-          <div className="flex items-center gap-1.5 bg-white rounded-lg px-2.5 py-2 border border-gray-200">
-            <ChevronUp size={12} className="text-gray-400" />
-            <select value={filterPriority} onChange={(e) => setFilterPriority(e.target.value)} className="text-xs text-gray-700 bg-transparent border-none focus:outline-none cursor-pointer">
-              <option value="All">All Priorities</option>
-              {PRIORITY_OPTIONS.map(p => <option key={p} value={p}>{p}</option>)}
-            </select>
-          </div>
+            <div className="flex items-center gap-1.5 bg-white rounded-lg px-2.5 py-2 border border-gray-200">
+              <ChevronUp size={12} className="text-gray-400" />
+              <select value={filterPriority} onChange={(e) => setFilterPriority(e.target.value)} className="text-xs text-gray-700 bg-transparent border-none focus:outline-none cursor-pointer">
+                <option value="All">All Priorities</option>
+                {PRIORITY_OPTIONS.map(p => <option key={p} value={p}>{p}</option>)}
+              </select>
+            </div>
 
-          {hasFilters && (
-            <button onClick={clearFilters} className="text-xs text-blue-600 hover:text-blue-800 font-medium">
-              Clear filters Â· {filtered.length}/{projects.length}
-            </button>
-          )}
-        </div>
+            <div className="flex items-center gap-1.5 bg-white rounded-lg px-2.5 py-2 border border-gray-200">
+              <Building2 size={12} className="text-gray-400" />
+              <select value={filterDept} onChange={(e) => setFilterDept(e.target.value)} className="text-xs text-gray-700 bg-transparent border-none focus:outline-none cursor-pointer">
+                <option value="All">All Departments</option>
+                {DEPARTMENTS.map(d => <option key={d} value={d}>{DEPT_SHORT[d]}</option>)}
+              </select>
+            </div>
 
-        {/* ââ QUICK TASKS ââ */}
-        <div className="mb-6">
-          <QuickTasks tasks={quickTasks} setTasks={setQuickTasks} />
-        </div>
-
-        {/* ââ PROJECTS ââ */}
-        {view === "cards" ? (
-          Object.entries(grouped).filter(([, ps]) => ps.length > 0).map(([area, ps]) => (
-            <AreaSection key={area} area={area} projects={ps} onUpdate={handleUpdate} onDelete={handleDelete} onAdd={handleAdd} onMove={handleMove} />
-          ))
-        ) : (
-          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-            <table className="w-full">
-              <thead>
-                <tr className="bg-gray-50 border-b border-gray-200 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
-                  <th className="py-2.5 px-3 w-8"></th>
-                  <th className="py-2.5 px-2 text-left">Area</th>
-                  <th className="py-2.5 px-3 text-left">Project</th>
-                  <th className="py-2.5 px-2 text-left">Status</th>
-                  <th className="py-2.5 px-2 text-left">Priority</th>
-                  <th className="py-2.5 px-2 text-left">Owner</th>
-                  <th className="py-2.5 px-2 text-left w-32">Progress</th>
-                  <th className="py-2.5 px-2 text-left">Date</th>
-                  <th className="py-2.5 px-2 w-16"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map(p => (
-                  <ProjectRow key={p.id} project={p} onUpdate={handleUpdate} onDelete={handleDelete} onMove={handleMove} showArea />
-                ))}
-              </tbody>
-            </table>
-            {AREAS.map(area => (
-              <button key={area} onClick={() => handleAdd(area)} className="w-full text-left px-6 py-2 text-xs text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors border-t border-gray-50 flex items-center gap-2">
-                <Plus size={12} /> Add to {area}
+            {hasFilters && (
+              <button onClick={clearFilters} className="text-xs text-blue-600 hover:text-blue-800 font-medium">
+                Clear filters | {filtered.length}/{activeProjects.length}
               </button>
-            ))}
+            )}
           </div>
         )}
 
-        {/* ââ FOOTER ââ */}
+        {/* QUICK TASKS (show on projects and owner views) */}
+        {(activeView === "projects" || activeView === "owner") && (
+          <div className="mb-6">
+            <QuickTasks tasks={quickTasks} setTasks={setQuickTasks} />
+          </div>
+        )}
+
+        {/* VIEW CONTENT */}
+        {activeView === "projects" && (
+          <AllProjectsView projects={filtered} onUpdate={handleUpdate} onDelete={handleDelete} onAdd={() => handleAddProject()} />
+        )}
+
+        {activeView === "owner" && (
+          <ByOwnerView projects={filtered} onUpdate={handleUpdate} onDelete={handleDelete}
+            onAdd={(owner) => handleAddProject(owner)} quickTasks={quickTasks} setQuickTasks={setQuickTasks} />
+        )}
+
+        {activeView === "dept" && (
+          <ByDeptView projects={filtered} onUpdate={handleUpdate} onDelete={handleDelete}
+            onAdd={(owner, dept) => handleAddProject(owner, dept)} />
+        )}
+
+        {activeView === "inbox" && (
+          <InboxView inboxItems={inboxItems} setInboxItems={setInboxItems} onPromote={handlePromoteInbox} />
+        )}
+
+        {activeView === "history" && (
+          <HistoryView completedProjects={completedProjects} onUpdate={handleUpdate} />
+        )}
+
+        {/* FOOTER */}
         <div className="text-center py-6 text-[11px] text-gray-300 mt-4">
-          Aubuchon Hardware â IT Department â Click any field to edit Â· Toggle views above Â· Move projects between areas
+          Aubuchon Hardware -- IT Department -- Click any field to edit | Toggle views above | Projects can belong to multiple departments
         </div>
       </div>
     </div>
