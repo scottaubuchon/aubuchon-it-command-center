@@ -584,8 +584,8 @@ export default function Dashboard() {
                 <BarChart3 size={20} className="text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900">Aubuchon IT Command Center</h1>
-                <p className="text-xs text-gray-500">IT Department Operations Hub</p>
+                <h1 className="text-xl font-bold text-gray-900">Scott's Workbench</h1>
+                <p className="text-xs text-gray-500">Aubuchon IT Operations Hub</p>
               </div>
             </div>
             {activeTab === "projects" && (
