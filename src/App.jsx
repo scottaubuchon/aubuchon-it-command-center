@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, ChevronRight, Plus, Trash2, Download, AlertTriangle, Clock, CheckCircle, XCircle, Pause, FlaskConical, BarChart3, Calendar, Edit3, Save, X, User, Server, Shield, Monitor, Headphones, Layers, FileText, ExternalLink, RefreshCw, DollarSign, Building2, Hash, MessageSquare } from "lucide-react";
+import { ChevronDown, ChevronRight, Plus, Trash2, Download, AlertTriangle, Clock, CheckCircle, XCircle, Pause, FlaskConical, BarChart3, Calendar, Edit3, Save, X, User, Server, Shield, Monitor, Headphones, Layers, FileText, ExternalLink, RefreshCw, DollarSign, Building2, Hash, MessageSquare, Wrench } from "lucide-react";
 import { Clock as ClockIcon } from "lucide-react";
 
 const STATUS_OPTIONS = ["Not Started", "In Progress", "Testing in Lab", "Done", "On Hold", "Blocked"];
@@ -580,8 +580,9 @@ export default function Dashboard() {
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center shadow-sm">
-                <BarChart3 size={20} className="text-white" />
+              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-xl flex items-center justify-center shadow-sm relative">
+                <Monitor size={18} className="text-white" />
+                <Wrench size={11} className="text-amber-300 absolute bottom-1.5 right-1.5" />
               </div>
               <div>
                 <h1 className="text-xl font-bold text-gray-900">Scott's Workbench</h1>
