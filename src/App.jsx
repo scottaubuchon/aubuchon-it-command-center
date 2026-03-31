@@ -483,9 +483,9 @@ function ProjectCard({ project, onUpdate, onDelete }) {
           <StatusBadge status={project.status} onChange={(v) => onUpdate(project.id, "status", v)} size="xs" />
           <PriorityBadge priority={project.priority} onChange={(v) => onUpdate(project.id, "priority", v)} size="xs" />
           <OwnerBadge owner={project.owner} onChange={(v) => onUpdate(project.id, "owner", v)} size="xs" />
-          {project.date && (
+          {(
             <span className="inline-flex items-center gap-1 text-[10px] text-gray-500 bg-gray-50 px-2 py-0.5 rounded-full border border-gray-100">
-              <Calendar size={9} />{project.date}
+              <Calendar size={9} /><InlineEdit value={project.date} onChange={(v) => onUpdate(project.id, "date", v)} placeholder="Set date..." className="text-[10px] text-gray-500" />
             </span>
           )}
         </div>
@@ -514,7 +514,7 @@ function ProjectCard({ project, onUpdate, onDelete }) {
         {expanded && (
           <div className="mt-3 space-y-2 pt-3 border-t border-gray-100">
             {[
-              ["Go-Live Date", "date", "Target date...", false],
+              ["Est. Completion", "date", "Target date...", false],
               ["Roadblocks", "roadblocks", "Any blockers or risks...", true],
               ["Milestones", "milestones", "What was accomplished...", true],
               ["Next Steps", "nextSteps", "Planned actions...", true],
@@ -584,7 +584,7 @@ function ProjectRow({ project, onUpdate, onDelete, showDepts = true, showOwner =
           <td className="py-2.5 px-2"><OwnerBadge owner={project.owner} onChange={(v) => onUpdate(project.id, "owner", v)} size="xs" /></td>
         )}
         <td className="py-2.5 px-2 w-32"><ProgressBar value={project.pct} onChange={(v) => onUpdate(project.id, "pct", v)} /></td>
-        <td className="py-2.5 px-2 text-xs text-gray-500 whitespace-nowrap">{project.date || "--"}</td>
+        <td className="py-2.5 px-2 text-xs text-gray-500 whitespace-nowrap"><InlineEdit value={project.date} onChange={(v) => onUpdate(project.id, "date", v)} placeholder="Set date..." className="text-xs text-gray-500" /></td>
         <td className="py-2.5 px-2">
           <div className="flex items-center gap-1">
             <DeptMultiSelect selected={project.departments} onChange={(d) => onUpdate(project.id, "departments", d)} />
@@ -636,7 +636,7 @@ function AllProjectsView({ projects, onUpdate, onDelete, onAdd }) {
             <th className="py-2.5 px-2 text-left">Priority</th>
             <th className="py-2.5 px-2 text-left">Owner</th>
             <th className="py-2.5 px-2 text-left w-32">Progress</th>
-            <th className="py-2.5 px-2 text-left">Date</th>
+            <th className="py-2.5 px-2 text-left">Est. Completion</th>
             <th className="py-2.5 px-2 w-16"></th>
           </tr>
         </thead>
@@ -720,7 +720,7 @@ function OwnerSection({ owner, initials, projects, highCount, blockedCount, onUp
                 <th className="py-2 px-2 text-left">Status</th>
                 <th className="py-2 px-2 text-left">Priority</th>
                 <th className="py-2 px-2 text-left w-32">Progress</th>
-                <th className="py-2 px-2 text-left">Date</th>
+                <th className="py-2 px-2 text-left">Est. Completion</th>
                 <th className="py-2 px-2 w-16"></th>
               </tr>
             </thead>
@@ -832,7 +832,7 @@ function DeptSection({ dept, cfg, Icon, projects, highCount, totalPct, onUpdate,
                     <th className="py-2 px-2 text-left">Priority</th>
                     <th className="py-2 px-2 text-left">Owner</th>
                     <th className="py-2 px-2 text-left w-32">Progress</th>
-                    <th className="py-2 px-2 text-left">Date</th>
+                    <th className="py-2 px-2 text-left">Est. Completion</th>
                     <th className="py-2 px-2 w-16"></th>
                   </tr>
                 </thead>
@@ -1211,7 +1211,7 @@ export default function Dashboard() {
 
   // Export handlers
   const handleExportCSV = () => {
-    const rows = [["Project", "Tier", "Departments", "Owner", "Status", "Priority", "% Complete", "Date", "Roadblocks", "Milestones", "Next Steps", "Notes", "Subtasks"]];
+    const rows = [["Project", "Tier", "Departments", "Owner", "Status", "Priority", "% Complete", "Est. Completion", "Roadblocks", "Milestones", "Next Steps", "Notes", "Subtasks"]];
     for (const p of projects) {
       const subsText = (p.subtasks || []).map(s => `${s.done ? "[x]" : "[ ]"} ${s.text}${s.dueDate ? " (due " + s.dueDate + ")" : ""}`).join("; ");
       rows.push([p.name, p.tier === "quickwin" ? "Quick Win" : "Project", p.departments.join("; "), p.owner, p.status, p.priority, p.pct + "%", p.date, p.roadblocks, p.milestones, p.nextSteps, p.notes, subsText]);
