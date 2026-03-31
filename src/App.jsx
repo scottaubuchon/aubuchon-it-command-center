@@ -10,7 +10,7 @@ import {
   Home, CreditCard, TrendingUp, Database, Lock, ArrowLeft
 } from "lucide-react";
 import { auth, signOut, db } from "./firebase";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, collection, getDocs, query, orderBy, updateDoc, serverTimestamp } from "firebase/firestore";
 
 /* =====================================================================
    CONFIGURATION
@@ -1593,7 +1593,7 @@ const SECTIONS = [
     border: "border-orange-200",
     text: "text-orange-700",
     shadow: "shadow-orange-200/50",
-    active: false,
+    active: true,
   },
   {
     id: "wells-cc",
@@ -1699,6 +1699,175 @@ function HomeScreen({ onNavigate }) {
 /* =====================================================================
    APP SHELL  --  Routes between Home and section views
    ===================================================================== */
+
+const APInvoices = ({ goHome }) => {
+  const [invoices, setInvoices] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const q = query(collection(db, "ap_invoices"), orderBy("paymentDue", "asc"));
+        const snap = await getDocs(q);
+        setInvoices(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+      } catch (e) {
+        setError(e.message);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  const handleAction = async (invoiceId, action) => {
+    try {
+      await updateDoc(doc(db, "ap_invoices", invoiceId), {
+        status: action,
+        actionedAt: serverTimestamp(),
+        actionedBy: "scott@aubuchon.com",
+      });
+      setInvoices(prev => prev.map(inv => inv.id === invoiceId ? { ...inv, status: action } : inv));
+    } catch (e) {
+      alert("Error updating invoice: " + e.message);
+    }
+  };
+
+  const fmt = n => "$" + Number(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  const fmtDate = ts => {
+    if (!ts) return "—";
+    const d = ts.toDate ? ts.toDate() : new Date(ts);
+    return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  };
+
+  const isPastDue = ts => {
+    if (!ts) return false;
+    const d = ts.toDate ? ts.toDate() : new Date(ts);
+    return d < new Date();
+  };
+
+  const pendingInvoices = invoices.filter(i => i.status === "pending");
+  const pendingTotal = pendingInvoices.reduce((s, i) => s + Number(i.amount), 0);
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <div className="bg-white border-b border-gray-200 px-6 py-4">
+        <div className="max-w-6xl mx-auto flex items-center gap-3">
+          <button
+            onClick={goHome}
+            className="flex items-center gap-1.5 text-gray-400 hover:text-gray-700 text-sm font-medium transition-colors"
+          >
+            <ArrowLeft size={16} />
+            <span>Back</span>
+          </button>
+          <div className="w-px h-5 bg-gray-200 mx-1" />
+          <div className="flex-1">
+            <h1 className="text-base font-bold text-gray-900">AP Invoices</h1>
+            <p className="text-[11px] text-gray-400">Accounts Payable · Pending Approval</p>
+          </div>
+          {!loading && (
+            <div className="flex items-center gap-3">
+              <span className="text-xs bg-amber-100 text-amber-700 px-2.5 py-1 rounded-full font-semibold">
+                {pendingInvoices.length} Pending
+              </span>
+              <span className="text-xs text-gray-500 font-mono font-semibold">{fmt(pendingTotal)}</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-6 py-6">
+        {loading && <div className="text-center py-20 text-gray-400 text-sm">Loading invoices…</div>}
+        {error && <div className="text-center py-20 text-red-400 text-sm">Error: {error}</div>}
+        {!loading && !error && invoices.length === 0 && (
+          <div className="text-center py-20 text-gray-400 text-sm">No invoices found.</div>
+        )}
+        {!loading && invoices.length > 0 && (
+          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-gray-50 border-b border-gray-200">
+                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Vendor</th>
+                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Invoice #</th>
+                  <th className="text-right px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Amount</th>
+                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Store</th>
+                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Due Date</th>
+                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Status</th>
+                  <th className="px-4 py-3" />
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {invoices.map(inv => (
+                  <tr key={inv.id} className="hover:bg-blue-50/30 transition-colors">
+                    <td className="px-4 py-3 font-medium text-gray-900">{inv.vendor}</td>
+                    <td className="px-4 py-3">
+                      {inv.jiffyUrl ? (
+                        <a href={inv.jiffyUrl} target="_blank" rel="noopener noreferrer"
+                          className="font-mono text-xs text-blue-600 hover:underline">
+                          {inv.invoiceNumber}
+                        </a>
+                      ) : (
+                        <span className="font-mono text-xs text-gray-600">{inv.invoiceNumber}</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-right font-mono text-gray-900">{fmt(inv.amount)}</td>
+                    <td className="px-4 py-3 text-gray-500">#{inv.storeNumber}</td>
+                    <td className={`px-4 py-3 ${isPastDue(inv.paymentDue) && inv.status === "pending" ? "text-red-600 font-semibold" : "text-gray-600"}`}>
+                      {fmtDate(inv.paymentDue)}
+                      {isPastDue(inv.paymentDue) && inv.status === "pending" && (
+                        <span className="ml-1 text-xs text-red-400" title="Past due">⚠</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
+                      {inv.status === "pending" && (
+                        <span className="text-[11px] bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-medium">Pending</span>
+                      )}
+                      {inv.status === "approved" && (
+                        <span className="inline-flex items-center gap-1 text-[11px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">
+                          <CheckCircle size={10} />Approved
+                        </span>
+                      )}
+                      {inv.status === "rejected" && (
+                        <span className="inline-flex items-center gap-1 text-[11px] bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-medium">
+                          <XCircle size={10} />Rejected
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
+                      {inv.status === "pending" && (
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            onClick={() => handleAction(inv.id, "approved")}
+                            className="text-[11px] bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg font-semibold transition-colors"
+                          >
+                            Approve
+                          </button>
+                          <button
+                            onClick={() => handleAction(inv.id, "rejected")}
+                            className="text-[11px] bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg font-semibold transition-colors"
+                          >
+                            Reject
+                          </button>
+                        </div>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+              <tfoot>
+                <tr className="bg-gray-50 border-t-2 border-gray-200">
+                  <td colSpan={2} className="px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Pending Total</td>
+                  <td className="px-4 py-3 text-right font-mono font-bold text-gray-900">{fmt(pendingTotal)}</td>
+                  <td colSpan={4} />
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
 
 export default function App() {
   const [activeSection, setActiveSection] = useState(null);
