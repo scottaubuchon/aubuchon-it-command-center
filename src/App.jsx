@@ -6,7 +6,7 @@ import {
   List, LayoutGrid, ArrowRight, GripVertical, Square, CheckSquare,
   FolderOpen, Filter, ChevronUp, Zap, MoveRight, LogOut, Users,
   Building2, History, FileText, Tag, Eye, Briefcase, Archive, Inbox,
-  ListChecks, CircleDot
+  ListChecks, CircleDot, RotateCcw
 } from "lucide-react";
 import { auth, signOut } from "./firebase";
 
@@ -63,6 +63,7 @@ const VIEWS = [
   { id: "owner",    label: "By Owner",     icon: Users },
   { id: "dept",     label: "By Dept",      icon: Building2 },
   { id: "inbox",    label: "Inbox",        icon: Inbox },
+  { id: "trash",    label: "Trash",        icon: Trash2 },
   { id: "history",  label: "History",       icon: Archive },
 ];
 
@@ -459,7 +460,7 @@ function ProjectCard({ project, onUpdate, onDelete }) {
           </div>
           <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
             <DeptMultiSelect selected={project.departments} onChange={(d) => onUpdate(project.id, "departments", d)} />
-            <button onClick={() => onDelete(project.id)} className="text-gray-300 hover:text-red-400 transition-colors" title="Remove"><Trash2 size={13} /></button>
+            <button onClick={(e) => { e.stopPropagation(); onDelete(project.id); }} className="text-gray-300 hover:text-red-400 transition-colors" title="Remove"><Trash2 size={13} /></button>
           </div>
         </div>
 
@@ -586,7 +587,7 @@ function ProjectRow({ project, onUpdate, onDelete, showDepts = true, showOwner =
         <td className="py-2.5 px-2">
           <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
             <DeptMultiSelect selected={project.departments} onChange={(d) => onUpdate(project.id, "departments", d)} />
-            <button onClick={() => onDelete(project.id)} className="text-gray-300 hover:text-red-400"><Trash2 size={12} /></button>
+            <button onClick={(e) => { e.stopPropagation(); onDelete(project.id); }} className="text-gray-300 hover:text-red-400"><Trash2 size={12} /></button>
           </div>
         </td>
       </tr>
@@ -850,6 +851,55 @@ function DeptSection({ dept, cfg, Icon, projects, highCount, totalPct, onUpdate,
 }
 
 /* =====================================================================
+   VIEW: TRASH (deleted projects)
+   ===================================================================== */
+
+function TrashView({ trashedProjects, onRestore, onPermanentDelete }) {
+  if (trashedProjects.length === 0) {
+    return (
+      <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+        <Trash2 size={40} className="text-gray-200 mx-auto mb-3" />
+        <h3 className="font-bold text-gray-400 text-lg">Trash is Empty</h3>
+        <p className="text-sm text-gray-300 mt-1">Deleted projects will appear here so you can restore them if needed.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+      <div className="px-5 py-3 bg-gray-50 border-b border-gray-200 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Trash2 size={14} className="text-gray-400" />
+          <span className="text-sm font-bold text-gray-700">{trashedProjects.length} Deleted Project{trashedProjects.length !== 1 ? "s" : ""}</span>
+        </div>
+      </div>
+      <div className="divide-y divide-gray-50">
+        {trashedProjects.map(p => (
+          <div key={p.id} className="px-5 py-3 flex items-center justify-between group hover:bg-gray-50/50 transition-colors">
+            <div className="flex-1">
+              <span className="text-sm font-medium text-gray-700">{p.name}</span>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-[10px] text-gray-400">Deleted {p.deletedDate}</span>
+                <span className="text-[10px] text-gray-300">{p.owner}</span>
+                <DeptChips departments={p.departments} size="xs" />
+              </div>
+            </div>
+            <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <button onClick={() => onRestore(p.id)} className="flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-2.5 py-1.5 rounded-lg transition-colors">
+                <RotateCcw size={11} />Restore
+              </button>
+              <button onClick={() => onPermanentDelete(p.id)} className="flex items-center gap-1 text-xs font-medium text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 px-2.5 py-1.5 rounded-lg transition-colors">
+                <X size={11} />Delete Forever
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* =====================================================================
    VIEW: HISTORY (completed projects)
    ===================================================================== */
 
@@ -994,6 +1044,7 @@ function InboxView({ inboxItems, setInboxItems, onPromote }) {
 export default function Dashboard() {
   const [projects, setProjects] = useState(initialProjects);
   const [inboxItems, setInboxItems] = useState(initialInboxItems);
+  const [trashedProjects, setTrashedProjects] = useState([]);
   const [nextId, setNextId] = useState(200);
   const [activeView, setActiveView] = useState("projects");
   const [filterOwner, setFilterOwner] = useState("All");
@@ -1053,7 +1104,26 @@ export default function Dashboard() {
     }));
   }, []);
 
-  const handleDelete = useCallback((id) => setProjects(prev => prev.filter(p => p.id !== id)), []);
+  const handleDelete = useCallback((id) => {
+    const project = projects.find(p => p.id === id);
+    if (!project) return;
+    if (!window.confirm(`Delete "${project.name}"? It will be moved to Trash.`)) return;
+    setTrashedProjects(prev => [...prev, { ...project, deletedDate: new Date().toLocaleDateString("en-US") }]);
+    setProjects(prev => prev.filter(p => p.id !== id));
+  }, [projects]);
+
+  const handleRestore = useCallback((id) => {
+    const project = trashedProjects.find(p => p.id === id);
+    if (!project) return;
+    const { deletedDate, ...restored } = project;
+    setProjects(prev => [...prev, restored]);
+    setTrashedProjects(prev => prev.filter(p => p.id !== id));
+  }, [trashedProjects]);
+
+  const handlePermanentDelete = useCallback((id) => {
+    if (!window.confirm("Permanently delete this project? This cannot be undone.")) return;
+    setTrashedProjects(prev => prev.filter(p => p.id !== id));
+  }, []);
 
   const handleAddProject = useCallback((ownerOrNull, deptOrNull) => {
     const newP = {
@@ -1209,6 +1279,9 @@ export default function Dashboard() {
                   {v.id === "inbox" && inboxItems.length > 0 && (
                     <span className="bg-indigo-100 text-indigo-700 text-[9px] px-1.5 py-0.5 rounded-full font-bold">{inboxItems.length}</span>
                   )}
+                  {v.id === "trash" && trashedProjects.length > 0 && (
+                    <span className="bg-gray-200 text-gray-600 text-[9px] px-1.5 py-0.5 rounded-full font-bold">{trashedProjects.length}</span>
+                  )}
                   {v.id === "history" && completedProjects.length > 0 && (
                     <span className="bg-emerald-100 text-emerald-700 text-[9px] px-1.5 py-0.5 rounded-full font-bold">{completedProjects.length}</span>
                   )}
@@ -1317,6 +1390,10 @@ export default function Dashboard() {
 
         {activeView === "inbox" && (
           <InboxView inboxItems={inboxItems} setInboxItems={setInboxItems} onPromote={handlePromoteInbox} />
+        )}
+
+        {activeView === "trash" && (
+          <TrashView trashedProjects={trashedProjects} onRestore={handleRestore} onPermanentDelete={handlePermanentDelete} />
         )}
 
         {activeView === "history" && (
