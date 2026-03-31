@@ -16,6 +16,7 @@ import { auth, signOut } from "./firebase";
 
 const STATUS_OPTIONS = ["Not Started", "In Progress", "Testing in Lab", "Done", "On Hold", "Blocked"];
 const PRIORITY_OPTIONS = ["High", "Medium", "Low"];
+const TIER_OPTIONS = ["Project", "Quick Win"];
 const OWNER_OPTIONS = ["Dave Faucher", "Craig Renaud", "Eric Handley", "Suzanne Fleury", "Unassigned"];
 
 const STATUS_CONFIG = {
@@ -71,50 +72,50 @@ const VIEWS = [
 
 const initialProjects = [
   // Enterprise Systems
-  { id: 1,  departments: ["Enterprise Systems"], name: "E-Commerce Migration (Magento to Easy Commerce)", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 25, date: "9/30/2026", roadblocks: "", milestones: "", nextSteps: "", notes: "Migration from Magento platform to Easy Commerce", completedDate: "", subtasks: [] },
-  { id: 2,  departments: ["Enterprise Systems"], name: "YODA (Power BI Analytics)", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "", roadblocks: "", milestones: "Basket Builders report redesign; AR aging report in dev", nextSteps: "Matillion upgrade (time-sensitive)", notes: "Business intelligence and analytics platform", completedDate: "", subtasks: [] },
-  { id: 3,  departments: ["Enterprise Systems"], name: "Power BI / Fabric (Presidio)", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Data platform modernization with Presidio", completedDate: "", subtasks: [] },
-  { id: 4,  departments: ["Enterprise Systems"], name: "In-house A/R Module", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 50, date: "6/30/2026", roadblocks: "", milestones: "", nextSteps: "", notes: "Custom accounts receivable module development", completedDate: "", subtasks: [] },
-  { id: 7,  departments: ["Enterprise Systems"], name: "Ideal Software Integration", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Ideal software system integration", completedDate: "", subtasks: [] },
-  { id: 8,  departments: ["Enterprise Systems"], name: "Mi9 Bug Fixes & Enhancements", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Ongoing Mi9 retail system maintenance", completedDate: "", subtasks: [] },
-  { id: 6,  departments: ["Enterprise Systems"], name: "Sport 2.0", owner: "Dave Faucher", status: "Not Started", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Next generation sporting goods system", completedDate: "", subtasks: [] },
-  { id: 30, departments: ["Enterprise Systems"], name: "Matillion Upgrade", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "", roadblocks: "Time-sensitive -- due within 1-2 weeks", milestones: "", nextSteps: "Complete upgrade ASAP", notes: "ETL platform upgrade -- flagged in YODA review 3/13", completedDate: "", subtasks: [] },
-  { id: 31, departments: ["Enterprise Systems"], name: "OpenFlow Migration POC", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "Evaluating proof of concept", nextSteps: "", notes: "From YODA review -- evaluating migration path", completedDate: "", subtasks: [] },
+  { id: 1,  departments: ["Enterprise Systems"], name: "E-Commerce Migration (Magento to Easy Commerce)", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 25, date: "9/30/2026", roadblocks: "", milestones: "", nextSteps: "", notes: "Migration from Magento platform to Easy Commerce", completedDate: "", subtasks: [], tier: "project" },
+  { id: 2,  departments: ["Enterprise Systems"], name: "YODA (Power BI Analytics)", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "", roadblocks: "", milestones: "Basket Builders report redesign; AR aging report in dev", nextSteps: "Matillion upgrade (time-sensitive)", notes: "Business intelligence and analytics platform", completedDate: "", subtasks: [], tier: "project" },
+  { id: 3,  departments: ["Enterprise Systems"], name: "Power BI / Fabric (Presidio)", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Data platform modernization with Presidio", completedDate: "", subtasks: [], tier: "project" },
+  { id: 4,  departments: ["Enterprise Systems"], name: "In-house A/R Module", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 50, date: "6/30/2026", roadblocks: "", milestones: "", nextSteps: "", notes: "Custom accounts receivable module development", completedDate: "", subtasks: [], tier: "project" },
+  { id: 7,  departments: ["Enterprise Systems"], name: "Ideal Software Integration", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Ideal software system integration", completedDate: "", subtasks: [], tier: "project" },
+  { id: 8,  departments: ["Enterprise Systems"], name: "Mi9 Bug Fixes & Enhancements", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Ongoing Mi9 retail system maintenance", completedDate: "", subtasks: [], tier: "project" },
+  { id: 6,  departments: ["Enterprise Systems"], name: "Sport 2.0", owner: "Dave Faucher", status: "Not Started", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Next generation sporting goods system", completedDate: "", subtasks: [], tier: "project" },
+  { id: 30, departments: ["Enterprise Systems"], name: "Matillion Upgrade", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "", roadblocks: "Time-sensitive -- due within 1-2 weeks", milestones: "", nextSteps: "Complete upgrade ASAP", notes: "ETL platform upgrade -- flagged in YODA review 3/13", completedDate: "", subtasks: [], tier: "project" },
+  { id: 31, departments: ["Enterprise Systems"], name: "OpenFlow Migration POC", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "Evaluating proof of concept", nextSteps: "", notes: "From YODA review -- evaluating migration path", completedDate: "", subtasks: [], tier: "project" },
 
   // Infrastructure & Cyber Security
-  { id: 9,  departments: ["Infrastructure & Cyber Security"], name: "Windows 11 Upgrade", owner: "Craig Renaud", status: "In Progress", priority: "High", pct: 0, date: "", roadblocks: "", milestones: "Weekly status meetings Wed 1pm", nextSteps: "", notes: "Enterprise-wide Windows 11 migration before end of support", completedDate: "", subtasks: [] },
-  { id: 10, departments: ["Infrastructure & Cyber Security"], name: "Cybersecurity Program", owner: "Craig Renaud", status: "In Progress", priority: "High", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "PCI compliance, CrowdStrike, Sophos, Mimecast, KnowBe4, Keeper", completedDate: "", subtasks: [] },
-  { id: 11, departments: ["Infrastructure & Cyber Security", "Store Expansion"], name: "Store Conversions / IT Alignment", owner: "Craig Renaud", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "Aggressive 6-week timelines; vendor scheduling issues with IW", milestones: "73-75 store projects completed successfully", nextSteps: "Low-voltage cabling SOP to Mark; pre-project meetings for next 3-4 projects; floor plan markups for APs and Cat5 drops", notes: "IT infrastructure for store conversions -- process significantly improved", completedDate: "", subtasks: [] },
-  { id: 12, departments: ["Infrastructure & Cyber Security", "POS & Store Technology"], name: "Delivery Pilot (IT Component)", owner: "Craig Renaud", status: "In Progress", priority: "High", pct: 0, date: "4/7/2026", roadblocks: "DMS vendor lacks bulk import; daily product data updates difficult", milestones: "Store 218 South Burlington -- 5,000 sq ft warehouse space secured", nextSteps: "Set up separate VLAN; order 2 PCs, 2 phones, label printers; WorkWave driver login setup", notes: "Soft launch early April -- starting with 6 stores, could scale to 50", completedDate: "", subtasks: [] },
-  { id: 32, departments: ["Infrastructure & Cyber Security"], name: "WiFi Speaker Evaluation", owner: "Craig Renaud", status: "Not Started", priority: "Low", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "Craig & Evan to investigate WiFi speakers vs. wired; review IW bills to separate speaker wiring costs", notes: "Cost-effective alternative to wired audio -- from store alignment 1:1", completedDate: "", subtasks: [] },
+  { id: 9,  departments: ["Infrastructure & Cyber Security"], name: "Windows 11 Upgrade", owner: "Craig Renaud", status: "In Progress", priority: "High", pct: 0, date: "", roadblocks: "", milestones: "Weekly status meetings Wed 1pm", nextSteps: "", notes: "Enterprise-wide Windows 11 migration before end of support", completedDate: "", subtasks: [], tier: "project" },
+  { id: 10, departments: ["Infrastructure & Cyber Security"], name: "Cybersecurity Program", owner: "Craig Renaud", status: "In Progress", priority: "High", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "PCI compliance, CrowdStrike, Sophos, Mimecast, KnowBe4, Keeper", completedDate: "", subtasks: [], tier: "project" },
+  { id: 11, departments: ["Infrastructure & Cyber Security", "Store Expansion"], name: "Store Conversions / IT Alignment", owner: "Craig Renaud", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "Aggressive 6-week timelines; vendor scheduling issues with IW", milestones: "73-75 store projects completed successfully", nextSteps: "Low-voltage cabling SOP to Mark; pre-project meetings for next 3-4 projects; floor plan markups for APs and Cat5 drops", notes: "IT infrastructure for store conversions -- process significantly improved", completedDate: "", subtasks: [], tier: "project" },
+  { id: 12, departments: ["Infrastructure & Cyber Security", "POS & Store Technology"], name: "Delivery Pilot (IT Component)", owner: "Craig Renaud", status: "In Progress", priority: "High", pct: 0, date: "4/7/2026", roadblocks: "DMS vendor lacks bulk import; daily product data updates difficult", milestones: "Store 218 South Burlington -- 5,000 sq ft warehouse space secured", nextSteps: "Set up separate VLAN; order 2 PCs, 2 phones, label printers; WorkWave driver login setup", notes: "Soft launch early April -- starting with 6 stores, could scale to 50", completedDate: "", subtasks: [], tier: "project" },
+  { id: 32, departments: ["Infrastructure & Cyber Security"], name: "WiFi Speaker Evaluation", owner: "Craig Renaud", status: "Not Started", priority: "Low", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "Craig & Evan to investigate WiFi speakers vs. wired; review IW bills to separate speaker wiring costs", notes: "Cost-effective alternative to wired audio -- from store alignment 1:1", completedDate: "", subtasks: [], tier: "project" },
 
   // POS & Store Technology
-  { id: 17, departments: ["POS & Store Technology"], name: "Tokenization", owner: "Eric Handley", status: "In Progress", priority: "High", pct: 75, date: "3/31/2026", roadblocks: "", milestones: "", nextSteps: "", notes: "Payment tokenization -- CRITICAL DEADLINE", completedDate: "", subtasks: [] },
-  { id: 18, departments: ["POS & Store Technology"], name: "B2B Features & Employee Discount", owner: "Eric Handley", status: "In Progress", priority: "High", pct: 75, date: "3/31/2026", roadblocks: "", milestones: "", nextSteps: "", notes: "B2B functionality -- CRITICAL DEADLINE", completedDate: "", subtasks: [] },
-  { id: 19, departments: ["POS & Store Technology"], name: "Mobile POS", owner: "Eric Handley", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Mobile point of sale deployment", completedDate: "", subtasks: [] },
-  { id: 20, departments: ["POS & Store Technology"], name: "Theatro (Motorola Solutions)", owner: "Eric Handley", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "In-store communication platform", completedDate: "", subtasks: [] },
-  { id: 5,  departments: ["POS & Store Technology", "Enterprise Systems"], name: "EZAD TV (Digital Signage)", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Digital signage rollout across stores", completedDate: "", subtasks: [] },
+  { id: 17, departments: ["POS & Store Technology"], name: "Tokenization", owner: "Eric Handley", status: "In Progress", priority: "High", pct: 75, date: "3/31/2026", roadblocks: "", milestones: "", nextSteps: "", notes: "Payment tokenization -- CRITICAL DEADLINE", completedDate: "", subtasks: [], tier: "project" },
+  { id: 18, departments: ["POS & Store Technology"], name: "B2B Features & Employee Discount", owner: "Eric Handley", status: "In Progress", priority: "High", pct: 75, date: "3/31/2026", roadblocks: "", milestones: "", nextSteps: "", notes: "B2B functionality -- CRITICAL DEADLINE", completedDate: "", subtasks: [], tier: "project" },
+  { id: 19, departments: ["POS & Store Technology"], name: "Mobile POS", owner: "Eric Handley", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Mobile point of sale deployment", completedDate: "", subtasks: [], tier: "project" },
+  { id: 20, departments: ["POS & Store Technology"], name: "Theatro (Motorola Solutions)", owner: "Eric Handley", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "In-store communication platform", completedDate: "", subtasks: [], tier: "project" },
+  { id: 5,  departments: ["POS & Store Technology", "Enterprise Systems"], name: "EZAD TV (Digital Signage)", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Digital signage rollout across stores", completedDate: "", subtasks: [], tier: "project" },
 
   // Store Expansion
-  { id: 13, departments: ["Store Expansion", "Infrastructure & Cyber Security"], name: "237 Cumberland RI", owner: "Craig Renaud", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "Completing smoothly per 1:1", nextSteps: "", notes: "New store acquisition -- IT setup and integration", completedDate: "", subtasks: [] },
-  { id: 14, departments: ["Store Expansion"], name: "233 Ithaca Downtown", owner: "Craig Renaud", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "New store acquisition -- POS equipment installation", completedDate: "", subtasks: [] },
-  { id: 15, departments: ["Store Expansion"], name: "234 Ithaca Triphammer", owner: "Craig Renaud", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "New store acquisition -- IT setup and integration", completedDate: "", subtasks: [] },
-  { id: 16, departments: ["Store Expansion"], name: "236 Dover PA", owner: "Craig Renaud", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "New store acquisition -- IT setup and integration", completedDate: "", subtasks: [] },
+  { id: 13, departments: ["Store Expansion", "Infrastructure & Cyber Security"], name: "237 Cumberland RI", owner: "Craig Renaud", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "Completing smoothly per 1:1", nextSteps: "", notes: "New store acquisition -- IT setup and integration", completedDate: "", subtasks: [], tier: "project" },
+  { id: 14, departments: ["Store Expansion"], name: "233 Ithaca Downtown", owner: "Craig Renaud", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "New store acquisition -- POS equipment installation", completedDate: "", subtasks: [], tier: "project" },
+  { id: 15, departments: ["Store Expansion"], name: "234 Ithaca Triphammer", owner: "Craig Renaud", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "New store acquisition -- IT setup and integration", completedDate: "", subtasks: [], tier: "project" },
+  { id: 16, departments: ["Store Expansion"], name: "236 Dover PA", owner: "Craig Renaud", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "New store acquisition -- IT setup and integration", completedDate: "", subtasks: [], tier: "project" },
 
   // Resource Center & Support
-  { id: 21, departments: ["Resource Center & Support"], name: "Resource Center / Help Desk Operations", owner: "Suzanne Fleury", status: "In Progress", priority: "High", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Help desk management and improvements", completedDate: "", subtasks: [] },
-  { id: 22, departments: ["Resource Center & Support", "POS & Store Technology"], name: "POS Team Support", owner: "Suzanne Fleury", status: "In Progress", priority: "High", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "POS system support for stores", completedDate: "", subtasks: [] },
+  { id: 21, departments: ["Resource Center & Support"], name: "Resource Center / Help Desk Operations", owner: "Suzanne Fleury", status: "In Progress", priority: "High", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Help desk management and improvements", completedDate: "", subtasks: [], tier: "project" },
+  { id: 22, departments: ["Resource Center & Support", "POS & Store Technology"], name: "POS Team Support", owner: "Suzanne Fleury", status: "In Progress", priority: "High", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "POS system support for stores", completedDate: "", subtasks: [], tier: "project" },
 ];
 
-const initialQuickTasks = [
-  { id: 501, text: "Texting to Store Phones -- evaluate options", done: false, owner: "Unassigned", source: "Asana Intake" },
-  { id: 502, text: "WiFi registers setup for new locations", done: false, owner: "Craig Renaud", source: "Asana Intake" },
-  { id: 503, text: "Stop Key Entry on Credit Cards", done: false, owner: "Eric Handley", source: "Asana Intake" },
-  { id: 504, text: "WorldPay / Authorize.net / Apple Pay / Google Pay integration", done: false, owner: "Eric Handley", source: "Asana Intake" },
-  { id: 505, text: "Weather forecast data expansion for stores 220+", done: false, owner: "Dave Faucher", source: "YODA Review" },
-  { id: 506, text: "Loss prevention data refinement", done: false, owner: "Dave Faucher", source: "YODA Review" },
-  { id: 507, text: "Craig to send low-voltage cabling SOP to Mark", done: false, owner: "Craig Renaud", source: "1:1 3/4" },
-  { id: 508, text: "Craig to introduce Mark to IW vendor", done: false, owner: "Craig Renaud", source: "1:1 3/4" },
+const initialInboxItems = [
+  { id: 501, text: "Texting to Store Phones -- evaluate options", source: "Asana Intake", owner: "Unassigned", priority: "Medium", addedDate: "3/30/2026", notes: "" },
+  { id: 502, text: "WiFi registers setup for new locations", source: "Asana Intake", owner: "Craig Renaud", priority: "Medium", addedDate: "3/30/2026", notes: "" },
+  { id: 503, text: "Stop Key Entry on Credit Cards", source: "Asana Intake", owner: "Eric Handley", priority: "Medium", addedDate: "3/30/2026", notes: "" },
+  { id: 504, text: "WorldPay / Authorize.net / Apple Pay / Google Pay integration", source: "Asana Intake", owner: "Eric Handley", priority: "Medium", addedDate: "3/30/2026", notes: "" },
+  { id: 505, text: "Weather forecast data expansion for stores 220+", source: "YODA Review", owner: "Dave Faucher", priority: "Medium", addedDate: "3/30/2026", notes: "" },
+  { id: 506, text: "Loss prevention data refinement", source: "YODA Review", owner: "Dave Faucher", priority: "Medium", addedDate: "3/30/2026", notes: "" },
+  { id: 507, text: "Craig to send low-voltage cabling SOP to Mark", source: "1:1 3/4", owner: "Craig Renaud", priority: "Medium", addedDate: "3/30/2026", notes: "" },
+  { id: 508, text: "Craig to introduce Mark to IW vendor", source: "1:1 3/4", owner: "Craig Renaud", priority: "Medium", addedDate: "3/30/2026", notes: "" },
 ];
 
 /* =====================================================================
@@ -435,75 +436,6 @@ function SummaryCard({ label, value, icon: Icon, color, bg }) {
    QUICK TASKS
    ===================================================================== */
 
-function QuickTasks({ tasks, setTasks }) {
-  const [newText, setNewText] = useState("");
-  const [collapsed, setCollapsed] = useState(false);
-
-  const addTask = () => {
-    if (!newText.trim()) return;
-    setTasks(prev => [...prev, { id: Date.now(), text: newText.trim(), done: false, owner: "Unassigned", source: "Manual" }]);
-    setNewText("");
-  };
-
-  const toggleTask = (id) => setTasks(prev => prev.map(t => t.id === id ? { ...t, done: !t.done } : t));
-  const removeTask = (id) => setTasks(prev => prev.filter(t => t.id !== id));
-
-  const pending = tasks.filter(t => !t.done);
-  const done = tasks.filter(t => t.done);
-
-  return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-      <button onClick={() => setCollapsed(!collapsed)} className="w-full flex items-center justify-between px-5 py-3.5 hover:bg-gray-50 transition-colors">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center">
-            <Zap size={16} className="text-white" />
-          </div>
-          <div className="text-left">
-            <h3 className="font-bold text-gray-900 text-sm">Quick Tasks & One-offs</h3>
-            <p className="text-[11px] text-gray-400">{pending.length} pending, {done.length} done</p>
-          </div>
-        </div>
-        {collapsed ? <ChevronRight size={16} className="text-gray-400" /> : <ChevronDown size={16} className="text-gray-400" />}
-      </button>
-
-      {!collapsed && (
-        <div className="border-t border-gray-100">
-          <div className="px-5 py-3 bg-gray-50/50 flex items-center gap-2">
-            <Plus size={14} className="text-gray-400" />
-            <input value={newText} onChange={(e) => setNewText(e.target.value)} onKeyDown={(e) => e.key === "Enter" && addTask()} className="flex-1 bg-transparent text-sm placeholder-gray-300 focus:outline-none" placeholder="Add a quick task..." />
-            {newText && <button onClick={addTask} className="text-xs font-medium text-blue-600 hover:text-blue-800">Add</button>}
-          </div>
-          <div className="divide-y divide-gray-50">
-            {pending.map(task => (
-              <div key={task.id} className="flex items-center gap-3 px-5 py-2.5 group hover:bg-gray-50/50 transition-colors">
-                <button onClick={() => toggleTask(task.id)} className="text-gray-300 hover:text-emerald-500 transition-colors flex-shrink-0"><Square size={16} /></button>
-                <span className="flex-1 text-sm text-gray-700">{task.text}</span>
-                <span className="text-[10px] text-gray-300 font-medium">{task.source}</span>
-                <span className="text-[10px] text-gray-400">{task.owner !== "Unassigned" ? task.owner.split(" ")[1] : ""}</span>
-                <button onClick={() => removeTask(task.id)} className="text-gray-200 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all"><X size={12} /></button>
-              </div>
-            ))}
-          </div>
-          {done.length > 0 && (
-            <div className="border-t border-gray-100">
-              <div className="px-5 py-1.5 bg-gray-50/50">
-                <span className="text-[10px] text-gray-400 font-semibold uppercase tracking-wider">Completed ({done.length})</span>
-              </div>
-              {done.map(task => (
-                <div key={task.id} className="flex items-center gap-3 px-5 py-2 group hover:bg-gray-50/50 transition-colors">
-                  <button onClick={() => toggleTask(task.id)} className="text-emerald-500 flex-shrink-0"><CheckSquare size={16} /></button>
-                  <span className="flex-1 text-sm text-gray-400 line-through">{task.text}</span>
-                  <button onClick={() => removeTask(task.id)} className="text-gray-200 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all"><X size={12} /></button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  );
-}
-
 /* =====================================================================
    PROJECT CARD (used in card views)
    ===================================================================== */
@@ -535,6 +467,14 @@ function ProjectCard({ project, onUpdate, onDelete }) {
         <div className="mb-2.5">
           <DeptChips departments={project.departments} size="xs" />
         </div>
+
+        {project.tier === "quickwin" && (
+          <div className="mb-2">
+            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+              <Zap size={9} />Quick Win
+            </span>
+          </div>
+        )}
 
         {/* Badges */}
         <div className="flex flex-wrap items-center gap-1.5 mb-3">
@@ -615,7 +555,12 @@ function ProjectRow({ project, onUpdate, onDelete, showDepts = true, showOwner =
         <td className="py-2.5 px-3">
           <div className="flex items-center gap-2">
             {isAlert && <AlertTriangle size={12} className="text-red-500 flex-shrink-0" />}
-            <span className="text-sm font-medium text-gray-900 truncate max-w-xs">{project.name}</span>
+            <InlineEdit value={project.name} onChange={(v) => onUpdate(project.id, "name", v)} placeholder="Project name" className="text-sm font-medium text-gray-900 truncate max-w-xs" />
+            {project.tier === "quickwin" && (
+              <span className="inline-flex items-center gap-0.5 text-[9px] font-semibold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-full border border-amber-200">
+                <Zap size={8} />QW
+              </span>
+            )}
             {project.subtasks && project.subtasks.length > 0 && (() => {
               const done = project.subtasks.filter(s => s.done).length;
               const total = project.subtasks.length;
@@ -710,7 +655,7 @@ function AllProjectsView({ projects, onUpdate, onDelete, onAdd }) {
    VIEW: BY OWNER (for 1:1 meetings)
    ===================================================================== */
 
-function ByOwnerView({ projects, onUpdate, onDelete, onAdd, quickTasks, setQuickTasks }) {
+function ByOwnerView({ projects, onUpdate, onDelete, onAdd }) {
   const ownerGroups = useMemo(() => {
     const groups = {};
     for (const o of OWNER_OPTIONS.filter(o => o !== "Unassigned")) groups[o] = [];
@@ -726,13 +671,12 @@ function ByOwnerView({ projects, onUpdate, onDelete, onAdd, quickTasks, setQuick
     <div className="space-y-6">
       {Object.entries(ownerGroups).filter(([, ps]) => ps.length > 0).map(([owner, ps]) => {
         const initials = owner === "Unassigned" ? "?" : owner.split(" ").map(n => n[0]).join("");
-        const ownerTasks = quickTasks.filter(t => t.owner === owner && !t.done);
         const highCount = ps.filter(p => p.priority === "High").length;
         const blockedCount = ps.filter(p => p.status === "Blocked" || p.status === "On Hold").length;
 
         return (
           <OwnerSection key={owner} owner={owner} initials={initials} projects={ps}
-            ownerTasks={ownerTasks} highCount={highCount} blockedCount={blockedCount}
+            highCount={highCount} blockedCount={blockedCount}
             onUpdate={onUpdate} onDelete={onDelete} onAdd={onAdd} />
         );
       })}
@@ -740,7 +684,7 @@ function ByOwnerView({ projects, onUpdate, onDelete, onAdd, quickTasks, setQuick
   );
 }
 
-function OwnerSection({ owner, initials, projects, ownerTasks, highCount, blockedCount, onUpdate, onDelete, onAdd }) {
+function OwnerSection({ owner, initials, projects, highCount, blockedCount, onUpdate, onDelete, onAdd }) {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
@@ -752,7 +696,7 @@ function OwnerSection({ owner, initials, projects, ownerTasks, highCount, blocke
           </div>
           <div className="text-left">
             <h3 className="font-bold text-gray-900 text-[15px]">{owner}</h3>
-            <p className="text-[11px] text-gray-400">{projects.length} project{projects.length !== 1 ? "s" : ""}{ownerTasks.length > 0 ? `, ${ownerTasks.length} task${ownerTasks.length !== 1 ? "s" : ""}` : ""}</p>
+            <p className="text-[11px] text-gray-400">{projects.length} project{projects.length !== 1 ? "s" : ""}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -764,19 +708,6 @@ function OwnerSection({ owner, initials, projects, ownerTasks, highCount, blocke
 
       {!collapsed && (
         <div className="border-t border-gray-100">
-          {/* Owner's quick tasks */}
-          {ownerTasks.length > 0 && (
-            <div className="px-5 py-2 bg-amber-50/50 border-b border-amber-100/50">
-              <p className="text-[10px] font-semibold text-amber-700 uppercase tracking-wider mb-1">Open Tasks</p>
-              {ownerTasks.map(t => (
-                <div key={t.id} className="flex items-center gap-2 py-0.5 text-xs text-amber-800">
-                  <span className="w-1 h-1 rounded-full bg-amber-400" />
-                  <span>{t.text}</span>
-                  <span className="text-[9px] text-amber-500 ml-auto">{t.source}</span>
-                </div>
-              ))}
-            </div>
-          )}
 
           <table className="w-full">
             <thead>
@@ -1003,7 +934,7 @@ function InboxView({ inboxItems, setInboxItems, onPromote }) {
           </div>
           <div>
             <h3 className="font-bold text-gray-900 text-sm">Inbox</h3>
-            <p className="text-[11px] text-gray-400">New ideas, requests, and items waiting to be triaged into projects</p>
+            <p className="text-[11px] text-gray-400">New ideas, requests, and items -- promote to Projects or Quick Wins</p>
           </div>
         </div>
 
@@ -1018,7 +949,7 @@ function InboxView({ inboxItems, setInboxItems, onPromote }) {
           <div className="px-5 py-8 text-center">
             <Inbox size={32} className="text-gray-200 mx-auto mb-2" />
             <p className="text-sm text-gray-400">Inbox is empty -- nice work!</p>
-            <p className="text-xs text-gray-300 mt-1">Add new requests here, then promote them to full projects when ready.</p>
+            <p className="text-xs text-gray-300 mt-1">Add new requests here, then promote them to Projects or Quick Wins.</p>
           </div>
         ) : (
           <div className="divide-y divide-gray-50">
@@ -1036,8 +967,11 @@ function InboxView({ inboxItems, setInboxItems, onPromote }) {
                     {item.notes && <p className="text-xs text-gray-400 mt-1">{item.notes}</p>}
                   </div>
                   <div className="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity mt-1">
-                    <button onClick={() => onPromote(item)} className="flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-2.5 py-1.5 rounded-lg transition-colors" title="Promote to project">
-                      <ArrowRight size={12} />Project
+                    <button onClick={() => onPromote(item, "project")} className="flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-800 bg-blue-50 hover:bg-blue-100 px-2.5 py-1.5 rounded-lg transition-colors" title="Promote to project">
+                      <Briefcase size={11} />Project
+                    </button>
+                    <button onClick={() => onPromote(item, "quickwin")} className="flex items-center gap-1 text-xs font-medium text-amber-600 hover:text-amber-800 bg-amber-50 hover:bg-amber-100 px-2.5 py-1.5 rounded-lg transition-colors" title="Promote to quick win">
+                      <Zap size={11} />Quick Win
                     </button>
                     <button onClick={() => removeItem(item.id)} className="text-gray-300 hover:text-red-400 p-1.5 transition-colors" title="Remove">
                       <Trash2 size={12} />
@@ -1059,14 +993,14 @@ function InboxView({ inboxItems, setInboxItems, onPromote }) {
 
 export default function Dashboard() {
   const [projects, setProjects] = useState(initialProjects);
-  const [quickTasks, setQuickTasks] = useState(initialQuickTasks);
-  const [inboxItems, setInboxItems] = useState([]);
+  const [inboxItems, setInboxItems] = useState(initialInboxItems);
   const [nextId, setNextId] = useState(200);
   const [activeView, setActiveView] = useState("projects");
   const [filterOwner, setFilterOwner] = useState("All");
   const [filterStatus, setFilterStatus] = useState("All");
   const [filterPriority, setFilterPriority] = useState("All");
   const [filterDept, setFilterDept] = useState("All");
+  const [filterTier, setFilterTier] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [exportMsg, setExportMsg] = useState("");
 
@@ -1080,10 +1014,11 @@ export default function Dashboard() {
       if (filterStatus !== "All" && p.status !== filterStatus) return false;
       if (filterPriority !== "All" && p.priority !== filterPriority) return false;
       if (filterDept !== "All" && !p.departments.includes(filterDept)) return false;
+      if (filterTier !== "All" && p.tier !== (filterTier === "Project" ? "project" : "quickwin")) return false;
       if (searchQuery && !p.name.toLowerCase().includes(searchQuery.toLowerCase()) && !p.notes.toLowerCase().includes(searchQuery.toLowerCase())) return false;
       return true;
     });
-  }, [activeProjects, filterOwner, filterStatus, filterPriority, filterDept, searchQuery]);
+  }, [activeProjects, filterOwner, filterStatus, filterPriority, filterDept, filterTier, searchQuery]);
 
   const stats = useMemo(() => {
     const all = activeProjects;
@@ -1098,7 +1033,7 @@ export default function Dashboard() {
   }, [activeProjects, completedProjects]);
 
   const alerts = activeProjects.filter(p => p.priority === "High" && p.pct < 100 && p.date && p.date.includes("3/31"));
-  const hasFilters = filterOwner !== "All" || filterStatus !== "All" || filterPriority !== "All" || filterDept !== "All" || searchQuery;
+  const hasFilters = filterOwner !== "All" || filterStatus !== "All" || filterPriority !== "All" || filterDept !== "All" || filterTier !== "All" || searchQuery;
 
   // Handlers
   const handleUpdate = useCallback((id, field, value) => {
@@ -1136,12 +1071,13 @@ export default function Dashboard() {
       notes: "",
       completedDate: "",
       subtasks: [],
+      tier: "project",
     };
     setProjects(prev => [...prev, newP]);
     setNextId(n => n + 1);
   }, [nextId]);
 
-  const handlePromoteInbox = useCallback((item) => {
+  const handlePromoteInbox = useCallback((item, tier) => {
     const newP = {
       id: nextId,
       departments: ["Enterprise Systems"],
@@ -1157,6 +1093,7 @@ export default function Dashboard() {
       notes: item.notes || `Promoted from Inbox (${item.source}, added ${item.addedDate})`,
       completedDate: "",
       subtasks: [],
+      tier: tier || "project",
     };
     setProjects(prev => [...prev, newP]);
     setInboxItems(prev => prev.filter(i => i.id !== item.id));
@@ -1165,10 +1102,10 @@ export default function Dashboard() {
 
   // Export handlers
   const handleExportCSV = () => {
-    const rows = [["Project", "Departments", "Owner", "Status", "Priority", "% Complete", "Date", "Roadblocks", "Milestones", "Next Steps", "Notes", "Subtasks"]];
+    const rows = [["Project", "Tier", "Departments", "Owner", "Status", "Priority", "% Complete", "Date", "Roadblocks", "Milestones", "Next Steps", "Notes", "Subtasks"]];
     for (const p of projects) {
       const subsText = (p.subtasks || []).map(s => `${s.done ? "[x]" : "[ ]"} ${s.text}${s.dueDate ? " (due " + s.dueDate + ")" : ""}`).join("; ");
-      rows.push([p.name, p.departments.join("; "), p.owner, p.status, p.priority, p.pct + "%", p.date, p.roadblocks, p.milestones, p.nextSteps, p.notes, subsText]);
+      rows.push([p.name, p.tier === "quickwin" ? "Quick Win" : "Project", p.departments.join("; "), p.owner, p.status, p.priority, p.pct + "%", p.date, p.roadblocks, p.milestones, p.nextSteps, p.notes, subsText]);
     }
     const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
@@ -1218,7 +1155,7 @@ export default function Dashboard() {
     setExportMsg("Done!"); setTimeout(() => setExportMsg(""), 2000);
   };
 
-  const clearFilters = () => { setFilterOwner("All"); setFilterStatus("All"); setFilterPriority("All"); setFilterDept("All"); setSearchQuery(""); };
+  const clearFilters = () => { setFilterOwner("All"); setFilterStatus("All"); setFilterPriority("All"); setFilterDept("All"); setFilterTier("All"); setSearchQuery(""); };
 
   // Active status options (exclude Done for filter in non-history views)
   const activeStatusOptions = STATUS_OPTIONS.filter(s => s !== "Done");
@@ -1313,6 +1250,16 @@ export default function Dashboard() {
               {searchQuery && <button onClick={() => setSearchQuery("")} className="text-gray-300 hover:text-gray-500"><X size={12} /></button>}
             </div>
 
+            <div className="flex bg-gray-100 rounded-lg p-0.5 border border-gray-200">
+              {["All", "Project", "Quick Win"].map(t => (
+                <button key={t} onClick={() => setFilterTier(t)}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${filterTier === t ? "bg-white shadow-sm text-gray-900" : "text-gray-400 hover:text-gray-600"}`}>
+                  {t === "Quick Win" && <Zap size={11} className="inline mr-1" />}
+                  {t === "All" ? "All" : t + "s"}
+                </button>
+              ))}
+            </div>
+
             <div className="flex items-center gap-1.5 bg-white rounded-lg px-2.5 py-2 border border-gray-200">
               <User size={12} className="text-gray-400" />
               <select value={filterOwner} onChange={(e) => setFilterOwner(e.target.value)} className="text-xs text-gray-700 bg-transparent border-none focus:outline-none cursor-pointer">
@@ -1353,13 +1300,6 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* QUICK TASKS (show on projects and owner views) */}
-        {(activeView === "projects" || activeView === "owner") && (
-          <div className="mb-6">
-            <QuickTasks tasks={quickTasks} setTasks={setQuickTasks} />
-          </div>
-        )}
-
         {/* VIEW CONTENT */}
         {activeView === "projects" && (
           <AllProjectsView projects={filtered} onUpdate={handleUpdate} onDelete={handleDelete} onAdd={() => handleAddProject()} />
@@ -1367,7 +1307,7 @@ export default function Dashboard() {
 
         {activeView === "owner" && (
           <ByOwnerView projects={filtered} onUpdate={handleUpdate} onDelete={handleDelete}
-            onAdd={(owner) => handleAddProject(owner)} quickTasks={quickTasks} setQuickTasks={setQuickTasks} />
+            onAdd={(owner) => handleAddProject(owner)} />
         )}
 
         {activeView === "dept" && (
