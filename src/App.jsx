@@ -1635,8 +1635,8 @@ function HomeScreen({ onNavigate }) {
                 <Home size={22} className="text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900 tracking-tight">IT Command Center</h1>
-                <p className="text-xs text-gray-400 mt-0.5">Aubuchon Hardware</p>
+                <h1 className="text-xl font-bold text-gray-900 tracking-tight">Scott's Workbench</h1>
+                <p className="text-xs text-gray-400 mt-0.5">The Aubuchon Company</p>
               </div>
             </div>
             <button onClick={() => signOut(auth)} className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors" title="Sign out">
@@ -1689,7 +1689,7 @@ function HomeScreen({ onNavigate }) {
 
         {/* Footer */}
         <div className="text-center py-10 text-[11px] text-gray-300 mt-8">
-          Aubuchon Hardware -- IT Department
+          The Aubuchon Company -- IT Department
         </div>
       </div>
     </div>
