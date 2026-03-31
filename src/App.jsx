@@ -6,7 +6,7 @@ import {
   List, LayoutGrid, ArrowRight, GripVertical, Square, CheckSquare,
   FolderOpen, Filter, ChevronUp, Zap, MoveRight, LogOut, Users,
   Building2, History, FileText, Tag, Eye, Briefcase, Archive, Inbox,
-  ListChecks, CircleDot, RotateCcw
+  ListChecks, CircleDot, RotateCcw, ArrowUpDown
 } from "lucide-react";
 import { auth, signOut, db } from "./firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
@@ -303,6 +303,113 @@ function InlineEdit({ value, onChange, placeholder, multiline = false, className
 }
 
 /* =====================================================================
+   DATE PICKER (calendar dropdown with consistent MM/DD/YYYY format)
+   ===================================================================== */
+
+function parseToISO(dateStr) {
+  if (!dateStr) return "";
+  if (dateStr.toLowerCase() === "ongoing") return "";
+  // Try MM/DD/YYYY or M/D/YYYY
+  const parts = dateStr.split("/");
+  if (parts.length === 3) {
+    const [m, d, y] = parts;
+    const year = y.length === 2 ? "20" + y : y;
+    return `${year}-${m.padStart(2, "0")}-${d.padStart(2, "0")}`;
+  }
+  // Try YYYY-MM-DD already
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr;
+  return "";
+}
+
+function formatFromISO(isoStr) {
+  if (!isoStr) return "";
+  const [y, m, d] = isoStr.split("-");
+  return `${parseInt(m)}/${parseInt(d)}/${y}`;
+}
+
+function DatePicker({ value, onChange, placeholder = "Set date..." }) {
+  const [open, setOpen] = useState(false);
+  const isoVal = parseToISO(value);
+  const displayVal = value === "Ongoing" ? "Ongoing" : (isoVal ? formatFromISO(isoVal) : "");
+
+  return (
+    <div className="relative inline-flex items-center gap-1 group">
+      <button onClick={() => setOpen(!open)} className="text-left text-xs text-gray-500 hover:text-gray-900 flex items-center gap-1">
+        <Calendar size={10} className="text-gray-300 group-hover:text-gray-500" />
+        <span className={displayVal ? "" : "text-gray-300 italic"}>{displayVal || placeholder}</span>
+      </button>
+      {open && (
+        <div className="absolute top-full left-0 mt-1 z-50 bg-white border border-gray-200 rounded-lg shadow-lg p-2 flex flex-col gap-1.5">
+          <input type="date" value={isoVal} onChange={(e) => { onChange(formatFromISO(e.target.value)); setOpen(false); }} className="text-xs border border-gray-200 rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-200" autoFocus />
+          <div className="flex gap-1">
+            <button onClick={() => { onChange(""); setOpen(false); }} className="text-[10px] text-gray-400 hover:text-gray-600 px-1">Clear</button>
+            <button onClick={() => setOpen(false)} className="text-[10px] text-gray-400 hover:text-gray-600 px-1">Cancel</button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* =====================================================================
+   SORTABLE TABLE HEADER
+   ===================================================================== */
+
+function SortHeader({ label, field, sortField, sortDir, onSort, className = "" }) {
+  const active = sortField === field;
+  return (
+    <th className={`py-2.5 px-2 text-left cursor-pointer select-none hover:bg-gray-100 transition-colors ${className}`} onClick={() => onSort(field)}>
+      <div className="flex items-center gap-1">
+        <span>{label}</span>
+        {active ? (sortDir === "asc" ? <ChevronUp size={10} /> : <ChevronDown size={10} />) : <ArrowUpDown size={9} className="text-gray-300" />}
+      </div>
+    </th>
+  );
+}
+
+const PRIORITY_ORDER = { "High": 0, "Medium": 1, "Low": 2, "": 3 };
+const STATUS_ORDER = { "In Progress": 0, "Not Started": 1, "On Hold": 2, "Completed": 3, "Cancelled": 4, "": 5 };
+
+function useSortableProjects(projects) {
+  const [sortField, setSortField] = useState(null);
+  const [sortDir, setSortDir] = useState("asc");
+
+  const onSort = useCallback((field) => {
+    if (sortField === field) {
+      setSortDir(d => d === "asc" ? "desc" : "asc");
+    } else {
+      setSortField(field);
+      setSortDir("asc");
+    }
+  }, [sortField]);
+
+  const sorted = useMemo(() => {
+    if (!sortField) return projects;
+    return [...projects].sort((a, b) => {
+      let av, bv;
+      switch (sortField) {
+        case "name": av = (a.name || "").toLowerCase(); bv = (b.name || "").toLowerCase(); break;
+        case "status": av = STATUS_ORDER[a.status] ?? 5; bv = STATUS_ORDER[b.status] ?? 5; break;
+        case "priority": av = PRIORITY_ORDER[a.priority] ?? 3; bv = PRIORITY_ORDER[b.priority] ?? 3; break;
+        case "owner": av = (a.owner || "").toLowerCase(); bv = (b.owner || "").toLowerCase(); break;
+        case "pct": av = a.pct ?? 0; bv = b.pct ?? 0; break;
+        case "date": {
+          const da = parseToISO(a.date); const db2 = parseToISO(b.date);
+          av = da || "9999"; bv = db2 || "9999"; break;
+        }
+        case "departments": av = (a.departments || []).join(",").toLowerCase(); bv = (b.departments || []).join(",").toLowerCase(); break;
+        default: av = a[sortField] ?? ""; bv = b[sortField] ?? ""; break;
+      }
+      if (av < bv) return sortDir === "asc" ? -1 : 1;
+      if (av > bv) return sortDir === "asc" ? 1 : -1;
+      return 0;
+    });
+  }, [projects, sortField, sortDir]);
+
+  return { sorted, sortField, sortDir, onSort };
+}
+
+/* =====================================================================
    SUBTASK LIST (inside projects)
    ===================================================================== */
 
@@ -483,11 +590,7 @@ function ProjectCard({ project, onUpdate, onDelete }) {
           <StatusBadge status={project.status} onChange={(v) => onUpdate(project.id, "status", v)} size="xs" />
           <PriorityBadge priority={project.priority} onChange={(v) => onUpdate(project.id, "priority", v)} size="xs" />
           <OwnerBadge owner={project.owner} onChange={(v) => onUpdate(project.id, "owner", v)} size="xs" />
-          {(
-            <span className="inline-flex items-center gap-1 text-[10px] text-gray-500 bg-gray-50 px-2 py-0.5 rounded-full border border-gray-100">
-              <Calendar size={9} /><InlineEdit value={project.date} onChange={(v) => onUpdate(project.id, "date", v)} placeholder="Set date..." className="text-[10px] text-gray-500" />
-            </span>
-          )}
+          <DatePicker value={project.date} onChange={(v) => onUpdate(project.id, "date", v)} placeholder="Set date..." />
         </div>
 
         <ProgressBar value={project.pct} onChange={(v) => onUpdate(project.id, "pct", v)} />
@@ -513,8 +616,11 @@ function ProjectCard({ project, onUpdate, onDelete }) {
 
         {expanded && (
           <div className="mt-3 space-y-2 pt-3 border-t border-gray-100">
+            <div>
+              <label className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">Est. Completion</label>
+              <DatePicker value={project.date} onChange={(v) => onUpdate(project.id, "date", v)} />
+            </div>
             {[
-              ["Est. Completion", "date", "Target date...", false],
               ["Roadblocks", "roadblocks", "Any blockers or risks...", true],
               ["Milestones", "milestones", "What was accomplished...", true],
               ["Next Steps", "nextSteps", "Planned actions...", true],
@@ -584,7 +690,7 @@ function ProjectRow({ project, onUpdate, onDelete, showDepts = true, showOwner =
           <td className="py-2.5 px-2"><OwnerBadge owner={project.owner} onChange={(v) => onUpdate(project.id, "owner", v)} size="xs" /></td>
         )}
         <td className="py-2.5 px-2 w-32"><ProgressBar value={project.pct} onChange={(v) => onUpdate(project.id, "pct", v)} /></td>
-        <td className="py-2.5 px-2 text-xs text-gray-500 whitespace-nowrap"><InlineEdit value={project.date} onChange={(v) => onUpdate(project.id, "date", v)} placeholder="Set date..." className="text-xs text-gray-500" /></td>
+        <td className="py-2.5 px-2 text-xs text-gray-500 whitespace-nowrap"><DatePicker value={project.date} onChange={(v) => onUpdate(project.id, "date", v)} /></td>
         <td className="py-2.5 px-2">
           <div className="flex items-center gap-1">
             <DeptMultiSelect selected={project.departments} onChange={(d) => onUpdate(project.id, "departments", d)} />
@@ -624,24 +730,25 @@ function ProjectRow({ project, onUpdate, onDelete, showDepts = true, showOwner =
    ===================================================================== */
 
 function AllProjectsView({ projects, onUpdate, onDelete, onAdd }) {
+  const { sorted, sortField, sortDir, onSort } = useSortableProjects(projects);
   return (
     <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
       <table className="w-full">
         <thead>
           <tr className="bg-gray-50 border-b border-gray-200 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
             <th className="py-2.5 px-3 w-8"></th>
-            <th className="py-2.5 px-3 text-left">Project</th>
-            <th className="py-2.5 px-2 text-left">Departments</th>
-            <th className="py-2.5 px-2 text-left">Status</th>
-            <th className="py-2.5 px-2 text-left">Priority</th>
-            <th className="py-2.5 px-2 text-left">Owner</th>
-            <th className="py-2.5 px-2 text-left w-32">Progress</th>
-            <th className="py-2.5 px-2 text-left">Est. Completion</th>
+            <SortHeader label="Project" field="name" sortField={sortField} sortDir={sortDir} onSort={onSort} className="py-2.5 px-3" />
+            <SortHeader label="Departments" field="departments" sortField={sortField} sortDir={sortDir} onSort={onSort} />
+            <SortHeader label="Status" field="status" sortField={sortField} sortDir={sortDir} onSort={onSort} />
+            <SortHeader label="Priority" field="priority" sortField={sortField} sortDir={sortDir} onSort={onSort} />
+            <SortHeader label="Owner" field="owner" sortField={sortField} sortDir={sortDir} onSort={onSort} />
+            <SortHeader label="Progress" field="pct" sortField={sortField} sortDir={sortDir} onSort={onSort} className="w-32" />
+            <SortHeader label="Est. Completion" field="date" sortField={sortField} sortDir={sortDir} onSort={onSort} />
             <th className="py-2.5 px-2 w-16"></th>
           </tr>
         </thead>
         <tbody>
-          {projects.map(p => (
+          {sorted.map(p => (
             <ProjectRow key={p.id} project={p} onUpdate={onUpdate} onDelete={onDelete} />
           ))}
         </tbody>
@@ -688,6 +795,7 @@ function ByOwnerView({ projects, onUpdate, onDelete, onAdd }) {
 
 function OwnerSection({ owner, initials, projects, highCount, blockedCount, onUpdate, onDelete, onAdd }) {
   const [collapsed, setCollapsed] = useState(false);
+  const { sorted, sortField, sortDir, onSort } = useSortableProjects(projects);
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
@@ -715,17 +823,17 @@ function OwnerSection({ owner, initials, projects, highCount, blockedCount, onUp
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
                 <th className="py-2 px-3 w-8"></th>
-                <th className="py-2 px-3 text-left">Project</th>
-                <th className="py-2 px-2 text-left">Departments</th>
-                <th className="py-2 px-2 text-left">Status</th>
-                <th className="py-2 px-2 text-left">Priority</th>
-                <th className="py-2 px-2 text-left w-32">Progress</th>
-                <th className="py-2 px-2 text-left">Est. Completion</th>
+                <SortHeader label="Project" field="name" sortField={sortField} sortDir={sortDir} onSort={onSort} className="py-2 px-3" />
+                <SortHeader label="Departments" field="departments" sortField={sortField} sortDir={sortDir} onSort={onSort} />
+                <SortHeader label="Status" field="status" sortField={sortField} sortDir={sortDir} onSort={onSort} />
+                <SortHeader label="Priority" field="priority" sortField={sortField} sortDir={sortDir} onSort={onSort} />
+                <SortHeader label="Progress" field="pct" sortField={sortField} sortDir={sortDir} onSort={onSort} className="w-32" />
+                <SortHeader label="Est. Completion" field="date" sortField={sortField} sortDir={sortDir} onSort={onSort} />
                 <th className="py-2 px-2 w-16"></th>
               </tr>
             </thead>
             <tbody>
-              {projects.map(p => (
+              {sorted.map(p => (
                 <ProjectRow key={p.id} project={p} onUpdate={onUpdate} onDelete={onDelete} showOwner={false} />
               ))}
             </tbody>
@@ -778,6 +886,7 @@ function ByDeptView({ projects, onUpdate, onDelete, onAdd }) {
 function DeptSection({ dept, cfg, Icon, projects, highCount, totalPct, onUpdate, onDelete, onAdd }) {
   const [collapsed, setCollapsed] = useState(false);
   const [viewMode, setViewMode] = useState("cards");
+  const { sorted, sortField, sortDir, onSort } = useSortableProjects(projects);
 
   return (
     <div className="mb-2">
@@ -827,17 +936,17 @@ function DeptSection({ dept, cfg, Icon, projects, highCount, totalPct, onUpdate,
                 <thead>
                   <tr className="bg-gray-50 border-b border-gray-200 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
                     <th className="py-2 px-3 w-8"></th>
-                    <th className="py-2 px-3 text-left">Project</th>
-                    <th className="py-2 px-2 text-left">Status</th>
-                    <th className="py-2 px-2 text-left">Priority</th>
-                    <th className="py-2 px-2 text-left">Owner</th>
-                    <th className="py-2 px-2 text-left w-32">Progress</th>
-                    <th className="py-2 px-2 text-left">Est. Completion</th>
+                    <SortHeader label="Project" field="name" sortField={sortField} sortDir={sortDir} onSort={onSort} className="py-2 px-3" />
+                    <SortHeader label="Status" field="status" sortField={sortField} sortDir={sortDir} onSort={onSort} />
+                    <SortHeader label="Priority" field="priority" sortField={sortField} sortDir={sortDir} onSort={onSort} />
+                    <SortHeader label="Owner" field="owner" sortField={sortField} sortDir={sortDir} onSort={onSort} />
+                    <SortHeader label="Progress" field="pct" sortField={sortField} sortDir={sortDir} onSort={onSort} className="w-32" />
+                    <SortHeader label="Est. Completion" field="date" sortField={sortField} sortDir={sortDir} onSort={onSort} />
                     <th className="py-2 px-2 w-16"></th>
                   </tr>
                 </thead>
                 <tbody>
-                  {projects.map(p => <ProjectRow key={p.id} project={p} onUpdate={onUpdate} onDelete={onDelete} showDepts={false} />)}
+                  {sorted.map(p => <ProjectRow key={p.id} project={p} onUpdate={onUpdate} onDelete={onDelete} showDepts={false} />)}
                 </tbody>
               </table>
             </div>
