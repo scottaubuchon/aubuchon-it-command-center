@@ -1700,6 +1700,218 @@ function HomeScreen({ onNavigate }) {
    APP SHELL  --  Routes between Home and section views
    ===================================================================== */
 
+const APInvoiceCard = ({ inv, onAction }) => {
+  const [openPanel, setOpenPanel] = useState(null);
+  const [category, setCategory] = useState(inv.category || "Expense in Budget");
+  const [comment, setComment] = useState(inv.comment || "");
+  const [saving, setSaving] = useState(false);
+
+  const togglePanel = (p) => setOpenPanel(prev => prev === p ? null : p);
+
+  const fmt = n => "$" + Number(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const fmtDate = ts => {
+    if (!ts) return "—";
+    const d = ts.toDate ? ts.toDate() : new Date(ts);
+    return d.toLocaleDateString("en-US", { month: "2-digit", day: "2-digit", year: "numeric" });
+  };
+  const isPastDue = ts => {
+    if (!ts) return false;
+    const d = ts.toDate ? ts.toDate() : new Date(ts);
+    return d < new Date();
+  };
+
+  const overdue = isPastDue(inv.paymentDue) && inv.status === "pending";
+  const dueLabel = fmtDate(inv.paymentDue);
+
+  const handleAction = async (action) => {
+    setSaving(true);
+    await onAction(inv.id, action, category, comment);
+    setSaving(false);
+  };
+
+  const actionedStyle = inv.status === "approved"
+    ? { border: "1px solid #16a34a", background: "rgba(22,163,74,0.06)" }
+    : inv.status === "rejected"
+    ? { border: "1px solid #dc2626", background: "rgba(220,38,38,0.06)" }
+    : {};
+
+  return (
+    <div style={{ background: "#1a1a2e", borderRadius: 12, marginBottom: 20, overflow: "hidden", border: "1px solid #2a2a4a", transition: "border-color .2s", ...actionedStyle }}>
+      {/* Card header */}
+      <div style={{ background: "linear-gradient(135deg,#16213e,#1a1a2e)", padding: "16px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 10 }}>
+        <div>
+          <div style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff" }}>{inv.vendor}</div>
+          <div style={{ fontSize: ".8rem", color: "#888", display: "flex", gap: 12, flexWrap: "wrap", marginTop: 2 }}>
+            <span>{inv.invoiceNumber}</span>
+            <span>Store #{inv.storeNumber}</span>
+            <span>Vendor #{inv.vendorNumber}</span>
+          </div>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          {inv.status !== "pending" && (
+            <span style={{
+              fontSize: ".78rem", fontWeight: 700, padding: "4px 14px", borderRadius: 20,
+              background: inv.status === "approved" ? "#166534" : "#7f1d1d",
+              color: inv.status === "approved" ? "#4ade80" : "#fca5a5"
+            }}>
+              {inv.status === "approved" ? "✓ Approved" : "✗ Rejected"}
+            </span>
+          )}
+          <div style={{ fontSize: "1.3rem", fontWeight: 700, color: "#e94560" }}>{fmt(inv.amount)}</div>
+        </div>
+      </div>
+
+      {/* Chips */}
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 8, padding: "10px 20px", borderBottom: "1px solid #2a2a4a" }}>
+        {inv.glCode && <span style={{ background: "#2a2a4a", color: "#ccc", padding: "3px 10px", borderRadius: 20, fontSize: ".76rem" }}>GL: {inv.glCode}</span>}
+        <span style={{ background: overdue ? "#5c1a1a" : "#2a2a4a", color: overdue ? "#ff6b6b" : "#ccc", padding: "3px 10px", borderRadius: 20, fontSize: ".76rem" }}>
+          Due: {dueLabel}{overdue ? " — OVERDUE ⚠" : ""}
+        </span>
+        {inv.terms && <span style={{ background: "#2a2a4a", color: "#ccc", padding: "3px 10px", borderRadius: 20, fontSize: ".76rem" }}>{inv.terms}</span>}
+        <span style={{ background: "#1a3a2a", color: "#4ade80", padding: "3px 10px", borderRadius: 20, fontSize: ".76rem" }}>{category}</span>
+        <span style={{ background: "#1a2a4a", color: "#93c5fd", padding: "3px 10px", borderRadius: 20, fontSize: ".76rem" }}>{inv.invoiceType || "Non-Utility"}</span>
+      </div>
+
+      {/* Toolbar */}
+      <div style={{ display: "flex", gap: 8, padding: "10px 20px", borderBottom: "1px solid #2a2a4a", flexWrap: "wrap" }}>
+        <button onClick={() => togglePanel("preview")} style={{ background: openPanel === "preview" ? "#e94560" : "#2a2a4a", color: openPanel === "preview" ? "#fff" : "#ccc", border: "none", padding: "7px 14px", borderRadius: 6, cursor: "pointer", fontSize: ".82rem" }}>
+          📄 View Invoice
+        </button>
+        <button onClick={() => togglePanel("details")} style={{ background: openPanel === "details" ? "#e94560" : "#2a2a4a", color: openPanel === "details" ? "#fff" : "#ccc", border: "none", padding: "7px 14px", borderRadius: 6, cursor: "pointer", fontSize: ".82rem" }}>
+          🔍 Full Details
+        </button>
+        {inv.jiffyUrl && (
+          <a href={inv.jiffyUrl} target="_blank" rel="noopener noreferrer"
+            style={{ background: "#2a2a4a", color: "#ccc", padding: "7px 14px", borderRadius: 6, fontSize: ".82rem", textDecoration: "none" }}>
+            🔗 Open in Jiffy
+          </a>
+        )}
+      </div>
+
+      {/* Invoice preview panel */}
+      {openPanel === "preview" && (
+        <div style={{ padding: 20, borderBottom: "1px solid #2a2a4a" }}>
+          <div style={{ background: "#fff", color: "#333", borderRadius: 8, padding: 28, maxWidth: 680, margin: "0 auto", fontFamily: "Georgia, serif" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16, paddingBottom: 14, borderBottom: "2px solid #333" }}>
+              <div style={{ fontWeight: 700, fontSize: "1.2rem", color: "#1a1a2e", fontFamily: "sans-serif" }}>{inv.vendor}</div>
+              <div style={{ textAlign: "right" }}>
+                <div style={{ fontSize: "1.4rem", fontWeight: 700, color: "#333", fontFamily: "sans-serif" }}>INVOICE</div>
+                <div style={{ fontSize: ".82rem", color: "#555" }}>
+                  {inv.invoiceNumber && <div>Invoice# {inv.invoiceNumber}</div>}
+                  {inv.invoiceDate && <div>Date: {inv.invoiceDate}</div>}
+                </div>
+              </div>
+            </div>
+            <div style={{ display: "flex", gap: 20, marginBottom: 14, flexWrap: "wrap", background: "#f5f5f5", padding: 10, borderRadius: 4 }}>
+              <div style={{ fontSize: ".8rem" }}><strong style={{ display: "block", fontSize: ".7rem", textTransform: "uppercase", color: "#888", fontFamily: "sans-serif" }}>Amount Due</strong>{fmt(inv.amount)}</div>
+              <div style={{ fontSize: ".8rem" }}><strong style={{ display: "block", fontSize: ".7rem", textTransform: "uppercase", color: "#888", fontFamily: "sans-serif" }}>Due Date</strong>{dueLabel}</div>
+              <div style={{ fontSize: ".8rem" }}><strong style={{ display: "block", fontSize: ".7rem", textTransform: "uppercase", color: "#888", fontFamily: "sans-serif" }}>Store</strong>#{inv.storeNumber}</div>
+              {inv.terms && <div style={{ fontSize: ".8rem" }}><strong style={{ display: "block", fontSize: ".7rem", textTransform: "uppercase", color: "#888", fontFamily: "sans-serif" }}>Terms</strong>{inv.terms}</div>}
+            </div>
+            {inv.lineItems && inv.lineItems.length > 0 ? (
+              <table style={{ width: "100%", borderCollapse: "collapse", margin: "12px 0", fontSize: ".84rem" }}>
+                <thead>
+                  <tr style={{ background: "#333" }}>
+                    <th style={{ color: "#fff", padding: "7px 10px", textAlign: "left", fontFamily: "sans-serif", fontSize: ".73rem", textTransform: "uppercase" }}>Description</th>
+                    <th style={{ color: "#fff", padding: "7px 10px", textAlign: "right", fontFamily: "sans-serif", fontSize: ".73rem", textTransform: "uppercase" }}>Amount</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {inv.lineItems.map((li, i) => (
+                    <tr key={i}><td style={{ padding: "7px 10px", borderBottom: "1px solid #ddd" }}>{li.description}</td><td style={{ padding: "7px 10px", borderBottom: "1px solid #ddd", textAlign: "right" }}>{li.amount ? fmt(li.amount) : ""}</td></tr>
+                  ))}
+                </tbody>
+                <tfoot>
+                  <tr><td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 700, borderTop: "2px solid #333" }} colSpan={2}>Total: {fmt(inv.amount)}</td></tr>
+                </tfoot>
+              </table>
+            ) : (
+              <div style={{ padding: "12px 0", fontSize: ".84rem", color: "#555", borderTop: "1px solid #ddd" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", padding: "4px 0" }}><span>Invoice Total</span><strong>{fmt(inv.amount)}</strong></div>
+              </div>
+            )}
+            <div style={{ fontStyle: "italic", fontSize: ".7rem", color: "#999", marginTop: 12, textAlign: "center", fontFamily: "sans-serif" }}>Click "Open in Jiffy" to view the original PDF</div>
+          </div>
+        </div>
+      )}
+
+      {/* Full details panel */}
+      {openPanel === "details" && (
+        <div style={{ padding: 20, borderBottom: "1px solid #2a2a4a" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+            <div style={{ background: "#222240", borderRadius: 8, padding: 14 }}>
+              <div style={{ color: "#e94560", fontSize: ".78rem", textTransform: "uppercase", letterSpacing: 1, marginBottom: 8, fontWeight: 600 }}>Approval Routing</div>
+              {[["Approver", "scott@aubuchon.com"], ["Assigned To", inv.assignedTo || "giselle@aubuchon.com"], ["VP", inv.vp || "will@aubuchon.com"]].map(([lbl, val]) => (
+                <div key={lbl} style={{ display: "flex", justifyContent: "space-between", padding: "4px 0", fontSize: ".8rem", borderBottom: "1px solid #2a2a4a" }}>
+                  <span style={{ color: "#888" }}>{lbl}</span><span style={{ color: "#ddd" }}>{val}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{ background: "#222240", borderRadius: 8, padding: 14 }}>
+              <div style={{ color: "#e94560", fontSize: ".78rem", textTransform: "uppercase", letterSpacing: 1, marginBottom: 8, fontWeight: 600 }}>Payment Info</div>
+              {[["Vendor #", inv.vendorNumber], ["Status", inv.executionState], ["Source", inv.source || "jiffy.ai"]].map(([lbl, val]) => (
+                <div key={lbl} style={{ display: "flex", justifyContent: "space-between", padding: "4px 0", fontSize: ".8rem", borderBottom: "1px solid #2a2a4a" }}>
+                  <span style={{ color: "#888" }}>{lbl}</span><span style={{ color: "#ddd" }}>{val}</span>
+                </div>
+              ))}
+            </div>
+            {inv.remarks && (
+              <div style={{ background: "#222240", borderRadius: 8, padding: 14, gridColumn: "1 / -1" }}>
+                <div style={{ color: "#e94560", fontSize: ".78rem", textTransform: "uppercase", letterSpacing: 1, marginBottom: 8, fontWeight: 600 }}>Remarks</div>
+                <div style={{ fontSize: ".82rem", color: "#ddd" }}>{inv.remarks}</div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Description */}
+      {inv.description && (
+        <div style={{ padding: "10px 20px", fontSize: ".86rem", color: "#aaa", borderBottom: "1px solid #2a2a4a", lineHeight: 1.55 }}>
+          {inv.description}
+        </div>
+      )}
+
+      {/* Controls */}
+      {inv.status === "pending" && (
+        <div style={{ padding: "14px 20px", display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+          <select
+            value={category}
+            onChange={e => setCategory(e.target.value)}
+            style={{ background: "#2a2a4a", color: "#ddd", border: "1px solid #3a3a5a", padding: "7px 10px", borderRadius: 6, fontSize: ".83rem" }}
+          >
+            <option>Expense in Budget</option>
+            <option>Expense Not in Budget</option>
+            <option>Capital In Budget</option>
+            <option>Capital Not in Budget</option>
+          </select>
+          <input
+            type="text"
+            value={comment}
+            onChange={e => setComment(e.target.value)}
+            placeholder="Add comment (optional)"
+            style={{ background: "#2a2a4a", color: "#ddd", border: "1px solid #3a3a5a", padding: "7px 10px", borderRadius: 6, fontSize: ".83rem", flex: 1, minWidth: 180 }}
+          />
+          <div style={{ display: "flex", gap: 8, marginLeft: "auto" }}>
+            <button onClick={() => handleAction("approved")} disabled={saving}
+              style={{ background: "#166534", color: "#fff", border: "none", padding: "9px 20px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem" }}>
+              ✓ Approve
+            </button>
+            <button onClick={() => handleAction("rejected")} disabled={saving}
+              style={{ background: "#7f1d1d", color: "#fff", border: "none", padding: "9px 20px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem" }}>
+              ✗ Reject
+            </button>
+            <button onClick={() => handleAction("ignored")} disabled={saving}
+              style={{ background: "#3a3a5a", color: "#ccc", border: "none", padding: "9px 20px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem" }}>
+              Ignore
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 const APInvoices = ({ goHome }) => {
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -1719,151 +1931,69 @@ const APInvoices = ({ goHome }) => {
     })();
   }, []);
 
-  const handleAction = async (invoiceId, action) => {
+  const handleAction = async (invoiceId, action, category, comment) => {
     try {
       await updateDoc(doc(db, "ap_invoices", invoiceId), {
         status: action,
+        category,
+        comment,
         actionedAt: serverTimestamp(),
         actionedBy: "scott@aubuchon.com",
       });
-      setInvoices(prev => prev.map(inv => inv.id === invoiceId ? { ...inv, status: action } : inv));
+      setInvoices(prev => prev.map(inv => inv.id === invoiceId ? { ...inv, status: action, category, comment } : inv));
     } catch (e) {
       alert("Error updating invoice: " + e.message);
     }
   };
 
   const fmt = n => "$" + Number(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
-  const fmtDate = ts => {
-    if (!ts) return "—";
-    const d = ts.toDate ? ts.toDate() : new Date(ts);
-    return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
-  };
-
-  const isPastDue = ts => {
-    if (!ts) return false;
-    const d = ts.toDate ? ts.toDate() : new Date(ts);
-    return d < new Date();
-  };
-
   const pendingInvoices = invoices.filter(i => i.status === "pending");
   const pendingTotal = pendingInvoices.reduce((s, i) => s + Number(i.amount), 0);
+  const overdueCount = pendingInvoices.filter(i => {
+    if (!i.paymentDue) return false;
+    const d = i.paymentDue.toDate ? i.paymentDue.toDate() : new Date(i.paymentDue);
+    return d < new Date();
+  }).length;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="max-w-6xl mx-auto flex items-center gap-3">
-          <button
-            onClick={goHome}
-            className="flex items-center gap-1.5 text-gray-400 hover:text-gray-700 text-sm font-medium transition-colors"
-          >
-            <ArrowLeft size={16} />
-            <span>Back</span>
+    <div style={{ minHeight: "100vh", background: "#0f0f1a", color: "#e0e0e0", fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
+      {/* Sticky header */}
+      <div style={{ background: "linear-gradient(135deg,#1a1a2e 0%,#16213e 100%)", padding: "18px 32px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "2px solid #e94560", position: "sticky", top: 0, zIndex: 100 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <button onClick={goHome} style={{ background: "none", border: "none", cursor: "pointer", color: "#888", display: "flex", alignItems: "center", gap: 6, fontSize: ".85rem" }}>
+            <ArrowLeft size={16} /> Back
           </button>
-          <div className="w-px h-5 bg-gray-200 mx-1" />
-          <div className="flex-1">
-            <h1 className="text-base font-bold text-gray-900">AP Invoices</h1>
-            <p className="text-[11px] text-gray-400">Accounts Payable · Pending Approval</p>
-          </div>
-          {!loading && (
-            <div className="flex items-center gap-3">
-              <span className="text-xs bg-amber-100 text-amber-700 px-2.5 py-1 rounded-full font-semibold">
-                {pendingInvoices.length} Pending
-              </span>
-              <span className="text-xs text-gray-500 font-mono font-semibold">{fmt(pendingTotal)}</span>
+          <div style={{ width: 1, height: 24, background: "#333" }} />
+          <h1 style={{ fontSize: "1.3rem", color: "#fff", margin: 0 }}>AP Invoice Approval — Aubuchon Hardware</h1>
+        </div>
+        <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
+          {[["Invoices", invoices.length], ["Total Pending", fmt(pendingTotal)], ["Need Action", pendingInvoices.length + " remaining"]].map(([lbl, val]) => (
+            <div key={lbl} style={{ textAlign: "center" }}>
+              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "#e94560" }}>{val}</div>
+              <div style={{ fontSize: ".72rem", color: "#999", textTransform: "uppercase", letterSpacing: 1 }}>{lbl}</div>
             </div>
-          )}
+          ))}
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-6 py-6">
-        {loading && <div className="text-center py-20 text-gray-400 text-sm">Loading invoices…</div>}
-        {error && <div className="text-center py-20 text-red-400 text-sm">Error: {error}</div>}
-        {!loading && !error && invoices.length === 0 && (
-          <div className="text-center py-20 text-gray-400 text-sm">No invoices found.</div>
-        )}
-        {!loading && invoices.length > 0 && (
-          <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="bg-gray-50 border-b border-gray-200">
-                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Vendor</th>
-                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Invoice #</th>
-                  <th className="text-right px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Amount</th>
-                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Store</th>
-                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Due Date</th>
-                  <th className="text-left px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Status</th>
-                  <th className="px-4 py-3" />
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-100">
-                {invoices.map(inv => (
-                  <tr key={inv.id} className="hover:bg-blue-50/30 transition-colors">
-                    <td className="px-4 py-3 font-medium text-gray-900">{inv.vendor}</td>
-                    <td className="px-4 py-3">
-                      {inv.jiffyUrl ? (
-                        <a href={inv.jiffyUrl} target="_blank" rel="noopener noreferrer"
-                          className="font-mono text-xs text-blue-600 hover:underline">
-                          {inv.invoiceNumber}
-                        </a>
-                      ) : (
-                        <span className="font-mono text-xs text-gray-600">{inv.invoiceNumber}</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3 text-right font-mono text-gray-900">{fmt(inv.amount)}</td>
-                    <td className="px-4 py-3 text-gray-500">#{inv.storeNumber}</td>
-                    <td className={`px-4 py-3 ${isPastDue(inv.paymentDue) && inv.status === "pending" ? "text-red-600 font-semibold" : "text-gray-600"}`}>
-                      {fmtDate(inv.paymentDue)}
-                      {isPastDue(inv.paymentDue) && inv.status === "pending" && (
-                        <span className="ml-1 text-xs text-red-400" title="Past due">⚠</span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3">
-                      {inv.status === "pending" && (
-                        <span className="text-[11px] bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full font-medium">Pending</span>
-                      )}
-                      {inv.status === "approved" && (
-                        <span className="inline-flex items-center gap-1 text-[11px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">
-                          <CheckCircle size={10} />Approved
-                        </span>
-                      )}
-                      {inv.status === "rejected" && (
-                        <span className="inline-flex items-center gap-1 text-[11px] bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-medium">
-                          <XCircle size={10} />Rejected
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-4 py-3">
-                      {inv.status === "pending" && (
-                        <div className="flex items-center gap-1.5">
-                          <button
-                            onClick={() => handleAction(inv.id, "approved")}
-                            className="text-[11px] bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-lg font-semibold transition-colors"
-                          >
-                            Approve
-                          </button>
-                          <button
-                            onClick={() => handleAction(inv.id, "rejected")}
-                            className="text-[11px] bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-lg font-semibold transition-colors"
-                          >
-                            Reject
-                          </button>
-                        </div>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-              <tfoot>
-                <tr className="bg-gray-50 border-t-2 border-gray-200">
-                  <td colSpan={2} className="px-4 py-3 text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Pending Total</td>
-                  <td className="px-4 py-3 text-right font-mono font-bold text-gray-900">{fmt(pendingTotal)}</td>
-                  <td colSpan={4} />
-                </tr>
-              </tfoot>
-            </table>
+      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "24px 16px" }}>
+        {loading && <div style={{ textAlign: "center", padding: "60px 0", color: "#888" }}>Loading invoices…</div>}
+        {error && <div style={{ textAlign: "center", padding: "60px 0", color: "#e94560" }}>Error: {error}</div>}
+
+        {!loading && overdueCount > 0 && (
+          <div style={{ background: "linear-gradient(90deg,#cc0000,#991b1b)", color: "#fff", padding: "12px 20px", borderRadius: 10, marginBottom: 20, fontWeight: 600, display: "flex", alignItems: "center", gap: 10 }}>
+            <span style={{ fontSize: "1.3rem" }}>⚠</span>
+            <span>OVERDUE: {overdueCount} invoice{overdueCount > 1 ? "s are" : " is"} past due — immediate action recommended.</span>
           </div>
         )}
+
+        {!loading && invoices.length === 0 && (
+          <div style={{ textAlign: "center", padding: "60px 0", color: "#888" }}>No invoices found.</div>
+        )}
+
+        {invoices.map(inv => (
+          <APInvoiceCard key={inv.id} inv={inv} onAction={handleAction} />
+        ))}
       </div>
     </div>
   );
