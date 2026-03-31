@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import {
   ChevronDown, ChevronRight, Plus, Trash2, Download, AlertTriangle, Clock,
   CheckCircle, XCircle, Pause, FlaskConical, BarChart3, Calendar, Edit3,
@@ -8,7 +8,8 @@ import {
   Building2, History, FileText, Tag, Eye, Briefcase, Archive, Inbox,
   ListChecks, CircleDot, RotateCcw
 } from "lucide-react";
-import { auth, signOut } from "./firebase";
+import { auth, signOut, db } from "./firebase";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 /* =====================================================================
    CONFIGURATION
@@ -458,9 +459,9 @@ function ProjectCard({ project, onUpdate, onDelete }) {
           <div className="flex-1 min-w-0">
             <InlineEdit value={project.name} onChange={(v) => onUpdate(project.id, "name", v)} placeholder="Project name" className="font-semibold text-sm text-gray-900" />
           </div>
-          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="flex items-center gap-1">
             <DeptMultiSelect selected={project.departments} onChange={(d) => onUpdate(project.id, "departments", d)} />
-            <button onClick={(e) => { e.stopPropagation(); onDelete(project.id); }} className="text-gray-300 hover:text-red-400 transition-colors" title="Remove"><Trash2 size={13} /></button>
+            <button onClick={(e) => { e.stopPropagation(); onDelete(project.id); }} className="text-red-300 hover:text-red-500 transition-colors p-1 rounded hover:bg-red-50" title="Delete project"><Trash2 size={13} /></button>
           </div>
         </div>
 
@@ -585,9 +586,9 @@ function ProjectRow({ project, onUpdate, onDelete, showDepts = true, showOwner =
         <td className="py-2.5 px-2 w-32"><ProgressBar value={project.pct} onChange={(v) => onUpdate(project.id, "pct", v)} /></td>
         <td className="py-2.5 px-2 text-xs text-gray-500 whitespace-nowrap">{project.date || "--"}</td>
         <td className="py-2.5 px-2">
-          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <div className="flex items-center gap-1">
             <DeptMultiSelect selected={project.departments} onChange={(d) => onUpdate(project.id, "departments", d)} />
-            <button onClick={(e) => { e.stopPropagation(); onDelete(project.id); }} className="text-gray-300 hover:text-red-400"><Trash2 size={12} /></button>
+            <button onClick={(e) => { e.stopPropagation(); onDelete(project.id); }} className="text-red-300 hover:text-red-500 transition-colors" title="Delete project"><Trash2 size={12} /></button>
           </div>
         </td>
       </tr>
@@ -1023,7 +1024,7 @@ function InboxView({ inboxItems, setInboxItems, onPromote }) {
                     <button onClick={() => onPromote(item, "quickwin")} className="flex items-center gap-1 text-xs font-medium text-amber-600 hover:text-amber-800 bg-amber-50 hover:bg-amber-100 px-2.5 py-1.5 rounded-lg transition-colors" title="Promote to quick win">
                       <Zap size={11} />Quick Win
                     </button>
-                    <button onClick={() => removeItem(item.id)} className="text-gray-300 hover:text-red-400 p-1.5 transition-colors" title="Remove">
+                    <button onClick={() => removeItem(item.id)} className="text-red-300 hover:text-red-500 p-1.5 transition-colors rounded hover:bg-red-50" title="Remove">
                       <Trash2 size={12} />
                     </button>
                   </div>
@@ -1054,6 +1055,44 @@ export default function Dashboard() {
   const [filterTier, setFilterTier] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [exportMsg, setExportMsg] = useState("");
+
+  // --- Firestore persistence ---
+  const isLoaded = useRef(false);
+  const saveTimer = useRef(null);
+  const DOC_REF = doc(db, "dashboards", "it-command-center");
+
+  // Load data from Firestore on mount
+  useEffect(() => {
+    (async () => {
+      try {
+        const snap = await getDoc(DOC_REF);
+        if (snap.exists()) {
+          const d = snap.data();
+          if (d.projects) setProjects(d.projects);
+          if (d.inboxItems) setInboxItems(d.inboxItems);
+          if (d.trashedProjects) setTrashedProjects(d.trashedProjects);
+        }
+      } catch (err) {
+        console.warn("Firestore load failed, using defaults:", err);
+      }
+      isLoaded.current = true;
+    })();
+  }, []);
+
+  // Auto-save to Firestore when data changes (debounced 2s)
+  useEffect(() => {
+    if (!isLoaded.current) return; // Don't save until initial load completes
+    if (saveTimer.current) clearTimeout(saveTimer.current);
+    saveTimer.current = setTimeout(() => {
+      setDoc(DOC_REF, {
+        projects,
+        inboxItems,
+        trashedProjects,
+        lastSaved: new Date().toISOString(),
+      }).catch(err => console.warn("Firestore save failed:", err));
+    }, 2000);
+    return () => { if (saveTimer.current) clearTimeout(saveTimer.current); };
+  }, [projects, inboxItems, trashedProjects]);
 
   // Derived data
   const activeProjects = useMemo(() => projects.filter(p => p.status !== "Done"), [projects]);
@@ -1261,6 +1300,7 @@ export default function Dashboard() {
                   </button>
                 </div>
               </div>
+              <span className="text-[10px] text-gray-300 px-1">Auto-saved</span>
               <button onClick={() => signOut(auth)} className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors" title="Sign out">
                 <LogOut size={15} />
               </button>
@@ -1402,7 +1442,7 @@ export default function Dashboard() {
 
         {/* FOOTER */}
         <div className="text-center py-6 text-[11px] text-gray-300 mt-4">
-          Aubuchon Hardware -- IT Department -- Click any field to edit | Toggle views above | Projects can belong to multiple departments
+          Aubuchon Hardware -- IT Department -- Click any field to edit | Changes auto-save | Projects can belong to multiple departments
         </div>
       </div>
     </div>
