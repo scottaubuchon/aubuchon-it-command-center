@@ -6,7 +6,8 @@ import {
   List, LayoutGrid, ArrowRight, GripVertical, Square, CheckSquare,
   FolderOpen, Filter, ChevronUp, Zap, MoveRight, LogOut, Users,
   Building2, History, FileText, Tag, Eye, Briefcase, Archive, Inbox,
-  ListChecks, CircleDot, RotateCcw, ArrowUpDown
+  ListChecks, CircleDot, RotateCcw, ArrowUpDown,
+  Home, CreditCard, TrendingUp, Database, Lock, ArrowLeft
 } from "lucide-react";
 import { auth, signOut, db } from "./firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
@@ -1151,7 +1152,7 @@ function InboxView({ inboxItems, setInboxItems, onPromote }) {
    MAIN DASHBOARD
    ===================================================================== */
 
-export default function Dashboard() {
+function ITProjectDashboard({ goHome }) {
   const [projects, setProjects] = useState(initialProjects);
   const [inboxItems, setInboxItems] = useState(initialInboxItems);
   const [trashedProjects, setTrashedProjects] = useState([]);
@@ -1385,6 +1386,11 @@ export default function Dashboard() {
         <div className="max-w-7xl mx-auto px-6 py-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
+              {goHome && (
+                <button onClick={goHome} className="p-2 text-gray-400 hover:text-blue-600 rounded-lg hover:bg-blue-50 transition-colors" title="Back to Home">
+                  <ArrowLeft size={18} />
+                </button>
+              )}
               <div className="w-9 h-9 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-lg flex items-center justify-center shadow-sm">
                 <BarChart3 size={18} className="text-white" />
               </div>
@@ -1556,4 +1562,155 @@ export default function Dashboard() {
       </div>
     </div>
   );
+}
+
+/* =====================================================================
+   HOME SCREEN  --  Navigation hub for all IT Command Center sections
+   ===================================================================== */
+
+const SECTIONS = [
+  {
+    id: "projects",
+    label: "Projects",
+    description: "IT Project Dashboard -- track status, priorities, and progress across all departments",
+    icon: Briefcase,
+    gradient: "from-blue-500 to-blue-700",
+    hoverGradient: "from-blue-600 to-blue-800",
+    bg: "bg-blue-50",
+    border: "border-blue-200",
+    text: "text-blue-700",
+    shadow: "shadow-blue-200/50",
+    active: true,
+  },
+  {
+    id: "ap-invoices",
+    label: "AP Invoices",
+    description: "Accounts Payable invoice tracking and approval workflow",
+    icon: FileText,
+    gradient: "from-orange-400 to-orange-600",
+    hoverGradient: "from-orange-500 to-orange-700",
+    bg: "bg-orange-50",
+    border: "border-orange-200",
+    text: "text-orange-700",
+    shadow: "shadow-orange-200/50",
+    active: false,
+  },
+  {
+    id: "wells-cc",
+    label: "Wells CC",
+    description: "Wells Fargo corporate credit card transaction management",
+    icon: CreditCard,
+    gradient: "from-red-500 to-red-700",
+    hoverGradient: "from-red-600 to-red-800",
+    bg: "bg-red-50",
+    border: "border-red-200",
+    text: "text-red-700",
+    shadow: "shadow-red-200/50",
+    active: false,
+  },
+  {
+    id: "yoda",
+    label: "YODA",
+    description: "Power BI analytics -- store performance, KPIs, and operational data",
+    icon: Database,
+    gradient: "from-emerald-500 to-emerald-700",
+    hoverGradient: "from-emerald-600 to-emerald-800",
+    bg: "bg-emerald-50",
+    border: "border-emerald-200",
+    text: "text-emerald-700",
+    shadow: "shadow-emerald-200/50",
+    active: false,
+  },
+];
+
+function HomeScreen({ onNavigate }) {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
+      {/* Header */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-5xl mx-auto px-6 py-5">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-11 h-11 bg-gradient-to-br from-gray-800 to-gray-950 rounded-xl flex items-center justify-center shadow-lg">
+                <Home size={22} className="text-white" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-gray-900 tracking-tight">IT Command Center</h1>
+                <p className="text-xs text-gray-400 mt-0.5">Aubuchon Hardware</p>
+              </div>
+            </div>
+            <button onClick={() => signOut(auth)} className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors" title="Sign out">
+              <LogOut size={16} />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Tile Grid */}
+      <div className="max-w-5xl mx-auto px-6 py-12">
+        <p className="text-sm text-gray-500 mb-8 font-medium">Select a section to get started</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          {SECTIONS.map((section) => {
+            const Icon = section.icon;
+            return (
+              <button
+                key={section.id}
+                onClick={() => section.active && onNavigate(section.id)}
+                className={`group relative text-left rounded-2xl border-2 p-6 transition-all duration-200
+                  ${section.active
+                    ? `${section.border} bg-white hover:shadow-xl hover:${section.shadow} hover:scale-[1.02] hover:border-transparent cursor-pointer`
+                    : "border-gray-200 bg-gray-50/50 cursor-not-allowed opacity-60"
+                  }`}
+              >
+                {/* Colored accent bar at top */}
+                <div className={`absolute top-0 left-6 right-6 h-1 rounded-b-full bg-gradient-to-r ${section.gradient} ${section.active ? "opacity-80 group-hover:opacity-100" : "opacity-30"} transition-opacity`} />
+
+                <div className="flex items-start gap-4 mt-2">
+                  <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${section.gradient} flex items-center justify-center shadow-md flex-shrink-0 ${section.active ? "group-hover:shadow-lg group-hover:scale-105" : ""} transition-all`}>
+                    <Icon size={22} className="text-white" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-lg font-bold text-gray-900">{section.label}</h2>
+                      {!section.active && (
+                        <span className="text-[10px] font-semibold uppercase tracking-wider bg-gray-200 text-gray-500 px-2 py-0.5 rounded-full">Coming Soon</span>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1 leading-relaxed">{section.description}</p>
+                  </div>
+                  {section.active && (
+                    <ArrowRight size={18} className="text-gray-300 group-hover:text-gray-500 group-hover:translate-x-1 transition-all mt-1 flex-shrink-0" />
+                  )}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Footer */}
+        <div className="text-center py-10 text-[11px] text-gray-300 mt-8">
+          Aubuchon Hardware -- IT Department
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* =====================================================================
+   APP SHELL  --  Routes between Home and section views
+   ===================================================================== */
+
+export default function App() {
+  const [activeSection, setActiveSection] = useState(null);
+
+  if (activeSection === "projects") {
+    return <ITProjectDashboard goHome={() => setActiveSection(null)} />;
+  }
+
+  // Future sections will go here:
+  // if (activeSection === "ap-invoices") return <APInvoices goHome={() => setActiveSection(null)} />;
+  // if (activeSection === "wells-cc") return <WellsCC goHome={() => setActiveSection(null)} />;
+  // if (activeSection === "yoda") return <YODADashboard goHome={() => setActiveSection(null)} />;
+
+  return <HomeScreen onNavigate={setActiveSection} />;
 }
