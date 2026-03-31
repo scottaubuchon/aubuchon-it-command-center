@@ -5,7 +5,8 @@ import {
   Save, X, User, Server, Shield, Monitor, Headphones, Layers, Search,
   List, LayoutGrid, ArrowRight, GripVertical, Square, CheckSquare,
   FolderOpen, Filter, ChevronUp, Zap, MoveRight, LogOut, Users,
-  Building2, History, FileText, Tag, Eye, Briefcase, Archive, Inbox
+  Building2, History, FileText, Tag, Eye, Briefcase, Archive, Inbox,
+  ListChecks, CircleDot
 } from "lucide-react";
 import { auth, signOut } from "./firebase";
 
@@ -70,39 +71,39 @@ const VIEWS = [
 
 const initialProjects = [
   // Enterprise Systems
-  { id: 1,  departments: ["Enterprise Systems"], name: "E-Commerce Migration (Magento to Easy Commerce)", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 25, date: "9/30/2026", roadblocks: "", milestones: "", nextSteps: "", notes: "Migration from Magento platform to Easy Commerce", completedDate: "" },
-  { id: 2,  departments: ["Enterprise Systems"], name: "YODA (Power BI Analytics)", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "", roadblocks: "", milestones: "Basket Builders report redesign; AR aging report in dev", nextSteps: "Matillion upgrade (time-sensitive)", notes: "Business intelligence and analytics platform", completedDate: "" },
-  { id: 3,  departments: ["Enterprise Systems"], name: "Power BI / Fabric (Presidio)", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Data platform modernization with Presidio", completedDate: "" },
-  { id: 4,  departments: ["Enterprise Systems"], name: "In-house A/R Module", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 50, date: "6/30/2026", roadblocks: "", milestones: "", nextSteps: "", notes: "Custom accounts receivable module development", completedDate: "" },
-  { id: 7,  departments: ["Enterprise Systems"], name: "Ideal Software Integration", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Ideal software system integration", completedDate: "" },
-  { id: 8,  departments: ["Enterprise Systems"], name: "Mi9 Bug Fixes & Enhancements", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Ongoing Mi9 retail system maintenance", completedDate: "" },
-  { id: 6,  departments: ["Enterprise Systems"], name: "Sport 2.0", owner: "Dave Faucher", status: "Not Started", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Next generation sporting goods system", completedDate: "" },
-  { id: 30, departments: ["Enterprise Systems"], name: "Matillion Upgrade", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "", roadblocks: "Time-sensitive -- due within 1-2 weeks", milestones: "", nextSteps: "Complete upgrade ASAP", notes: "ETL platform upgrade -- flagged in YODA review 3/13", completedDate: "" },
-  { id: 31, departments: ["Enterprise Systems"], name: "OpenFlow Migration POC", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "Evaluating proof of concept", nextSteps: "", notes: "From YODA review -- evaluating migration path", completedDate: "" },
+  { id: 1,  departments: ["Enterprise Systems"], name: "E-Commerce Migration (Magento to Easy Commerce)", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 25, date: "9/30/2026", roadblocks: "", milestones: "", nextSteps: "", notes: "Migration from Magento platform to Easy Commerce", completedDate: "", subtasks: [] },
+  { id: 2,  departments: ["Enterprise Systems"], name: "YODA (Power BI Analytics)", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "", roadblocks: "", milestones: "Basket Builders report redesign; AR aging report in dev", nextSteps: "Matillion upgrade (time-sensitive)", notes: "Business intelligence and analytics platform", completedDate: "", subtasks: [] },
+  { id: 3,  departments: ["Enterprise Systems"], name: "Power BI / Fabric (Presidio)", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Data platform modernization with Presidio", completedDate: "", subtasks: [] },
+  { id: 4,  departments: ["Enterprise Systems"], name: "In-house A/R Module", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 50, date: "6/30/2026", roadblocks: "", milestones: "", nextSteps: "", notes: "Custom accounts receivable module development", completedDate: "", subtasks: [] },
+  { id: 7,  departments: ["Enterprise Systems"], name: "Ideal Software Integration", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Ideal software system integration", completedDate: "", subtasks: [] },
+  { id: 8,  departments: ["Enterprise Systems"], name: "Mi9 Bug Fixes & Enhancements", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Ongoing Mi9 retail system maintenance", completedDate: "", subtasks: [] },
+  { id: 6,  departments: ["Enterprise Systems"], name: "Sport 2.0", owner: "Dave Faucher", status: "Not Started", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Next generation sporting goods system", completedDate: "", subtasks: [] },
+  { id: 30, departments: ["Enterprise Systems"], name: "Matillion Upgrade", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "", roadblocks: "Time-sensitive -- due within 1-2 weeks", milestones: "", nextSteps: "Complete upgrade ASAP", notes: "ETL platform upgrade -- flagged in YODA review 3/13", completedDate: "", subtasks: [] },
+  { id: 31, departments: ["Enterprise Systems"], name: "OpenFlow Migration POC", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "Evaluating proof of concept", nextSteps: "", notes: "From YODA review -- evaluating migration path", completedDate: "", subtasks: [] },
 
   // Infrastructure & Cyber Security
-  { id: 9,  departments: ["Infrastructure & Cyber Security"], name: "Windows 11 Upgrade", owner: "Craig Renaud", status: "In Progress", priority: "High", pct: 0, date: "", roadblocks: "", milestones: "Weekly status meetings Wed 1pm", nextSteps: "", notes: "Enterprise-wide Windows 11 migration before end of support", completedDate: "" },
-  { id: 10, departments: ["Infrastructure & Cyber Security"], name: "Cybersecurity Program", owner: "Craig Renaud", status: "In Progress", priority: "High", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "PCI compliance, CrowdStrike, Sophos, Mimecast, KnowBe4, Keeper", completedDate: "" },
-  { id: 11, departments: ["Infrastructure & Cyber Security", "Store Expansion"], name: "Store Conversions / IT Alignment", owner: "Craig Renaud", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "Aggressive 6-week timelines; vendor scheduling issues with IW", milestones: "73-75 store projects completed successfully", nextSteps: "Low-voltage cabling SOP to Mark; pre-project meetings for next 3-4 projects; floor plan markups for APs and Cat5 drops", notes: "IT infrastructure for store conversions -- process significantly improved", completedDate: "" },
-  { id: 12, departments: ["Infrastructure & Cyber Security", "POS & Store Technology"], name: "Delivery Pilot (IT Component)", owner: "Craig Renaud", status: "In Progress", priority: "High", pct: 0, date: "4/7/2026", roadblocks: "DMS vendor lacks bulk import; daily product data updates difficult", milestones: "Store 218 South Burlington -- 5,000 sq ft warehouse space secured", nextSteps: "Set up separate VLAN; order 2 PCs, 2 phones, label printers; WorkWave driver login setup", notes: "Soft launch early April -- starting with 6 stores, could scale to 50", completedDate: "" },
-  { id: 32, departments: ["Infrastructure & Cyber Security"], name: "WiFi Speaker Evaluation", owner: "Craig Renaud", status: "Not Started", priority: "Low", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "Craig & Evan to investigate WiFi speakers vs. wired; review IW bills to separate speaker wiring costs", notes: "Cost-effective alternative to wired audio -- from store alignment 1:1", completedDate: "" },
+  { id: 9,  departments: ["Infrastructure & Cyber Security"], name: "Windows 11 Upgrade", owner: "Craig Renaud", status: "In Progress", priority: "High", pct: 0, date: "", roadblocks: "", milestones: "Weekly status meetings Wed 1pm", nextSteps: "", notes: "Enterprise-wide Windows 11 migration before end of support", completedDate: "", subtasks: [] },
+  { id: 10, departments: ["Infrastructure & Cyber Security"], name: "Cybersecurity Program", owner: "Craig Renaud", status: "In Progress", priority: "High", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "PCI compliance, CrowdStrike, Sophos, Mimecast, KnowBe4, Keeper", completedDate: "", subtasks: [] },
+  { id: 11, departments: ["Infrastructure & Cyber Security", "Store Expansion"], name: "Store Conversions / IT Alignment", owner: "Craig Renaud", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "Aggressive 6-week timelines; vendor scheduling issues with IW", milestones: "73-75 store projects completed successfully", nextSteps: "Low-voltage cabling SOP to Mark; pre-project meetings for next 3-4 projects; floor plan markups for APs and Cat5 drops", notes: "IT infrastructure for store conversions -- process significantly improved", completedDate: "", subtasks: [] },
+  { id: 12, departments: ["Infrastructure & Cyber Security", "POS & Store Technology"], name: "Delivery Pilot (IT Component)", owner: "Craig Renaud", status: "In Progress", priority: "High", pct: 0, date: "4/7/2026", roadblocks: "DMS vendor lacks bulk import; daily product data updates difficult", milestones: "Store 218 South Burlington -- 5,000 sq ft warehouse space secured", nextSteps: "Set up separate VLAN; order 2 PCs, 2 phones, label printers; WorkWave driver login setup", notes: "Soft launch early April -- starting with 6 stores, could scale to 50", completedDate: "", subtasks: [] },
+  { id: 32, departments: ["Infrastructure & Cyber Security"], name: "WiFi Speaker Evaluation", owner: "Craig Renaud", status: "Not Started", priority: "Low", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "Craig & Evan to investigate WiFi speakers vs. wired; review IW bills to separate speaker wiring costs", notes: "Cost-effective alternative to wired audio -- from store alignment 1:1", completedDate: "", subtasks: [] },
 
   // POS & Store Technology
-  { id: 17, departments: ["POS & Store Technology"], name: "Tokenization", owner: "Eric Handley", status: "In Progress", priority: "High", pct: 75, date: "3/31/2026", roadblocks: "", milestones: "", nextSteps: "", notes: "Payment tokenization -- CRITICAL DEADLINE", completedDate: "" },
-  { id: 18, departments: ["POS & Store Technology"], name: "B2B Features & Employee Discount", owner: "Eric Handley", status: "In Progress", priority: "High", pct: 75, date: "3/31/2026", roadblocks: "", milestones: "", nextSteps: "", notes: "B2B functionality -- CRITICAL DEADLINE", completedDate: "" },
-  { id: 19, departments: ["POS & Store Technology"], name: "Mobile POS", owner: "Eric Handley", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Mobile point of sale deployment", completedDate: "" },
-  { id: 20, departments: ["POS & Store Technology"], name: "Theatro (Motorola Solutions)", owner: "Eric Handley", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "In-store communication platform", completedDate: "" },
-  { id: 5,  departments: ["POS & Store Technology", "Enterprise Systems"], name: "EZAD TV (Digital Signage)", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Digital signage rollout across stores", completedDate: "" },
+  { id: 17, departments: ["POS & Store Technology"], name: "Tokenization", owner: "Eric Handley", status: "In Progress", priority: "High", pct: 75, date: "3/31/2026", roadblocks: "", milestones: "", nextSteps: "", notes: "Payment tokenization -- CRITICAL DEADLINE", completedDate: "", subtasks: [] },
+  { id: 18, departments: ["POS & Store Technology"], name: "B2B Features & Employee Discount", owner: "Eric Handley", status: "In Progress", priority: "High", pct: 75, date: "3/31/2026", roadblocks: "", milestones: "", nextSteps: "", notes: "B2B functionality -- CRITICAL DEADLINE", completedDate: "", subtasks: [] },
+  { id: 19, departments: ["POS & Store Technology"], name: "Mobile POS", owner: "Eric Handley", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Mobile point of sale deployment", completedDate: "", subtasks: [] },
+  { id: 20, departments: ["POS & Store Technology"], name: "Theatro (Motorola Solutions)", owner: "Eric Handley", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "In-store communication platform", completedDate: "", subtasks: [] },
+  { id: 5,  departments: ["POS & Store Technology", "Enterprise Systems"], name: "EZAD TV (Digital Signage)", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Digital signage rollout across stores", completedDate: "", subtasks: [] },
 
   // Store Expansion
-  { id: 13, departments: ["Store Expansion", "Infrastructure & Cyber Security"], name: "237 Cumberland RI", owner: "Craig Renaud", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "Completing smoothly per 1:1", nextSteps: "", notes: "New store acquisition -- IT setup and integration", completedDate: "" },
-  { id: 14, departments: ["Store Expansion"], name: "233 Ithaca Downtown", owner: "Craig Renaud", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "New store acquisition -- POS equipment installation", completedDate: "" },
-  { id: 15, departments: ["Store Expansion"], name: "234 Ithaca Triphammer", owner: "Craig Renaud", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "New store acquisition -- IT setup and integration", completedDate: "" },
-  { id: 16, departments: ["Store Expansion"], name: "236 Dover PA", owner: "Craig Renaud", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "New store acquisition -- IT setup and integration", completedDate: "" },
+  { id: 13, departments: ["Store Expansion", "Infrastructure & Cyber Security"], name: "237 Cumberland RI", owner: "Craig Renaud", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "Completing smoothly per 1:1", nextSteps: "", notes: "New store acquisition -- IT setup and integration", completedDate: "", subtasks: [] },
+  { id: 14, departments: ["Store Expansion"], name: "233 Ithaca Downtown", owner: "Craig Renaud", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "New store acquisition -- POS equipment installation", completedDate: "", subtasks: [] },
+  { id: 15, departments: ["Store Expansion"], name: "234 Ithaca Triphammer", owner: "Craig Renaud", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "New store acquisition -- IT setup and integration", completedDate: "", subtasks: [] },
+  { id: 16, departments: ["Store Expansion"], name: "236 Dover PA", owner: "Craig Renaud", status: "In Progress", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "New store acquisition -- IT setup and integration", completedDate: "", subtasks: [] },
 
   // Resource Center & Support
-  { id: 21, departments: ["Resource Center & Support"], name: "Resource Center / Help Desk Operations", owner: "Suzanne Fleury", status: "In Progress", priority: "High", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Help desk management and improvements", completedDate: "" },
-  { id: 22, departments: ["Resource Center & Support", "POS & Store Technology"], name: "POS Team Support", owner: "Suzanne Fleury", status: "In Progress", priority: "High", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "POS system support for stores", completedDate: "" },
+  { id: 21, departments: ["Resource Center & Support"], name: "Resource Center / Help Desk Operations", owner: "Suzanne Fleury", status: "In Progress", priority: "High", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Help desk management and improvements", completedDate: "", subtasks: [] },
+  { id: 22, departments: ["Resource Center & Support", "POS & Store Technology"], name: "POS Team Support", owner: "Suzanne Fleury", status: "In Progress", priority: "High", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "POS system support for stores", completedDate: "", subtasks: [] },
 ];
 
 const initialQuickTasks = [
@@ -299,6 +300,122 @@ function InlineEdit({ value, onChange, placeholder, multiline = false, className
 }
 
 /* =====================================================================
+   SUBTASK LIST (inside projects)
+   ===================================================================== */
+
+function SubtaskList({ subtasks, onUpdate }) {
+  const [newText, setNewText] = useState("");
+  const [newDate, setNewDate] = useState("");
+
+  const addSubtask = () => {
+    if (!newText.trim()) return;
+    const updated = [...subtasks, { id: Date.now(), text: newText.trim(), dueDate: newDate, done: false }];
+    onUpdate(updated);
+    setNewText("");
+    setNewDate("");
+  };
+
+  const toggleSubtask = (id) => {
+    onUpdate(subtasks.map(s => s.id === id ? { ...s, done: !s.done } : s));
+  };
+
+  const removeSubtask = (id) => {
+    onUpdate(subtasks.filter(s => s.id !== id));
+  };
+
+  const updateSubtaskText = (id, text) => {
+    onUpdate(subtasks.map(s => s.id === id ? { ...s, text } : s));
+  };
+
+  const updateSubtaskDate = (id, dueDate) => {
+    onUpdate(subtasks.map(s => s.id === id ? { ...s, dueDate } : s));
+  };
+
+  const pending = subtasks.filter(s => !s.done);
+  const done = subtasks.filter(s => s.done);
+  const overdue = pending.filter(s => s.dueDate && new Date(s.dueDate) < new Date(new Date().toDateString()));
+
+  return (
+    <div className="mt-2">
+      <div className="flex items-center gap-1.5 mb-2">
+        <ListChecks size={12} className="text-gray-400" />
+        <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
+          Subtasks ({pending.length} open{done.length > 0 ? `, ${done.length} done` : ""})
+        </span>
+        {overdue.length > 0 && (
+          <span className="text-[9px] font-bold text-red-500 bg-red-50 px-1.5 py-0.5 rounded-full">{overdue.length} overdue</span>
+        )}
+      </div>
+
+      {/* Pending subtasks */}
+      <div className="space-y-0.5">
+        {pending.map(s => {
+          const isOverdue = s.dueDate && new Date(s.dueDate) < new Date(new Date().toDateString());
+          return (
+            <div key={s.id} className="flex items-center gap-2 group py-1 px-1.5 rounded-md hover:bg-gray-50 transition-colors">
+              <button onClick={() => toggleSubtask(s.id)} className="text-gray-300 hover:text-emerald-500 transition-colors flex-shrink-0">
+                <Square size={13} />
+              </button>
+              <InlineEdit value={s.text} onChange={(v) => updateSubtaskText(s.id, v)} placeholder="Subtask..." className="flex-1 text-xs text-gray-700" />
+              <input
+                type="date"
+                value={s.dueDate || ""}
+                onChange={(e) => updateSubtaskDate(s.id, e.target.value)}
+                className={`text-[10px] bg-transparent border-none focus:outline-none cursor-pointer w-24 ${isOverdue ? "text-red-500 font-semibold" : "text-gray-400"}`}
+                title="Due date"
+              />
+              <button onClick={() => removeSubtask(s.id)} className="text-gray-200 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all flex-shrink-0">
+                <X size={11} />
+              </button>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Completed subtasks */}
+      {done.length > 0 && (
+        <div className="mt-1">
+          {done.map(s => (
+            <div key={s.id} className="flex items-center gap-2 group py-1 px-1.5 rounded-md hover:bg-gray-50 transition-colors">
+              <button onClick={() => toggleSubtask(s.id)} className="text-emerald-500 flex-shrink-0">
+                <CheckSquare size={13} />
+              </button>
+              <span className="flex-1 text-xs text-gray-400 line-through">{s.text}</span>
+              {s.dueDate && <span className="text-[10px] text-gray-300">{s.dueDate}</span>}
+              <button onClick={() => removeSubtask(s.id)} className="text-gray-200 hover:text-red-400 opacity-0 group-hover:opacity-100 transition-all flex-shrink-0">
+                <X size={11} />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Add new subtask */}
+      <div className="flex items-center gap-2 mt-1.5 px-1.5 py-1 rounded-md bg-gray-50/50">
+        <Plus size={11} className="text-gray-300 flex-shrink-0" />
+        <input
+          value={newText}
+          onChange={(e) => setNewText(e.target.value)}
+          onKeyDown={(e) => e.key === "Enter" && addSubtask()}
+          className="flex-1 bg-transparent text-xs placeholder-gray-300 focus:outline-none"
+          placeholder="Add subtask..."
+        />
+        <input
+          type="date"
+          value={newDate}
+          onChange={(e) => setNewDate(e.target.value)}
+          className="text-[10px] text-gray-400 bg-transparent border-none focus:outline-none cursor-pointer w-24"
+          title="Due date"
+        />
+        {newText && (
+          <button onClick={addSubtask} className="text-[10px] font-medium text-blue-600 hover:text-blue-800">Add</button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* =====================================================================
    SUMMARY CARD
    ===================================================================== */
 
@@ -438,6 +555,20 @@ function ProjectCard({ project, onUpdate, onDelete }) {
           {expanded ? "Less" : "Details"}
         </button>
 
+        {/* Subtask summary when collapsed */}
+        {!expanded && project.subtasks && project.subtasks.length > 0 && (() => {
+          const pending = project.subtasks.filter(s => !s.done);
+          const total = project.subtasks.length;
+          const overdue = pending.filter(s => s.dueDate && new Date(s.dueDate) < new Date(new Date().toDateString()));
+          return (
+            <div className="flex items-center gap-2 mt-1.5 text-[10px] text-gray-400">
+              <ListChecks size={10} />
+              <span>{total - pending.length}/{total} subtasks</span>
+              {overdue.length > 0 && <span className="text-red-500 font-semibold">{overdue.length} overdue</span>}
+            </div>
+          );
+        })()}
+
         {expanded && (
           <div className="mt-3 space-y-2 pt-3 border-t border-gray-100">
             {[
@@ -452,6 +583,11 @@ function ProjectCard({ project, onUpdate, onDelete }) {
                 <InlineEdit value={project[field]} onChange={(v) => onUpdate(project.id, field, v)} placeholder={ph} multiline={multi} />
               </div>
             ))}
+
+            {/* Subtasks */}
+            <div className="pt-2 border-t border-gray-100">
+              <SubtaskList subtasks={project.subtasks || []} onUpdate={(subs) => onUpdate(project.id, "subtasks", subs)} />
+            </div>
           </div>
         )}
       </div>
@@ -480,6 +616,16 @@ function ProjectRow({ project, onUpdate, onDelete, showDepts = true, showOwner =
           <div className="flex items-center gap-2">
             {isAlert && <AlertTriangle size={12} className="text-red-500 flex-shrink-0" />}
             <span className="text-sm font-medium text-gray-900 truncate max-w-xs">{project.name}</span>
+            {project.subtasks && project.subtasks.length > 0 && (() => {
+              const done = project.subtasks.filter(s => s.done).length;
+              const total = project.subtasks.length;
+              const overdue = project.subtasks.filter(s => !s.done && s.dueDate && new Date(s.dueDate) < new Date(new Date().toDateString())).length;
+              return (
+                <span className={`inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded-full ${overdue > 0 ? "bg-red-50 text-red-600" : done === total ? "bg-emerald-50 text-emerald-600" : "bg-gray-100 text-gray-500"}`}>
+                  <ListChecks size={9} />{done}/{total}
+                </span>
+              );
+            })()}
           </div>
         </td>
         {showDepts && (
@@ -514,6 +660,10 @@ function ProjectRow({ project, onUpdate, onDelete, showDepts = true, showOwner =
                   <InlineEdit value={project[field]} onChange={(v) => onUpdate(project.id, field, v)} placeholder={`Add ${label.toLowerCase()}...`} multiline={multi} />
                 </div>
               ))}
+            </div>
+            {/* Subtasks */}
+            <div className="mt-3 pt-3 border-t border-gray-200 max-w-3xl">
+              <SubtaskList subtasks={project.subtasks || []} onUpdate={(subs) => onUpdate(project.id, "subtasks", subs)} />
             </div>
           </td>
         </tr>
@@ -985,6 +1135,7 @@ export default function Dashboard() {
       nextSteps: "",
       notes: "",
       completedDate: "",
+      subtasks: [],
     };
     setProjects(prev => [...prev, newP]);
     setNextId(n => n + 1);
@@ -1005,6 +1156,7 @@ export default function Dashboard() {
       nextSteps: "",
       notes: item.notes || `Promoted from Inbox (${item.source}, added ${item.addedDate})`,
       completedDate: "",
+      subtasks: [],
     };
     setProjects(prev => [...prev, newP]);
     setInboxItems(prev => prev.filter(i => i.id !== item.id));
@@ -1013,9 +1165,10 @@ export default function Dashboard() {
 
   // Export handlers
   const handleExportCSV = () => {
-    const rows = [["Project", "Departments", "Owner", "Status", "Priority", "% Complete", "Date", "Roadblocks", "Milestones", "Next Steps", "Notes"]];
+    const rows = [["Project", "Departments", "Owner", "Status", "Priority", "% Complete", "Date", "Roadblocks", "Milestones", "Next Steps", "Notes", "Subtasks"]];
     for (const p of projects) {
-      rows.push([p.name, p.departments.join("; "), p.owner, p.status, p.priority, p.pct + "%", p.date, p.roadblocks, p.milestones, p.nextSteps, p.notes]);
+      const subsText = (p.subtasks || []).map(s => `${s.done ? "[x]" : "[ ]"} ${s.text}${s.dueDate ? " (due " + s.dueDate + ")" : ""}`).join("; ");
+      rows.push([p.name, p.departments.join("; "), p.owner, p.status, p.priority, p.pct + "%", p.date, p.roadblocks, p.milestones, p.nextSteps, p.notes, subsText]);
     }
     const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
