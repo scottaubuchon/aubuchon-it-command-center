@@ -1876,8 +1876,9 @@ export default function App() {
     return <ITProjectDashboard goHome={() => setActiveSection(null)} />;
   }
 
-  // Future sections will go here:
-  // if (activeSection === "ap-invoices") return <APInvoices goHome={() => setActiveSection(null)} />;
+  if (activeSection === "ap-invoices") return <APInvoices goHome={() => setActiveSection(null)} />;
+
+  // Future sections:
   // if (activeSection === "wells-cc") return <WellsCC goHome={() => setActiveSection(null)} />;
   // if (activeSection === "yoda") return <YODADashboard goHome={() => setActiveSection(null)} />;
 
