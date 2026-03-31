@@ -7,10 +7,11 @@ import {
   FolderOpen, Filter, ChevronUp, Zap, MoveRight, LogOut, Users,
   Building2, History, FileText, Tag, Eye, Briefcase, Archive, Inbox,
   ListChecks, CircleDot, RotateCcw, ArrowUpDown,
-  Home, CreditCard, TrendingUp, Database, Lock, ArrowLeft
+  Home, CreditCard, TrendingUp, Database, Lock, ArrowLeft,
+  AlertCircle
 } from "lucide-react";
 import { auth, signOut, db } from "./firebase";
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, setDoc, collection, getDocs, addDoc, onSnapshot, query, orderBy, where, updateDoc, serverTimestamp, writeBatch } from "firebase/firestore";
 
 /* =====================================================================
    CONFIGURATION
@@ -1564,6 +1565,271 @@ function ITProjectDashboard({ goHome }) {
   );
 }
 
+
+
+/* =====================================================================
+   AP INVOICES PAGE
+   ===================================================================== */
+function APInvoicesPage({ goHome }) {
+  const [activeTab, setActiveTab] = useState('approvals');
+  const [pendingInvoices, setPendingInvoices] = useState([]);
+  const [historicalInvoices, setHistoricalInvoices] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [approvalActions, setApprovalActions] = useState({});
+  const [expandedInvoice, setExpandedInvoice] = useState(null);
+  const [previewInvoice, setPreviewInvoice] = useState(null);
+  const [detailsInvoice, setDetailsInvoice] = useState(null);
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterStatus, setFilterStatus] = useState('all');
+
+  useEffect(() => {
+    if (activeTab === 'approvals') {
+      setLoading(true);
+      const q = query(
+        collection(db, 'ap_invoices'),
+        where('status', '==', 'PENDING'),
+        orderBy('paymentDue', 'asc')
+      );
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const invoices = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setPendingInvoices(invoices);
+        setLoading(false);
+      });
+      return () => unsubscribe();
+    }
+  }, [activeTab]);
+
+  useEffect(() => {
+    if (activeTab === 'history') {
+      setLoading(true);
+      const q = query(
+        collection(db, 'invoice_history'),
+        orderBy('date', 'desc')
+      );
+      const unsubscribe = onSnapshot(q, (snapshot) => {
+        const invoices = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setHistoricalInvoices(invoices);
+        setLoading(false);
+      });
+      return () => unsubscribe();
+    }
+  }, [activeTab]);
+
+  const today = new Date();
+  const overdueCount = pendingInvoices.filter(inv => {
+    const due = inv.paymentDue?.toDate?.() || new Date(inv.paymentDue);
+    return due < today;
+  }).length;
+  const totalAmount = pendingInvoices.reduce((sum, inv) => sum + (inv.amount || 0), 0);
+
+  const handleApprovalAction = (invoiceId, action, invoiceGroup, comment) => {
+    setApprovalActions(prev => ({ ...prev, [invoiceId]: { action, invoiceGroup, comment } }));
+  };
+
+  const handleSubmitApprovals = async () => {
+    setSubmitLoading(true);
+    try {
+      const batch = writeBatch(db);
+      Object.entries(approvalActions).forEach(([invoiceId, { action, invoiceGroup, comment }]) => {
+        if (action) {
+          const docRef = doc(db, 'ap_invoices', invoiceId);
+          batch.update(docRef, { action, invoiceGroup, comment, status: 'SUBMITTED', updatedAt: serverTimestamp() });
+        }
+      });
+      await batch.commit();
+      setSubmitSuccess(true);
+      setApprovalActions({});
+      setTimeout(() => setSubmitSuccess(false), 3000);
+    } catch (error) {
+      console.error('Error submitting approvals:', error);
+      alert('Error submitting approvals. Please try again.');
+    } finally {
+      setSubmitLoading(false);
+    }
+  };
+
+  const allActionsSelected = pendingInvoices.every(inv =>
+    approvalActions[inv.id]?.action && approvalActions[inv.id]?.invoiceGroup
+  );
+
+  const filteredHistory = historicalInvoices.filter(inv => {
+    const matchesSearch = inv.vendor?.toLowerCase().includes(searchTerm.toLowerCase()) || inv.doc?.toString().includes(searchTerm) || inv.glNumber?.includes(searchTerm);
+    const matchesStatus = filterStatus === 'all' || inv.status === filterStatus;
+    return matchesSearch && matchesStatus;
+  });
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 p-6">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-4">
+          <button onClick={goHome} className="p-2 hover:bg-gray-200 rounded-lg transition-colors">
+            <ArrowLeft size={24} className="text-gray-600" />
+          </button>
+          <h1 className="text-3xl font-bold text-gray-800">AP Invoices</h1>
+        </div>
+      </div>
+      <div className="flex gap-2 mb-6 border-b border-gray-200">
+        <button onClick={() => setActiveTab('approvals')} className={`px-4 py-2 font-semibold border-b-2 transition-colors ${activeTab === 'approvals' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>Today's Approvals</button>
+        <button onClick={() => setActiveTab('history')} className={`px-4 py-2 font-semibold border-b-2 transition-colors ${activeTab === 'history' ? 'border-blue-500 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>Invoice History</button>
+      </div>
+      {submitSuccess && (<div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg text-green-800">\u2713 All approvals submitted successfully</div>)}
+      {activeTab === 'approvals' && (
+        <div className="space-y-4">
+          {overdueCount > 0 && (<div className="p-4 bg-amber-50 border border-amber-200 rounded-lg flex items-center gap-3"><AlertCircle size={20} className="text-amber-600" /><span className="text-amber-800 font-semibold">{overdueCount} invoice{overdueCount !== 1 ? 's' : ''} overdue</span></div>)}
+          <div className="bg-white rounded-xl border border-gray-200 p-4 flex justify-between items-center">
+            <div className="text-center"><p className="text-gray-500 text-sm">Invoices</p><p className="text-2xl font-bold text-gray-800">{pendingInvoices.length}</p></div>
+            <div className="text-center"><p className="text-gray-500 text-sm">Total Amount</p><p className="text-2xl font-bold text-gray-800">${totalAmount.toLocaleString('en-US', { minimumFractionDigits: 2 })}</p></div>
+            <div className="text-center"><p className="text-gray-500 text-sm">Overdue</p><p className="text-2xl font-bold text-red-600">{overdueCount}</p></div>
+          </div>
+          {loading ? (<div className="text-center py-12 text-gray-500">Loading invoices...</div>) : pendingInvoices.length === 0 ? (<div className="text-center py-12 text-gray-500">No pending invoices</div>) : (<>
+            <div className="space-y-4">{pendingInvoices.map(invoice => (<InvoiceCard key={invoice.id} invoice={invoice} action={approvalActions[invoice.id]?.action} onActionChange={(action, group, comment) => handleApprovalAction(invoice.id, action, group, comment)} />))}</div>
+            {previewInvoice && (<InvoicePreview invoice={previewInvoice} onClose={() => setPreviewInvoice(null)} />)}
+            {detailsInvoice && (<ApprovalDetails invoice={detailsInvoice} onClose={() => setDetailsInvoice(null)} />)}
+            <div className="flex gap-4 pt-6"><button onClick={handleSubmitApprovals} disabled={!allActionsSelected || submitLoading} className="flex-1 bg-green-500 hover:bg-green-600 disabled:bg-gray-300 text-white font-semibold py-3 rounded-lg transition-colors">{submitLoading ? 'Submitting...' : 'Submit All Approvals'}</button></div>
+          </>)}
+        </div>
+      )}
+      {activeTab === 'history' && (
+        <div className="space-y-4">
+          <div className="bg-white rounded-xl border border-gray-200 p-4 space-y-4">
+            <input type="text" placeholder="Search by vendor, doc #, or GL #..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <select value={filterStatus} onChange={(e) => setFilterStatus(e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="all">All Statuses</option><option value="APPROVED">Approved</option><option value="REJECTED">Rejected</option><option value="PENDING">Pending</option><option value="ERROR">Error</option>
+            </select>
+          </div>
+          {loading ? (<div className="text-center py-12 text-gray-500">Loading invoices...</div>) : filteredHistory.length === 0 ? (<div className="text-center py-12 text-gray-500">No invoices found</div>) : (
+            <div className="bg-white rounded-xl border border-gray-200 overflow-hidden overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-gray-50 border-b border-gray-200"><tr>
+                  <th className="px-4 py-3 text-left font-semibold text-gray-700">Type</th>
+                  <th className="px-4 py-3 text-left font-semibold text-gray-700">Date</th>
+                  <th className="px-4 py-3 text-left font-semibold text-gray-700">Vendor</th>
+                  <th className="px-4 py-3 text-left font-semibold text-gray-700">Doc #</th>
+                  <th className="px-4 py-3 text-right font-semibold text-gray-700">Amount</th>
+                  <th className="px-4 py-3 text-left font-semibold text-gray-700">Store</th>
+                  <th className="px-4 py-3 text-left font-semibold text-gray-700">GL #</th>
+                  <th className="px-4 py-3 text-left font-semibold text-gray-700">Status</th>
+                  <th className="px-4 py-3 text-left font-semibold text-gray-700">Group</th>
+                  <th className="px-4 py-3 text-left font-semibold text-gray-700">Action</th>
+                </tr></thead>
+                <tbody>{filteredHistory.map(invoice => (<tr key={invoice.id} className="border-b border-gray-200 hover:bg-gray-50">
+                  <td className="px-4 py-3 text-gray-700 font-semibold">{invoice.type || 'AP'}</td>
+                  <td className="px-4 py-3 text-gray-600">{invoice.date?.toDate?.()?.toLocaleDateString() || new Date(invoice.date).toLocaleDateString()}</td>
+                  <td className="px-4 py-3 text-gray-700">{invoice.vendor}</td>
+                  <td className="px-4 py-3 text-gray-600">{invoice.doc}</td>
+                  <td className="px-4 py-3 text-right font-semibold text-gray-700">${(invoice.amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</td>
+                  <td className="px-4 py-3 text-gray-600">{invoice.store}</td>
+                  <td className="px-4 py-3 text-gray-600">{invoice.glNumber}</td>
+                  <td className="px-4 py-3"><StatusBadge status={invoice.status} /></td>
+                  <td className="px-4 py-3 text-gray-600 text-xs">{invoice.invoiceGroup}</td>
+                  <td className="px-4 py-3 text-gray-600 text-xs">{invoice.action}</td>
+                </tr>))}</tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+
+  function InvoiceCard({ invoice, onActionChange, action }) {
+    const [invoiceGroup, setInvoiceGroup] = useState('');
+    const [comment, setComment] = useState('');
+    return (
+      <div className="bg-white rounded-xl border border-gray-200 p-5 space-y-4 hover:shadow-md transition-shadow">
+        <div className="flex justify-between items-start">
+          <div><h3 className="text-lg font-bold text-gray-800">{invoice.vendor}</h3><p className="text-sm text-gray-500">Doc: {invoice.doc}</p></div>
+          <div className="text-right"><p className="text-2xl font-bold text-green-600">${(invoice.amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}</p>{invoice.store && (<span className="inline-block mt-2 px-2 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded">Store {invoice.store}</span>)}</div>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {invoice.glNumber && (<Chip label="GL" value={invoice.glNumber} />)}
+          {invoice.paymentDue && (<Chip label="Due" value={invoice.paymentDue?.toDate?.()?.toLocaleDateString() || new Date(invoice.paymentDue).toLocaleDateString()} isOverdue={new Date(invoice.paymentDue?.toDate?.() || invoice.paymentDue) < new Date()} />)}
+          {invoice.paymentTerms && (<Chip label="Terms" value={invoice.paymentTerms} />)}
+          {invoice.invoiceNumber && (<Chip label="Inv #" value={invoice.invoiceNumber} />)}
+          {invoice.projectNumber && (<span className="inline-block px-2 py-1 bg-purple-100 text-purple-700 text-xs font-semibold rounded">Capital</span>)}
+        </div>
+        {invoice.description && (<p className="text-sm text-gray-600 italic">{invoice.description}</p>)}
+        <div className="space-y-3 pt-2 border-t border-gray-200">
+          <select value={invoiceGroup} onChange={(e) => { setInvoiceGroup(e.target.value); onActionChange(action, e.target.value, comment); }} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <option value="">Select Invoice Group</option><option value="Expense in Budget">Expense in Budget</option><option value="Capital in Budget">Capital in Budget</option><option value="Expense Not in Budget">Expense Not in Budget</option><option value="Capital Not in Budget">Capital Not in Budget</option>
+          </select>
+          <input type="text" placeholder="Add comment (optional)" value={comment} onChange={(e) => { setComment(e.target.value); onActionChange(action, invoiceGroup, e.target.value); }} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          <div className="flex gap-2">
+            <button onClick={() => onActionChange('APPROVE', invoiceGroup, comment)} className={`flex-1 py-2 rounded-lg font-semibold transition-colors ${action === 'APPROVE' ? 'bg-green-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>\u2713 Approve</button>
+            <button onClick={() => onActionChange('REJECT', invoiceGroup, comment)} className={`flex-1 py-2 rounded-lg font-semibold transition-colors ${action === 'REJECT' ? 'bg-red-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>\u2715 Reject</button>
+            <button onClick={() => onActionChange('IGNORE', invoiceGroup, comment)} className={`flex-1 py-2 rounded-lg font-semibold transition-colors ${action === 'IGNORE' ? 'bg-gray-500 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>\u2014 Ignore</button>
+          </div>
+          <div className="flex gap-2 pt-1">
+            <button onClick={() => {}} className="flex-1 text-blue-600 hover:underline text-sm font-semibold">View Invoice</button>
+            <button onClick={() => {}} className="flex-1 text-blue-600 hover:underline text-sm font-semibold">Full Details</button>
+            {invoice.jiffyUrl && (<a href={invoice.jiffyUrl} target="_blank" rel="noopener noreferrer" className="flex-1 text-blue-600 hover:underline text-sm font-semibold">Open in Jiffy \u2192</a>)}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  function Chip({ label, value, isOverdue }) {
+    return (<span className={`inline-block px-2 py-1 text-xs font-semibold rounded ${isOverdue ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'}`}>{label}: {value}</span>);
+  }
+
+  function StatusBadge({ status }) {
+    const statusConfig = { APPROVED: { bg: 'bg-green-100', text: 'text-green-700' }, REJECTED: { bg: 'bg-red-100', text: 'text-red-700' }, PENDING: { bg: 'bg-amber-100', text: 'text-amber-700' }, SUBMITTED: { bg: 'bg-blue-100', text: 'text-blue-700' }, ERROR: { bg: 'bg-red-100', text: 'text-red-700' } };
+    const config = statusConfig[status] || statusConfig.PENDING;
+    return (<span className={`inline-block px-2 py-1 text-xs font-semibold rounded ${config.bg} ${config.text}`}>{status}</span>);
+  }
+
+  function InvoicePreview({ invoice, onClose }) {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div className="bg-white rounded-xl max-w-2xl w-full max-h-96 overflow-y-auto p-6">
+          <div className="flex justify-between items-center mb-4"><h2 className="text-xl font-bold text-gray-800">Invoice Preview</h2><button onClick={onClose} className="text-gray-500 hover:text-gray-700">\u2715</button></div>
+          {invoice.ocrData ? (
+            <div className="space-y-4 text-sm">
+              <div className="grid grid-cols-2 gap-4">
+                <div><p className="text-gray-500">Vendor</p><p className="font-semibold text-gray-800">{invoice.ocrData.vendorName}</p></div>
+                <div><p className="text-gray-500">Bill #</p><p className="font-semibold text-gray-800">{invoice.ocrData.billNumber}</p></div>
+                <div><p className="text-gray-500">Bill Date</p><p className="font-semibold text-gray-800">{invoice.ocrData.billDate}</p></div>
+                <div><p className="text-gray-500">Due Date</p><p className="font-semibold text-gray-800">{invoice.ocrData.dueDate}</p></div>
+              </div>
+              {invoice.ocrData.lineItems && invoice.ocrData.lineItems.length > 0 && (
+                <div><p className="font-semibold text-gray-800 mb-2">Line Items</p>
+                  <table className="w-full text-xs border border-gray-200"><thead className="bg-gray-50"><tr><th className="px-2 py-1 text-left">Description</th><th className="px-2 py-1 text-right">Qty</th><th className="px-2 py-1 text-right">Amount</th></tr></thead>
+                    <tbody>{invoice.ocrData.lineItems.map((item, i) => (<tr key={i} className="border-t border-gray-200"><td className="px-2 py-1">{item.description}</td><td className="px-2 py-1 text-right">{item.qty}</td><td className="px-2 py-1 text-right">${item.amount}</td></tr>))}</tbody>
+                  </table>
+                </div>
+              )}
+              <div className="border-t border-gray-200 pt-2 flex justify-between font-semibold text-gray-800"><span>Total:</span><span>${invoice.ocrData.grandTotal}</span></div>
+            </div>
+          ) : (<p className="text-gray-500">No OCR data available</p>)}
+        </div>
+      </div>
+    );
+  }
+
+  function ApprovalDetails({ invoice, onClose }) {
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+        <div className="bg-white rounded-xl max-w-xl w-full max-h-96 overflow-y-auto p-6">
+          <div className="flex justify-between items-center mb-4"><h2 className="text-xl font-bold text-gray-800">Approval Details</h2><button onClick={onClose} className="text-gray-500 hover:text-gray-700">\u2715</button></div>
+          <div className="space-y-3 text-sm">
+            {invoice.detailFields?.currentApprover && (<div><p className="text-gray-500">Current Approver</p><p className="font-semibold text-gray-800">{invoice.detailFields.currentApprover}</p></div>)}
+            {invoice.detailFields?.assignedTo && (<div><p className="text-gray-500">Assigned To</p><p className="font-semibold text-gray-800">{invoice.detailFields.assignedTo}</p></div>)}
+            {invoice.vp && (<div><p className="text-gray-500">VP</p><p className="font-semibold text-gray-800">{invoice.vp}</p></div>)}
+            {invoice.storeManager && (<div><p className="text-gray-500">Store Manager</p><p className="font-semibold text-gray-800">{invoice.storeManager}</p></div>)}
+            {invoice.detailFields?.vendorNumber && (<div><p className="text-gray-500">Vendor #</p><p className="font-semibold text-gray-800">{invoice.detailFields.vendorNumber}</p></div>)}
+            {invoice.detailFields?.location && (<div><p className="text-gray-500">Location</p><p className="font-semibold text-gray-800">{invoice.detailFields.location}</p></div>)}
+            {invoice.remarks && (<div><p className="text-gray-500">Remarks</p><p className="font-semibold text-gray-800">{invoice.remarks}</p></div>)}
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
+
+
 /* =====================================================================
    HOME SCREEN  --  Navigation hub for all IT Command Center sections
    ===================================================================== */
@@ -1708,7 +1974,9 @@ export default function App() {
   }
 
   // Future sections will go here:
-  // if (activeSection === "ap-invoices") return <APInvoices goHome={() => setActiveSection(null)} />;
+  if (activeSection === "ap-invoices") {
+    return <APInvoicesPage goHome={() => setActiveSection(null)} />;
+  }
   // if (activeSection === "wells-cc") return <WellsCC goHome={() => setActiveSection(null)} />;
   // if (activeSection === "yoda") return <YODADashboard goHome={() => setActiveSection(null)} />;
 
