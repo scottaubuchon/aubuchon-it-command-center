@@ -1859,7 +1859,7 @@ const SECTIONS = [
     border: "border-orange-200",
     text: "text-orange-700",
     shadow: "shadow-orange-200/50",
-    active: false,
+    active: true,
   },
   {
     id: "wells-cc",
