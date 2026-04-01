@@ -1709,19 +1709,23 @@ const APInvoiceCard = ({ inv, onAction }) => {
   const togglePanel = (p) => setOpenPanel(prev => prev === p ? null : p);
 
   const fmt = n => "$" + Number(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  const fmtDate = ts => {
-    if (!ts) return "—";
-    const d = ts.toDate ? ts.toDate() : new Date(ts);
-    return d.toLocaleDateString("en-US", { month: "2-digit", day: "2-digit", year: "numeric" });
-  };
-  const isPastDue = ts => {
-    if (!ts) return false;
-    const d = ts.toDate ? ts.toDate() : new Date(ts);
-    return d < new Date();
+
+  const parseDue = (val) => {
+    if (!val) return null;
+    if (val && val.toDate) return val.toDate();
+    // Handle "MM/DD/YYYY" string format
+    if (typeof val === "string" && val.includes("/")) {
+      const [m, d, y] = val.split("/");
+      return new Date(`${y}-${m.padStart(2,"0")}-${d.padStart(2,"0")}`);
+    }
+    return new Date(val);
   };
 
-  const overdue = isPastDue(inv.paymentDue) && inv.status === "pending";
-  const dueLabel = fmtDate(inv.paymentDue);
+  const dueDate = parseDue(inv.paymentDue);
+  const overdue = dueDate && dueDate < new Date() && inv.status === "pending";
+  const dueLabel = dueDate
+    ? dueDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+    : inv.paymentDue || "—";
 
   const handleAction = async (action) => {
     setSaving(true);
@@ -1729,136 +1733,182 @@ const APInvoiceCard = ({ inv, onAction }) => {
     setSaving(false);
   };
 
-  const actionedStyle = inv.status === "approved"
-    ? { border: "1px solid #16a34a", background: "rgba(22,163,74,0.06)" }
-    : inv.status === "rejected"
-    ? { border: "1px solid #dc2626", background: "rgba(220,38,38,0.06)" }
-    : {};
+  const statusColors = {
+    approved: { border: "#16a34a", bg: "#f0fdf4" },
+    rejected:  { border: "#dc2626", bg: "#fef2f2" },
+    ignored:   { border: "#9ca3af", bg: "#f9fafb" },
+    pending:   { border: "#e5e7eb", bg: "#ffffff" },
+  };
+  const sc = statusColors[inv.status] || statusColors.pending;
+
+  const chip = (text, color = "#6b7280", bg = "#f3f4f6") => (
+    <span style={{ background: bg, color, border: `1px solid ${color}22`, padding: "3px 11px", borderRadius: 20, fontSize: ".75rem", fontWeight: 500, display: "inline-flex", alignItems: "center", gap: 4 }}>
+      {text}
+    </span>
+  );
+
+  const detailRow = (label, value, light = false) => (
+    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "5px 0", borderBottom: "1px solid #f3f4f6", gap: 12 }}>
+      <span style={{ color: "#9ca3af", fontSize: ".78rem", flexShrink: 0 }}>{label}</span>
+      <span style={{ color: light ? "#6b7280" : "#111827", fontSize: ".78rem", fontWeight: 500, textAlign: "right" }}>{value || "—"}</span>
+    </div>
+  );
 
   return (
-    <div style={{ background: "#1a1a2e", borderRadius: 12, marginBottom: 20, overflow: "hidden", border: "1px solid #2a2a4a", transition: "border-color .2s", ...actionedStyle }}>
+    <div style={{ background: sc.bg, borderRadius: 12, marginBottom: 20, overflow: "hidden", border: `1px solid ${sc.border}`, boxShadow: "0 1px 4px rgba(0,0,0,0.06)", fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
+
       {/* Card header */}
-      <div style={{ background: "linear-gradient(135deg,#16213e,#1a1a2e)", padding: "16px 20px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 10 }}>
+      <div style={{ background: "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)", padding: "16px 20px", display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 10, borderBottom: "1px solid #e5e7eb" }}>
         <div>
-          <div style={{ fontSize: "1.1rem", fontWeight: 700, color: "#fff" }}>{inv.vendor}</div>
-          <div style={{ fontSize: ".8rem", color: "#888", display: "flex", gap: 12, flexWrap: "wrap", marginTop: 2 }}>
-            <span>{inv.invoiceNumber}</span>
-            <span>Store #{inv.storeNumber}</span>
+          <div style={{ fontSize: "1.1rem", fontWeight: 700, color: "#111827", letterSpacing: "-.01em" }}>{inv.vendor}</div>
+          <div style={{ fontSize: ".8rem", color: "#6b7280", display: "flex", gap: 14, flexWrap: "wrap", marginTop: 4 }}>
+            <span>Invoice #{inv.invoiceNumber}</span>
+            <span>·</span>
+            <span>Store {inv.storeNumber}{inv.location ? ` — ${inv.location}` : ""}</span>
+            <span>·</span>
             <span>Vendor #{inv.vendorNumber}</span>
+            {inv.docNumber && <><span>·</span><span style={{ color: "#9ca3af" }}>{inv.docNumber}</span></>}
           </div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
           {inv.status !== "pending" && (
             <span style={{
               fontSize: ".78rem", fontWeight: 700, padding: "4px 14px", borderRadius: 20,
-              background: inv.status === "approved" ? "#166534" : "#7f1d1d",
-              color: inv.status === "approved" ? "#4ade80" : "#fca5a5"
+              background: inv.status === "approved" ? "#dcfce7" : inv.status === "rejected" ? "#fee2e2" : "#f3f4f6",
+              color: inv.status === "approved" ? "#166534" : inv.status === "rejected" ? "#991b1b" : "#4b5563",
+              border: `1px solid ${inv.status === "approved" ? "#bbf7d0" : inv.status === "rejected" ? "#fecaca" : "#e5e7eb"}`
             }}>
-              {inv.status === "approved" ? "✓ Approved" : "✗ Rejected"}
+              {inv.status === "approved" ? "✓ Approved" : inv.status === "rejected" ? "✗ Rejected" : "Ignored"}
             </span>
           )}
-          <div style={{ fontSize: "1.3rem", fontWeight: 700, color: "#e94560" }}>{fmt(inv.amount)}</div>
+          <div style={{ fontSize: "1.5rem", fontWeight: 800, color: overdue ? "#dc2626" : "#0f766e" }}>{fmt(inv.amount)}</div>
         </div>
       </div>
 
       {/* Chips */}
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 8, padding: "10px 20px", borderBottom: "1px solid #2a2a4a" }}>
-        {inv.glCode && <span style={{ background: "#2a2a4a", color: "#ccc", padding: "3px 10px", borderRadius: 20, fontSize: ".76rem" }}>GL: {inv.glCode}</span>}
-        <span style={{ background: overdue ? "#5c1a1a" : "#2a2a4a", color: overdue ? "#ff6b6b" : "#ccc", padding: "3px 10px", borderRadius: 20, fontSize: ".76rem" }}>
-          Due: {dueLabel}{overdue ? " — OVERDUE ⚠" : ""}
-        </span>
-        {inv.terms && <span style={{ background: "#2a2a4a", color: "#ccc", padding: "3px 10px", borderRadius: 20, fontSize: ".76rem" }}>{inv.terms}</span>}
-        <span style={{ background: "#1a3a2a", color: "#4ade80", padding: "3px 10px", borderRadius: 20, fontSize: ".76rem" }}>{category}</span>
-        <span style={{ background: "#1a2a4a", color: "#93c5fd", padding: "3px 10px", borderRadius: 20, fontSize: ".76rem" }}>{inv.invoiceType || "Non-Utility"}</span>
+      <div style={{ display: "flex", flexWrap: "wrap", gap: 7, padding: "10px 20px", borderBottom: "1px solid #f3f4f6", background: "#fafafa" }}>
+        {inv.glNumber && chip(`GL: ${inv.glNumber}`, "#4338ca", "#eef2ff")}
+        {inv.projectNumber && chip(`Project: ${inv.projectNumber}`, "#0369a1", "#e0f2fe")}
+        {chip(
+          `Due: ${dueLabel}${overdue ? " — OVERDUE ⚠" : ""}`,
+          overdue ? "#dc2626" : "#374151",
+          overdue ? "#fef2f2" : "#f9fafb"
+        )}
+        {inv.paymentTerms && chip(inv.paymentTerms, "#374151", "#f3f4f6")}
+        {chip(category, "#15803d", "#f0fdf4")}
+        {chip(inv.invoiceType || "Non-Utility", "#1d4ed8", "#eff6ff")}
       </div>
 
       {/* Toolbar */}
-      <div style={{ display: "flex", gap: 8, padding: "10px 20px", borderBottom: "1px solid #2a2a4a", flexWrap: "wrap" }}>
-        <button onClick={() => togglePanel("preview")} style={{ background: openPanel === "preview" ? "#e94560" : "#2a2a4a", color: openPanel === "preview" ? "#fff" : "#ccc", border: "none", padding: "7px 14px", borderRadius: 6, cursor: "pointer", fontSize: ".82rem" }}>
-          📄 View Invoice
-        </button>
-        <button onClick={() => togglePanel("details")} style={{ background: openPanel === "details" ? "#e94560" : "#2a2a4a", color: openPanel === "details" ? "#fff" : "#ccc", border: "none", padding: "7px 14px", borderRadius: 6, cursor: "pointer", fontSize: ".82rem" }}>
-          🔍 Full Details
-        </button>
+      <div style={{ display: "flex", gap: 8, padding: "10px 20px", borderBottom: "1px solid #f3f4f6", flexWrap: "wrap", background: "#fff" }}>
+        {["preview", "details"].map(panel => {
+          const isOpen = openPanel === panel;
+          return (
+            <button key={panel} onClick={() => togglePanel(panel)} style={{
+              background: isOpen ? "#0f766e" : "#f3f4f6",
+              color: isOpen ? "#fff" : "#374151",
+              border: `1px solid ${isOpen ? "#0f766e" : "#e5e7eb"}`,
+              padding: "7px 14px", borderRadius: 6, cursor: "pointer", fontSize: ".82rem", fontWeight: 500,
+              transition: "all .15s"
+            }}>
+              {panel === "preview" ? "📄 View Invoice" : "🔍 Full Details"}
+            </button>
+          );
+        })}
         {inv.jiffyUrl && (
           <a href={inv.jiffyUrl} target="_blank" rel="noopener noreferrer"
-            style={{ background: "#2a2a4a", color: "#ccc", padding: "7px 14px", borderRadius: 6, fontSize: ".82rem", textDecoration: "none" }}>
+            style={{ background: "#f3f4f6", color: "#374151", border: "1px solid #e5e7eb", padding: "7px 14px", borderRadius: 6, fontSize: ".82rem", fontWeight: 500, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 5 }}>
             🔗 Open in Jiffy
           </a>
         )}
       </div>
 
-      {/* Invoice preview panel */}
+      {/* Invoice PDF panel */}
       {openPanel === "preview" && (
-        <div style={{ padding: 20, borderBottom: "1px solid #2a2a4a" }}>
-          <div style={{ background: "#fff", color: "#333", borderRadius: 8, padding: 28, maxWidth: 680, margin: "0 auto", fontFamily: "Georgia, serif" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16, paddingBottom: 14, borderBottom: "2px solid #333" }}>
-              <div style={{ fontWeight: 700, fontSize: "1.2rem", color: "#1a1a2e", fontFamily: "sans-serif" }}>{inv.vendor}</div>
-              <div style={{ textAlign: "right" }}>
-                <div style={{ fontSize: "1.4rem", fontWeight: 700, color: "#333", fontFamily: "sans-serif" }}>INVOICE</div>
-                <div style={{ fontSize: ".82rem", color: "#555" }}>
-                  {inv.invoiceNumber && <div>Invoice# {inv.invoiceNumber}</div>}
-                  {inv.invoiceDate && <div>Date: {inv.invoiceDate}</div>}
+        <div style={{ padding: "16px 20px", borderBottom: "1px solid #f3f4f6", background: "#f8fafc" }}>
+          {inv.pdfUrl ? (
+            <div>
+              <div style={{ marginBottom: 10, fontSize: ".8rem", color: "#6b7280" }}>
+                Invoice PDF — rendered from Jiffy (requires active Jiffy session)
+              </div>
+              <iframe
+                src={inv.pdfUrl}
+                style={{ width: "100%", height: 700, border: "1px solid #e5e7eb", borderRadius: 8, background: "#fff" }}
+                title={`Invoice ${inv.invoiceNumber}`}
+              />
+            </div>
+          ) : (
+            <div style={{ background: "#fff", color: "#333", borderRadius: 8, padding: 28, maxWidth: 640, margin: "0 auto", border: "1px solid #e5e7eb" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 14, paddingBottom: 12, borderBottom: "2px solid #111" }}>
+                <div style={{ fontWeight: 700, fontSize: "1.1rem" }}>{inv.vendor}</div>
+                <div style={{ textAlign: "right" }}>
+                  <div style={{ fontWeight: 700, fontSize: ".9rem" }}>Invoice #{inv.invoiceNumber}</div>
+                  <div style={{ fontSize: ".8rem", color: "#666" }}>{inv.invoiceDate}</div>
                 </div>
               </div>
-            </div>
-            <div style={{ display: "flex", gap: 20, marginBottom: 14, flexWrap: "wrap", background: "#f5f5f5", padding: 10, borderRadius: 4 }}>
-              <div style={{ fontSize: ".8rem" }}><strong style={{ display: "block", fontSize: ".7rem", textTransform: "uppercase", color: "#888", fontFamily: "sans-serif" }}>Amount Due</strong>{fmt(inv.amount)}</div>
-              <div style={{ fontSize: ".8rem" }}><strong style={{ display: "block", fontSize: ".7rem", textTransform: "uppercase", color: "#888", fontFamily: "sans-serif" }}>Due Date</strong>{dueLabel}</div>
-              <div style={{ fontSize: ".8rem" }}><strong style={{ display: "block", fontSize: ".7rem", textTransform: "uppercase", color: "#888", fontFamily: "sans-serif" }}>Store</strong>#{inv.storeNumber}</div>
-              {inv.terms && <div style={{ fontSize: ".8rem" }}><strong style={{ display: "block", fontSize: ".7rem", textTransform: "uppercase", color: "#888", fontFamily: "sans-serif" }}>Terms</strong>{inv.terms}</div>}
-            </div>
-            {inv.lineItems && inv.lineItems.length > 0 ? (
-              <table style={{ width: "100%", borderCollapse: "collapse", margin: "12px 0", fontSize: ".84rem" }}>
-                <thead>
-                  <tr style={{ background: "#333" }}>
-                    <th style={{ color: "#fff", padding: "7px 10px", textAlign: "left", fontFamily: "sans-serif", fontSize: ".73rem", textTransform: "uppercase" }}>Description</th>
-                    <th style={{ color: "#fff", padding: "7px 10px", textAlign: "right", fontFamily: "sans-serif", fontSize: ".73rem", textTransform: "uppercase" }}>Amount</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {inv.lineItems.map((li, i) => (
-                    <tr key={i}><td style={{ padding: "7px 10px", borderBottom: "1px solid #ddd" }}>{li.description}</td><td style={{ padding: "7px 10px", borderBottom: "1px solid #ddd", textAlign: "right" }}>{li.amount ? fmt(li.amount) : ""}</td></tr>
-                  ))}
-                </tbody>
-                <tfoot>
-                  <tr><td style={{ padding: "8px 10px", textAlign: "right", fontWeight: 700, borderTop: "2px solid #333" }} colSpan={2}>Total: {fmt(inv.amount)}</td></tr>
-                </tfoot>
-              </table>
-            ) : (
-              <div style={{ padding: "12px 0", fontSize: ".84rem", color: "#555", borderTop: "1px solid #ddd" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", padding: "4px 0" }}><span>Invoice Total</span><strong>{fmt(inv.amount)}</strong></div>
+              <div style={{ display: "flex", gap: 20, flexWrap: "wrap", background: "#f5f5f5", padding: 10, borderRadius: 4, marginBottom: 14 }}>
+                <div><div style={{ fontSize: ".68rem", textTransform: "uppercase", color: "#888" }}>Amount Due</div><strong>{fmt(inv.amount)}</strong></div>
+                <div><div style={{ fontSize: ".68rem", textTransform: "uppercase", color: "#888" }}>Due Date</div><strong>{dueLabel}</strong></div>
+                <div><div style={{ fontSize: ".68rem", textTransform: "uppercase", color: "#888" }}>Store</div><strong>#{inv.storeNumber}</strong></div>
+                {inv.paymentTerms && <div><div style={{ fontSize: ".68rem", textTransform: "uppercase", color: "#888" }}>Terms</div><strong>{inv.paymentTerms}</strong></div>}
               </div>
-            )}
-            <div style={{ fontStyle: "italic", fontSize: ".7rem", color: "#999", marginTop: 12, textAlign: "center", fontFamily: "sans-serif" }}>Click "Open in Jiffy" to view the original PDF</div>
-          </div>
+              <div style={{ fontSize: ".8rem", color: "#999", textAlign: "center", fontStyle: "italic" }}>PDF preview not available — use "Open in Jiffy" to view original</div>
+            </div>
+          )}
         </div>
       )}
 
       {/* Full details panel */}
       {openPanel === "details" && (
-        <div style={{ padding: 20, borderBottom: "1px solid #2a2a4a" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
-            <div style={{ background: "#222240", borderRadius: 8, padding: 14 }}>
-              <div style={{ color: "#e94560", fontSize: ".78rem", textTransform: "uppercase", letterSpacing: 1, marginBottom: 8, fontWeight: 600 }}>Approval Routing</div>
-              {[["Approver", "scott@aubuchon.com"], ["Assigned To", inv.assignedTo || "giselle@aubuchon.com"], ["VP", inv.vp || "will@aubuchon.com"]].map(([lbl, val]) => (
-                <div key={lbl} style={{ display: "flex", justifyContent: "space-between", padding: "4px 0", fontSize: ".8rem", borderBottom: "1px solid #2a2a4a" }}>
-                  <span style={{ color: "#888" }}>{lbl}</span><span style={{ color: "#ddd" }}>{val}</span>
-                </div>
-              ))}
+        <div style={{ padding: "16px 20px", borderBottom: "1px solid #f3f4f6", background: "#f8fafc" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 12 }}>
+
+            {/* Approval Routing */}
+            <div style={{ background: "#fff", borderRadius: 8, padding: 14, border: "1px solid #e5e7eb" }}>
+              <div style={{ color: "#0f766e", fontSize: ".75rem", textTransform: "uppercase", letterSpacing: ".06em", marginBottom: 10, fontWeight: 700 }}>Approval Routing</div>
+              {detailRow("Current Approver", inv.currentApprover)}
+              {detailRow("Assigned To", inv.assignedTo)}
+              {detailRow("VP", inv.vp)}
             </div>
-            <div style={{ background: "#222240", borderRadius: 8, padding: 14 }}>
-              <div style={{ color: "#e94560", fontSize: ".78rem", textTransform: "uppercase", letterSpacing: 1, marginBottom: 8, fontWeight: 600 }}>Payment Info</div>
-              {[["Vendor #", inv.vendorNumber], ["Status", inv.executionState], ["Source", inv.source || "jiffy.ai"]].map(([lbl, val]) => (
-                <div key={lbl} style={{ display: "flex", justifyContent: "space-between", padding: "4px 0", fontSize: ".8rem", borderBottom: "1px solid #2a2a4a" }}>
-                  <span style={{ color: "#888" }}>{lbl}</span><span style={{ color: "#ddd" }}>{val}</span>
-                </div>
-              ))}
+
+            {/* Invoice Info */}
+            <div style={{ background: "#fff", borderRadius: 8, padding: 14, border: "1px solid #e5e7eb" }}>
+              <div style={{ color: "#0f766e", fontSize: ".75rem", textTransform: "uppercase", letterSpacing: ".06em", marginBottom: 10, fontWeight: 700 }}>Invoice Details</div>
+              {detailRow("Invoice #", inv.invoiceNumber)}
+              {detailRow("Invoice Date", inv.invoiceDate)}
+              {detailRow("GL Code", inv.glNumber)}
+              {detailRow("Project #", inv.projectNumber || "—")}
             </div>
+
+            {/* Payment Info */}
+            <div style={{ background: "#fff", borderRadius: 8, padding: 14, border: "1px solid #e5e7eb" }}>
+              <div style={{ color: "#0f766e", fontSize: ".75rem", textTransform: "uppercase", letterSpacing: ".06em", marginBottom: 10, fontWeight: 700 }}>Payment Info</div>
+              {detailRow("Amount Due", fmt(inv.amount))}
+              {detailRow("Payment Due", dueLabel)}
+              {detailRow("Terms", inv.paymentTerms)}
+              {detailRow("Vendor #", inv.vendorNumber)}
+            </div>
+
+            {/* Store & Remit */}
+            <div style={{ background: "#fff", borderRadius: 8, padding: 14, border: "1px solid #e5e7eb" }}>
+              <div style={{ color: "#0f766e", fontSize: ".75rem", textTransform: "uppercase", letterSpacing: ".06em", marginBottom: 10, fontWeight: 700 }}>Store & Remit</div>
+              {detailRow("Store #", inv.storeNumber)}
+              {detailRow("Location", inv.location)}
+              {inv.remitAddress && (
+                <div style={{ marginTop: 8 }}>
+                  <div style={{ color: "#9ca3af", fontSize: ".73rem", marginBottom: 4 }}>Remit Address</div>
+                  <div style={{ fontSize: ".78rem", color: "#374151", lineHeight: 1.5 }}>
+                    {inv.remitAddress.split("|").map((s, i) => <div key={i}>{s.trim()}</div>)}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Remarks */}
             {inv.remarks && (
-              <div style={{ background: "#222240", borderRadius: 8, padding: 14, gridColumn: "1 / -1" }}>
-                <div style={{ color: "#e94560", fontSize: ".78rem", textTransform: "uppercase", letterSpacing: 1, marginBottom: 8, fontWeight: 600 }}>Remarks</div>
-                <div style={{ fontSize: ".82rem", color: "#ddd" }}>{inv.remarks}</div>
+              <div style={{ background: "#fff", borderRadius: 8, padding: 14, border: "1px solid #e5e7eb", gridColumn: "1 / -1" }}>
+                <div style={{ color: "#0f766e", fontSize: ".75rem", textTransform: "uppercase", letterSpacing: ".06em", marginBottom: 8, fontWeight: 700 }}>Remarks</div>
+                <div style={{ fontSize: ".84rem", color: "#374151", lineHeight: 1.6 }}>{inv.remarks}</div>
               </div>
             )}
           </div>
@@ -1867,18 +1917,18 @@ const APInvoiceCard = ({ inv, onAction }) => {
 
       {/* Description */}
       {inv.description && (
-        <div style={{ padding: "10px 20px", fontSize: ".86rem", color: "#aaa", borderBottom: "1px solid #2a2a4a", lineHeight: 1.55 }}>
+        <div style={{ padding: "10px 20px", fontSize: ".85rem", color: "#6b7280", borderBottom: "1px solid #f3f4f6", lineHeight: 1.6, background: "#fff" }}>
           {inv.description}
         </div>
       )}
 
       {/* Controls */}
       {inv.status === "pending" && (
-        <div style={{ padding: "14px 20px", display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+        <div style={{ padding: "14px 20px", display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", background: "#fafafa", borderTop: "1px solid #f3f4f6" }}>
           <select
             value={category}
             onChange={e => setCategory(e.target.value)}
-            style={{ background: "#2a2a4a", color: "#ddd", border: "1px solid #3a3a5a", padding: "7px 10px", borderRadius: 6, fontSize: ".83rem" }}
+            style={{ background: "#fff", color: "#374151", border: "1px solid #d1d5db", padding: "7px 10px", borderRadius: 6, fontSize: ".83rem" }}
           >
             <option>Expense in Budget</option>
             <option>Expense Not in Budget</option>
@@ -1890,19 +1940,19 @@ const APInvoiceCard = ({ inv, onAction }) => {
             value={comment}
             onChange={e => setComment(e.target.value)}
             placeholder="Add comment (optional)"
-            style={{ background: "#2a2a4a", color: "#ddd", border: "1px solid #3a3a5a", padding: "7px 10px", borderRadius: 6, fontSize: ".83rem", flex: 1, minWidth: 180 }}
+            style={{ background: "#fff", color: "#374151", border: "1px solid #d1d5db", padding: "7px 10px", borderRadius: 6, fontSize: ".83rem", flex: 1, minWidth: 180 }}
           />
           <div style={{ display: "flex", gap: 8, marginLeft: "auto" }}>
             <button onClick={() => handleAction("approved")} disabled={saving}
-              style={{ background: "#166534", color: "#fff", border: "none", padding: "9px 20px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem" }}>
+              style={{ background: "#166534", color: "#fff", border: "none", padding: "9px 20px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem", opacity: saving ? .6 : 1 }}>
               ✓ Approve
             </button>
             <button onClick={() => handleAction("rejected")} disabled={saving}
-              style={{ background: "#7f1d1d", color: "#fff", border: "none", padding: "9px 20px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem" }}>
+              style={{ background: "#991b1b", color: "#fff", border: "none", padding: "9px 20px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem", opacity: saving ? .6 : 1 }}>
               ✗ Reject
             </button>
             <button onClick={() => handleAction("ignored")} disabled={saving}
-              style={{ background: "#3a3a5a", color: "#ccc", border: "none", padding: "9px 20px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem" }}>
+              style={{ background: "#e5e7eb", color: "#374151", border: "none", padding: "9px 20px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem", opacity: saving ? .6 : 1 }}>
               Ignore
             </button>
           </div>
@@ -1920,7 +1970,7 @@ const APInvoices = ({ goHome }) => {
   useEffect(() => {
     (async () => {
       try {
-        const q = query(collection(db, "ap_invoices"), orderBy("paymentDue", "asc"));
+        const q = query(collection(db, "ap_invoices"), orderBy("createdAt", "desc"));
         const snap = await getDocs(q);
         setInvoices(snap.docs.map(d => ({ id: d.id, ...d.data() })));
       } catch (e) {
@@ -1934,9 +1984,7 @@ const APInvoices = ({ goHome }) => {
   const handleAction = async (invoiceId, action, category, comment) => {
     try {
       await updateDoc(doc(db, "ap_invoices", invoiceId), {
-        status: action,
-        category,
-        comment,
+        status: action, category, comment,
         actionedAt: serverTimestamp(),
         actionedBy: "scott@aubuchon.com",
       });
@@ -1948,47 +1996,61 @@ const APInvoices = ({ goHome }) => {
 
   const fmt = n => "$" + Number(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const pendingInvoices = invoices.filter(i => i.status === "pending");
-  const pendingTotal = pendingInvoices.reduce((s, i) => s + Number(i.amount), 0);
-  const overdueCount = pendingInvoices.filter(i => {
-    if (!i.paymentDue) return false;
-    const d = i.paymentDue.toDate ? i.paymentDue.toDate() : new Date(i.paymentDue);
-    return d < new Date();
-  }).length;
+  const pendingTotal = pendingInvoices.reduce((s, i) => s + Number(i.amount || 0), 0);
+
+  const parseDue = (val) => {
+    if (!val) return null;
+    if (val && val.toDate) return val.toDate();
+    if (typeof val === "string" && val.includes("/")) {
+      const [m, d, y] = val.split("/");
+      return new Date(`${y}-${m.padStart(2,"0")}-${d.padStart(2,"0")}`);
+    }
+    return new Date(val);
+  };
+  const overdueCount = pendingInvoices.filter(i => { const d = parseDue(i.paymentDue); return d && d < new Date(); }).length;
 
   return (
-    <div style={{ minHeight: "100vh", background: "#0f0f1a", color: "#e0e0e0", fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
+    <div style={{ minHeight: "100vh", background: "#f1f5f9", color: "#111827", fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
+
       {/* Sticky header */}
-      <div style={{ background: "linear-gradient(135deg,#1a1a2e 0%,#16213e 100%)", padding: "18px 32px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "2px solid #e94560", position: "sticky", top: 0, zIndex: 100 }}>
+      <div style={{ background: "#fff", padding: "16px 32px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #e5e7eb", position: "sticky", top: 0, zIndex: 100, boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <button onClick={goHome} style={{ background: "none", border: "none", cursor: "pointer", color: "#888", display: "flex", alignItems: "center", gap: 6, fontSize: ".85rem" }}>
+          <button onClick={goHome} style={{ background: "none", border: "none", cursor: "pointer", color: "#6b7280", display: "flex", alignItems: "center", gap: 6, fontSize: ".85rem", fontWeight: 500 }}>
             <ArrowLeft size={16} /> Back
           </button>
-          <div style={{ width: 1, height: 24, background: "#333" }} />
-          <h1 style={{ fontSize: "1.3rem", color: "#fff", margin: 0 }}>AP Invoice Approval — Aubuchon Hardware</h1>
+          <div style={{ width: 1, height: 24, background: "#e5e7eb" }} />
+          <div>
+            <h1 style={{ fontSize: "1.15rem", color: "#111827", margin: 0, fontWeight: 700 }}>AP Invoice Approval</h1>
+            <div style={{ fontSize: ".75rem", color: "#6b7280" }}>Aubuchon Hardware — Accounts Payable</div>
+          </div>
         </div>
-        <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
-          {[["Invoices", invoices.length], ["Total Pending", fmt(pendingTotal)], ["Need Action", pendingInvoices.length + " remaining"]].map(([lbl, val]) => (
+        <div style={{ display: "flex", gap: 28, alignItems: "center" }}>
+          {[
+            ["Invoices", invoices.length, "#374151"],
+            ["Pending Total", fmt(pendingTotal), "#0f766e"],
+            ["Need Action", `${pendingInvoices.length}`, overdueCount > 0 ? "#dc2626" : "#374151"]
+          ].map(([lbl, val, color]) => (
             <div key={lbl} style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "#e94560" }}>{val}</div>
-              <div style={{ fontSize: ".72rem", color: "#999", textTransform: "uppercase", letterSpacing: 1 }}>{lbl}</div>
+              <div style={{ fontSize: "1.4rem", fontWeight: 800, color }}>{val}</div>
+              <div style={{ fontSize: ".7rem", color: "#9ca3af", textTransform: "uppercase", letterSpacing: ".05em" }}>{lbl}</div>
             </div>
           ))}
         </div>
       </div>
 
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "24px 16px" }}>
-        {loading && <div style={{ textAlign: "center", padding: "60px 0", color: "#888" }}>Loading invoices…</div>}
-        {error && <div style={{ textAlign: "center", padding: "60px 0", color: "#e94560" }}>Error: {error}</div>}
+        {loading && <div style={{ textAlign: "center", padding: "60px 0", color: "#6b7280" }}>Loading invoices…</div>}
+        {error && <div style={{ textAlign: "center", padding: "60px 0", color: "#dc2626" }}>Error: {error}</div>}
 
         {!loading && overdueCount > 0 && (
-          <div style={{ background: "linear-gradient(90deg,#cc0000,#991b1b)", color: "#fff", padding: "12px 20px", borderRadius: 10, marginBottom: 20, fontWeight: 600, display: "flex", alignItems: "center", gap: 10 }}>
-            <span style={{ fontSize: "1.3rem" }}>⚠</span>
-            <span>OVERDUE: {overdueCount} invoice{overdueCount > 1 ? "s are" : " is"} past due — immediate action recommended.</span>
+          <div style={{ background: "linear-gradient(90deg,#fef2f2,#fff5f5)", border: "1px solid #fecaca", color: "#991b1b", padding: "12px 20px", borderRadius: 10, marginBottom: 20, fontWeight: 600, display: "flex", alignItems: "center", gap: 10 }}>
+            <span style={{ fontSize: "1.2rem" }}>⚠</span>
+            <span>OVERDUE: {overdueCount} invoice{overdueCount !== 1 ? "s are" : " is"} past due — immediate action recommended.</span>
           </div>
         )}
 
         {!loading && invoices.length === 0 && (
-          <div style={{ textAlign: "center", padding: "60px 0", color: "#888" }}>No invoices found.</div>
+          <div style={{ textAlign: "center", padding: "60px 0", color: "#6b7280" }}>No invoices found in the queue.</div>
         )}
 
         {invoices.map(inv => (
