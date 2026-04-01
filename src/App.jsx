@@ -1609,6 +1609,19 @@ const SECTIONS = [
     active: false,
   },
   {
+    id: "payment-history",
+    label: "Payment History",
+    description: "View and filter all authorized payments — AP invoices & CC expenses",
+    icon: History,
+    gradient: "from-slate-500 to-slate-700",
+    hoverGradient: "from-slate-600 to-slate-800",
+    bg: "bg-slate-50",
+    border: "border-slate-200",
+    text: "text-slate-700",
+    shadow: "shadow-slate-200/50",
+    active: true,
+  },
+  {
     id: "yoda",
     label: "YODA",
     description: "Power BI analytics -- store performance, KPIs, and operational data",
@@ -1981,7 +1994,7 @@ const APInvoiceCard = ({ inv, onAction }) => {
   );
 };
 
-const APInvoices = ({ goHome }) => {
+const APInvoices = ({ goHome, goHistory }) => {
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -2040,8 +2053,16 @@ const APInvoices = ({ goHome }) => {
           <div style={{ width: 1, height: 24, background: "#e5e7eb" }} />
           <div>
             <h1 style={{ fontSize: "1.15rem", color: "#111827", margin: 0, fontWeight: 700 }}>AP Invoice Approval</h1>
-            <div style={{ fontSize: ".75rem", color: "#6b7280" }}>Aubuchon Hardware — Accounts Payable</div>
+            <div style={{ fontSize: ".73rem", color: "#6b7280" }}>Aubuchon Hardware — Accounts Payable</div>
           </div>
+          {goHistory && (
+            <>
+              <div style={{ width: 1, height: 24, background: "#e5e7eb" }} />
+              <button onClick={goHistory} style={{ background: "#f3f4f6", border: "1px solid #e5e7eb", cursor: "pointer", color: "#374151", display: "flex", alignItems: "center", gap: 6, fontSize: ".82rem", fontWeight: 600, padding: "7px 14px", borderRadius: 8 }}>
+                <History size={14} /> Payment History
+              </button>
+            </>
+          )}
         </div>
         <div style={{ display: "flex", gap: 28, alignItems: "center" }}>
           {[
@@ -2080,6 +2101,289 @@ const APInvoices = ({ goHome }) => {
   );
 };
 
+/* =====================================================================
+   PAYMENT HISTORY  --  Unified view of all authorized payments (AP + CC)
+   ===================================================================== */
+
+const PaymentHistory = ({ goHome, goBack }) => {
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Filters
+  const [filterType, setFilterType] = useState("All");
+  const [filterVendor, setFilterVendor] = useState("");
+  const [filterStatus, setFilterStatus] = useState("All");
+  const [filterStore, setFilterStore] = useState("");
+  const [filterGL, setFilterGL] = useState("");
+  const [filterGroup, setFilterGroup] = useState("All");
+  const [sortCol, setSortCol] = useState("date");
+  const [sortDir, setSortDir] = useState("desc");
+
+  useEffect(() => {
+    (async () => {
+      try {
+        // Load AP invoices
+        const apSnap = await getDocs(collection(db, "ap_invoices"));
+        const apRows = apSnap.docs.map(d => {
+          const data = d.data();
+          return {
+            id: d.id,
+            type: "AP",
+            vendor: data.vendor || "—",
+            amount: Number(data.amount || 0),
+            store: data.storeNumber || "",
+            location: data.location || "",
+            gl: data.glNumber || "",
+            project: data.projectNumber || "",
+            dueDate: data.paymentDue || "",
+            invoiceDate: data.invoiceDate || "",
+            status: data.status || "pending",
+            description: data.description || data.remarks || "",
+            group: data.invoiceGroup || data.category || "—",
+            invoiceNumber: data.invoiceNumber || "",
+            actionedAt: data.actionedAt || null,
+          };
+        });
+
+        // Future: Load CC expenses
+        // const ccSnap = await getDocs(collection(db, "cc_expenses"));
+        // const ccRows = ccSnap.docs.map(d => { ... type: "CC" ... });
+
+        setRows([...apRows /*, ...ccRows */]);
+      } catch (e) {
+        console.error("PaymentHistory load error:", e);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  const fmt = n => "$" + Number(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  const parseDateStr = (val) => {
+    if (!val) return null;
+    if (val.toDate) return val.toDate();
+    if (typeof val === "string" && val.includes("/")) {
+      const [m, d, y] = val.split("/");
+      return new Date(`${y}-${m.padStart(2,"0")}-${d.padStart(2,"0")}`);
+    }
+    return new Date(val);
+  };
+
+  const fmtDate = (val) => {
+    const d = parseDateStr(val);
+    return d && !isNaN(d) ? d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : (val || "—");
+  };
+
+  // Unique values for filter dropdowns
+  const uniqueGroups = [...new Set(rows.map(r => r.group).filter(Boolean))].sort();
+
+  // Apply filters
+  const filtered = rows.filter(r => {
+    if (filterType !== "All" && r.type !== filterType) return false;
+    if (filterStatus !== "All" && r.status !== filterStatus) return false;
+    if (filterVendor && !r.vendor.toLowerCase().includes(filterVendor.toLowerCase())) return false;
+    if (filterStore && !r.store.includes(filterStore) && !r.location.toLowerCase().includes(filterStore.toLowerCase())) return false;
+    if (filterGL && !r.gl.includes(filterGL)) return false;
+    if (filterGroup !== "All" && r.group !== filterGroup) return false;
+    return true;
+  });
+
+  // Sort
+  const sorted = [...filtered].sort((a, b) => {
+    let aVal, bVal;
+    switch (sortCol) {
+      case "vendor": aVal = a.vendor; bVal = b.vendor; break;
+      case "amount": aVal = a.amount; bVal = b.amount; break;
+      case "store": aVal = a.store; bVal = b.store; break;
+      case "status": aVal = a.status; bVal = b.status; break;
+      case "type": aVal = a.type; bVal = b.type; break;
+      case "gl": aVal = a.gl; bVal = b.gl; break;
+      default: // date
+        aVal = parseDateStr(a.dueDate) || new Date(0);
+        bVal = parseDateStr(b.dueDate) || new Date(0);
+    }
+    if (typeof aVal === "string") { aVal = aVal.toLowerCase(); bVal = bVal.toLowerCase(); }
+    if (aVal < bVal) return sortDir === "asc" ? -1 : 1;
+    if (aVal > bVal) return sortDir === "asc" ? 1 : -1;
+    return 0;
+  });
+
+  const toggleSort = (col) => {
+    if (sortCol === col) setSortDir(d => d === "asc" ? "desc" : "asc");
+    else { setSortCol(col); setSortDir("asc"); }
+  };
+
+  // Totals
+  const totalAmount = filtered.reduce((s, r) => s + r.amount, 0);
+  const approvedTotal = filtered.filter(r => r.status === "approved").reduce((s, r) => s + r.amount, 0);
+  const pendingTotal = filtered.filter(r => r.status === "pending").reduce((s, r) => s + r.amount, 0);
+  const rejectedTotal = filtered.filter(r => r.status === "rejected").reduce((s, r) => s + r.amount, 0);
+
+  const statusBadge = (status) => {
+    const cfg = {
+      approved: { bg: "#dcfce7", color: "#166534", border: "#bbf7d0", label: "Approved" },
+      rejected: { bg: "#fee2e2", color: "#991b1b", border: "#fecaca", label: "Rejected" },
+      ignored:  { bg: "#f3f4f6", color: "#4b5563", border: "#e5e7eb", label: "Ignored" },
+      pending:  { bg: "#fef3c7", color: "#92400e", border: "#fde68a", label: "Pending" },
+    };
+    const c = cfg[status] || cfg.pending;
+    return <span style={{ background: c.bg, color: c.color, border: `1px solid ${c.border}`, padding: "2px 10px", borderRadius: 12, fontSize: ".72rem", fontWeight: 600 }}>{c.label}</span>;
+  };
+
+  const typeBadge = (type) => {
+    const cfg = {
+      AP: { bg: "#eff6ff", color: "#1d4ed8", border: "#bfdbfe" },
+      CC: { bg: "#fdf2f8", color: "#be185d", border: "#fbcfe8" },
+    };
+    const c = cfg[type] || cfg.AP;
+    return <span style={{ background: c.bg, color: c.color, border: `1px solid ${c.border}`, padding: "2px 8px", borderRadius: 10, fontSize: ".7rem", fontWeight: 700 }}>{type}</span>;
+  };
+
+  const sortIcon = (col) => sortCol === col ? (sortDir === "asc" ? " ▲" : " ▼") : "";
+
+  const selectStyle = { padding: "6px 10px", borderRadius: 6, border: "1px solid #d1d5db", fontSize: ".8rem", background: "#fff", color: "#374151", minWidth: 90 };
+  const inputStyle = { ...selectStyle, minWidth: 100 };
+
+  return (
+    <div style={{ minHeight: "100vh", background: "#f1f5f9", color: "#111827", fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
+
+      {/* Sticky header */}
+      <div style={{ background: "#fff", padding: "14px 24px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #e5e7eb", position: "sticky", top: 0, zIndex: 100, boxShadow: "0 1px 4px rgba(0,0,0,0.06)", flexWrap: "wrap", gap: 10 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+          <button onClick={goBack || goHome} style={{ background: "none", border: "none", cursor: "pointer", color: "#6b7280", display: "flex", alignItems: "center", gap: 6, fontSize: ".85rem", fontWeight: 500 }}>
+            <ArrowLeft size={16} /> Back
+          </button>
+          <div style={{ width: 1, height: 24, background: "#e5e7eb" }} />
+          <div>
+            <h1 style={{ fontSize: "1.15rem", color: "#111827", margin: 0, fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>
+              <History size={18} /> Payment History
+            </h1>
+            <div style={{ fontSize: ".73rem", color: "#6b7280" }}>All authorized payments — AP Invoices & CC Expenses</div>
+          </div>
+        </div>
+        <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
+          {[
+            ["Records", filtered.length, "#374151"],
+            ["Total", fmt(totalAmount), "#0f766e"],
+            ["Approved", fmt(approvedTotal), "#16a34a"],
+          ].map(([lbl, val, color]) => (
+            <div key={lbl} style={{ textAlign: "center" }}>
+              <div style={{ fontSize: "1.2rem", fontWeight: 800, color }}>{val}</div>
+              <div style={{ fontSize: ".68rem", color: "#9ca3af", textTransform: "uppercase", letterSpacing: ".05em" }}>{lbl}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "20px 16px" }}>
+
+        {/* Filters */}
+        <div style={{ background: "#fff", borderRadius: 10, border: "1px solid #e5e7eb", padding: "14px 18px", marginBottom: 16, display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
+          <div style={{ fontSize: ".75rem", fontWeight: 700, color: "#6b7280", textTransform: "uppercase", letterSpacing: ".05em", marginRight: 4 }}>Filters:</div>
+          <select value={filterType} onChange={e => setFilterType(e.target.value)} style={selectStyle}>
+            <option value="All">All Types</option>
+            <option value="AP">AP Invoice</option>
+            <option value="CC">CC Expense</option>
+          </select>
+          <input placeholder="Vendor..." value={filterVendor} onChange={e => setFilterVendor(e.target.value)} style={inputStyle} />
+          <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} style={selectStyle}>
+            <option value="All">All Status</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+            <option value="ignored">Ignored</option>
+          </select>
+          <input placeholder="Store #..." value={filterStore} onChange={e => setFilterStore(e.target.value)} style={{ ...inputStyle, minWidth: 80 }} />
+          <input placeholder="GL #..." value={filterGL} onChange={e => setFilterGL(e.target.value)} style={{ ...inputStyle, minWidth: 80 }} />
+          <select value={filterGroup} onChange={e => setFilterGroup(e.target.value)} style={selectStyle}>
+            <option value="All">All Groups</option>
+            {uniqueGroups.map(g => <option key={g} value={g}>{g}</option>)}
+          </select>
+          {(filterVendor || filterStore || filterGL || filterType !== "All" || filterStatus !== "All" || filterGroup !== "All") && (
+            <button onClick={() => { setFilterType("All"); setFilterVendor(""); setFilterStatus("All"); setFilterStore(""); setFilterGL(""); setFilterGroup("All"); }}
+              style={{ background: "#fee2e2", color: "#991b1b", border: "1px solid #fecaca", borderRadius: 6, padding: "6px 12px", fontSize: ".78rem", fontWeight: 600, cursor: "pointer" }}>
+              Clear
+            </button>
+          )}
+        </div>
+
+        {loading && <div style={{ textAlign: "center", padding: "60px 0", color: "#6b7280" }}>Loading payment history…</div>}
+
+        {!loading && (
+          <div style={{ background: "#fff", borderRadius: 10, border: "1px solid #e5e7eb", overflow: "hidden" }}>
+            <div style={{ overflowX: "auto" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: ".82rem" }}>
+                <thead>
+                  <tr style={{ background: "#f8fafc", borderBottom: "2px solid #e5e7eb" }}>
+                    {[
+                      { key: "type", label: "Type", w: 60 },
+                      { key: "vendor", label: "Vendor", w: 160 },
+                      { key: "amount", label: "Amount", w: 100 },
+                      { key: "store", label: "Store / Location", w: 130 },
+                      { key: "gl", label: "GL #", w: 110 },
+                      { key: "project", label: "Project #", w: 80 },
+                      { key: "date", label: "Due Date", w: 100 },
+                      { key: "status", label: "Status", w: 90 },
+                      { key: "desc", label: "Description", w: 180 },
+                      { key: "group", label: "Group", w: 100 },
+                    ].map(col => (
+                      <th key={col.key}
+                        onClick={() => toggleSort(col.key)}
+                        style={{ padding: "10px 12px", textAlign: col.key === "amount" ? "right" : "left", fontWeight: 700, color: "#374151", cursor: "pointer", userSelect: "none", whiteSpace: "nowrap", fontSize: ".75rem", textTransform: "uppercase", letterSpacing: ".04em", minWidth: col.w }}>
+                        {col.label}{sortIcon(col.key)}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {sorted.length === 0 && (
+                    <tr><td colSpan={10} style={{ textAlign: "center", padding: "40px 0", color: "#9ca3af" }}>No records match the current filters.</td></tr>
+                  )}
+                  {sorted.map((r, idx) => (
+                    <tr key={r.id} style={{ borderBottom: "1px solid #f3f4f6", background: idx % 2 === 0 ? "#fff" : "#fafafa" }}>
+                      <td style={{ padding: "10px 12px" }}>{typeBadge(r.type)}</td>
+                      <td style={{ padding: "10px 12px", fontWeight: 600, color: "#111827" }}>{r.vendor}</td>
+                      <td style={{ padding: "10px 12px", textAlign: "right", fontWeight: 700, color: "#0f766e", fontVariantNumeric: "tabular-nums" }}>{fmt(r.amount)}</td>
+                      <td style={{ padding: "10px 12px", color: "#374151" }}>{r.store}{r.location ? ` — ${r.location}` : ""}</td>
+                      <td style={{ padding: "10px 12px", color: "#4338ca", fontFamily: "monospace", fontSize: ".78rem" }}>{r.gl || "—"}</td>
+                      <td style={{ padding: "10px 12px", color: "#374151" }}>{r.project || "—"}</td>
+                      <td style={{ padding: "10px 12px", color: "#374151", whiteSpace: "nowrap" }}>{fmtDate(r.dueDate)}</td>
+                      <td style={{ padding: "10px 12px" }}>{statusBadge(r.status)}</td>
+                      <td style={{ padding: "10px 12px", color: "#6b7280", maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.description || "—"}</td>
+                      <td style={{ padding: "10px 12px", color: "#374151", fontSize: ".78rem" }}>{r.group || "—"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Totals footer */}
+            <div style={{ borderTop: "2px solid #e5e7eb", background: "#f8fafc", padding: "14px 18px", display: "flex", gap: 24, flexWrap: "wrap", justifyContent: "space-between", alignItems: "center" }}>
+              <div style={{ fontSize: ".8rem", color: "#6b7280" }}>
+                Showing <strong style={{ color: "#111827" }}>{filtered.length}</strong> of {rows.length} records
+              </div>
+              <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
+                {[
+                  ["Total", totalAmount, "#374151"],
+                  ["Approved", approvedTotal, "#16a34a"],
+                  ["Pending", pendingTotal, "#d97706"],
+                  ["Rejected", rejectedTotal, "#dc2626"],
+                ].map(([lbl, val, color]) => (
+                  <div key={lbl} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <span style={{ fontSize: ".75rem", color: "#9ca3af", textTransform: "uppercase", fontWeight: 600 }}>{lbl}:</span>
+                    <span style={{ fontSize: ".9rem", fontWeight: 800, color, fontVariantNumeric: "tabular-nums" }}>{fmt(val)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
 export default function App() {
   const [activeSection, setActiveSection] = useState(null);
 
@@ -2087,10 +2391,12 @@ export default function App() {
     return <ITProjectDashboard goHome={() => setActiveSection(null)} />;
   }
 
-  if (activeSection === "ap-invoices") return <APInvoices goHome={() => setActiveSection(null)} />;
+  if (activeSection === "ap-invoices") return <APInvoices goHome={() => setActiveSection(null)} goHistory={() => setActiveSection("payment-history")} />;
+
+  if (activeSection === "payment-history") return <PaymentHistory goHome={() => setActiveSection(null)} goBack={() => setActiveSection(null)} />;
 
   // Future sections:
-  // if (activeSection === "wells-cc") return <WellsCC goHome={() => setActiveSection(null)} />;
+  // if (activeSection === "wells-cc") return <WellsCC goHome={() => setActiveSection(null)} goHistory={() => setActiveSection("payment-history")} />;
   // if (activeSection === "yoda") return <YODADashboard goHome={() => setActiveSection(null)} />;
 
   return <HomeScreen onNavigate={setActiveSection} />;
