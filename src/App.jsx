@@ -1762,7 +1762,6 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
   const statusColors = {
     approved: { border: "#16a34a", bg: "#f0fdf4" },
     rejected:  { border: "#dc2626", bg: "#fef2f2" },
-    ignored:   { border: "#9ca3af", bg: "#f9fafb" },
     pending:   { border: "#e5e7eb", bg: "#ffffff" },
   };
   const sc = statusColors[displayStatus] || statusColors.pending;
@@ -1805,7 +1804,7 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
               border: `1px solid ${displayStatus === "approved" ? "#bbf7d0" : displayStatus === "rejected" ? "#fecaca" : "#e5e7eb"}`
             }}>
               {decision && "⏳ "}
-              {displayStatus === "approved" ? "✓ Approved" : displayStatus === "rejected" ? "✗ Rejected" : "Ignored"}
+              {displayStatus === "approved" ? "✓ Approved" : "✗ Rejected"}
               {decision && " (unsaved)"}
             </span>
           )}
@@ -1991,10 +1990,7 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
               style={{ background: decision?.action === "rejected" ? "#7f1d1d" : "#991b1b", color: "#fff", border: decision?.action === "rejected" ? "2px solid #dc2626" : "none", padding: "9px 20px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem" }}>
               ✗ Reject
             </button>
-            <button onClick={() => handleDecision("ignored")}
-              style={{ background: decision?.action === "ignored" ? "#d1d5db" : "#e5e7eb", color: "#374151", border: decision?.action === "ignored" ? "2px solid #9ca3af" : "none", padding: "9px 20px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem" }}>
-              Ignore
-            </button>
+
             {decision && (
               <button onClick={() => onClearDecision(inv.id)}
                 style={{ background: "#fff", color: "#dc2626", border: "1px solid #fecaca", padding: "9px 14px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem" }}>
@@ -2014,7 +2010,6 @@ const APInvoices = ({ goHome, goHistory }) => {
   const [error, setError] = useState(null);
   const [decisions, setDecisions] = useState({});  // { [invoiceId]: { action, category, comment } }
   const [submitting, setSubmitting] = useState(false);
-  const [jiffySubmitting, setJiffySubmitting] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -2039,78 +2034,32 @@ const APInvoices = ({ goHome, goHistory }) => {
     setDecisions(prev => { const next = { ...prev }; delete next[invoiceId]; return next; });
   };
 
-  // Batch submit — writes ALL decisions to Firestore at once
+  // Batch submit — writes decisions to Firestore AND auto-approves in Jiffy
   const submitAll = async () => {
     const entries = Object.entries(decisions);
     if (entries.length === 0) return;
     setSubmitting(true);
     try {
       for (const [invoiceId, { action, category, comment }] of entries) {
-        if (action === "ignored") {
-          await deleteDoc(doc(db, "ap_invoices", invoiceId));
-        } else {
-          await updateDoc(doc(db, "ap_invoices", invoiceId), {
-            status: action, category, comment,
-            actionedAt: serverTimestamp(),
-            actionedBy: "scott@aubuchon.com",
-          });
-        }
+        await updateDoc(doc(db, "ap_invoices", invoiceId), {
+          status: action, category, comment,
+          actionedAt: serverTimestamp(),
+          actionedBy: "scott@aubuchon.com",
+          jiffyAction: "pending",
+          jiffyGroup: category || "Expense in Budget",
+        });
       }
-      // Update local state to reflect saved statuses
-      setInvoices(prev => prev
-          .filter(inv => !(decisions[inv.id] && decisions[inv.id].action === "ignored"))
-          .map(inv => {
-            const d = decisions[inv.id];
-            return d ? { ...inv, status: d.action, category: d.category, comment: d.comment } : inv;
-          }));
+      setInvoices(prev => prev.map(inv => {
+        const d = decisions[inv.id];
+        return d ? { ...inv, status: d.action, category: d.category, comment: d.comment, jiffyAction: "pending" } : inv;
+      }));
       setDecisions({});
-      alert(`Successfully submitted ${entries.length} invoice${entries.length !== 1 ? "s" : ""}!`);
+      alert(`Submitted ${entries.length} invoice${entries.length !== 1 ? "s" : ""} — queued for Jiffy approval.`);
     } catch (e) {
       alert("Error submitting invoices: " + e.message);
     } finally {
       setSubmitting(false);
     }
-  };
-
-  // Push approved/rejected invoices to Jiffy queue on demand
-  const submitToJiffy = async () => {
-    const eligible = invoices.filter(i =>
-      (i.status === "approved" || i.status === "rejected") &&
-      (!i.jiffyAction || i.jiffyAction === "ready")
-    );
-    if (eligible.length === 0) return;
-    setJiffySubmitting(true);
-    try {
-      for (const inv of eligible) {
-        await updateDoc(doc(db, "ap_invoices", inv.id), {
-          jiffyAction: "pending",
-          jiffyGroup: inv.category || "Expense in Budget",
-        });
-      }
-      setInvoices(prev => prev.map(inv => {
-        const match = eligible.find(e => e.id === inv.id);
-        return match ? { ...inv, jiffyAction: "pending" } : inv;
-      }));
-      alert(`${eligible.length} invoice(s) queued for Jiffy. Open Cowork to run the submission task.`);
-    } catch (e) {
-      alert("Error queuing for Jiffy: " + e.message);
-    } finally {
-      setJiffySubmitting(false);
-    }
-  };
-
-  const fmt = n => "$" + Number(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  const pendingInvoices = invoices.filter(i => i.status === "pending");
-  const pendingTotal = pendingInvoices.reduce((s, i) => s + Number(i.amount || 0), 0);
-
-  const parseDue = (val) => {
-    if (!val) return null;
-    if (val && val.toDate) return val.toDate();
-    if (typeof val === "string" && val.includes("/")) {
-      const [m, d, y] = val.split("/");
-      return new Date(`${y}-${m.padStart(2,"0")}-${d.padStart(2,"0")}`);
-    }
-    return new Date(val);
   };
   const overdueCount = pendingInvoices.filter(i => { const d = parseDue(i.paymentDue); return d && d < new Date(); }).length;
 
@@ -2131,38 +2080,7 @@ const APInvoices = ({ goHome, goHistory }) => {
           {goHistory && (
             <>
               <div style={{ width: 1, height: 24, background: "#e5e7eb" }} />
-              <button onClick={goHistory} style={{ background: "#f3f4f6", border: "1px solid #e5e7eb", cursor: "pointer", color: "#374151", display: "flex", alignItems: "center", gap: 6, fontSize: ".82rem", fontWeight: 600, padding: "7px 14px", borderRadius: 8 }}>
-                <History size={14} /> Payment History
-              </button>
-            </>
-          )}
-          {(() => {
-            const jiffyEligible = invoices.filter(i =>
-              (i.status === "approved" || i.status === "rejected") &&
-              (!i.jiffyAction || i.jiffyAction === "ready")
-            );
-            const jiffyPending = invoices.filter(i => i.jiffyAction === "pending").length;
-            if (jiffyEligible.length === 0 && jiffyPending === 0) return null;
-            return (
-              <>
-                <div style={{ width: 1, height: 24, background: "#e5e7eb" }} />
-                {jiffyEligible.length > 0 ? (
-                  <button onClick={submitToJiffy} disabled={jiffySubmitting}
-                    style={{ background: "linear-gradient(135deg, #7c3aed, #6d28d9)", color: "#fff", border: "none", cursor: "pointer",
-                      display: "flex", alignItems: "center", gap: 6, fontSize: ".82rem", fontWeight: 600,
-                      padding: "7px 14px", borderRadius: 8, opacity: jiffySubmitting ? 0.6 : 1,
-                      boxShadow: "0 1px 4px rgba(124,58,237,0.3)" }}>
-                    {jiffySubmitting ? "Queuing\u2026" : `Push to Jiffy (${jiffyEligible.length})`}
-                  </button>
-                ) : (
-                  <div style={{ fontSize: ".78rem", color: "#7c3aed", fontWeight: 600, display: "flex", alignItems: "center", gap: 6,
-                    background: "#f5f3ff", padding: "6px 12px", borderRadius: 8, border: "1px solid #e9d5ff" }}>
-                    {jiffyPending} in Jiffy queue
-                  </div>
-                )}
-              </>
-            );
-          })()}
+              <button onClick={goHistory} style={{ background: "#f3f4f6", border: "1px solid #e5e7eb", cursor: "pointer", color: "#374151", display: "flex", alignItems: "c
         </div>
         <div style={{ display: "flex", gap: 28, alignItems: "center" }}>
           {[
@@ -2217,12 +2135,10 @@ const APInvoices = ({ goHome, goHistory }) => {
               {Object.values(decisions).filter(d => d.action === "approved").length} approved
               {" · "}
               {Object.values(decisions).filter(d => d.action === "rejected").length} rejected
-              {" · "}
-              {Object.values(decisions).filter(d => d.action === "ignored").length} ignored
-              {" · "}
+                            {" · "}
               Total: {fmt(Object.entries(decisions).reduce((sum, [id, d]) => {
                 const inv = invoices.find(i => i.id === id);
-                return sum + (d.action !== "ignored" ? Number(inv?.amount || 0) : 0);
+                return sum + Number(inv?.amount || 0);
               }, 0))}
             </div>
           </div>
