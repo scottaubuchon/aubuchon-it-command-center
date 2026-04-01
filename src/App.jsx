@@ -1723,11 +1723,10 @@ function HomeScreen({ onNavigate }) {
    APP SHELL  --  Routes between Home and section views
    ===================================================================== */
 
-const APInvoiceCard = ({ inv, onAction }) => {
+const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
   const [openPanel, setOpenPanel] = useState(null);
-  const [category, setCategory] = useState(inv.category || "Expense in Budget");
-  const [comment, setComment] = useState(inv.comment || "");
-  const [saving, setSaving] = useState(false);
+  const [category, setCategory] = useState(decision?.category || inv.category || "Expense in Budget");
+  const [comment, setComment] = useState(decision?.comment || inv.comment || "");
 
   const togglePanel = (p) => setOpenPanel(prev => prev === p ? null : p);
 
@@ -1736,7 +1735,6 @@ const APInvoiceCard = ({ inv, onAction }) => {
   const parseDue = (val) => {
     if (!val) return null;
     if (val && val.toDate) return val.toDate();
-    // Handle "MM/DD/YYYY" string format
     if (typeof val === "string" && val.includes("/")) {
       const [m, d, y] = val.split("/");
       return new Date(`${y}-${m.padStart(2,"0")}-${d.padStart(2,"0")}`);
@@ -1750,19 +1748,24 @@ const APInvoiceCard = ({ inv, onAction }) => {
     ? dueDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
     : inv.paymentDue || "—";
 
-  const handleAction = async (action) => {
-    setSaving(true);
-    await onAction(inv.id, action, category, comment);
-    setSaving(false);
+  const handleDecision = (action) => {
+    onDecision(inv.id, action, category, comment);
   };
 
+  // Update parent when category/comment change if a decision is already set
+  useEffect(() => {
+    if (decision) onDecision(inv.id, decision.action, category, comment);
+  }, [category, comment]);
+
+  // Visual state: use decision (local batch) if present, otherwise use saved status
+  const displayStatus = decision ? decision.action : inv.status;
   const statusColors = {
     approved: { border: "#16a34a", bg: "#f0fdf4" },
     rejected:  { border: "#dc2626", bg: "#fef2f2" },
     ignored:   { border: "#9ca3af", bg: "#f9fafb" },
     pending:   { border: "#e5e7eb", bg: "#ffffff" },
   };
-  const sc = statusColors[inv.status] || statusColors.pending;
+  const sc = statusColors[displayStatus] || statusColors.pending;
 
   const chip = (text, color = "#6b7280", bg = "#f3f4f6") => (
     <span style={{ background: bg, color, border: `1px solid ${color}22`, padding: "3px 11px", borderRadius: 20, fontSize: ".75rem", fontWeight: 500, display: "inline-flex", alignItems: "center", gap: 4 }}>
@@ -1794,14 +1797,16 @@ const APInvoiceCard = ({ inv, onAction }) => {
           </div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          {inv.status !== "pending" && (
+          {displayStatus !== "pending" && (
             <span style={{
               fontSize: ".78rem", fontWeight: 700, padding: "4px 14px", borderRadius: 20,
-              background: inv.status === "approved" ? "#dcfce7" : inv.status === "rejected" ? "#fee2e2" : "#f3f4f6",
-              color: inv.status === "approved" ? "#166534" : inv.status === "rejected" ? "#991b1b" : "#4b5563",
-              border: `1px solid ${inv.status === "approved" ? "#bbf7d0" : inv.status === "rejected" ? "#fecaca" : "#e5e7eb"}`
+              background: displayStatus === "approved" ? "#dcfce7" : displayStatus === "rejected" ? "#fee2e2" : "#f3f4f6",
+              color: displayStatus === "approved" ? "#166534" : displayStatus === "rejected" ? "#991b1b" : "#4b5563",
+              border: `1px solid ${displayStatus === "approved" ? "#bbf7d0" : displayStatus === "rejected" ? "#fecaca" : "#e5e7eb"}`
             }}>
-              {inv.status === "approved" ? "✓ Approved" : inv.status === "rejected" ? "✗ Rejected" : "Ignored"}
+              {decision && "⏳ "}
+              {displayStatus === "approved" ? "✓ Approved" : displayStatus === "rejected" ? "✗ Rejected" : "Ignored"}
+              {decision && " (unsaved)"}
             </span>
           )}
           <div style={{ fontSize: "1.5rem", fontWeight: 800, color: overdue ? "#dc2626" : "#0f766e" }}>{fmt(inv.amount)}</div>
@@ -1954,9 +1959,9 @@ const APInvoiceCard = ({ inv, onAction }) => {
         </div>
       )}
 
-      {/* Controls */}
+      {/* Controls — only show for pending invoices (not yet saved to Firestore) */}
       {inv.status === "pending" && (
-        <div style={{ padding: "14px 20px", display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", background: "#fafafa", borderTop: "1px solid #f3f4f6" }}>
+        <div style={{ padding: "14px 20px", display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", background: decision ? (decision.action === "approved" ? "#f0fdf4" : decision.action === "rejected" ? "#fef2f2" : "#f9fafb") : "#fafafa", borderTop: "1px solid #f3f4f6" }}>
           <select
             value={category}
             onChange={e => setCategory(e.target.value)}
@@ -1978,18 +1983,24 @@ const APInvoiceCard = ({ inv, onAction }) => {
             style={{ background: "#fff", color: "#374151", border: "1px solid #d1d5db", padding: "7px 10px", borderRadius: 6, fontSize: ".83rem", flex: 1, minWidth: 180 }}
           />
           <div style={{ display: "flex", gap: 8, marginLeft: "auto" }}>
-            <button onClick={() => handleAction("approved")} disabled={saving}
-              style={{ background: "#166534", color: "#fff", border: "none", padding: "9px 20px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem", opacity: saving ? .6 : 1 }}>
+            <button onClick={() => handleDecision("approved")}
+              style={{ background: decision?.action === "approved" ? "#0f5132" : "#166534", color: "#fff", border: decision?.action === "approved" ? "2px solid #16a34a" : "none", padding: "9px 20px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem" }}>
               ✓ Approve
             </button>
-            <button onClick={() => handleAction("rejected")} disabled={saving}
-              style={{ background: "#991b1b", color: "#fff", border: "none", padding: "9px 20px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem", opacity: saving ? .6 : 1 }}>
+            <button onClick={() => handleDecision("rejected")}
+              style={{ background: decision?.action === "rejected" ? "#7f1d1d" : "#991b1b", color: "#fff", border: decision?.action === "rejected" ? "2px solid #dc2626" : "none", padding: "9px 20px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem" }}>
               ✗ Reject
             </button>
-            <button onClick={() => handleAction("ignored")} disabled={saving}
-              style={{ background: "#e5e7eb", color: "#374151", border: "none", padding: "9px 20px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem", opacity: saving ? .6 : 1 }}>
+            <button onClick={() => handleDecision("ignored")}
+              style={{ background: decision?.action === "ignored" ? "#d1d5db" : "#e5e7eb", color: "#374151", border: decision?.action === "ignored" ? "2px solid #9ca3af" : "none", padding: "9px 20px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem" }}>
               Ignore
             </button>
+            {decision && (
+              <button onClick={() => onClearDecision(inv.id)}
+                style={{ background: "#fff", color: "#dc2626", border: "1px solid #fecaca", padding: "9px 14px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem" }}>
+                ↩ Undo
+              </button>
+            )}
           </div>
         </div>
       )}
@@ -2001,6 +2012,8 @@ const APInvoices = ({ goHome, goHistory }) => {
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [decisions, setDecisions] = useState({});  // { [invoiceId]: { action, category, comment } }
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -2016,19 +2029,41 @@ const APInvoices = ({ goHome, goHistory }) => {
     })();
   }, []);
 
-  const handleAction = async (invoiceId, action, category, comment) => {
+  // Local-only — updates batch decisions state (nothing saved to Firestore yet)
+  const handleDecision = (invoiceId, action, category, comment) => {
+    setDecisions(prev => ({ ...prev, [invoiceId]: { action, category, comment } }));
+  };
+
+  const clearDecision = (invoiceId) => {
+    setDecisions(prev => { const next = { ...prev }; delete next[invoiceId]; return next; });
+  };
+
+  // Batch submit — writes ALL decisions to Firestore at once
+  const submitAll = async () => {
+    const entries = Object.entries(decisions);
+    if (entries.length === 0) return;
+    setSubmitting(true);
     try {
-      await updateDoc(doc(db, "ap_invoices", invoiceId), {
-        status: action, category, comment,
-        actionedAt: serverTimestamp(),
-        actionedBy: "scott@aubuchon.com",
-        // Flag for Jiffy submission agent — "pending" means needs to be submitted in Jiffy
-        jiffyAction: action === "ignored" ? "skip" : "pending",
-        jiffyGroup: category,
-      });
-      setInvoices(prev => prev.map(inv => inv.id === invoiceId ? { ...inv, status: action, category, comment } : inv));
+      for (const [invoiceId, { action, category, comment }] of entries) {
+        await updateDoc(doc(db, "ap_invoices", invoiceId), {
+          status: action, category, comment,
+          actionedAt: serverTimestamp(),
+          actionedBy: "scott@aubuchon.com",
+          jiffyAction: action === "ignored" ? "skip" : "pending",
+          jiffyGroup: category,
+        });
+      }
+      // Update local state to reflect saved statuses
+      setInvoices(prev => prev.map(inv => {
+        const d = decisions[inv.id];
+        return d ? { ...inv, status: d.action, category: d.category, comment: d.comment } : inv;
+      }));
+      setDecisions({});
+      alert(`Successfully submitted ${entries.length} invoice${entries.length !== 1 ? "s" : ""}!`);
     } catch (e) {
-      alert("Error updating invoice: " + e.message);
+      alert("Error submitting invoices: " + e.message);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -2100,9 +2135,50 @@ const APInvoices = ({ goHome, goHistory }) => {
         )}
 
         {invoices.map(inv => (
-          <APInvoiceCard key={inv.id} inv={inv} onAction={handleAction} />
+          <APInvoiceCard key={inv.id} inv={inv} decision={decisions[inv.id]} onDecision={handleDecision} onClearDecision={clearDecision} />
         ))}
+
+        {/* Spacer so sticky bar doesn't cover last card */}
+        {Object.keys(decisions).length > 0 && <div style={{ height: 100 }} />}
       </div>
+
+      {/* Sticky Submit All bar */}
+      {Object.keys(decisions).length > 0 && (
+        <div style={{
+          position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 200,
+          background: "linear-gradient(135deg, #0f766e 0%, #065f46 100%)",
+          padding: "14px 32px", display: "flex", justifyContent: "space-between", alignItems: "center",
+          boxShadow: "0 -4px 20px rgba(0,0,0,0.15)", borderTop: "2px solid #10b981"
+        }}>
+          <div style={{ color: "#fff" }}>
+            <div style={{ fontWeight: 700, fontSize: "1rem" }}>
+              {Object.keys(decisions).length} invoice{Object.keys(decisions).length !== 1 ? "s" : ""} ready to submit
+            </div>
+            <div style={{ fontSize: ".78rem", opacity: .85 }}>
+              {Object.values(decisions).filter(d => d.action === "approved").length} approved
+              {" · "}
+              {Object.values(decisions).filter(d => d.action === "rejected").length} rejected
+              {" · "}
+              {Object.values(decisions).filter(d => d.action === "ignored").length} ignored
+              {" · "}
+              Total: {fmt(Object.entries(decisions).reduce((sum, [id, d]) => {
+                const inv = invoices.find(i => i.id === id);
+                return sum + (d.action !== "ignored" ? Number(inv?.amount || 0) : 0);
+              }, 0))}
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: 12 }}>
+            <button onClick={() => setDecisions({})}
+              style={{ background: "rgba(255,255,255,0.15)", color: "#fff", border: "1px solid rgba(255,255,255,0.3)", padding: "10px 22px", borderRadius: 8, fontWeight: 600, cursor: "pointer", fontSize: ".88rem" }}>
+              Clear All
+            </button>
+            <button onClick={submitAll} disabled={submitting}
+              style={{ background: "#fff", color: "#065f46", border: "none", padding: "10px 30px", borderRadius: 8, fontWeight: 700, cursor: "pointer", fontSize: ".92rem", opacity: submitting ? .6 : 1, boxShadow: "0 2px 8px rgba(0,0,0,0.15)" }}>
+              {submitting ? "Submitting…" : `Submit All (${Object.keys(decisions).length})`}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
