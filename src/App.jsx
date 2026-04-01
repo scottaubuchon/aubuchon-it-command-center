@@ -1826,34 +1826,29 @@ const APInvoiceCard = ({ inv, onAction }) => {
       {/* Invoice Preview panel */}
       {openPanel === "preview" && (
         <div style={{ padding: "16px 20px", borderBottom: "1px solid #f3f4f6", background: "#f8fafc" }}>
-          <div style={{ background: "#fff", color: "#333", borderRadius: 8, padding: 28, maxWidth: 640, margin: "0 auto", border: "1px solid #e5e7eb" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 14, paddingBottom: 12, borderBottom: "2px solid #111" }}>
-              <div style={{ fontWeight: 700, fontSize: "1.1rem" }}>{inv.vendor}</div>
+          <div style={{ background: "#fff", color: "#333", borderRadius: 8, padding: 16, maxWidth: 720, margin: "0 auto", border: "1px solid #e5e7eb" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, paddingBottom: 10, borderBottom: "2px solid #111" }}>
+              <div style={{ fontWeight: 700, fontSize: "1.05rem" }}>{inv.vendor}</div>
               <div style={{ textAlign: "right" }}>
-                <div style={{ fontWeight: 700, fontSize: ".9rem" }}>Invoice #{inv.invoiceNumber}</div>
-                <div style={{ fontSize: ".8rem", color: "#666" }}>{inv.invoiceDate}</div>
+                <div style={{ fontWeight: 700, fontSize: ".85rem" }}>Invoice #{inv.invoiceNumber}</div>
+                <div style={{ fontSize: ".78rem", color: "#666" }}>{inv.invoiceDate}</div>
               </div>
             </div>
-            <div style={{ display: "flex", gap: 20, flexWrap: "wrap", background: "#f5f5f5", padding: 10, borderRadius: 4, marginBottom: 14 }}>
+            <img
+              src={`/invoices/${inv.invoiceNumber}.png`}
+              alt={`Invoice ${inv.invoiceNumber}`}
+              style={{ width: "100%", borderRadius: 6, border: "1px solid #e5e7eb", marginBottom: 12 }}
+              onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block'; }}
+            />
+            <div style={{ display: "none", fontSize: ".8rem", color: "#999", textAlign: "center", fontStyle: "italic", marginBottom: 12 }}>
+              Invoice image not available — use "Open in Jiffy" to view original
+            </div>
+            <div style={{ display: "flex", gap: 16, flexWrap: "wrap", background: "#f5f5f5", padding: 10, borderRadius: 4 }}>
               <div><div style={{ fontSize: ".68rem", textTransform: "uppercase", color: "#888" }}>Amount Due</div><strong>{fmt(inv.amount)}</strong></div>
               <div><div style={{ fontSize: ".68rem", textTransform: "uppercase", color: "#888" }}>Due Date</div><strong>{dueLabel}</strong></div>
               <div><div style={{ fontSize: ".68rem", textTransform: "uppercase", color: "#888" }}>Store</div><strong>#{inv.storeNumber}</strong></div>
               {inv.paymentTerms && <div><div style={{ fontSize: ".68rem", textTransform: "uppercase", color: "#888" }}>Terms</div><strong>{inv.paymentTerms}</strong></div>}
             </div>
-            {inv.description && (
-              <div style={{ fontSize: ".82rem", color: "#444", marginBottom: 14, lineHeight: 1.5 }}>
-                <div style={{ fontSize: ".7rem", textTransform: "uppercase", color: "#999", marginBottom: 4, fontWeight: 600 }}>Description</div>
-                {inv.description}
-              </div>
-            )}
-            {inv.pdfUrl ? (
-              <a href={inv.pdfUrl} target="_blank" rel="noopener noreferrer"
-                style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "#0f766e", color: "#fff", padding: "10px 20px", borderRadius: 6, fontSize: ".85rem", fontWeight: 600, textDecoration: "none", cursor: "pointer" }}>
-                📄 View Invoice PDF
-              </a>
-            ) : (
-              <div style={{ fontSize: ".8rem", color: "#999", textAlign: "center", fontStyle: "italic" }}>PDF not available — use "Open in Jiffy" to view original</div>
-            )}
           </div>
         </div>
       )}
