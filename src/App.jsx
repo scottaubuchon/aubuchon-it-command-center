@@ -1966,6 +1966,9 @@ const APInvoiceCard = ({ inv, onAction }) => {
             <option>Expense Not in Budget</option>
             <option>Capital In Budget</option>
             <option>Capital Not in Budget</option>
+            <option>Capital Contingency In Budget</option>
+            <option>Trade Invoice</option>
+            <option>Rejected</option>
           </select>
           <input
             type="text"
@@ -2019,6 +2022,9 @@ const APInvoices = ({ goHome, goHistory }) => {
         status: action, category, comment,
         actionedAt: serverTimestamp(),
         actionedBy: "scott@aubuchon.com",
+        // Flag for Jiffy submission agent — "pending" means needs to be submitted in Jiffy
+        jiffyAction: action === "ignored" ? "skip" : "pending",
+        jiffyGroup: category,
       });
       setInvoices(prev => prev.map(inv => inv.id === invoiceId ? { ...inv, status: action, category, comment } : inv));
     } catch (e) {
