@@ -1624,6 +1624,16 @@ const SECTIONS = [
 ];
 
 function HomeScreen({ onNavigate }) {
+  const [apInvoiceCount, setApInvoiceCount] = useState(null);
+  useEffect(() => {
+    (async () => {
+      try {
+        const snap = await getDocs(collection(db, "ap_invoices"));
+        const pending = snap.docs.filter(d => (d.data().status || "pending") === "pending").length;
+        setApInvoiceCount(pending);
+      } catch (e) { /* silent */ }
+    })();
+  }, []);
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
       {/* Header */}
@@ -1671,7 +1681,7 @@ function HomeScreen({ onNavigate }) {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <h2 className="text-lg font-bold text-gray-900">{section.label}</h2>
+                      <h2 className="text-lg font-bold text-gray-900">{section.label}{section.id === "ap-invoices" && apInvoiceCount > 0 && ` (${apInvoiceCount})`}</h2>
                       {!section.active && (
                         <span className="text-[10px] font-semibold uppercase tracking-wider bg-gray-200 text-gray-500 px-2 py-0.5 rounded-full">Coming Soon</span>
                       )}
@@ -1836,19 +1846,33 @@ const APInvoiceCard = ({ inv, onAction }) => {
             </div>
             <img
               src={`/invoices/${inv.invoiceNumber}.png`}
-              alt={`Invoice ${inv.invoiceNumber}`}
-              style={{ width: "100%", borderRadius: 6, border: "1px solid #e5e7eb", marginBottom: 12 }}
-              onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block'; }}
+              alt={`Invoice ${inv.invoiceNumber} - Page 1`}
+              style={{ width: "100%", borderRadius: 6, border: "1px solid #e5e7eb", marginBottom: 4 }}
+              onError={(e) => { e.target.style.display = 'none'; e.target.parentNode.querySelector('[data-fallback]').style.display = 'block'; }}
             />
-            <div style={{ display: "none", fontSize: ".8rem", color: "#999", textAlign: "center", fontStyle: "italic", marginBottom: 12 }}>
+            {[2,3,4].map(p => (
+              <img
+                key={p}
+                src={`/invoices/${inv.invoiceNumber}_p${p}.png`}
+                alt={`Invoice ${inv.invoiceNumber} - Page ${p}`}
+                style={{ width: "100%", borderRadius: 6, border: "1px solid #e5e7eb", marginBottom: 4 }}
+                onError={(e) => { e.target.style.display = 'none'; }}
+              />
+            ))}
+            <div data-fallback style={{ display: "none", fontSize: ".8rem", color: "#999", textAlign: "center", fontStyle: "italic", marginBottom: 12 }}>
               Invoice image not available — use "Open in Jiffy" to view original
             </div>
-            <div style={{ display: "flex", gap: 16, flexWrap: "wrap", background: "#f5f5f5", padding: 10, borderRadius: 4 }}>
+            <div style={{ display: "flex", gap: 16, flexWrap: "wrap", background: "#f5f5f5", padding: 10, borderRadius: 4, marginBottom: 14 }}>
               <div><div style={{ fontSize: ".68rem", textTransform: "uppercase", color: "#888" }}>Amount Due</div><strong>{fmt(inv.amount)}</strong></div>
               <div><div style={{ fontSize: ".68rem", textTransform: "uppercase", color: "#888" }}>Due Date</div><strong>{dueLabel}</strong></div>
               <div><div style={{ fontSize: ".68rem", textTransform: "uppercase", color: "#888" }}>Store</div><strong>#{inv.storeNumber}</strong></div>
               {inv.paymentTerms && <div><div style={{ fontSize: ".68rem", textTransform: "uppercase", color: "#888" }}>Terms</div><strong>{inv.paymentTerms}</strong></div>}
             </div>
+            <button
+              onClick={() => setOpenPanel(null)}
+              style={{ display: "block", width: "100%", background: "#374151", color: "#fff", padding: "12px 0", borderRadius: 8, fontSize: ".9rem", fontWeight: 600, border: "none", cursor: "pointer" }}>
+              Close Preview
+            </button>
           </div>
         </div>
       )}
