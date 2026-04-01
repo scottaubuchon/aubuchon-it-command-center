@@ -1611,7 +1611,7 @@ const SECTIONS = [
   {
     id: "payment-history",
     label: "Payment History",
-    description: "View and filter all authorized payments — AP invoices & CC expenses",
+    description: "View and filter all authorized payments â AP invoices & CC expenses",
     icon: History,
     gradient: "from-slate-500 to-slate-700",
     hoverGradient: "from-slate-600 to-slate-800",
@@ -1746,7 +1746,7 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
   const overdue = dueDate && dueDate < new Date() && inv.status === "pending";
   const dueLabel = dueDate
     ? dueDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
-    : inv.paymentDue || "—";
+    : inv.paymentDue || "â";
 
   const handleDecision = (action) => {
     onDecision(inv.id, action, category, comment);
@@ -1776,7 +1776,7 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
   const detailRow = (label, value, light = false) => (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "5px 0", borderBottom: "1px solid #f3f4f6", gap: 12 }}>
       <span style={{ color: "#9ca3af", fontSize: ".78rem", flexShrink: 0 }}>{label}</span>
-      <span style={{ color: light ? "#6b7280" : "#111827", fontSize: ".78rem", fontWeight: 500, textAlign: "right" }}>{value || "—"}</span>
+      <span style={{ color: light ? "#6b7280" : "#111827", fontSize: ".78rem", fontWeight: 500, textAlign: "right" }}>{value || "â"}</span>
     </div>
   );
 
@@ -1789,11 +1789,11 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
           <div style={{ fontSize: "1.1rem", fontWeight: 700, color: "#111827", letterSpacing: "-.01em" }}>{inv.vendor}</div>
           <div style={{ fontSize: ".8rem", color: "#6b7280", display: "flex", gap: 14, flexWrap: "wrap", marginTop: 4 }}>
             <span>Invoice #{inv.invoiceNumber}</span>
-            <span>·</span>
-            <span>Store {inv.storeNumber}{inv.location ? ` — ${inv.location}` : ""}</span>
-            <span>·</span>
+            <span>Â·</span>
+            <span>Store {inv.storeNumber}{inv.location ? ` â ${inv.location}` : ""}</span>
+            <span>Â·</span>
             <span>Vendor #{inv.vendorNumber}</span>
-            {inv.docNumber && <><span>·</span><span style={{ color: "#9ca3af" }}>{inv.docNumber}</span></>}
+            {inv.docNumber && <><span>Â·</span><span style={{ color: "#9ca3af" }}>{inv.docNumber}</span></>}
           </div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -1804,8 +1804,8 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
               color: displayStatus === "approved" ? "#166534" : displayStatus === "rejected" ? "#991b1b" : "#4b5563",
               border: `1px solid ${displayStatus === "approved" ? "#bbf7d0" : displayStatus === "rejected" ? "#fecaca" : "#e5e7eb"}`
             }}>
-              {decision && "⏳ "}
-              {displayStatus === "approved" ? "✓ Approved" : displayStatus === "rejected" ? "✗ Rejected" : "Ignored"}
+              {decision && "â³ "}
+              {displayStatus === "approved" ? "â Approved" : displayStatus === "rejected" ? "â Rejected" : "Ignored"}
               {decision && " (unsaved)"}
             </span>
           )}
@@ -1818,7 +1818,7 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
         {inv.glNumber && chip(`GL: ${inv.glNumber}`, "#4338ca", "#eef2ff")}
         {inv.projectNumber && chip(`Project: ${inv.projectNumber}`, "#0369a1", "#e0f2fe")}
         {chip(
-          `Due: ${dueLabel}${overdue ? " — OVERDUE ⚠" : ""}`,
+          `Due: ${dueLabel}${overdue ? " â OVERDUE â " : ""}`,
           overdue ? "#dc2626" : "#374151",
           overdue ? "#fef2f2" : "#f9fafb"
         )}
@@ -1839,14 +1839,14 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
               padding: "7px 14px", borderRadius: 6, cursor: "pointer", fontSize: ".82rem", fontWeight: 500,
               transition: "all .15s"
             }}>
-              {panel === "preview" ? "📄 View Invoice" : "🔍 Full Details"}
+              {panel === "preview" ? "ð View Invoice" : "ð Full Details"}
             </button>
           );
         })}
         {inv.jiffyUrl && (
           <a href={inv.jiffyUrl} target="_blank" rel="noopener noreferrer"
             style={{ background: "#f3f4f6", color: "#374151", border: "1px solid #e5e7eb", padding: "7px 14px", borderRadius: 6, fontSize: ".82rem", fontWeight: 500, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 5 }}>
-            🔗 Open in Jiffy
+            ð Open in Jiffy
           </a>
         )}
       </div>
@@ -1878,7 +1878,7 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
               />
             ))}
             <div data-fallback style={{ display: "none", fontSize: ".8rem", color: "#999", textAlign: "center", fontStyle: "italic", marginBottom: 12 }}>
-              Invoice image not available — use "Open in Jiffy" to view original
+              Invoice image not available â use "Open in Jiffy" to view original
             </div>
             <div style={{ display: "flex", gap: 16, flexWrap: "wrap", background: "#f5f5f5", padding: 10, borderRadius: 4, marginBottom: 14 }}>
               <div><div style={{ fontSize: ".68rem", textTransform: "uppercase", color: "#888" }}>Amount Due</div><strong>{fmt(inv.amount)}</strong></div>
@@ -1914,7 +1914,7 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
               {detailRow("Invoice #", inv.invoiceNumber)}
               {detailRow("Invoice Date", inv.invoiceDate)}
               {detailRow("GL Code", inv.glNumber)}
-              {detailRow("Project #", inv.projectNumber || "—")}
+              {detailRow("Project #", inv.projectNumber || "â")}
             </div>
 
             {/* Payment Info */}
@@ -1959,7 +1959,7 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
         </div>
       )}
 
-      {/* Controls — only show for pending invoices (not yet saved to Firestore) */}
+      {/* Controls â only show for pending invoices (not yet saved to Firestore) */}
       {inv.status === "pending" && (
         <div style={{ padding: "14px 20px", display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", background: decision ? (decision.action === "approved" ? "#f0fdf4" : decision.action === "rejected" ? "#fef2f2" : "#f9fafb") : "#fafafa", borderTop: "1px solid #f3f4f6" }}>
           <select
@@ -1985,11 +1985,11 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
           <div style={{ display: "flex", gap: 8, marginLeft: "auto" }}>
             <button onClick={() => handleDecision("approved")}
               style={{ background: decision?.action === "approved" ? "#0f5132" : "#166534", color: "#fff", border: decision?.action === "approved" ? "2px solid #16a34a" : "none", padding: "9px 20px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem" }}>
-              ✓ Approve
+              â Approve
             </button>
             <button onClick={() => handleDecision("rejected")}
               style={{ background: decision?.action === "rejected" ? "#7f1d1d" : "#991b1b", color: "#fff", border: decision?.action === "rejected" ? "2px solid #dc2626" : "none", padding: "9px 20px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem" }}>
-              ✗ Reject
+              â Reject
             </button>
             <button onClick={() => handleDecision("ignored")}
               style={{ background: decision?.action === "ignored" ? "#d1d5db" : "#e5e7eb", color: "#374151", border: decision?.action === "ignored" ? "2px solid #9ca3af" : "none", padding: "9px 20px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem" }}>
@@ -1998,7 +1998,7 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
             {decision && (
               <button onClick={() => onClearDecision(inv.id)}
                 style={{ background: "#fff", color: "#dc2626", border: "1px solid #fecaca", padding: "9px 14px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem" }}>
-                ↩ Undo
+                â© Undo
               </button>
             )}
           </div>
@@ -2014,6 +2014,7 @@ const APInvoices = ({ goHome, goHistory }) => {
   const [error, setError] = useState(null);
   const [decisions, setDecisions] = useState({});  // { [invoiceId]: { action, category, comment } }
   const [submitting, setSubmitting] = useState(false);
+  const [jiffySubmitting, setJiffySubmitting] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -2029,7 +2030,7 @@ const APInvoices = ({ goHome, goHistory }) => {
     })();
   }, []);
 
-  // Local-only — updates batch decisions state (nothing saved to Firestore yet)
+  // Local-only â updates batch decisions state (nothing saved to Firestore yet)
   const handleDecision = (invoiceId, action, category, comment) => {
     setDecisions(prev => ({ ...prev, [invoiceId]: { action, category, comment } }));
   };
@@ -2038,7 +2039,7 @@ const APInvoices = ({ goHome, goHistory }) => {
     setDecisions(prev => { const next = { ...prev }; delete next[invoiceId]; return next; });
   };
 
-  // Batch submit — writes ALL decisions to Firestore at once
+  // Batch submit â writes ALL decisions to Firestore at once
   const submitAll = async () => {
     const entries = Object.entries(decisions);
     if (entries.length === 0) return;
@@ -2049,9 +2050,7 @@ const APInvoices = ({ goHome, goHistory }) => {
           status: action, category, comment,
           actionedAt: serverTimestamp(),
           actionedBy: "scott@aubuchon.com",
-          jiffyAction: action === "ignored" ? "skip" : "pending",
-          jiffyGroup: category,
-        });
+                  });
       }
       // Update local state to reflect saved statuses
       setInvoices(prev => prev.map(inv => {
@@ -2064,6 +2063,33 @@ const APInvoices = ({ goHome, goHistory }) => {
       alert("Error submitting invoices: " + e.message);
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  // Push approved/rejected invoices to Jiffy queue on demand
+  const submitToJiffy = async () => {
+    const eligible = invoices.filter(i =>
+      (i.status === "approved" || i.status === "rejected") &&
+      (!i.jiffyAction || i.jiffyAction === "ready")
+    );
+    if (eligible.length === 0) return;
+    setJiffySubmitting(true);
+    try {
+      for (const inv of eligible) {
+        await updateDoc(doc(db, "ap_invoices", inv.id), {
+          jiffyAction: "pending",
+          jiffyGroup: inv.category || "Expense in Budget",
+        });
+      }
+      setInvoices(prev => prev.map(inv => {
+        const match = eligible.find(e => e.id === inv.id);
+        return match ? { ...inv, jiffyAction: "pending" } : inv;
+      }));
+      alert(`${eligible.length} invoice(s) queued for Jiffy. Open Cowork to run the submission task.`);
+    } catch (e) {
+      alert("Error queuing for Jiffy: " + e.message);
+    } finally {
+      setJiffySubmitting(false);
     }
   };
 
@@ -2094,7 +2120,7 @@ const APInvoices = ({ goHome, goHistory }) => {
           <div style={{ width: 1, height: 24, background: "#e5e7eb" }} />
           <div>
             <h1 style={{ fontSize: "1.15rem", color: "#111827", margin: 0, fontWeight: 700 }}>AP Invoice Approval</h1>
-            <div style={{ fontSize: ".73rem", color: "#6b7280" }}>Aubuchon Hardware — Accounts Payable</div>
+            <div style={{ fontSize: ".73rem", color: "#6b7280" }}>Aubuchon Hardware â Accounts Payable</div>
           </div>
           {goHistory && (
             <>
@@ -2104,6 +2130,33 @@ const APInvoices = ({ goHome, goHistory }) => {
               </button>
             </>
           )}
+          {(() => {
+            const jiffyEligible = invoices.filter(i =>
+              (i.status === "approved" || i.status === "rejected") &&
+              (!i.jiffyAction || i.jiffyAction === "ready")
+            );
+            const jiffyPending = invoices.filter(i => i.jiffyAction === "pending").length;
+            if (jiffyEligible.length === 0 && jiffyPending === 0) return null;
+            return (
+              <>
+                <div style={{ width: 1, height: 24, background: "#e5e7eb" }} />
+                {jiffyEligible.length > 0 ? (
+                  <button onClick={submitToJiffy} disabled={jiffySubmitting}
+                    style={{ background: "linear-gradient(135deg, #7c3aed, #6d28d9)", color: "#fff", border: "none", cursor: "pointer",
+                      display: "flex", alignItems: "center", gap: 6, fontSize: ".82rem", fontWeight: 600,
+                      padding: "7px 14px", borderRadius: 8, opacity: jiffySubmitting ? 0.6 : 1,
+                      boxShadow: "0 1px 4px rgba(124,58,237,0.3)" }}>
+                    {jiffySubmitting ? "Queuing\u2026" : `Push to Jiffy (${jiffyEligible.length})`}
+                  </button>
+                ) : (
+                  <div style={{ fontSize: ".78rem", color: "#7c3aed", fontWeight: 600, display: "flex", alignItems: "center", gap: 6,
+                    background: "#f5f3ff", padding: "6px 12px", borderRadius: 8, border: "1px solid #e9d5ff" }}>
+                    {jiffyPending} in Jiffy queue
+                  </div>
+                )}
+              </>
+            );
+          })()}
         </div>
         <div style={{ display: "flex", gap: 28, alignItems: "center" }}>
           {[
@@ -2120,13 +2173,13 @@ const APInvoices = ({ goHome, goHistory }) => {
       </div>
 
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "24px 16px" }}>
-        {loading && <div style={{ textAlign: "center", padding: "60px 0", color: "#6b7280" }}>Loading invoices…</div>}
+        {loading && <div style={{ textAlign: "center", padding: "60px 0", color: "#6b7280" }}>Loading invoicesâ¦</div>}
         {error && <div style={{ textAlign: "center", padding: "60px 0", color: "#dc2626" }}>Error: {error}</div>}
 
         {!loading && overdueCount > 0 && (
           <div style={{ background: "linear-gradient(90deg,#fef2f2,#fff5f5)", border: "1px solid #fecaca", color: "#991b1b", padding: "12px 20px", borderRadius: 10, marginBottom: 20, fontWeight: 600, display: "flex", alignItems: "center", gap: 10 }}>
-            <span style={{ fontSize: "1.2rem" }}>⚠</span>
-            <span>OVERDUE: {overdueCount} invoice{overdueCount !== 1 ? "s are" : " is"} past due — immediate action recommended.</span>
+            <span style={{ fontSize: "1.2rem" }}>â </span>
+            <span>OVERDUE: {overdueCount} invoice{overdueCount !== 1 ? "s are" : " is"} past due â immediate action recommended.</span>
           </div>
         )}
 
@@ -2156,11 +2209,11 @@ const APInvoices = ({ goHome, goHistory }) => {
             </div>
             <div style={{ fontSize: ".78rem", opacity: .85 }}>
               {Object.values(decisions).filter(d => d.action === "approved").length} approved
-              {" · "}
+              {" Â· "}
               {Object.values(decisions).filter(d => d.action === "rejected").length} rejected
-              {" · "}
+              {" Â· "}
               {Object.values(decisions).filter(d => d.action === "ignored").length} ignored
-              {" · "}
+              {" Â· "}
               Total: {fmt(Object.entries(decisions).reduce((sum, [id, d]) => {
                 const inv = invoices.find(i => i.id === id);
                 return sum + (d.action !== "ignored" ? Number(inv?.amount || 0) : 0);
@@ -2174,7 +2227,7 @@ const APInvoices = ({ goHome, goHistory }) => {
             </button>
             <button onClick={submitAll} disabled={submitting}
               style={{ background: "#fff", color: "#065f46", border: "none", padding: "10px 30px", borderRadius: 8, fontWeight: 700, cursor: "pointer", fontSize: ".92rem", opacity: submitting ? .6 : 1, boxShadow: "0 2px 8px rgba(0,0,0,0.15)" }}>
-              {submitting ? "Submitting…" : `Submit All (${Object.keys(decisions).length})`}
+              {submitting ? "Submittingâ¦" : `Submit All (${Object.keys(decisions).length})`}
             </button>
           </div>
         </div>
@@ -2211,7 +2264,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
           return {
             id: d.id,
             type: "AP",
-            vendor: data.vendor || "—",
+            vendor: data.vendor || "â",
             amount: Number(data.amount || 0),
             store: data.storeNumber || "",
             location: data.location || "",
@@ -2221,7 +2274,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
             invoiceDate: data.invoiceDate || "",
             status: data.status || "pending",
             description: data.description || data.remarks || "",
-            group: data.invoiceGroup || data.category || "—",
+            group: data.invoiceGroup || data.category || "â",
             invoiceNumber: data.invoiceNumber || "",
             actionedAt: data.actionedAt || null,
           };
@@ -2254,7 +2307,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
 
   const fmtDate = (val) => {
     const d = parseDateStr(val);
-    return d && !isNaN(d) ? d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : (val || "—");
+    return d && !isNaN(d) ? d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : (val || "â");
   };
 
   // Unique values for filter dropdowns
@@ -2322,7 +2375,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
     return <span style={{ background: c.bg, color: c.color, border: `1px solid ${c.border}`, padding: "2px 8px", borderRadius: 10, fontSize: ".7rem", fontWeight: 700 }}>{type}</span>;
   };
 
-  const sortIcon = (col) => sortCol === col ? (sortDir === "asc" ? " ▲" : " ▼") : "";
+  const sortIcon = (col) => sortCol === col ? (sortDir === "asc" ? " â²" : " â¼") : "";
 
   const selectStyle = { padding: "6px 10px", borderRadius: 6, border: "1px solid #d1d5db", fontSize: ".8rem", background: "#fff", color: "#374151", minWidth: 90 };
   const inputStyle = { ...selectStyle, minWidth: 100 };
@@ -2341,7 +2394,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
             <h1 style={{ fontSize: "1.15rem", color: "#111827", margin: 0, fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>
               <History size={18} /> Payment History
             </h1>
-            <div style={{ fontSize: ".73rem", color: "#6b7280" }}>All authorized payments — AP Invoices & CC Expenses</div>
+            <div style={{ fontSize: ".73rem", color: "#6b7280" }}>All authorized payments â AP Invoices & CC Expenses</div>
           </div>
         </div>
         <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
@@ -2390,7 +2443,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
           )}
         </div>
 
-        {loading && <div style={{ textAlign: "center", padding: "60px 0", color: "#6b7280" }}>Loading payment history…</div>}
+        {loading && <div style={{ textAlign: "center", padding: "60px 0", color: "#6b7280" }}>Loading payment historyâ¦</div>}
 
         {!loading && (
           <div style={{ background: "#fff", borderRadius: 10, border: "1px solid #e5e7eb", overflow: "hidden" }}>
@@ -2427,13 +2480,13 @@ const PaymentHistory = ({ goHome, goBack }) => {
                       <td style={{ padding: "10px 12px" }}>{typeBadge(r.type)}</td>
                       <td style={{ padding: "10px 12px", fontWeight: 600, color: "#111827" }}>{r.vendor}</td>
                       <td style={{ padding: "10px 12px", textAlign: "right", fontWeight: 700, color: "#0f766e", fontVariantNumeric: "tabular-nums" }}>{fmt(r.amount)}</td>
-                      <td style={{ padding: "10px 12px", color: "#374151" }}>{r.store}{r.location ? ` — ${r.location}` : ""}</td>
-                      <td style={{ padding: "10px 12px", color: "#4338ca", fontFamily: "monospace", fontSize: ".78rem" }}>{r.gl || "—"}</td>
-                      <td style={{ padding: "10px 12px", color: "#374151" }}>{r.project || "—"}</td>
+                      <td style={{ padding: "10px 12px", color: "#374151" }}>{r.store}{r.location ? ` â ${r.location}` : ""}</td>
+                      <td style={{ padding: "10px 12px", color: "#4338ca", fontFamily: "monospace", fontSize: ".78rem" }}>{r.gl || "â"}</td>
+                      <td style={{ padding: "10px 12px", color: "#374151" }}>{r.project || "â"}</td>
                       <td style={{ padding: "10px 12px", color: "#374151", whiteSpace: "nowrap" }}>{fmtDate(r.dueDate)}</td>
                       <td style={{ padding: "10px 12px" }}>{statusBadge(r.status)}</td>
-                      <td style={{ padding: "10px 12px", color: "#6b7280", maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.description || "—"}</td>
-                      <td style={{ padding: "10px 12px", color: "#374151", fontSize: ".78rem" }}>{r.group || "—"}</td>
+                      <td style={{ padding: "10px 12px", color: "#6b7280", maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.description || "â"}</td>
+                      <td style={{ padding: "10px 12px", color: "#374151", fontSize: ".78rem" }}>{r.group || "â"}</td>
                     </tr>
                   ))}
                 </tbody>
