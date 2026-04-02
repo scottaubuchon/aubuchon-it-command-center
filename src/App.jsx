@@ -946,7 +946,7 @@ function ProjectCard({ project, onUpdate, onDelete }) {
 function ProjectRow({ project, onUpdate, onDelete, showDepts = true, showOwner = true, ownerOptions, onAddOwner, allDepartments, onAddDept }) {
   const [expanded, setExpanded] = useState(false);
   const isAlert = project.priority === "High" && project.pct < 100 && project.date && project.date.includes("3/31");
-  const colCount = 7 + (showDepts ? 1 : 0) + (showOwner ? 1 : 0);
+  const colCount = 9 + (showDepts ? 1 : 0) + (showOwner ? 1 : 0);
 
   return (
     <>
@@ -960,18 +960,22 @@ function ProjectRow({ project, onUpdate, onDelete, showDepts = true, showOwner =
           <div className="flex items-center gap-2">
             {isAlert && <AlertTriangle size={12} className="text-red-500 flex-shrink-0" />}
             <InlineEdit value={project.name} onChange={(v) => onUpdate(project.id, "name", v)} placeholder="Project name" className="text-sm font-medium text-gray-900 truncate max-w-xs" />
-            <TierBadge tier={project.tier || "project"} onChange={(v) => onUpdate(project.id, "tier", v)} />
-            {project.subtasks && project.subtasks.length > 0 && (() => {
-              const done = project.subtasks.filter(s => s.done).length;
-              const total = project.subtasks.length;
-              const overdue = project.subtasks.filter(s => !s.done && s.dueDate && new Date(s.dueDate) < new Date(new Date().toDateString())).length;
-              return (
-                <span className={`inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded-full ${overdue > 0 ? "bg-red-50 text-red-600" : done === total ? "bg-emerald-50 text-emerald-600" : "bg-gray-100 text-gray-500"}`}>
-                  <ListChecks size={9} />{done}/{total}
-                </span>
-              );
-            })()}
           </div>
+        </td>
+        <td className="py-2.5 px-2">
+          <TierBadge tier={project.tier || "project"} onChange={(v) => onUpdate(project.id, "tier", v)} />
+        </td>
+        <td className="py-2.5 px-2 text-center">
+          {project.subtasks && project.subtasks.length > 0 && (() => {
+            const done = project.subtasks.filter(s => s.done).length;
+            const total = project.subtasks.length;
+            const overdue = project.subtasks.filter(s => !s.done && s.dueDate && new Date(s.dueDate) < new Date(new Date().toDateString())).length;
+            return (
+              <span className={`inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded-full ${overdue > 0 ? "bg-red-50 text-red-600" : done === total ? "bg-emerald-50 text-emerald-600" : "bg-gray-100 text-gray-500"}`}>
+                <ListChecks size={9} />{done}/{total}
+              </span>
+            );
+          })()}
         </td>
         {showDepts && (
           <td className="py-2.5 px-2"><DeptChips departments={project.departments} size="xs" /></td>
@@ -1033,7 +1037,7 @@ function AllProjectsView({ projects, onUpdate, onDelete, onAdd, ownerOptions, on
   const {sorted,sortField,sortDir,onSort}=useSortableProjects(reg);
   const {sorted:supSorted}=useSortableProjects(sup);
   const [supHide,setSupHide]=useState(false);
-  const TH=()=>(<thead><tr className="bg-gray-50 border-b border-gray-200 text-[10px] font-semibold text-gray-400 uppercase tracking-wider"><th className="py-2.5 px-3 w-8"></th><SortHeader label="Project" field="name" sortField={sortField} sortDir={sortDir} onSort={onSort} className="py-2.5 px-3"/><SortHeader label="Departments" field="departments" sortField={sortField} sortDir={sortDir} onSort={onSort}/><SortHeader label="Status" field="status" sortField={sortField} sortDir={sortDir} onSort={onSort}/><SortHeader label="Priority" field="priority" sortField={sortField} sortDir={sortDir} onSort={onSort}/><SortHeader label="Owner" field="owner" sortField={sortField} sortDir={sortDir} onSort={onSort}/><SortHeader label="Progress" field="pct" sortField={sortField} sortDir={sortDir} onSort={onSort} className="w-32"/><SortHeader label="Est. Completion" field="date" sortField={sortField} sortDir={sortDir} onSort={onSort}/><th className="py-2.5 px-2 text-left" style={{minWidth:80}}>Last Updated</th><th className="py-2.5 px-2 w-16"></th></tr></thead>);
+  const TH=()=>(<thead><tr className="bg-gray-50 border-b border-gray-200 text-[10px] font-semibold text-gray-400 uppercase tracking-wider"><th className="py-2.5 px-3 w-8"></th><SortHeader label="Project" field="name" sortField={sortField} sortDir={sortDir} onSort={onSort} className="py-2.5 px-3"/><SortHeader label="Type" field="tier" sortField={sortField} sortDir={sortDir} onSort={onSort}/><th className="py-2.5 px-2 text-left">Subtasks</th><SortHeader label="Departments" field="departments" sortField={sortField} sortDir={sortDir} onSort={onSort}/><SortHeader label="Status" field="status" sortField={sortField} sortDir={sortDir} onSort={onSort}/><SortHeader label="Priority" field="priority" sortField={sortField} sortDir={sortDir} onSort={onSort}/><SortHeader label="Owner" field="owner" sortField={sortField} sortDir={sortDir} onSort={onSort}/><SortHeader label="Progress" field="pct" sortField={sortField} sortDir={sortDir} onSort={onSort} className="w-32"/><SortHeader label="Est. Completion" field="date" sortField={sortField} sortDir={sortDir} onSort={onSort}/><th className="py-2.5 px-2 text-left" style={{minWidth:80}}>Last Updated</th><th className="py-2.5 px-2 w-16"></th></tr></thead>);
   return (<div>
     <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
       <table className="w-full"><TH/><tbody>{sorted.map(p=><ProjectRow key={p.id} project={p} onUpdate={onUpdate} onDelete={onDelete} ownerOptions={ownerOptions} onAddOwner={onAddOwner} allDepartments={allDepartments} onAddDept={onAddDept}/>)}</tbody></table>
@@ -1112,6 +1116,8 @@ function OwnerSection({ owner, initials, projects, highCount, blockedCount, onUp
               <tr className="bg-gray-50 border-b border-gray-200 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
                 <th className="py-2 px-3 w-8"></th>
                 <SortHeader label="Project" field="name" sortField={sortField} sortDir={sortDir} onSort={onSort} className="py-2 px-3" />
+                <SortHeader label="Type" field="tier" sortField={sortField} sortDir={sortDir} onSort={onSort} />
+                <th className="py-2 px-2 text-left">Subtasks</th>
                 <SortHeader label="Departments" field="departments" sortField={sortField} sortDir={sortDir} onSort={onSort} />
                 <SortHeader label="Status" field="status" sortField={sortField} sortDir={sortDir} onSort={onSort} />
                 <SortHeader label="Priority" field="priority" sortField={sortField} sortDir={sortDir} onSort={onSort} />
@@ -1230,6 +1236,8 @@ function DeptSection({ dept, cfg, Icon, projects, highCount, totalPct, onUpdate,
                   <tr className="bg-gray-50 border-b border-gray-200 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
                     <th className="py-2 px-3 w-8"></th>
                     <SortHeader label="Project" field="name" sortField={sortField} sortDir={sortDir} onSort={onSort} className="py-2 px-3" />
+                    <SortHeader label="Type" field="tier" sortField={sortField} sortDir={sortDir} onSort={onSort} />
+                    <th className="py-2 px-2 text-left">Subtasks</th>
                     <SortHeader label="Status" field="status" sortField={sortField} sortDir={sortDir} onSort={onSort} />
                     <SortHeader label="Priority" field="priority" sortField={sortField} sortDir={sortDir} onSort={onSort} />
                     <SortHeader label="Owner" field="owner" sortField={sortField} sortDir={sortDir} onSort={onSort} />
