@@ -1046,7 +1046,7 @@ function ProjectRow({ project, onUpdate, onDelete, showDepts = true, showOwner =
           })()}
         </td>
         {showDepts && (
-          <td className="py-2.5 px-2" style={{minWidth:100}}><DeptChips departments={project.departments} size="xs" /></td>
+          <td className="py-2.5 px-2" style={{minWidth:100}}><div className="flex items-center gap-1"><DeptChips departments={project.departments} size="xs" /><DeptMultiSelect selected={project.departments} onChange={(d) => onUpdate(project.id, "departments", d)} allDepartments={allDepartments} onAddDept={onAddDept} /></div></td>
         )}
         <td className="py-2.5 px-2"><StatusBadge status={project.status} onChange={(v) => onUpdate(project.id, "status", v)} size="xs" /></td>
         <td className="py-2.5 px-2"><PriorityBadge priority={project.priority} onChange={(v) => onUpdate(project.id, "priority", v)} size="xs" /></td>
