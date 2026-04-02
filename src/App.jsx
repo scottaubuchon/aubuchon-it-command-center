@@ -2110,17 +2110,17 @@ function ITProjectDashboard({ goHome }) {
 
         {/* VIEW CONTENT */}
         {activeView === "projects" && (
-          <AllProjectsView projects={filtered} onUpdate={handleUpdate} onDelete={handleDelete} onAdd={(t)=>handleAddProject(t)} ownerOptions={allOwners} onAddOwner={handleAddOwner} allDepartments={allDepartments} onAddDept={handleAddDept} />
+          <AllProjectsView projects={filtered} onUpdate={handleUpdate} onDelete={handleDelete} onAdd={()=>setShowNewProjectModal(true)} ownerOptions={allOwners} onAddOwner={handleAddOwner} allDepartments={allDepartments} onAddDept={handleAddDept} />
         )}
 
         {activeView === "owner" && (
           <ByOwnerView projects={filtered} onUpdate={handleUpdate} onDelete={handleDelete}
-            onAdd={(owner) => handleAddProject(owner)} ownerOptions={allOwners} onAddOwner={handleAddOwner} allDepartments={allDepartments} onAddDept={handleAddDept} />
+            onAdd={()=>setShowNewProjectModal(true)} ownerOptions={allOwners} onAddOwner={handleAddOwner} allDepartments={allDepartments} onAddDept={handleAddDept} />
         )}
 
         {activeView === "dept" && (
           <ByDeptView projects={filtered} onUpdate={handleUpdate} onDelete={handleDelete}
-            onAdd={(owner, dept) => handleAddProject(owner, dept)} ownerOptions={allOwners} onAddOwner={handleAddOwner} allDepartments={allDepartments} onAddDept={handleAddDept} />
+            onAdd={()=>setShowNewProjectModal(true)} ownerOptions={allOwners} onAddOwner={handleAddOwner} allDepartments={allDepartments} onAddDept={handleAddDept} />
         )}
 
         {activeView === "inbox" && (
