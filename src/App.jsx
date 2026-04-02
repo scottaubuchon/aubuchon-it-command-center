@@ -10,7 +10,7 @@ import {
   Home, CreditCard, TrendingUp, Database, Lock, ArrowLeft, Link2, FolderKanban
 } from "lucide-react";
 import { auth, signOut, db } from "./firebase";
-import { doc, getDoc, setDoc, collection, getDocs, query, orderBy, updateDoc, deleteDoc, serverTimestamp } from "firebase/firestore";
+import { doc, getDoc, setDoc, addDoc, collection, getDocs, query, orderBy, updateDoc, deleteDoc, serverTimestamp } from "firebase/firestore";
 
 /* =====================================================================
    CONFIGURATION
@@ -2629,12 +2629,35 @@ const APInvoices = ({ goHome, goHistory }) => {
     setSubmitting(true);
     try {
       for (const [invoiceId, { action, category, comment }] of entries) {
+        const inv = invoices.find(i => i.id === invoiceId) || {};
+        const now = serverTimestamp();
+        // Update the live invoice record
         await updateDoc(doc(db, "ap_invoices", invoiceId), {
           status: action, category, comment,
-          actionedAt: serverTimestamp(),
+          actionedAt: now,
           actionedBy: "scott@aubuchon.com",
           jiffyAction: "pending",
           jiffyGroup: category || "Expense in Budget",
+        });
+        // Write a permanent history record — this is the audit trail
+        await addDoc(collection(db, "ap_payment_history"), {
+          invoiceId,
+          invoiceNumber: inv.invoiceNumber || invoiceId,
+          vendor: inv.vendor || "—",
+          amount: Number(inv.amount || 0),
+          storeNumber: inv.storeNumber || "",
+          location: inv.location || "",
+          glNumber: inv.glNumber || "",
+          projectNumber: inv.projectNumber || "",
+          paymentDue: inv.paymentDue || "",
+          invoiceDate: inv.invoiceDate || "",
+          description: inv.description || inv.remarks || "",
+          invoiceGroup: category || inv.invoiceGroup || "—",
+          status: action,
+          comment: comment || "",
+          actionedAt: now,
+          actionedBy: "scott@aubuchon.com",
+          type: "AP",
         });
       }
       setInvoices(prev => prev.map(inv => {
@@ -2780,19 +2803,19 @@ const PaymentHistory = ({ goHome, goBack }) => {
   const [filterStore, setFilterStore] = useState("");
   const [filterGL, setFilterGL] = useState("");
   const [filterGroup, setFilterGroup] = useState("All");
-  const [sortCol, setSortCol] = useState("date");
+  const [sortCol, setSortCol] = useState("actioned");
   const [sortDir, setSortDir] = useState("desc");
 
   useEffect(() => {
     (async () => {
       try {
-        // Load AP invoices
-        const apSnap = await getDocs(collection(db, "ap_invoices"));
+        // Load permanent AP payment history (written on every approve/reject submit)
+        const apSnap = await getDocs(query(collection(db, "ap_payment_history"), orderBy("actionedAt", "desc")));
         const apRows = apSnap.docs.map(d => {
           const data = d.data();
           return {
             id: d.id,
-            type: "AP",
+            type: data.type || "AP",
             vendor: data.vendor || "—",
             amount: Number(data.amount || 0),
             store: data.storeNumber || "",
@@ -2802,15 +2825,17 @@ const PaymentHistory = ({ goHome, goBack }) => {
             dueDate: data.paymentDue || "",
             invoiceDate: data.invoiceDate || "",
             status: data.status || "pending",
-            description: data.description || data.remarks || "",
-            group: data.invoiceGroup || data.category || "—",
+            description: data.description || "",
+            group: data.invoiceGroup || "—",
             invoiceNumber: data.invoiceNumber || "",
             actionedAt: data.actionedAt || null,
+            actionedBy: data.actionedBy || "",
+            comment: data.comment || "",
           };
         });
 
         // Future: Load CC expenses
-        // const ccSnap = await getDocs(collection(db, "cc_expenses"));
+        // const ccSnap = await getDocs(query(collection(db, "cc_expenses"), orderBy("actionedAt", "desc")));
         // const ccRows = ccSnap.docs.map(d => { ... type: "CC" ... });
 
         setRows([...apRows /*, ...ccRows */]);
@@ -2863,6 +2888,11 @@ const PaymentHistory = ({ goHome, goBack }) => {
       case "status": aVal = a.status; bVal = b.status; break;
       case "type": aVal = a.type; bVal = b.type; break;
       case "gl": aVal = a.gl; bVal = b.gl; break;
+      case "group": aVal = a.group; bVal = b.group; break;
+      case "actioned":
+        aVal = parseDateStr(a.actionedAt) || new Date(0);
+        bVal = parseDateStr(b.actionedAt) || new Date(0);
+        break;
       default: // date
         aVal = parseDateStr(a.dueDate) || new Date(0);
         bVal = parseDateStr(b.dueDate) || new Date(0);
@@ -2984,13 +3014,12 @@ const PaymentHistory = ({ goHome, goBack }) => {
                       { key: "type", label: "Type", w: 60 },
                       { key: "vendor", label: "Vendor", w: 160 },
                       { key: "amount", label: "Amount", w: 100 },
-                      { key: "store", label: "Store / Location", w: 130 },
-                      { key: "gl", label: "GL #", w: 110 },
-                      { key: "project", label: "Project #", w: 80 },
+                      { key: "store", label: "Store", w: 70 },
                       { key: "date", label: "Due Date", w: 100 },
-                      { key: "status", label: "Status", w: 90 },
-                      { key: "desc", label: "Description", w: 180 },
-                      { key: "group", label: "Group", w: 100 },
+                      { key: "actioned", label: "Actioned On", w: 110 },
+                      { key: "status", label: "Decision", w: 90 },
+                      { key: "group", label: "Category", w: 130 },
+                      { key: "comment", label: "Comment", w: 180 },
                     ].map(col => (
                       <th key={col.key}
                         onClick={() => toggleSort(col.key)}
@@ -3002,20 +3031,26 @@ const PaymentHistory = ({ goHome, goBack }) => {
                 </thead>
                 <tbody>
                   {sorted.length === 0 && (
-                    <tr><td colSpan={10} style={{ textAlign: "center", padding: "40px 0", color: "#9ca3af" }}>No records match the current filters.</td></tr>
+                    <tr><td colSpan={9} style={{ textAlign: "center", padding: "50px 0", color: "#9ca3af" }}>
+                      {rows.length === 0
+                        ? "No history yet — records appear here after you submit approvals or rejections."
+                        : "No records match the current filters."}
+                    </td></tr>
                   )}
                   {sorted.map((r, idx) => (
                     <tr key={r.id} style={{ borderBottom: "1px solid #f3f4f6", background: idx % 2 === 0 ? "#fff" : "#fafafa" }}>
                       <td style={{ padding: "10px 12px" }}>{typeBadge(r.type)}</td>
-                      <td style={{ padding: "10px 12px", fontWeight: 600, color: "#111827" }}>{r.vendor}</td>
+                      <td style={{ padding: "10px 12px", fontWeight: 600, color: "#111827" }}>
+                        <div>{r.vendor}</div>
+                        {r.invoiceNumber && <div style={{ fontSize: ".72rem", color: "#9ca3af", fontWeight: 400 }}>#{r.invoiceNumber}</div>}
+                      </td>
                       <td style={{ padding: "10px 12px", textAlign: "right", fontWeight: 700, color: "#0f766e", fontVariantNumeric: "tabular-nums" }}>{fmt(r.amount)}</td>
-                      <td style={{ padding: "10px 12px", color: "#374151" }}>{r.store}{r.location ? ` — ${r.location}` : ""}</td>
-                      <td style={{ padding: "10px 12px", color: "#4338ca", fontFamily: "monospace", fontSize: ".78rem" }}>{r.gl || "—"}</td>
-                      <td style={{ padding: "10px 12px", color: "#374151" }}>{r.project || "—"}</td>
+                      <td style={{ padding: "10px 12px", color: "#374151" }}>#{r.store}</td>
                       <td style={{ padding: "10px 12px", color: "#374151", whiteSpace: "nowrap" }}>{fmtDate(r.dueDate)}</td>
+                      <td style={{ padding: "10px 12px", color: "#374151", whiteSpace: "nowrap", fontSize: ".78rem" }}>{fmtDate(r.actionedAt)}</td>
                       <td style={{ padding: "10px 12px" }}>{statusBadge(r.status)}</td>
-                      <td style={{ padding: "10px 12px", color: "#6b7280", maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.description || "—"}</td>
                       <td style={{ padding: "10px 12px", color: "#374151", fontSize: ".78rem" }}>{r.group || "—"}</td>
+                      <td style={{ padding: "10px 12px", color: "#6b7280", maxWidth: 220, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.comment || "—"}</td>
                     </tr>
                   ))}
                 </tbody>
