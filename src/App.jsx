@@ -1938,11 +1938,11 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
           <div style={{ fontSize: "1.1rem", fontWeight: 700, color: "#111827", letterSpacing: "-.01em" }}>{inv.vendor}</div>
           <div style={{ fontSize: ".8rem", color: "#6b7280", display: "flex", gap: 14, flexWrap: "wrap", marginTop: 4 }}>
             <span>Invoice #{inv.invoiceNumber}</span>
-            <span>·</span>
+            <span>Â·</span>
             <span>Store {inv.storeNumber}{inv.location ? ` â€” ${inv.location}` : ""}</span>
-            <span>·</span>
+            <span>Â·</span>
             <span>Vendor #{inv.vendorNumber}</span>
-            {inv.docNumber && <><span>·</span><span style={{ color: "#9ca3af" }}>{inv.docNumber}</span></>}
+            {inv.docNumber && <><span>Â·</span><span style={{ color: "#9ca3af" }}>{inv.docNumber}</span></>}
           </div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -2301,9 +2301,9 @@ const APInvoices = ({ goHome, goHistory }) => {
             </div>
             <div style={{ fontSize: ".78rem", opacity: .85 }}>
               {Object.values(decisions).filter(d => d.action === "approved").length} approved
-              {" · "}
+              {" Â· "}
               {Object.values(decisions).filter(d => d.action === "rejected").length} rejected
-              {" · "}
+              {" Â· "}
               Total: {fmt(Object.entries(decisions).reduce((sum, [id, d]) => {
                 const inv = invoices.find(i => i.id === id);
                 return sum + (Number(inv?.amount || 0));
