@@ -7,7 +7,7 @@ import {
   FolderOpen, Filter, ChevronUp, Zap, MoveRight, LogOut, Users,
   Building2, History, FileText, Tag, Eye, Briefcase, Archive, Inbox,
   ListChecks, CircleDot, RotateCcw, ArrowUpDown,
-  Home, CreditCard, TrendingUp, Database, Lock, ArrowLeft, Link2
+  Home, CreditCard, TrendingUp, Database, Lock, ArrowLeft, Link2, FolderKanban
 } from "lucide-react";
 import { auth, signOut, db } from "./firebase";
 import { doc, getDoc, setDoc, collection, getDocs, query, orderBy, updateDoc, deleteDoc, serverTimestamp } from "firebase/firestore";
@@ -19,6 +19,13 @@ import { doc, getDoc, setDoc, collection, getDocs, query, orderBy, updateDoc, de
 const STATUS_OPTIONS = ["Not Started", "In Progress", "Testing in Lab", "Done", "On Hold", "Blocked", "Backlog"];
 const PRIORITY_OPTIONS = ["High", "Medium", "Low"];
 const TIER_OPTIONS = ["Project", "Quick Win", "Ongoing Support"];
+const TIER_CONFIG = {
+  "project": { label: "Project", color: "bg-blue-50 text-blue-700", dot: "bg-blue-500", icon: FolderKanban, border: "border-blue-200" },
+  "quickwin": { label: "Quick Win", color: "bg-amber-50 text-amber-700", dot: "bg-amber-500", icon: Zap, border: "border-amber-200" },
+  "support": { label: "Ongoing Support", color: "bg-teal-50 text-teal-700", dot: "bg-teal-500", icon: Headphones, border: "border-teal-200" },
+};
+const TIER_VALUE_MAP = { "Project": "project", "Quick Win": "quickwin", "Ongoing Support": "support" };
+const TIER_LABEL_MAP = { "project": "Project", "quickwin": "Quick Win", "support": "Ongoing Support" };
 const OWNER_OPTIONS = ["Dave Faucher", "Craig Renaud", "Eric Handley", "Suzanne Fleury", "Unassigned"];
 
 const STATUS_CONFIG = {
@@ -227,6 +234,25 @@ function StatusBadge({ status, onChange, size = "sm" }) {
       )}
       renderOption={(s) => {
         const c = STATUS_CONFIG[s];
+        const I = c.icon;
+        return <><span className={`w-2 h-2 rounded-full ${c.dot}`} /><I size={12} className="opacity-60" />{s}</>;
+      }}
+    />
+  );
+}
+
+function TierBadge({ tier, onChange }) {
+  const cfg = TIER_CONFIG[tier] || TIER_CONFIG["project"];
+  const Icon = cfg.icon;
+  return (
+    <Dropdown value={TIER_LABEL_MAP[tier] || "Project"} options={TIER_OPTIONS} onChange={(label) => onChange(TIER_VALUE_MAP[label])}
+      renderTrigger={(v) => (
+        <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-[10px] rounded-full font-semibold ${cfg.color} border ${cfg.border} cursor-pointer hover:opacity-80 transition-all`}>
+          <Icon size={9} />{v}<ChevronDown size={8} className="opacity-50" />
+        </span>
+      )}
+      renderOption={(s) => {
+        const c = TIER_CONFIG[TIER_VALUE_MAP[s]];
         const I = c.icon;
         return <><span className={`w-2 h-2 rounded-full ${c.dot}`} /><I size={12} className="opacity-60" />{s}</>;
       }}
@@ -847,13 +873,10 @@ function ProjectCard({ project, onUpdate, onDelete }) {
           <DeptChips departments={project.departments} size="xs" />
         </div>
 
-        {project.tier === "quickwin" && (
-          <div className="mb-2">
-            <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
-              <Zap size={9} />Quick Win
-            </span>
-          </div>
-        )}
+        {/* Tier selector */}
+        <div className="mb-2">
+          <TierBadge tier={project.tier} onChange={(v) => onUpdate(project.id, "tier", v)} />
+        </div>
 
         {/* Badges */}
         <div className="flex flex-wrap items-center gap-1.5 mb-3">
@@ -937,8 +960,7 @@ function ProjectRow({ project, onUpdate, onDelete, showDepts = true, showOwner =
           <div className="flex items-center gap-2">
             {isAlert && <AlertTriangle size={12} className="text-red-500 flex-shrink-0" />}
             <InlineEdit value={project.name} onChange={(v) => onUpdate(project.id, "name", v)} placeholder="Project name" className="text-sm font-medium text-gray-900 truncate max-w-xs" />
-            {project.tier === "quickwin" && (<span className="inline-flex items-center gap-0.5 text-[9px] font-semibold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-full border border-amber-200"><Zap size={8} />QW</span>)}
-            {project.tier === "support" && (<span className="inline-flex items-center gap-0.5 text-[9px] font-semibold text-teal-600 bg-teal-50 px-1.5 py-0.5 rounded-full border border-teal-200"><Headphones size={8} />Support</span>)}
+            <TierBadge tier={project.tier || "project"} onChange={(v) => onUpdate(project.id, "tier", v)} />
             {project.subtasks && project.subtasks.length > 0 && (() => {
               const done = project.subtasks.filter(s => s.done).length;
               const total = project.subtasks.length;
@@ -1662,9 +1684,9 @@ function ITProjectDashboard({ goHome }) {
         const snap = await getDoc(DOC_REF);
         if (snap.exists()) {
           const d = snap.data();
-          if (d.projects) { const migrated=d.projects.map(p=>p.date==="Ongoing"&&p.tier!=="support"?{...p,tier:"support"}:p); setProjects(migrated); }
+          if (d.projects) { const migrated=d.projects.map(p=>p.date==="Ongoing"&&p.tier!=="support"?{...p,tier:"support"}:p); setProjects(migrated); const maxExisting=Math.max(0,...migrated.map(p=>typeof p.id==="number"?p.id:0)); setNextId(maxExisting+1); }
           if (d.inboxItems) setInboxItems(d.inboxItems);
-          if (d.trashedProjects) setTrashedProjects(d.trashedProjects);
+          if (d.trashedProjects) { setTrashedProjects(d.trashedProjects); const trashedMax=Math.max(0,...d.trashedProjects.map(p=>typeof p.id==="number"?p.id:0)); setNextId(prev=>Math.max(prev,trashedMax+1)); }
           if (d.changeLog) setChangeLog(d.changeLog);
           if (d.customOwners) setCustomOwners(d.customOwners);
           if (d.customDepartments) setCustomDepartments(d.customDepartments);
@@ -1766,8 +1788,9 @@ function ITProjectDashboard({ goHome }) {
 
   const handleAddProject = useCallback((ownerOrNull, deptOrNull) => {
     const isSup=ownerOrNull==="support";
+    const newId = Date.now();
     const newP = {
-      id: nextId,
+      id: newId,
       departments: deptOrNull?[deptOrNull]:["Enterprise Systems"],
       name: isSup?"New Support Item":"New Project",
       owner: (ownerOrNull&&ownerOrNull!=="support")?ownerOrNull:"Unassigned",
@@ -1785,12 +1808,13 @@ function ITProjectDashboard({ goHome }) {
       lastUpdated: new Date().toLocaleDateString("en-US")+" "+new Date().toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"}),
     };
     setProjects(prev => [...prev, newP]);
-    setNextId(n => n + 1);
-  }, [nextId]);
+    setNextId(n => Math.max(n, newId) + 1);
+  }, []);
 
   const handlePromoteInbox = useCallback((item, tier) => {
+    const newId = Date.now();
     const newP = {
-      id: nextId,
+      id: newId,
       departments: ["Enterprise Systems"],
       name: item.text,
       owner: item.owner || "Unassigned",
@@ -1808,8 +1832,8 @@ function ITProjectDashboard({ goHome }) {
     };
     setProjects(prev => [...prev, newP]);
     setInboxItems(prev => prev.filter(i => i.id !== item.id));
-    setNextId(n => n + 1);
-  }, [nextId]);
+    setNextId(n => Math.max(n, newId) + 1);
+  }, []);
 
   // Export handlers
   const handleExportCSV = () => {
