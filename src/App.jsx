@@ -733,13 +733,13 @@ function UpdateLog({ updates = [], onAdd, onReplace }) {
                 </div>
               </div>
             ) : (
-              <div key={i} className="bg-gray-50 rounded-lg p-2.5 border border-gray-100 group">
+              <div key={i} className="bg-gray-50 rounded-lg p-2.5 border border-gray-100">
                 <div className="flex items-center gap-2 mb-0.5">
                   <span className="text-[10px] font-semibold text-gray-500">{u.date}</span>
                   {u.author && <span className="text-[10px] text-gray-400">-- {u.author}</span>}
                   <span className="flex-1" />
-                  <button onClick={() => startEdit(i)} className="text-[10px] text-gray-300 hover:text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity" title="Edit"><Edit3 size={10} /></button>
-                  <button onClick={() => deleteEntry(i)} className="text-[10px] text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity" title="Delete"><Trash2 size={10} /></button>
+                  <button onClick={() => startEdit(i)} className="text-[10px] text-gray-400 hover:text-blue-600 p-0.5 rounded hover:bg-blue-50" title="Edit"><Edit3 size={10} /></button>
+                  <button onClick={() => deleteEntry(i)} className="text-[10px] text-gray-400 hover:text-red-600 p-0.5 rounded hover:bg-red-50" title="Delete"><Trash2 size={10} /></button>
                 </div>
                 {u.notes && <p className="text-xs text-gray-700 whitespace-pre-wrap"><Linkify text={u.notes} /></p>}
                 {u.links && u.links.length > 0 && (
