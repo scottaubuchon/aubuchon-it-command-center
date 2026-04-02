@@ -345,7 +345,7 @@ function PriorityBadge({ priority, onChange, size = "sm" }) {
 
 function OwnerBadge({ owner, onChange, size = "sm", ownerOptions, onAddOwner }) {
   const sizeClass = size === "xs" ? "px-2 py-0.5 text-[10px]" : "px-2.5 py-1 text-xs";
-  const initials = owner === "Unassigned" ? "?" : owner.split(" ").map(n => n[0]).join("");
+  const initials = owner === "Unassigned" ? "?" : String(owner || "").split(" ").map(n => n[0]).join("");
   return (
     <Dropdown value={owner} options={ownerOptions || OWNER_OPTIONS} onChange={onChange} onAddNew={onAddOwner}
       renderTrigger={(v) => (
@@ -500,7 +500,7 @@ function parseToISO(dateStr) {
   if (!dateStr) return "";
   if (dateStr.toLowerCase() === "ongoing") return "";
   // Try MM/DD/YYYY or M/D/YYYY
-  const parts = dateStr.split("/");
+  const parts = String(dateStr || "").split("/");
   if (parts.length === 3) {
     const [m, d, y] = parts;
     const year = y.length === 2 ? "20" + y : y;
@@ -1135,7 +1135,7 @@ function ByOwnerView({ projects, onUpdate, onDelete, onAdd, ownerOptions, onAddO
   return (
     <div className="space-y-6">
       {Object.entries(ownerGroups).filter(([, ps]) => ps.length > 0).map(([owner, ps]) => {
-        const initials = owner === "Unassigned" ? "?" : owner.split(" ").map(n => n[0]).join("");
+        const initials = owner === "Unassigned" ? "?" : String(owner || "").split(" ").map(n => n[0]).join("");
         const highCount = ps.filter(p => p.priority === "High").length;
         const blockedCount = ps.filter(p => p.status === "Blocked" || p.status === "On Hold").length;
 
@@ -1199,7 +1199,7 @@ function OwnerSection({ owner, initials, projects, highCount, blockedCount, onUp
             </tbody>
           </table>
           <button onClick={() => onAdd(owner)} className="w-full text-left px-6 py-2 text-xs text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors border-t border-gray-50 flex items-center gap-2">
-            <Plus size={12} /> Add project for {owner.split(" ")[0]}
+            <Plus size={12} /> Add project for {String(owner || "").split(" ")[0]}
           </button>
         </div>
       )}
@@ -1967,7 +1967,7 @@ function ITProjectDashboard({ goHome }) {
   const handleUndoChange = useCallback((entry) => {
     if (!window.confirm(`Undo "${entry.field}" on "${entry.projectName}"? Revert to "${entry.oldValue}"?`)) return;
     const rv=entry.oldValue==="(empty)"?"":entry.oldValue;
-    const fv=entry.field==="departments"?rv.split(", ").filter(Boolean):(entry.field==="pct"?Number(rv):rv);
+    const fv=entry.field==="departments"?String(rv || "").split(", ").filter(Boolean):(entry.field==="pct"?Number(rv):rv);
     handleUpdate(entry.projectId, entry.field, fv);
     setChangeLog(prev=>prev.filter(e=>e.id!==entry.id));
   }, [handleUpdate]);
