@@ -1,4 +1,4 @@
-ï»¿ï»¿import { useState, useMemo, useCallback, useEffect, useRef } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import {
   ChevronDown, ChevronRight, Plus, Trash2, Download, AlertTriangle, Clock,
   CheckCircle, XCircle, Pause, FlaskConical, BarChart3, Calendar, Edit3,
