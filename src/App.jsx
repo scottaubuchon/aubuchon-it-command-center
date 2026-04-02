@@ -601,13 +601,19 @@ function Linkify({ text }) {
   );
 }
 
-function UpdateLog({ updates = [], onAdd }) {
+function UpdateLog({ updates = [], onAdd, onReplace }) {
   const [showForm, setShowForm] = useState(false);
   const [newNote, setNewNote] = useState("");
   const [newLink, setNewLink] = useState("");
   const [links, setLinks] = useState([]);
   const [editingLink, setEditingLink] = useState(null);
   const [editLinkValue, setEditLinkValue] = useState("");
+  const [editingIdx, setEditingIdx] = useState(null);
+  const [editNote, setEditNote] = useState("");
+  const [editLinks, setEditLinks] = useState([]);
+  const [editNewLink, setEditNewLink] = useState("");
+  const [editingEntryLink, setEditingEntryLink] = useState(null);
+  const [editEntryLinkValue, setEditEntryLinkValue] = useState("");
 
   const addLink = () => {
     if (newLink.trim()) { setLinks([...links, newLink.trim()]); setNewLink(""); }
@@ -620,6 +626,32 @@ function UpdateLog({ updates = [], onAdd }) {
     }
   };
 
+  const realIdx = (displayIdx) => updates.length - 1 - displayIdx;
+
+  const startEdit = (displayIdx) => {
+    const u = [...updates].reverse()[displayIdx];
+    setEditingIdx(displayIdx);
+    setEditNote(u.notes || "");
+    setEditLinks([...(u.links || [])]);
+    setEditNewLink("");
+    setEditingEntryLink(null);
+  };
+
+  const saveEdit = (displayIdx) => {
+    const ri = realIdx(displayIdx);
+    const updated = [...updates];
+    updated[ri] = { ...updated[ri], notes: editNote.trim(), links: editLinks };
+    onReplace(updated);
+    setEditingIdx(null);
+  };
+
+  const deleteEntry = (displayIdx) => {
+    const ri = realIdx(displayIdx);
+    const updated = updates.filter((_, idx) => idx !== ri);
+    onReplace(updated);
+    setEditingIdx(null);
+  };
+
   return (
     <div className="pt-2 border-t border-gray-100">
       <div className="flex items-center justify-between mb-2">
@@ -627,7 +659,7 @@ function UpdateLog({ updates = [], onAdd }) {
           <History size={10} /> Update Log
           {updates.length > 0 && <span className="text-gray-300">({updates.length})</span>}
         </label>
-        <button onClick={() => setShowForm(!showForm)} className="text-[10px] text-blue-500 hover:text-blue-700 font-medium">
+        <button onClick={() => { setShowForm(!showForm); setEditingIdx(null); }} className="text-[10px] text-blue-500 hover:text-blue-700 font-medium">
           {showForm ? "Cancel" : "+ Add Update"}
         </button>
       </div>
@@ -665,22 +697,62 @@ function UpdateLog({ updates = [], onAdd }) {
       {updates.length > 0 && (
         <div className="space-y-1.5 max-h-48 overflow-y-auto">
           {[...updates].reverse().map((u, i) => (
-            <div key={i} className="bg-gray-50 rounded-lg p-2.5 border border-gray-100">
-              <div className="flex items-center gap-2 mb-0.5">
-                <span className="text-[10px] font-semibold text-gray-500">{u.date}</span>
-                {u.author && <span className="text-[10px] text-gray-400">-- {u.author}</span>}
-              </div>
-              {u.notes && <p className="text-xs text-gray-700 whitespace-pre-wrap"><Linkify text={u.notes} /></p>}
-              {u.links && u.links.length > 0 && (
-                <div className="flex flex-wrap gap-1.5 mt-1.5">
-                  {u.links.map((l, j) => (
-                    <a key={j} href={l} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[10px] text-blue-600 hover:text-blue-800 hover:underline bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100">
-                      <Link2 size={8} />{l.replace(/^https?:\/\/(www\.)?/, "").split("/")[0]}
-                    </a>
-                  ))}
+            editingIdx === i ? (
+              <div key={i} className="bg-blue-50/50 rounded-lg p-3 border border-blue-200 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-semibold text-gray-500">{u.date}{u.author ? ` -- ${u.author}` : ""}</span>
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => deleteEntry(i)} className="text-[10px] text-red-500 hover:text-red-700 font-medium">Delete</button>
+                    <button onClick={() => setEditingIdx(null)} className="text-[10px] text-gray-400 hover:text-gray-600 font-medium">Cancel</button>
+                  </div>
                 </div>
-              )}
-            </div>
+                <textarea value={editNote} onChange={(e) => { setEditNote(e.target.value); e.target.style.height = "auto"; e.target.style.height = e.target.scrollHeight + "px"; }} className="w-full text-xs p-2 border border-gray-200 rounded-md resize-y focus:outline-none focus:ring-1 focus:ring-blue-300" rows={2} />
+                <div className="flex items-center gap-1">
+                  <input value={editNewLink} onChange={(e) => setEditNewLink(e.target.value)} placeholder="Add a link..." className="flex-1 text-xs p-1.5 border border-gray-200 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-300" onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); if (editNewLink.trim()) { setEditLinks([...editLinks, editNewLink.trim()]); setEditNewLink(""); } } }} />
+                  <button onClick={() => { if (editNewLink.trim()) { setEditLinks([...editLinks, editNewLink.trim()]); setEditNewLink(""); } }} className="text-[10px] bg-gray-100 hover:bg-gray-200 text-gray-600 px-2 py-1.5 rounded-md font-medium">Add Link</button>
+                </div>
+                {editLinks.length > 0 && (
+                  <div className="flex flex-wrap gap-1">
+                    {editLinks.map((l, j) => (
+                      editingEntryLink === j ? (
+                        <span key={j} className="inline-flex items-center gap-1 text-[10px] bg-white border border-blue-300 rounded px-1 py-0.5 ring-1 ring-blue-200">
+                          <Link2 size={8} className="flex-shrink-0 text-blue-500" />
+                          <input value={editEntryLinkValue} onChange={(e) => setEditEntryLinkValue(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); const upd = [...editLinks]; upd[j] = editEntryLinkValue.trim() || l; setEditLinks(upd); setEditingEntryLink(null); } if (e.key === "Escape") setEditingEntryLink(null); }} onBlur={() => { const upd = [...editLinks]; upd[j] = editEntryLinkValue.trim() || l; setEditLinks(upd); setEditingEntryLink(null); }} autoFocus className="text-[10px] border-none outline-none bg-transparent w-48" />
+                        </span>
+                      ) : (
+                        <span key={j} className="inline-flex items-center gap-1 text-[10px] bg-white border border-gray-200 rounded px-2 py-0.5 max-w-xs truncate cursor-pointer hover:border-blue-300 hover:bg-blue-50/30" onClick={() => { setEditingEntryLink(j); setEditEntryLinkValue(l); }}>
+                          <Link2 size={8} className="flex-shrink-0" />{l.length > 40 ? l.slice(0, 40) + "..." : l}
+                          <button onClick={(e) => { e.stopPropagation(); setEditLinks(editLinks.filter((_, k) => k !== j)); }} className="text-gray-400 hover:text-red-500 flex-shrink-0 ml-0.5">&times;</button>
+                        </span>
+                      )
+                    ))}
+                  </div>
+                )}
+                <div className="flex justify-end">
+                  <button onClick={() => saveEdit(i)} className="text-[10px] bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-md font-medium">Save Changes</button>
+                </div>
+              </div>
+            ) : (
+              <div key={i} className="bg-gray-50 rounded-lg p-2.5 border border-gray-100 group/entry">
+                <div className="flex items-center gap-2 mb-0.5">
+                  <span className="text-[10px] font-semibold text-gray-500">{u.date}</span>
+                  {u.author && <span className="text-[10px] text-gray-400">-- {u.author}</span>}
+                  <span className="flex-1" />
+                  <button onClick={() => startEdit(i)} className="text-[10px] text-gray-300 hover:text-blue-500 opacity-0 group-hover/entry:opacity-100 transition-opacity" title="Edit"><Edit3 size={10} /></button>
+                  <button onClick={() => deleteEntry(i)} className="text-[10px] text-gray-300 hover:text-red-500 opacity-0 group-hover/entry:opacity-100 transition-opacity" title="Delete"><Trash2 size={10} /></button>
+                </div>
+                {u.notes && <p className="text-xs text-gray-700 whitespace-pre-wrap"><Linkify text={u.notes} /></p>}
+                {u.links && u.links.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 mt-1.5">
+                    {u.links.map((l, j) => (
+                      <a key={j} href={l} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-[10px] text-blue-600 hover:text-blue-800 hover:underline bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100">
+                        <Link2 size={8} />{l.replace(/^https?:\/\/(www\.)?/, "").split("/")[0]}
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )
           ))}
         </div>
       )}
@@ -781,7 +853,7 @@ function ProjectCard({ project, onUpdate, onDelete }) {
             </div>
 
             {/* Update Log */}
-            <UpdateLog updates={project.updateLog || []} onAdd={(entry) => onUpdate(project.id, "updateLog", [...(project.updateLog || []), entry])} />
+            <UpdateLog updates={project.updateLog || []} onAdd={(entry) => onUpdate(project.id, "updateLog", [...(project.updateLog || []), entry])} onReplace={(arr) => onUpdate(project.id, "updateLog", arr)} />
           </div>
         )}
       </div>
@@ -867,7 +939,7 @@ function ProjectRow({ project, onUpdate, onDelete, showDepts = true, showOwner =
 
             {/* Update Log */}
             <div className="mt-3 max-w-3xl">
-              <UpdateLog updates={project.updateLog || []} onAdd={(entry) => onUpdate(project.id, "updateLog", [...(project.updateLog || []), entry])} />
+              <UpdateLog updates={project.updateLog || []} onAdd={(entry) => onUpdate(project.id, "updateLog", [...(project.updateLog || []), entry])} onReplace={(arr) => onUpdate(project.id, "updateLog", arr)} />
             </div>
           </td>
         </tr>
