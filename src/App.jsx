@@ -1,4 +1,4 @@
-﻿import { useState, useMemo, useCallback, useEffect, useRef } from "react";
+import { useState, useMemo, useCallback, useEffect, useRef } from "react";
 import {
   ChevronDown, ChevronRight, Plus, Trash2, Download, AlertTriangle, Clock,
   CheckCircle, XCircle, Pause, FlaskConical, BarChart3, Calendar, Edit3,
@@ -18,7 +18,7 @@ import { doc, getDoc, setDoc, collection, getDocs, query, orderBy, updateDoc, de
 
 const STATUS_OPTIONS = ["Not Started", "In Progress", "Testing in Lab", "Done", "On Hold", "Blocked"];
 const PRIORITY_OPTIONS = ["High", "Medium", "Low"];
-const TIER_OPTIONS = ["Project", "Quick Win"];
+const TIER_OPTIONS = ["Project", "Quick Win", "Ongoing Support"];
 const OWNER_OPTIONS = ["Dave Faucher", "Craig Renaud", "Eric Handley", "Suzanne Fleury", "Unassigned"];
 
 const STATUS_CONFIG = {
@@ -67,6 +67,7 @@ const VIEWS = [
   { id: "inbox",    label: "Inbox",        icon: Inbox },
   { id: "trash",    label: "Trash",        icon: Trash2 },
   { id: "history",  label: "History",       icon: Archive },
+  { id: "changelog", label: "Change Log",  icon: History },
 ];
 
 /* =====================================================================
@@ -84,15 +85,15 @@ const initialProjects = [
   { id: 46, departments: ["Enterprise Systems"], name: "Cookie Cutter Store Network Initiative", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "6/1/2026", roadblocks: "IT Team bandwidth", milestones: "", nextSteps: "", notes: "Standardize and template store networks and intranet sites for new store acquisitions beyond Store #244", completedDate: "", subtasks: [], tier: "project" },
   { id: 47, departments: ["Enterprise Systems"], name: "Price Ticket Generation Automation", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "6/8/2026", roadblocks: "Depends on completion of Price Change Tracking & Forecasting project", milestones: "", nextSteps: "", notes: "Fully automate price ticket generation sent to stores. Includes review of removing Bar Tender application from the technology stack.", completedDate: "", subtasks: [], tier: "project" },
   // Enterprise Systems — Ongoing Support & Operations
-  { id: 48, departments: ["Enterprise Systems"], name: "EDI Technical Support", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Ongoing operational support for EDI data exchange (OpenText / EricWare). Includes monitoring, troubleshooting, and documentation.", completedDate: "", subtasks: [], tier: "project" },
-  { id: 49, departments: ["Enterprise Systems"], name: "Promotion Support", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Continuous support for promotion configuration, testing, and issue resolution within Mi9 Merchant, Ace, and the Marketing Dept.", completedDate: "", subtasks: [], tier: "project" },
-  { id: 50, departments: ["Enterprise Systems"], name: "Mi9 Merchant Support", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Day-to-day support for Mi9 Merchant operations including upgrade coordination, break-fix, and vendor escalation.", completedDate: "", subtasks: [], tier: "project" },
-  { id: 51, departments: ["Enterprise Systems"], name: "YODA Dashboard Development Support", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Continuous development and enhancement of Power BI dashboards sourced from Snowflake/YODA for store operations and management.", completedDate: "", subtasks: [], tier: "project" },
-  { id: 52, departments: ["Enterprise Systems"], name: "Database Optimization, Movement & Troubleshooting", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Ongoing performance tuning, data migrations, and issue resolution across operational databases (MS SQL / MySQL / Snowflake)", completedDate: "", subtasks: [], tier: "project" },
-  { id: 53, departments: ["Enterprise Systems"], name: "TorqueBot", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Proactive IT notification and process automation engine. Monitoring of systems and the trigger of alerts or automated responses.", completedDate: "", subtasks: [], tier: "project" },
-  { id: 54, departments: ["Enterprise Systems"], name: "Toolbox Initiative", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Centralized, secure, role-based portal for internal tools and data collection forms.", completedDate: "", subtasks: [], tier: "project" },
-  { id: 55, departments: ["Enterprise Systems"], name: "New Store / Acquisitions Support", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "End-to-end technical support for new stores and acquisitions: customer data loading, EPICOR Bridge integration, and full store setup in Mi9 ecosystem.", completedDate: "", subtasks: [], tier: "project" },
-  { id: 56, departments: ["Enterprise Systems"], name: "Documenting EricWare", owner: "Dave Faucher", status: "In Progress", priority: "Low", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Ongoing documentation effort for EricWare systems, with emphasis on EDI processes.", completedDate: "", subtasks: [], tier: "project" },
+  { id: 48, departments: ["Enterprise Systems"], name: "EDI Technical Support", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Ongoing operational support for EDI data exchange (OpenText / EricWare). Includes monitoring, troubleshooting, and documentation.", completedDate: "", subtasks: [], tier: "support" },
+  { id: 49, departments: ["Enterprise Systems"], name: "Promotion Support", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Continuous support for promotion configuration, testing, and issue resolution within Mi9 Merchant, Ace, and the Marketing Dept.", completedDate: "", subtasks: [], tier: "support" },
+  { id: 50, departments: ["Enterprise Systems"], name: "Mi9 Merchant Support", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Day-to-day support for Mi9 Merchant operations including upgrade coordination, break-fix, and vendor escalation.", completedDate: "", subtasks: [], tier: "support" },
+  { id: 51, departments: ["Enterprise Systems"], name: "YODA Dashboard Development Support", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Continuous development and enhancement of Power BI dashboards sourced from Snowflake/YODA for store operations and management.", completedDate: "", subtasks: [], tier: "support" },
+  { id: 52, departments: ["Enterprise Systems"], name: "Database Optimization, Movement & Troubleshooting", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Ongoing performance tuning, data migrations, and issue resolution across operational databases (MS SQL / MySQL / Snowflake)", completedDate: "", subtasks: [], tier: "support" },
+  { id: 53, departments: ["Enterprise Systems"], name: "TorqueBot", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Proactive IT notification and process automation engine. Monitoring of systems and the trigger of alerts or automated responses.", completedDate: "", subtasks: [], tier: "support" },
+  { id: 54, departments: ["Enterprise Systems"], name: "Toolbox Initiative", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Centralized, secure, role-based portal for internal tools and data collection forms.", completedDate: "", subtasks: [], tier: "support" },
+  { id: 55, departments: ["Enterprise Systems"], name: "New Store / Acquisitions Support", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "End-to-end technical support for new stores and acquisitions: customer data loading, EPICOR Bridge integration, and full store setup in Mi9 ecosystem.", completedDate: "", subtasks: [], tier: "support" },
+  { id: 56, departments: ["Enterprise Systems"], name: "Documenting EricWare", owner: "Dave Faucher", status: "In Progress", priority: "Low", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Ongoing documentation effort for EricWare systems, with emphasis on EDI processes.", completedDate: "", subtasks: [], tier: "support" },
   // Enterprise Systems — Backlog
   { id: 57, departments: ["Enterprise Systems"], name: "Unified Bin Ticket Printing", owner: "Dave Faucher", status: "Not Started", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Consolidate bin ticket printing across all systems into a single, consistent workflow leveraging the Price Change Tracking initiative.", completedDate: "", subtasks: [], tier: "project" },
   { id: 58, departments: ["Enterprise Systems"], name: "Customer History Lookup v3 (Mi9 Customer History)", owner: "Dave Faucher", status: "Not Started", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Extend lookup to include Mi9 native customer transaction history.", completedDate: "", subtasks: [], tier: "project" },
@@ -120,7 +121,7 @@ const initialProjects = [
   { id: 80, departments: ["Infrastructure & Cyber Security"], name: "Windows 11 Upgrade", owner: "Craig Renaud", status: "In Progress", priority: "High", pct: 0, date: "5/1/2026", roadblocks: "Changes to the image, updates to POS software; deliveries delayed or missing equipment", milestones: "20-30 stores in progress", nextSteps: "", notes: "On track now, targeting end of April / early May", completedDate: "", subtasks: [], tier: "project" },
   { id: 81, departments: ["Infrastructure & Cyber Security"], name: "Store Re-IP", owner: "Craig Renaud", status: "In Progress", priority: "High", pct: 0, date: "4/30/2026", roadblocks: "Internal applications not working with SSO; unplanned network traffic dependent on red tunnels", milestones: "Completed DDNS setup", nextSteps: "Engage with Mi9 for whitelisting", notes: "Ready to engage with Mi9 for whitelisting", completedDate: "", subtasks: [], tier: "project" },
   { id: 82, departments: ["Infrastructure & Cyber Security"], name: "Store Wireless Updates", owner: "Craig Renaud", status: "In Progress", priority: "Medium", pct: 0, date: "6/30/2026", roadblocks: "Locations needing new wiring fall outside current IW project scope; new agreement for smaller jobs in progress", milestones: "Identified 20+ stores needing replacement or additional APs", nextSteps: "Working with 3rd party (IW) to dispatch for one-off fixes", notes: "End of 2nd quarter target", completedDate: "", subtasks: [], tier: "project" },
-  { id: 83, departments: ["Infrastructure & Cyber Security"], name: "Physical Server Decommissioning", owner: "Craig Renaud", status: "In Progress", priority: "Medium", pct: 0, date: "Ongoing", roadblocks: "New VMs missing something and we would need to bring back online the old servers", milestones: "GP2 and RemoteGP (legacy physical hardware) offline post service migrations -- now running in Azure", nextSteps: "", notes: "Ongoing decommissioning of old hardware", completedDate: "", subtasks: [], tier: "project" },
+  { id: 83, departments: ["Infrastructure & Cyber Security"], name: "Physical Server Decommissioning", owner: "Craig Renaud", status: "In Progress", priority: "Medium", pct: 0, date: "Ongoing", roadblocks: "New VMs missing something and we would need to bring back online the old servers", milestones: "GP2 and RemoteGP (legacy physical hardware) offline post service migrations -- now running in Azure", nextSteps: "", notes: "Ongoing decommissioning of old hardware", completedDate: "", subtasks: [], tier: "support" },
   { id: 84, departments: ["Infrastructure & Cyber Security"], name: "Windows PCs Patching & Security Updates", owner: "Craig Renaud", status: "In Progress", priority: "High", pct: 0, date: "5/1/2026", roadblocks: "Current WSUS will no longer function post Re-IP project", milestones: "", nextSteps: "Pricing and testing Splashtop endpoint management solution for patching", notes: "Apr/May target", completedDate: "", subtasks: [], tier: "project" },
   { id: 85, departments: ["Infrastructure & Cyber Security"], name: "Security Policy Creation", owner: "Craig Renaud", status: "In Progress", priority: "Medium", pct: 0, date: "6/30/2026", roadblocks: "Other priorities and internal information/decision points", milestones: "Created IRP along with sub-policies for communication plan, backup restoration, asset disposal, etc.", nextSteps: "Need adoption/acceptance framework", notes: "End of 2nd quarter (ongoing)", completedDate: "", subtasks: [], tier: "project" },
   { id: 86, departments: ["Infrastructure & Cyber Security"], name: "Laptop Refresh", owner: "Craig Renaud", status: "In Progress", priority: "Medium", pct: 0, date: "6/30/2026", roadblocks: "Current hardware costs are skyrocketing, in many cases doubling or more", milestones: "About 50% of deployed laptops are 6+ years old", nextSteps: "Looking into phasing in replacements", notes: "End of 2nd quarter target", completedDate: "", subtasks: [], tier: "project" },
@@ -868,7 +869,7 @@ function ProjectCard({ project, onUpdate, onDelete }) {
 function ProjectRow({ project, onUpdate, onDelete, showDepts = true, showOwner = true }) {
   const [expanded, setExpanded] = useState(false);
   const isAlert = project.priority === "High" && project.pct < 100 && project.date && project.date.includes("3/31");
-  const colCount = 6 + (showDepts ? 1 : 0) + (showOwner ? 1 : 0);
+  const colCount = 7 + (showDepts ? 1 : 0) + (showOwner ? 1 : 0);
 
   return (
     <>
@@ -882,11 +883,8 @@ function ProjectRow({ project, onUpdate, onDelete, showDepts = true, showOwner =
           <div className="flex items-center gap-2">
             {isAlert && <AlertTriangle size={12} className="text-red-500 flex-shrink-0" />}
             <InlineEdit value={project.name} onChange={(v) => onUpdate(project.id, "name", v)} placeholder="Project name" className="text-sm font-medium text-gray-900 truncate max-w-xs" />
-            {project.tier === "quickwin" && (
-              <span className="inline-flex items-center gap-0.5 text-[9px] font-semibold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-full border border-amber-200">
-                <Zap size={8} />QW
-              </span>
-            )}
+            {project.tier === "quickwin" && (<span className="inline-flex items-center gap-0.5 text-[9px] font-semibold text-amber-600 bg-amber-50 px-1.5 py-0.5 rounded-full border border-amber-200"><Zap size={8} />QW</span>)}
+            {project.tier === "support" && (<span className="inline-flex items-center gap-0.5 text-[9px] font-semibold text-teal-600 bg-teal-50 px-1.5 py-0.5 rounded-full border border-teal-200"><Headphones size={8} />Support</span>)}
             {project.subtasks && project.subtasks.length > 0 && (() => {
               const done = project.subtasks.filter(s => s.done).length;
               const total = project.subtasks.length;
@@ -909,6 +907,7 @@ function ProjectRow({ project, onUpdate, onDelete, showDepts = true, showOwner =
         )}
         <td className="py-2.5 px-2 w-32"><ProgressBar value={project.pct} onChange={(v) => onUpdate(project.id, "pct", v)} /></td>
         <td className="py-2.5 px-2 text-xs text-gray-500 whitespace-nowrap"><DatePicker value={project.date} onChange={(v) => onUpdate(project.id, "date", v)} /></td>
+        <td className="py-2.5 px-2 text-[10px] text-gray-400 whitespace-nowrap">{project.lastUpdated || "--"}</td>
         <td className="py-2.5 px-2">
           <div className="flex items-center gap-1">
             <DeptMultiSelect selected={project.departments} onChange={(d) => onUpdate(project.id, "departments", d)} />
@@ -953,34 +952,22 @@ function ProjectRow({ project, onUpdate, onDelete, showDepts = true, showOwner =
    ===================================================================== */
 
 function AllProjectsView({ projects, onUpdate, onDelete, onAdd }) {
-  const { sorted, sortField, sortDir, onSort } = useSortableProjects(projects);
-  return (
+  const reg=useMemo(()=>projects.filter(p=>p.tier!=="support"),[projects]);
+  const sup=useMemo(()=>projects.filter(p=>p.tier==="support"),[projects]);
+  const {sorted,sortField,sortDir,onSort}=useSortableProjects(reg);
+  const {sorted:supSorted}=useSortableProjects(sup);
+  const [supHide,setSupHide]=useState(false);
+  const TH=()=>(<thead><tr className="bg-gray-50 border-b border-gray-200 text-[10px] font-semibold text-gray-400 uppercase tracking-wider"><th className="py-2.5 px-3 w-8"></th><SortHeader label="Project" field="name" sortField={sortField} sortDir={sortDir} onSort={onSort} className="py-2.5 px-3"/><SortHeader label="Departments" field="departments" sortField={sortField} sortDir={sortDir} onSort={onSort}/><SortHeader label="Status" field="status" sortField={sortField} sortDir={sortDir} onSort={onSort}/><SortHeader label="Priority" field="priority" sortField={sortField} sortDir={sortDir} onSort={onSort}/><SortHeader label="Owner" field="owner" sortField={sortField} sortDir={sortDir} onSort={onSort}/><SortHeader label="Progress" field="pct" sortField={sortField} sortDir={sortDir} onSort={onSort} className="w-32"/><SortHeader label="Est. Completion" field="date" sortField={sortField} sortDir={sortDir} onSort={onSort}/><th className="py-2.5 px-2 text-left" style={{minWidth:80}}>Last Updated</th><th className="py-2.5 px-2 w-16"></th></tr></thead>);
+  return (<div>
     <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-      <table className="w-full">
-        <thead>
-          <tr className="bg-gray-50 border-b border-gray-200 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
-            <th className="py-2.5 px-3 w-8"></th>
-            <SortHeader label="Project" field="name" sortField={sortField} sortDir={sortDir} onSort={onSort} className="py-2.5 px-3" />
-            <SortHeader label="Departments" field="departments" sortField={sortField} sortDir={sortDir} onSort={onSort} />
-            <SortHeader label="Status" field="status" sortField={sortField} sortDir={sortDir} onSort={onSort} />
-            <SortHeader label="Priority" field="priority" sortField={sortField} sortDir={sortDir} onSort={onSort} />
-            <SortHeader label="Owner" field="owner" sortField={sortField} sortDir={sortDir} onSort={onSort} />
-            <SortHeader label="Progress" field="pct" sortField={sortField} sortDir={sortDir} onSort={onSort} className="w-32" />
-            <SortHeader label="Est. Completion" field="date" sortField={sortField} sortDir={sortDir} onSort={onSort} />
-            <th className="py-2.5 px-2 w-16"></th>
-          </tr>
-        </thead>
-        <tbody>
-          {sorted.map(p => (
-            <ProjectRow key={p.id} project={p} onUpdate={onUpdate} onDelete={onDelete} />
-          ))}
-        </tbody>
-      </table>
-      <button onClick={() => onAdd()} className="w-full text-left px-6 py-3 text-xs text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors border-t border-gray-100 flex items-center gap-2">
-        <Plus size={12} /> Add project
-      </button>
+      <table className="w-full"><TH/><tbody>{sorted.map(p=><ProjectRow key={p.id} project={p} onUpdate={onUpdate} onDelete={onDelete}/>)}</tbody></table>
+      <button onClick={()=>onAdd()} className="w-full text-left px-6 py-3 text-xs text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors border-t border-gray-100 flex items-center gap-2"><Plus size={12}/> Add project</button>
     </div>
-  );
+    {sup.length>0&&(<div className="mt-6">
+      <button onClick={()=>setSupHide(!supHide)} className="flex items-center gap-2 mb-3"><div className="w-7 h-7 bg-gradient-to-br from-teal-500 to-emerald-600 rounded-lg flex items-center justify-center shadow-sm"><Headphones size={14} className="text-white"/></div><h3 className="text-sm font-bold text-gray-700">Ongoing Support</h3><span className="text-[10px] bg-teal-50 text-teal-700 border border-teal-200 px-2 py-0.5 rounded-full font-medium">{sup.length}</span>{supHide?<ChevronRight size={14} className="text-gray-400"/>:<ChevronDown size={14} className="text-gray-400"/>}</button>
+      {!supHide&&(<div className="bg-white rounded-xl border border-teal-200 overflow-hidden"><table className="w-full"><TH/><tbody>{supSorted.map(p=><ProjectRow key={p.id} project={p} onUpdate={onUpdate} onDelete={onDelete}/>)}</tbody></table><button onClick={()=>onAdd("support")} className="w-full text-left px-6 py-3 text-xs text-gray-400 hover:text-teal-600 hover:bg-teal-50 transition-colors border-t border-teal-100 flex items-center gap-2"><Plus size={12}/> Add support item</button></div>)}
+    </div>)}
+  </div>);
 }
 
 /* =====================================================================
@@ -1052,6 +1039,7 @@ function OwnerSection({ owner, initials, projects, highCount, blockedCount, onUp
                 <SortHeader label="Priority" field="priority" sortField={sortField} sortDir={sortDir} onSort={onSort} />
                 <SortHeader label="Progress" field="pct" sortField={sortField} sortDir={sortDir} onSort={onSort} className="w-32" />
                 <SortHeader label="Est. Completion" field="date" sortField={sortField} sortDir={sortDir} onSort={onSort} />
+                <th className="py-2 px-2 text-left" style={{minWidth:80}}>Last Updated</th>
                 <th className="py-2 px-2 w-16"></th>
               </tr>
             </thead>
@@ -1165,6 +1153,7 @@ function DeptSection({ dept, cfg, Icon, projects, highCount, totalPct, onUpdate,
                     <SortHeader label="Owner" field="owner" sortField={sortField} sortDir={sortDir} onSort={onSort} />
                     <SortHeader label="Progress" field="pct" sortField={sortField} sortDir={sortDir} onSort={onSort} className="w-32" />
                     <SortHeader label="Est. Completion" field="date" sortField={sortField} sortDir={sortDir} onSort={onSort} />
+                    <th className="py-2 px-2 text-left" style={{minWidth:80}}>Last Updated</th>
                     <th className="py-2 px-2 w-16"></th>
                   </tr>
                 </thead>
@@ -1284,8 +1273,55 @@ function HistoryView({ completedProjects, onUpdate }) {
 }
 
 /* =====================================================================
+   VIEW: CHANGE LOG (field-level audit trail)
+   ===================================================================== */
+
+function ChangeLogView({changeLog,onUndo}){
+  const [clF,setClF]=useState("");
+  const FL={name:"Name",status:"Status",priority:"Priority",owner:"Owner",pct:"Progress",date:"Est. Completion",departments:"Departments",roadblocks:"Roadblocks",milestones:"Milestones",nextSteps:"Next Steps",notes:"Notes",tier:"Tier",completedDate:"Completed Date"};
+  const fLog=useMemo(()=>{if(!clF)return changeLog;const q=clF.toLowerCase();return changeLog.filter(e=>(e.projectName||"").toLowerCase().includes(q)||(FL[e.field]||e.field||"").toLowerCase().includes(q)||(e.user||"").toLowerCase().includes(q));},[changeLog,clF]);
+  if(changeLog.length===0)return(<div className="bg-white rounded-xl border border-gray-200 p-12 text-center"><History size={40} className="text-gray-200 mx-auto mb-3"/><h3 className="font-bold text-gray-400 text-lg">No Changes Yet</h3><p className="text-sm text-gray-300 mt-1">When you edit project fields, every change will be logged here so you can track and undo changes.</p></div>);
+  return(<div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+    <div className="px-5 py-3 bg-gray-50 border-b border-gray-200 flex items-center justify-between"><div className="flex items-center gap-2"><History size={14} className="text-blue-500"/><span className="text-sm font-bold text-gray-700">{changeLog.length} Change{changeLog.length!==1?"s":""} Logged</span></div><div className="flex items-center gap-1.5 bg-white rounded-lg px-2.5 py-1.5 border border-gray-200 w-56"><Search size={12} className="text-gray-400"/><input value={clF} onChange={e=>setClF(e.target.value)} className="text-xs bg-transparent focus:outline-none w-full" placeholder="Filter by project or field..."/></div></div>
+    <div className="divide-y divide-gray-100 max-h-[600px] overflow-y-auto">{fLog.map(entry=>(<div key={entry.id} className="px-5 py-3 hover:bg-gray-50/50 transition-colors flex items-start gap-3"><div className="flex-shrink-0 mt-0.5"><div className="w-6 h-6 bg-blue-50 rounded-full flex items-center justify-center"><Edit3 size={10} className="text-blue-500"/></div></div><div className="flex-1 min-w-0"><div className="flex items-center gap-2 flex-wrap"><span className="text-xs font-semibold text-gray-800">{entry.projectName}</span><span className="text-[10px] bg-gray-100 text-gray-500 px-1.5 py-0.5 rounded font-medium">{FL[entry.field]||entry.field}</span></div><div className="flex items-center gap-1.5 mt-1 text-xs"><span className="text-red-400 line-through max-w-[200px] truncate" title={entry.oldValue}>{entry.oldValue}</span><ArrowRight size={10} className="text-gray-300 flex-shrink-0"/><span className="text-emerald-600 font-medium max-w-[200px] truncate" title={entry.newValue}>{entry.newValue}</span></div><div className="flex items-center gap-2 mt-1.5 text-[10px] text-gray-400"><span>{entry.timestamp}</span><span>by {entry.user}</span></div></div><button onClick={()=>onUndo(entry)} className="flex-shrink-0 text-[10px] text-blue-500 hover:text-blue-700 hover:bg-blue-50 px-2 py-1 rounded transition-colors flex items-center gap-1" title="Undo this change"><RotateCcw size={10}/> Undo</button></div>))}</div>
+  </div>);
+}
+
+/* =====================================================================
    VIEW: INBOX (triage area for new requests & unassigned items)
    ===================================================================== */
+
+/* =====================================================================
+   PDF EXPORT DIALOG (section picker)
+   ===================================================================== */
+
+function ExportPDFDialog({onClose,projects,stats,alerts,completedProjects,changeLog}){
+  const [sec,setSec]=useState({summary:true,activeProjects:true,ongoingSupport:true,blocked:true,byOwner:false,completed:false,changeLog:false});
+  const tog=(k)=>setSec(p=>({...p,[k]:!p[k]}));
+  const ap=projects.filter(p=>p.status!=="Done");
+  const handleExport=()=>{
+    const now=new Date();const ds=now.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric"});
+    const css="@page{margin:.75in;size:letter}body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;font-size:11px;color:#1f2937;line-height:1.5}h1{font-size:20px;color:#111827;margin-bottom:4px}h2{font-size:14px;color:#374151;margin-top:24px;border-bottom:2px solid #e5e7eb;padding-bottom:4px}h3{font-size:12px;color:#4b5563;margin-top:16px}.sub{font-size:11px;color:#9ca3af;margin-bottom:16px}.sr{display:flex;gap:16px;margin:12px 0}.sb{background:#f9fafb;border:1px solid #e5e7eb;border-radius:6px;padding:8px 14px;text-align:center;flex:1}.sn{font-size:20px;font-weight:700;color:#111827}.sl{font-size:9px;color:#9ca3af;text-transform:uppercase}table{width:100%;border-collapse:collapse;margin-top:8px;font-size:10px}th{background:#f9fafb;border-bottom:2px solid #e5e7eb;padding:6px 8px;text-align:left;font-weight:600;color:#6b7280;text-transform:uppercase;font-size:9px}td{padding:6px 8px;border-bottom:1px solid #f3f4f6}.bg{display:inline-block;padding:1px 6px;border-radius:4px;font-size:9px;font-weight:600}.hi{background:#fef2f2;color:#b91c1c}.me{background:#fffbeb;color:#92400e}.lo{background:#f0fdf4;color:#15803d}.ft{margin-top:32px;text-align:center;font-size:9px;color:#d1d5db;border-top:1px solid #e5e7eb;padding-top:8px}@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}";
+    let h="<!DOCTYPE html><html><head><title>IT Dashboard Report</title><style>"+css+"</style></head><body>";
+    h+="<h1>IT Project Dashboard</h1><div class=sub>Aubuchon Hardware -- "+ds+"</div>";
+    window.__epd={h,ds,sec,ap};
+  };
+  window.__epdExport=handleExport;
+    if(sec.summary){h+="<h2>Summary</h2><div class=sr><div class=sb><div class=sn>"+stats.total+"</div><div class=sl>Active</div></div><div class=sb><div class=sn>"+stats.inProgress+"</div><div class=sl>In Progress</div></div><div class=sb><div class=sn>"+stats.highPriority+"</div><div class=sl>High Priority</div></div><div class=sb><div class=sn>"+stats.avgProgress+"%</div><div class=sl>Avg Progress</div></div><div class=sb><div class=sn>"+stats.blocked+"</div><div class=sl>Blocked</div></div><div class=sb><div class=sn>"+stats.done+"</div><div class=sl>Completed</div></div></div>";}
+    if(sec.activeProjects){const items=ap.filter(p=>p.tier!=="support");h+="<h2>Active Projects ("+items.length+")</h2><table><tr><th>Project</th><th>Dept</th><th>Status</th><th>Priority</th><th>Owner</th><th>Progress</th><th>Est.Completion</th></tr>";for(const p of items)h+="<tr><td><strong>"+p.name+"</strong></td><td>"+p.departments.join(", ")+"</td><td>"+p.status+"</td><td><span class='bg "+p.priority.toLowerCase().slice(0,2)+"'>"+p.priority+"</span></td><td>"+p.owner+"</td><td>"+p.pct+"%</td><td>"+(p.date||"--")+"</td></tr>";h+="</table>";}
+    if(sec.ongoingSupport){const items=ap.filter(p=>p.tier==="support");if(items.length>0){h+="<h2>Ongoing Support ("+items.length+")</h2><table><tr><th>Item</th><th>Dept</th><th>Priority</th><th>Owner</th><th>Notes</th></tr>";for(const p of items)h+="<tr><td><strong>"+p.name+"</strong></td><td>"+p.departments.join(", ")+"</td><td><span class='bg "+p.priority.toLowerCase().slice(0,2)+"'>"+p.priority+"</span></td><td>"+p.owner+"</td><td>"+((p.notes||"").slice(0,80))+((p.notes||"").length>80?"...":"")+"</td></tr>";h+="</table>";}}
+    if(sec.blocked){const items=ap.filter(p=>p.status==="Blocked"||p.status==="On Hold");if(items.length>0){h+="<h2>Blocked / On Hold ("+items.length+")</h2><table><tr><th>Project</th><th>Owner</th><th>Status</th><th>Roadblocks</th></tr>";for(const p of items)h+="<tr><td><strong>"+p.name+"</strong></td><td>"+p.owner+"</td><td>"+p.status+"</td><td>"+(p.roadblocks||"No details")+"</td></tr>";h+="</table>";}}
+    if(sec.byOwner){h+="<h2>By Owner</h2>";for(const ow of ["Dave Faucher","Craig Renaud","Eric Handley","Suzanne Fleury"]){const ops=ap.filter(p=>p.owner===ow);if(ops.length===0)continue;h+="<h3>"+ow+" ("+ops.length+")</h3><table><tr><th>Project</th><th>Status</th><th>Priority</th><th>Progress</th></tr>";for(const p of ops)h+="<tr><td>"+p.name+"</td><td>"+p.status+"</td><td><span class='bg "+p.priority.toLowerCase().slice(0,2)+"'>"+p.priority+"</span></td><td>"+p.pct+"%</td></tr>";h+="</table>";}}
+    if(sec.completed&&completedProjects.length>0){h+="<h2>Completed ("+completedProjects.length+")</h2><table><tr><th>Project</th><th>Owner</th><th>Completed</th></tr>";for(const p of completedProjects)h+="<tr><td>"+p.name+"</td><td>"+p.owner+"</td><td>"+(p.completedDate||"--")+"</td></tr>";h+="</table>";}
+    if(sec.changeLog&&changeLog.length>0){h+="<h2>Recent Changes (last 50)</h2><table><tr><th>When</th><th>Project</th><th>Field</th><th>From</th><th>To</th><th>By</th></tr>";for(const e of changeLog.slice(0,50))h+="<tr><td>"+e.timestamp+"</td><td>"+e.projectName+"</td><td>"+e.field+"</td><td>"+e.oldValue+"</td><td>"+e.newValue+"</td><td>"+e.user+"</td></tr>";h+="</table>";}
+    h+="<div class=ft>Aubuchon Hardware -- IT Department -- Generated "+ds+"</div></body></html>";
+    const pw=window.open("","_blank");pw.document.write(h);pw.document.close();setTimeout(()=>{pw.print();},500);onClose();
+  };
+  const SL=[["summary","Executive Summary","Stats overview"],["activeProjects","Active Projects","All non-support items"],["ongoingSupport","Ongoing Support","Support & ops items"],["blocked","Blocked / On Hold","Blocked or paused"],["byOwner","By Owner","Grouped by team member"],["completed","Completed Projects","Finished projects"],["changeLog","Recent Changes","Last 50 changes"]];
+  return(<div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center" onClick={onClose}><div className="bg-white rounded-2xl shadow-2xl border border-gray-200 w-[420px] max-h-[90vh] overflow-hidden" onClick={e=>e.stopPropagation()}><div className="px-5 py-4 border-b border-gray-200 flex items-center justify-between"><div className="flex items-center gap-2"><FileText size={16} className="text-blue-600"/><h3 className="text-sm font-bold text-gray-800">Export to PDF</h3></div><button onClick={onClose} className="text-gray-400 hover:text-gray-600"><X size={16}/></button></div><div className="px-5 py-4"><p className="text-xs text-gray-500 mb-3">Select sections to include:</p><div className="space-y-2">{SL.map(([k,l,d])=>(<label key={k} className="flex items-start gap-3 p-2.5 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"><input type="checkbox" checked={sec[k]} onChange={()=>tog(k)} className="mt-0.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"/><div><div className="text-xs font-semibold text-gray-700">{l}</div><div className="text-[10px] text-gray-400">{d}</div></div></label>))}</div></div><div className="px-5 py-3 bg-gray-50 border-t border-gray-200 flex items-center justify-end gap-2"><button onClick={onClose} className="px-3.5 py-2 text-xs text-gray-600 hover:bg-gray-200 rounded-lg transition-colors">Cancel</button><button onClick={handleExport} className="px-4 py-2 bg-blue-600 text-white text-xs font-medium rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-1.5"><Download size={12}/> Generate PDF</button></div></div></div>);
+}
+
+
 
 function InboxView({ inboxItems, setInboxItems, onPromote }) {
   const [newText, setNewText] = useState("");
@@ -1387,6 +1423,8 @@ function ITProjectDashboard({ goHome }) {
   const [filterTier, setFilterTier] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [exportMsg, setExportMsg] = useState("");
+  const [changeLog, setChangeLog] = useState([]);
+  const [showExportDialog, setShowExportDialog] = useState(false);
 
   // --- Firestore persistence ---
   const isLoaded = useRef(false);
@@ -1400,9 +1438,10 @@ function ITProjectDashboard({ goHome }) {
         const snap = await getDoc(DOC_REF);
         if (snap.exists()) {
           const d = snap.data();
-          if (d.projects) setProjects(d.projects);
+          if (d.projects) { const migrated=d.projects.map(p=>p.date==="Ongoing"&&p.tier!=="support"?{...p,tier:"support"}:p); setProjects(migrated); }
           if (d.inboxItems) setInboxItems(d.inboxItems);
           if (d.trashedProjects) setTrashedProjects(d.trashedProjects);
+          if (d.changeLog) setChangeLog(d.changeLog);
         }
       } catch (err) {
         console.warn("Firestore load failed, using defaults:", err);
@@ -1420,11 +1459,12 @@ function ITProjectDashboard({ goHome }) {
         projects,
         inboxItems,
         trashedProjects,
+        changeLog,
         lastSaved: new Date().toISOString(),
       }).catch(err => console.warn("Firestore save failed:", err));
     }, 2000);
     return () => { if (saveTimer.current) clearTimeout(saveTimer.current); };
-  }, [projects, inboxItems, trashedProjects]);
+  }, [projects, inboxItems, trashedProjects, changeLog]);
 
   // Derived data
   const activeProjects = useMemo(() => projects.filter(p => p.status !== "Done"), [projects]);
@@ -1436,7 +1476,7 @@ function ITProjectDashboard({ goHome }) {
       if (filterStatus !== "All" && p.status !== filterStatus) return false;
       if (filterPriority !== "All" && p.priority !== filterPriority) return false;
       if (filterDept !== "All" && !p.departments.includes(filterDept)) return false;
-      if (filterTier !== "All" && p.tier !== (filterTier === "Project" ? "project" : "quickwin")) return false;
+      if (filterTier !== "All") { const tierMap={"Project":"project","Quick Win":"quickwin","Ongoing Support":"support"}; if(p.tier!==tierMap[filterTier]) return false; }
       if (searchQuery && !p.name.toLowerCase().includes(searchQuery.toLowerCase()) && !p.notes.toLowerCase().includes(searchQuery.toLowerCase())) return false;
       return true;
     });
@@ -1459,17 +1499,17 @@ function ITProjectDashboard({ goHome }) {
 
   // Handlers
   const handleUpdate = useCallback((id, field, value) => {
+    const now = new Date();
+    const ts = now.toLocaleDateString("en-US")+" "+now.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
     setProjects(prev => prev.map(p => {
       if (p.id !== id) return p;
-      const updated = { ...p, [field]: value };
-      // Auto-capture completion date when status changes to Done
-      if (field === "status" && value === "Done" && !p.completedDate) {
-        updated.completedDate = new Date().toLocaleDateString("en-US");
-        updated.pct = 100;
-      }
-      // Clear completion date if un-done
-      if (field === "status" && value !== "Done" && p.status === "Done") {
-        updated.completedDate = "";
+      const oldVal = p[field];
+      const updated = { ...p, [field]: value, lastUpdated: ts };
+      if (field==="status"&&value==="Done"&&!p.completedDate) { updated.completedDate=new Date().toLocaleDateString("en-US"); updated.pct=100; }
+      if (field==="status"&&value!=="Done"&&p.status==="Done") { updated.completedDate=""; }
+      if (!["updateLog","subtasks"].includes(field)) {
+        const fmt=(v)=>Array.isArray(v)?v.join(", "):(v===""||v===null||v===undefined?"(empty)":String(v));
+        setChangeLog(prev=>[{id:Date.now(),timestamp:ts,projectId:id,projectName:p.name,field,oldValue:fmt(oldVal),newValue:fmt(value),user:auth.currentUser?.displayName||auth.currentUser?.email||"Unknown"},...prev].slice(0,500));
       }
       return updated;
     }));
@@ -1497,22 +1537,24 @@ function ITProjectDashboard({ goHome }) {
   }, []);
 
   const handleAddProject = useCallback((ownerOrNull, deptOrNull) => {
+    const isSup=ownerOrNull==="support";
     const newP = {
       id: nextId,
-      departments: deptOrNull ? [deptOrNull] : ["Enterprise Systems"],
-      name: "New Project",
-      owner: ownerOrNull || "Unassigned",
-      status: "Not Started",
+      departments: deptOrNull?[deptOrNull]:["Enterprise Systems"],
+      name: isSup?"New Support Item":"New Project",
+      owner: (ownerOrNull&&ownerOrNull!=="support")?ownerOrNull:"Unassigned",
+      status: isSup?"In Progress":"Not Started",
       priority: "Medium",
       pct: 0,
-      date: "",
+      date: isSup?"Ongoing":"",
       roadblocks: "",
       milestones: "",
       nextSteps: "",
       notes: "",
       completedDate: "",
       subtasks: [],
-      tier: "project",
+      tier: isSup?"support":"project",
+      lastUpdated: new Date().toLocaleDateString("en-US")+" "+new Date().toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"}),
     };
     setProjects(prev => [...prev, newP]);
     setNextId(n => n + 1);
@@ -1596,6 +1638,14 @@ function ITProjectDashboard({ goHome }) {
     setExportMsg("Done!"); setTimeout(() => setExportMsg(""), 2000);
   };
 
+  const handleUndoChange = useCallback((entry) => {
+    if (!window.confirm(`Undo "${entry.field}" on "${entry.projectName}"? Revert to "${entry.oldValue}"?`)) return;
+    const rv=entry.oldValue==="(empty)"?"":entry.oldValue;
+    const fv=entry.field==="departments"?rv.split(", ").filter(Boolean):(entry.field==="pct"?Number(rv):rv);
+    handleUpdate(entry.projectId, entry.field, fv);
+    setChangeLog(prev=>prev.filter(e=>e.id!==entry.id));
+  }, [handleUpdate]);
+
   const clearFilters = () => { setFilterOwner("All"); setFilterStatus("All"); setFilterPriority("All"); setFilterDept("All"); setFilterTier("All"); setSearchQuery(""); };
 
   // Active status options (exclude Done for filter in non-history views)
@@ -1623,20 +1673,7 @@ function ITProjectDashboard({ goHome }) {
             </div>
 
             <div className="flex items-center gap-2">
-              {/* Export dropdown */}
-              <div className="relative group">
-                <button className="flex items-center gap-1.5 bg-gray-900 text-white px-3.5 py-2 rounded-lg text-xs font-medium hover:bg-gray-800 transition-colors shadow-sm">
-                  <Download size={13} />{exportMsg || "Export"}
-                </button>
-                <div className="absolute right-0 mt-1 bg-white rounded-lg shadow-xl border border-gray-200 py-1 min-w-[180px] hidden group-hover:block z-50">
-                  <button onClick={handleExportCSV} className="w-full text-left px-3 py-2 text-xs hover:bg-gray-50 flex items-center gap-2">
-                    <Download size={12} className="text-gray-400" />CSV (Full Data)
-                  </button>
-                  <button onClick={handleExportSummary} className="w-full text-left px-3 py-2 text-xs hover:bg-gray-50 flex items-center gap-2">
-                    <FileText size={12} className="text-gray-400" />Executive Summary
-                  </button>
-                </div>
-              </div>
+              <button onClick={()=>setShowExportDialog(true)} className="flex items-center gap-1.5 bg-gray-900 text-white px-3.5 py-2 rounded-lg text-xs font-medium hover:bg-gray-800 transition-colors shadow-sm"><Download size={13}/>Export</button>
               <span className="text-[10px] text-gray-300 px-1">Auto-saved</span>
               <button onClick={() => signOut(auth)} className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors" title="Sign out">
                 <LogOut size={15} />
@@ -1659,9 +1696,8 @@ function ITProjectDashboard({ goHome }) {
                   {v.id === "trash" && trashedProjects.length > 0 && (
                     <span className="bg-gray-200 text-gray-600 text-[9px] px-1.5 py-0.5 rounded-full font-bold">{trashedProjects.length}</span>
                   )}
-                  {v.id === "history" && completedProjects.length > 0 && (
-                    <span className="bg-emerald-100 text-emerald-700 text-[9px] px-1.5 py-0.5 rounded-full font-bold">{completedProjects.length}</span>
-                  )}
+                  {v.id === "history" && completedProjects.length > 0 && (<span className="bg-emerald-100 text-emerald-700 text-[9px] px-1.5 py-0.5 rounded-full font-bold">{completedProjects.length}</span>)}
+                  {v.id === "changelog" && changeLog.length > 0 && (<span className="bg-blue-100 text-blue-700 text-[9px] px-1.5 py-0.5 rounded-full font-bold">{changeLog.length}</span>)}
                 </button>
               );
             })}
@@ -1681,7 +1717,7 @@ function ITProjectDashboard({ goHome }) {
         </div>
 
         {/* ALERTS */}
-        {alerts.length > 0 && activeView !== "history" && (
+        {alerts.length > 0 && activeView !== "history" && activeView !== "changelog" && (
           <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-5 flex items-start gap-3">
             <AlertTriangle size={16} className="text-red-500 mt-0.5 flex-shrink-0" />
             <div>
@@ -1691,8 +1727,8 @@ function ITProjectDashboard({ goHome }) {
           </div>
         )}
 
-        {/* FILTERS (hidden on history view) */}
-        {activeView !== "history" && (
+        {/* FILTERS */}
+        {activeView !== "history" && activeView !== "changelog" && (
           <div className="flex items-center gap-2 mb-5 flex-wrap">
             <div className="flex items-center gap-1.5 bg-white rounded-lg px-3 py-2 border border-gray-200 flex-1 max-w-xs">
               <Search size={14} className="text-gray-400" />
@@ -1701,13 +1737,7 @@ function ITProjectDashboard({ goHome }) {
             </div>
 
             <div className="flex bg-gray-100 rounded-lg p-0.5 border border-gray-200">
-              {["All", "Project", "Quick Win"].map(t => (
-                <button key={t} onClick={() => setFilterTier(t)}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${filterTier === t ? "bg-white shadow-sm text-gray-900" : "text-gray-400 hover:text-gray-600"}`}>
-                  {t === "Quick Win" && <Zap size={11} className="inline mr-1" />}
-                  {t === "All" ? "All" : t + "s"}
-                </button>
-              ))}
+              {["All","Project","Quick Win","Ongoing Support"].map(t=>(<button key={t} onClick={()=>setFilterTier(t)} className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${filterTier===t?"bg-white shadow-sm text-gray-900":"text-gray-400 hover:text-gray-600"}`}>{t==="Quick Win"&&<Zap size={11} className="inline mr-1"/>}{t==="Ongoing Support"&&<Headphones size={11} className="inline mr-1"/>}{t==="All"?"All":t}</button>))}
             </div>
 
             <div className="flex items-center gap-1.5 bg-white rounded-lg px-2.5 py-2 border border-gray-200">
@@ -1752,7 +1782,7 @@ function ITProjectDashboard({ goHome }) {
 
         {/* VIEW CONTENT */}
         {activeView === "projects" && (
-          <AllProjectsView projects={filtered} onUpdate={handleUpdate} onDelete={handleDelete} onAdd={() => handleAddProject()} />
+          <AllProjectsView projects={filtered} onUpdate={handleUpdate} onDelete={handleDelete} onAdd={(t)=>handleAddProject(t)} />
         )}
 
         {activeView === "owner" && (
@@ -1773,9 +1803,11 @@ function ITProjectDashboard({ goHome }) {
           <TrashView trashedProjects={trashedProjects} onRestore={handleRestore} onPermanentDelete={handlePermanentDelete} />
         )}
 
-        {activeView === "history" && (
-          <HistoryView completedProjects={completedProjects} onUpdate={handleUpdate} />
-        )}
+        {activeView === "history" && (<HistoryView completedProjects={completedProjects} onUpdate={handleUpdate} />)}
+
+        {activeView === "changelog" && (<ChangeLogView changeLog={changeLog} onUndo={handleUndoChange} />)}
+
+        {showExportDialog && (<ExportPDFDialog onClose={()=>setShowExportDialog(false)} projects={projects} stats={stats} alerts={alerts} completedProjects={completedProjects} changeLog={changeLog} />)}
 
         {/* FOOTER */}
         <div className="text-center py-6 text-[11px] text-gray-300 mt-4">
