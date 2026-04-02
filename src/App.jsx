@@ -1731,6 +1731,7 @@ function ITProjectDashboard({ goHome }) {
   const [filterDept, setFilterDept] = useState("All");
   const [filterTier, setFilterTier] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
+  const [showNewProjectModal, setShowNewProjectModal] = useState(false);
   const [exportMsg, setExportMsg] = useState("");
   const [changeLog, setChangeLog] = useState([]);
   const [showExportDialog, setShowExportDialog] = useState(false);
