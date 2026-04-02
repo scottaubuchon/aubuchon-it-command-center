@@ -1057,10 +1057,7 @@ function ProjectRow({ project, onUpdate, onDelete, showDepts = true, showOwner =
         <td className="py-2.5 px-2 text-xs text-gray-500 whitespace-nowrap"><DatePicker value={project.date} onChange={(v) => onUpdate(project.id, "date", v)} /></td>
         <td className="py-2.5 px-2 text-[10px] text-gray-400 whitespace-nowrap">{project.lastUpdated || "--"}</td>
         <td className="py-2.5 px-2">
-          <div className="flex items-center gap-1">
-            <DeptMultiSelect selected={project.departments} onChange={(d) => onUpdate(project.id, "departments", d)} allDepartments={allDepartments} onAddDept={onAddDept} />
-            <button onClick={(e) => { e.stopPropagation(); onDelete(project.id); }} className="text-red-300 hover:text-red-500 transition-colors" title="Delete project"><Trash2 size={12} /></button>
-          </div>
+          <button onClick={(e) => { e.stopPropagation(); onDelete(project.id); }} className="text-red-300 hover:text-red-500 transition-colors" title="Delete project"><Trash2 size={12} /></button>
         </td>
       </tr>
       {expanded && (
