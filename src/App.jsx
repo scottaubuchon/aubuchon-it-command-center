@@ -1102,15 +1102,15 @@ function AllProjectsView({ projects, onUpdate, onDelete, onAdd, ownerOptions, on
   const {sorted,sortField,sortDir,onSort}=useSortableProjects(reg);
   const {sorted:supSorted}=useSortableProjects(sup);
   const [supHide,setSupHide]=useState(false);
-  const TH=()=>(<thead><tr className="bg-gray-50 border-b border-gray-200 text-[10px] font-semibold text-gray-400 uppercase tracking-wider"><th className="py-2.5 px-3 w-8"></th><SortHeader label="Project" field="name" sortField={sortField} sortDir={sortDir} onSort={onSort} className="py-2.5 px-3"/><SortHeader label="Type" field="tier" sortField={sortField} sortDir={sortDir} onSort={onSort}/><th className="py-2.5 px-2 text-left">Subtasks</th><SortHeader label="Departments" field="departments" sortField={sortField} sortDir={sortDir} onSort={onSort}/><SortHeader label="Status" field="status" sortField={sortField} sortDir={sortDir} onSort={onSort}/><SortHeader label="Priority" field="priority" sortField={sortField} sortDir={sortDir} onSort={onSort}/><SortHeader label="Owner" field="owner" sortField={sortField} sortDir={sortDir} onSort={onSort}/><SortHeader label="Progress" field="pct" sortField={sortField} sortDir={sortDir} onSort={onSort} className="w-32"/><SortHeader label="Est. Completion" field="date" sortField={sortField} sortDir={sortDir} onSort={onSort}/><th className="py-2.5 px-2 text-left" style={{minWidth:80}}>Last Updated</th><th className="py-2.5 px-2 w-16"></th></tr></thead>);
+  const TH=()=>(<thead><tr className="bg-gray-50 border-b border-gray-200 text-[10px] font-semibold text-gray-400 uppercase tracking-wider"><th className="py-2.5 px-3 w-8"></th><SortHeader label="Project" field="name" sortField={sortField} sortDir={sortDir} onSort={onSort} className="py-2.5 px-3"/><SortHeader label="Type" field="tier" sortField={sortField} sortDir={sortDir} onSort={onSort}/><th className="py-2.5 px-2 text-left">Subtasks</th><SortHeader label="Departments" field="departments" sortField={sortField} sortDir={sortDir} onSort={onSort}/><SortHeader label="Status" field="status" sortField={sortField} sortDir={sortDir} onSort={onSort}/><SortHeader label="Priority" field="priority" sortField={sortField} sortDir={sortDir} onSort={onSort}/><SortHeader label="Owner" field="owner" sortField={sortField} sortDir={sortDir} onSort={onSort}/><SortHeader label="Progress" field="pct" sortField={sortField} sortDir={sortDir} onSort={onSort} className="w-24"/><SortHeader label="Est. Date" field="date" sortField={sortField} sortDir={sortDir} onSort={onSort}/><th className="py-2.5 px-2 text-left" style={{minWidth:60}}>Updated</th><th className="py-2.5 px-2 w-16"></th></tr></thead>);
   return (<div>
     <div className="bg-white rounded-xl border border-gray-200 overflow-x-auto">
-      <table className="w-full" style={{minWidth:1100}}><TH/><tbody>{sorted.map(p=><ProjectRow key={p.id} project={p} onUpdate={onUpdate} onDelete={onDelete} ownerOptions={ownerOptions} onAddOwner={onAddOwner} allDepartments={allDepartments} onAddDept={onAddDept}/>)}</tbody></table>
+      <table className="w-full" style={{minWidth:1000}}><TH/><tbody>{sorted.map(p=><ProjectRow key={p.id} project={p} onUpdate={onUpdate} onDelete={onDelete} ownerOptions={ownerOptions} onAddOwner={onAddOwner} allDepartments={allDepartments} onAddDept={onAddDept}/>)}</tbody></table>
       <button onClick={()=>onAdd()} className="w-full text-left px-6 py-3 text-xs text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors border-t border-gray-100 flex items-center gap-2"><Plus size={12}/> Add project</button>
     </div>
     {sup.length>0&&(<div className="mt-6">
       <button onClick={()=>setSupHide(!supHide)} className="flex items-center gap-2 mb-3"><div className="w-7 h-7 bg-gradient-to-br from-teal-500 to-emerald-600 rounded-lg flex items-center justify-center shadow-sm"><Headphones size={14} className="text-white"/></div><h3 className="text-sm font-bold text-gray-700">Ongoing Support</h3><span className="text-[10px] bg-teal-50 text-teal-700 border border-teal-200 px-2 py-0.5 rounded-full font-medium">{sup.length}</span>{supHide?<ChevronRight size={14} className="text-gray-400"/>:<ChevronDown size={14} className="text-gray-400"/>}</button>
-      {!supHide&&(<div className="bg-white rounded-xl border border-teal-200 overflow-x-auto"><table className="w-full" style={{minWidth:1100}}><TH/><tbody>{supSorted.map(p=><ProjectRow key={p.id} project={p} onUpdate={onUpdate} onDelete={onDelete} ownerOptions={ownerOptions} onAddOwner={onAddOwner} allDepartments={allDepartments} onAddDept={onAddDept}/>)}</tbody></table><button onClick={()=>onAdd()} className="w-full text-left px-6 py-3 text-xs text-gray-400 hover:text-teal-600 hover:bg-teal-50 transition-colors border-t border-teal-100 flex items-center gap-2"><Plus size={12}/> Add support item</button></div>)}
+      {!supHide&&(<div className="bg-white rounded-xl border border-teal-200 overflow-x-auto"><table className="w-full" style={{minWidth:1000}}><TH/><tbody>{supSorted.map(p=><ProjectRow key={p.id} project={p} onUpdate={onUpdate} onDelete={onDelete} ownerOptions={ownerOptions} onAddOwner={onAddOwner} allDepartments={allDepartments} onAddDept={onAddDept}/>)}</tbody></table><button onClick={()=>onAdd()} className="w-full text-left px-6 py-3 text-xs text-gray-400 hover:text-teal-600 hover:bg-teal-50 transition-colors border-t border-teal-100 flex items-center gap-2"><Plus size={12}/> Add support item</button></div>)}
     </div>)}
   </div>);
 }
@@ -1176,7 +1176,7 @@ function OwnerSection({ owner, initials, projects, highCount, blockedCount, onUp
       {!collapsed && (
         <div className="border-t border-gray-100 overflow-x-auto">
 
-          <table className="w-full" style={{minWidth:1100}}>
+          <table className="w-full" style={{minWidth:1000}}>
             <thead>
               <tr className="bg-gray-50 border-b border-gray-200 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
                 <th className="py-2 px-3 w-8"></th>
@@ -1186,9 +1186,9 @@ function OwnerSection({ owner, initials, projects, highCount, blockedCount, onUp
                 <SortHeader label="Departments" field="departments" sortField={sortField} sortDir={sortDir} onSort={onSort} />
                 <SortHeader label="Status" field="status" sortField={sortField} sortDir={sortDir} onSort={onSort} />
                 <SortHeader label="Priority" field="priority" sortField={sortField} sortDir={sortDir} onSort={onSort} />
-                <SortHeader label="Progress" field="pct" sortField={sortField} sortDir={sortDir} onSort={onSort} className="w-32" />
-                <SortHeader label="Est. Completion" field="date" sortField={sortField} sortDir={sortDir} onSort={onSort} />
-                <th className="py-2 px-2 text-left" style={{minWidth:80}}>Last Updated</th>
+                <SortHeader label="Progress" field="pct" sortField={sortField} sortDir={sortDir} onSort={onSort} className="w-24" />
+                <SortHeader label="Est. Date" field="date" sortField={sortField} sortDir={sortDir} onSort={onSort} />
+                <th className="py-2 px-2 text-left" style={{minWidth:60}}>Updated</th>
                 <th className="py-2 px-2 w-16"></th>
               </tr>
             </thead>
@@ -1296,7 +1296,7 @@ function DeptSection({ dept, cfg, Icon, projects, highCount, totalPct, onUpdate,
             </div>
           ) : (
             <div className="bg-white rounded-xl border border-gray-200 overflow-x-auto">
-              <table className="w-full" style={{minWidth:1100}}>
+              <table className="w-full" style={{minWidth:1000}}>
                 <thead>
                   <tr className="bg-gray-50 border-b border-gray-200 text-[10px] font-semibold text-gray-400 uppercase tracking-wider">
                     <th className="py-2 px-3 w-8"></th>
@@ -1306,9 +1306,9 @@ function DeptSection({ dept, cfg, Icon, projects, highCount, totalPct, onUpdate,
                     <SortHeader label="Status" field="status" sortField={sortField} sortDir={sortDir} onSort={onSort} />
                     <SortHeader label="Priority" field="priority" sortField={sortField} sortDir={sortDir} onSort={onSort} />
                     <SortHeader label="Owner" field="owner" sortField={sortField} sortDir={sortDir} onSort={onSort} />
-                    <SortHeader label="Progress" field="pct" sortField={sortField} sortDir={sortDir} onSort={onSort} className="w-32" />
-                    <SortHeader label="Est. Completion" field="date" sortField={sortField} sortDir={sortDir} onSort={onSort} />
-                    <th className="py-2 px-2 text-left" style={{minWidth:80}}>Last Updated</th>
+                    <SortHeader label="Progress" field="pct" sortField={sortField} sortDir={sortDir} onSort={onSort} className="w-24" />
+                    <SortHeader label="Est. Date" field="date" sortField={sortField} sortDir={sortDir} onSort={onSort} />
+                    <th className="py-2 px-2 text-left" style={{minWidth:60}}>Updated</th>
                     <th className="py-2 px-2 w-16"></th>
                   </tr>
                 </thead>
