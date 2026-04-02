@@ -1860,25 +1860,24 @@ function ITProjectDashboard({ goHome }) {
     setTrashedProjects(prev => prev.filter(p => p.id !== id));
   }, []);
 
-  const handleAddProject = useCallback((ownerOrNull, deptOrNull) => {
-    const isSup=ownerOrNull==="support";
+  const handleAddProject = useCallback((data) => {
     const newId = Date.now();
     const newP = {
       id: newId,
-      departments: deptOrNull?[deptOrNull]:["Enterprise Systems"],
-      name: isSup?"New Support Item":"New Project",
-      owner: (ownerOrNull&&ownerOrNull!=="support")?ownerOrNull:"Unassigned",
-      status: isSup?"In Progress":"Not Started",
-      priority: "Medium",
+      departments: data?.departments || ["Enterprise Systems"],
+      name: data?.name || "New Project",
+      owner: data?.owner || "Unassigned",
+      status: data?.status || "Not Started",
+      priority: data?.priority || "Medium",
       pct: 0,
-      date: isSup?"Ongoing":"",
+      date: data?.tier === "support" ? "Ongoing" : "",
       roadblocks: "",
       milestones: "",
       nextSteps: "",
       notes: "",
       completedDate: "",
       subtasks: [],
-      tier: isSup?"support":"project",
+      tier: data?.tier || "project",
       lastUpdated: new Date().toLocaleDateString("en-US")+" "+new Date().toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"}),
     };
     setProjects(prev => [...prev, newP]);
