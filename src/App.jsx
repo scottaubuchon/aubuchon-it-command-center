@@ -3173,6 +3173,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
             actionedAt: data.actionedAt || null,
             actionedBy: data.actionedBy || "",
             comment: data.comment || "",
+            receiptSubmitted: null,  // AP receipts accessed via invoice image link
           };
         });
 
@@ -3204,9 +3205,10 @@ const PaymentHistory = ({ goHome, goBack }) => {
               : (data.category && data.category !== "--")
                 ? "approved"
                 : (data.status || "pending"),
-            description: (data.cardLast4 ? "Card ..." + data.cardLast4 + " - " : "") + (data.notes || data.category || ""),
+            description: data.notes || "",
             group: data.category || "--",
-            invoiceNumber: "",
+            invoiceNumber: data.cardLast4 ? `Card ...${data.cardLast4}` : "",
+            receiptSubmitted: data.receiptSubmitted || false,
             actionedAt: data.reviewedAt || null,
           };
         });
@@ -3403,6 +3405,8 @@ const PaymentHistory = ({ goHome, goBack }) => {
                       { key: "actioned", label: "Actioned On", w: 110 },
                       { key: "status", label: "Decision", w: 90 },
                       { key: "group", label: "Category", w: 130 },
+                      { key: "desc", label: "Description", w: 180 },
+                      { key: "receipt", label: "Receipt", w: 80 },
                       { key: "comment", label: "Comment", w: 180 },
                     ].map(col => (
                       <th key={col.key}
@@ -3415,7 +3419,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
                 </thead>
                 <tbody>
                   {sorted.length === 0 && (
-                    <tr><td colSpan={9} style={{ textAlign: "center", padding: "50px 0", color: "#9ca3af" }}>
+                    <tr><td colSpan={11} style={{ textAlign: "center", padding: "50px 0", color: "#9ca3af" }}>
                       {rows.length === 0
                         ? "No history yet — records appear here after you submit approvals or rejections."
                         : "No records match the current filters."}
@@ -3434,6 +3438,19 @@ const PaymentHistory = ({ goHome, goBack }) => {
                       <td style={{ padding: "10px 12px", color: "#374151", whiteSpace: "nowrap", fontSize: ".78rem" }}>{fmtDate(r.actionedAt)}</td>
                       <td style={{ padding: "10px 12px" }}>{statusBadge(r.status)}</td>
                       <td style={{ padding: "10px 12px", color: "#374151", fontSize: ".78rem" }}>{r.group || "—"}</td>
+                      <td style={{ padding: "10px 12px", color: "#6b7280", maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: ".78rem" }}>{r.description || "—"}</td>
+                      <td style={{ padding: "10px 12px", textAlign: "center" }}>
+                        {r.type === "AP" && r.invoiceNumber
+                          ? <a href={`/invoices/${r.invoiceNumber}.png`} target="_blank" rel="noopener noreferrer"
+                              style={{ color: "#1d4ed8", fontSize: ".75rem", fontWeight: 600, textDecoration: "none", background: "#eff6ff", border: "1px solid #bfdbfe", padding: "3px 8px", borderRadius: 5, whiteSpace: "nowrap" }}>
+                              📄 View
+                            </a>
+                          : r.type === "CC"
+                            ? <span style={{ fontSize: ".75rem", fontWeight: 600, color: r.receiptSubmitted ? "#15803d" : "#9ca3af" }}>
+                                {r.receiptSubmitted ? "✓ On file" : "—"}
+                              </span>
+                            : "—"}
+                      </td>
                       <td style={{ padding: "10px 12px", color: "#6b7280", maxWidth: 220, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.comment || "—"}</td>
                     </tr>
                   ))}
