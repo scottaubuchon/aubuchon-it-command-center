@@ -3196,8 +3196,14 @@ const PaymentHistory = ({ goHome, goBack }) => {
             project: "",
             dueDate: fmtTs(data.transactionDate),
             invoiceDate: fmtTs(data.transactionDate),
-            // WellsCC saves approved transactions as "reviewed"; map to "approved" for display
-            status: (data.status || "pending") === "reviewed" ? "approved" : (data.status || "pending"),
+            // Status logic: "reviewed" or "approved" from WellsCC = approved.
+            // Records from bulk import have a real category set but status=null — treat as approved.
+            // Records with NO date AND NO category are raw/duplicate import artifacts — excluded below.
+            status: (data.status === "reviewed" || data.status === "approved")
+              ? "approved"
+              : (data.category && data.category !== "--")
+                ? "approved"
+                : (data.status || "pending"),
             description: (data.cardLast4 ? "Card ..." + data.cardLast4 + " - " : "") + (data.notes || data.category || ""),
             group: data.category || "--",
             invoiceNumber: "",
@@ -3205,9 +3211,11 @@ const PaymentHistory = ({ goHome, goBack }) => {
           };
         });
 
-        // Deduplicate: same merchant + amount + date can appear if imported more than once
+        // Remove raw/empty records (no date AND no meaningful category) — these are import artifacts
+        const ccCleaned = ccRows.filter(r => r.dueDate || (r.group && r.group !== "--"));
+        // Deduplicate remaining rows by vendor+amount+date
         const ccSeen = new Set();
-        const ccRowsDeduped = ccRows.filter(r => {
+        const ccRowsDeduped = ccCleaned.filter(r => {
           const key = `${r.vendor}|${r.amount}|${r.dueDate}`;
           if (ccSeen.has(key)) return false;
           ccSeen.add(key);
