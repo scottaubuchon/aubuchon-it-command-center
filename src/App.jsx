@@ -1,4 +1,4 @@
-import { Fragment, useState, useMemo, useCallback, useEffect, useRef } from "react";
+﻿﻿import { Fragment, useState, useMemo, useCallback, useEffect, useRef } from "react";
 import {
   ChevronDown, ChevronRight, Plus, Trash2, Download, AlertTriangle, Clock,
   CheckCircle, XCircle, Pause, FlaskConical, BarChart3, Calendar, Edit3,
@@ -10,7 +10,7 @@ import {
   Home, CreditCard, TrendingUp, Database, Lock, ArrowLeft, Link2, FolderKanban
 } from "lucide-react";
 import { auth, signOut, db } from "./firebase";
-import { doc, getDoc, setDoc, addDoc, collection, getDocs, query, orderBy, updateDoc, deleteDoc, serverTimestamp } from "firebase/firestore";
+import { doc, getDoc, setDoc, collection, getDocs, query, orderBy, updateDoc, deleteDoc, serverTimestamp } from "firebase/firestore";
 
 /* =====================================================================
    CONFIGURATION
@@ -83,7 +83,7 @@ const VIEWS = [
    ===================================================================== */
 
 const initialProjects = [
-  // Enterprise Systems — Active Projects
+  // Enterprise Systems ÃÂ¢ÃÂÃÂ Active Projects
   { id: 40, departments: ["Enterprise Systems"], name: "Merchant 2025.3 Update", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "4/8/2026", roadblocks: "External teams not responding to feedback requests; caused deferral", milestones: "", nextSteps: "", notes: "Upgrade Mi9 Merchant/MMS to version 2025.3 on the live environment", completedDate: "", subtasks: [], tier: "project" },
   { id: 41, departments: ["Enterprise Systems"], name: "Customer History Lookup v2 (Pre-Acquisition POS)", owner: "Dave Faucher", status: "In Progress", priority: "Low", pct: 0, date: "4/10/2026", roadblocks: "", milestones: "", nextSteps: "", notes: "Extend customer history lookup to include data from pre-acquisition POS systems: EPICOR, Rock Solid, Spruce, and others", completedDate: "", subtasks: [], tier: "project" },
   { id: 42, departments: ["Enterprise Systems"], name: "SpacePlan v2.0 Store (Mobile First)", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "4/9/2026", roadblocks: "UX feedback cycles may extend timeline", milestones: "Beta Release", nextSteps: "", notes: "Redevelop the store-facing SpacePlan tool with a mobile-first responsive UI", completedDate: "", subtasks: [], tier: "project" },
@@ -92,7 +92,7 @@ const initialProjects = [
   { id: 45, departments: ["Enterprise Systems"], name: "Price Change Tracking & Forecasting", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "4/22/2026", roadblocks: "IT Team bandwidth", milestones: "", nextSteps: "", notes: "Centralized price change tracking feeds: bin ticket printing, EZ-Commerce, TCB APIs, YODA, and Promo Management. Enables consistent pricing across all channels.", completedDate: "", subtasks: [], tier: "project" },
   { id: 46, departments: ["Enterprise Systems"], name: "Cookie Cutter Store Network Initiative", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "6/1/2026", roadblocks: "IT Team bandwidth", milestones: "", nextSteps: "", notes: "Standardize and template store networks and intranet sites for new store acquisitions beyond Store #244", completedDate: "", subtasks: [], tier: "project" },
   { id: 47, departments: ["Enterprise Systems"], name: "Price Ticket Generation Automation", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "6/8/2026", roadblocks: "Depends on completion of Price Change Tracking & Forecasting project", milestones: "", nextSteps: "", notes: "Fully automate price ticket generation sent to stores. Includes review of removing Bar Tender application from the technology stack.", completedDate: "", subtasks: [], tier: "project" },
-  // Enterprise Systems — Ongoing Support & Operations
+  // Enterprise Systems ÃÂ¢ÃÂÃÂ Ongoing Support & Operations
   { id: 48, departments: ["Enterprise Systems"], name: "EDI Technical Support", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Ongoing operational support for EDI data exchange (OpenText / EricWare). Includes monitoring, troubleshooting, and documentation.", completedDate: "", subtasks: [], tier: "support" },
   { id: 49, departments: ["Enterprise Systems"], name: "Promotion Support", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Continuous support for promotion configuration, testing, and issue resolution within Mi9 Merchant, Ace, and the Marketing Dept.", completedDate: "", subtasks: [], tier: "support" },
   { id: 50, departments: ["Enterprise Systems"], name: "Mi9 Merchant Support", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Day-to-day support for Mi9 Merchant operations including upgrade coordination, break-fix, and vendor escalation.", completedDate: "", subtasks: [], tier: "support" },
@@ -102,7 +102,7 @@ const initialProjects = [
   { id: 54, departments: ["Enterprise Systems"], name: "Toolbox Initiative", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Centralized, secure, role-based portal for internal tools and data collection forms.", completedDate: "", subtasks: [], tier: "support" },
   { id: 55, departments: ["Enterprise Systems"], name: "New Store / Acquisitions Support", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "End-to-end technical support for new stores and acquisitions: customer data loading, EPICOR Bridge integration, and full store setup in Mi9 ecosystem.", completedDate: "", subtasks: [], tier: "support" },
   { id: 56, departments: ["Enterprise Systems"], name: "Documenting EricWare", owner: "Dave Faucher", status: "In Progress", priority: "Low", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Ongoing documentation effort for EricWare systems, with emphasis on EDI processes.", completedDate: "", subtasks: [], tier: "support" },
-  // Enterprise Systems — Backlog
+  // Enterprise Systems ÃÂ¢ÃÂÃÂ Backlog
   { id: 57, departments: ["Enterprise Systems"], name: "Unified Bin Ticket Printing", owner: "Dave Faucher", status: "Not Started", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Consolidate bin ticket printing across all systems into a single, consistent workflow leveraging the Price Change Tracking initiative.", completedDate: "", subtasks: [], tier: "project" },
   { id: 58, departments: ["Enterprise Systems"], name: "Customer History Lookup v3 (Mi9 Customer History)", owner: "Dave Faucher", status: "Not Started", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Extend lookup to include Mi9 native customer transaction history.", completedDate: "", subtasks: [], tier: "project" },
   { id: 59, departments: ["Enterprise Systems"], name: "Customer History Lookup v4 (Service History: EPICOR / Ideal)", owner: "Dave Faucher", status: "Not Started", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Add service history from EPICOR and Ideal systems to the customer history lookup.", completedDate: "", subtasks: [], tier: "project" },
@@ -115,7 +115,7 @@ const initialProjects = [
   { id: 66, departments: ["Enterprise Systems"], name: "Unified Store Hours Management", owner: "Dave Faucher", status: "Not Started", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Single source of truth for store hours propagated to SPORT, Merchant, HS.com, Google My Business, SOCi, AH.com, and Yelp.", completedDate: "", subtasks: [], tier: "project" },
   { id: 67, departments: ["Enterprise Systems"], name: "ITSM", owner: "Dave Faucher", status: "Not Started", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Implement a formal IT service management platform covering ticketing, assigned equipment inventory, and a self-service portal for staff.", completedDate: "", subtasks: [], tier: "project" },
   { id: 68, departments: ["Enterprise Systems"], name: "Invalid Bin Ticket ID & Reprinting via Elvis", owner: "Dave Faucher", status: "Not Started", priority: "Low", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Automate identification and reprinting of invalid bin tickets using the Elvis devices.", completedDate: "", subtasks: [], tier: "project" },
-  // Enterprise Systems — Recently Completed
+  // Enterprise Systems ÃÂ¢ÃÂÃÂ Recently Completed
   { id: 69, departments: ["Enterprise Systems"], name: "FindMyElvis v1.0", owner: "Dave Faucher", status: "Done", priority: "Medium", pct: 100, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Elvis store device locator", completedDate: "2026", subtasks: [], tier: "project" },
   { id: 70, departments: ["Enterprise Systems"], name: "Google SSO Login For Intranet Sites", owner: "Dave Faucher", status: "Done", priority: "Medium", pct: 100, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Google Single Sign-On authentication for internal websites", completedDate: "2026", subtasks: [], tier: "project" },
   { id: 71, departments: ["Enterprise Systems"], name: "Customer History Lookup v1", owner: "Dave Faucher", status: "Done", priority: "Medium", pct: 100, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "EPICOR-only customer history lookup", completedDate: "2026", subtasks: [], tier: "project" },
@@ -345,7 +345,7 @@ function PriorityBadge({ priority, onChange, size = "sm" }) {
 
 function OwnerBadge({ owner, onChange, size = "sm", ownerOptions, onAddOwner }) {
   const sizeClass = size === "xs" ? "px-2 py-0.5 text-[10px]" : "px-2.5 py-1 text-xs";
-  const initials = owner === "Unassigned" ? "?" : String(owner || "").split(" ").map(n => n[0]).join("");
+  const initials = owner === "Unassigned" ? "?" : owner.split(" ").map(n => n[0]).join("");
   return (
     <Dropdown value={owner} options={ownerOptions || OWNER_OPTIONS} onChange={onChange} onAddNew={onAddOwner}
       renderTrigger={(v) => (
@@ -500,7 +500,7 @@ function parseToISO(dateStr) {
   if (!dateStr) return "";
   if (dateStr.toLowerCase() === "ongoing") return "";
   // Try MM/DD/YYYY or M/D/YYYY
-  const parts = String(dateStr || "").split("/");
+  const parts = dateStr.split("/");
   if (parts.length === 3) {
     const [m, d, y] = parts;
     const year = y.length === 2 ? "20" + y : y;
@@ -1046,7 +1046,12 @@ function ProjectRow({ project, onUpdate, onDelete, showDepts = true, showOwner =
           })()}
         </td>
         {showDepts && (
-          <td className="py-2.5 px-2" style={{minWidth:100}}><div className="flex items-center gap-1"><DeptChips departments={project.departments} size="xs" /><DeptMultiSelect selected={project.departments} onChange={(d) => onUpdate(project.id, "departments", d)} allDepartments={allDepartments} onAddDept={onAddDept} /></div></td>
+          <td className="py-2.5 px-2" style={{minWidth:100}}>
+            <div className="flex items-center gap-1">
+              <DeptChips departments={project.departments} size="xs" />
+              <DeptMultiSelect selected={project.departments} onChange={(d) => onUpdate(project.id, "departments", d)} allDepartments={allDepartments} onAddDept={onAddDept} />
+            </div>
+          </td>
         )}
         <td className="py-2.5 px-2"><StatusBadge status={project.status} onChange={(v) => onUpdate(project.id, "status", v)} size="xs" /></td>
         <td className="py-2.5 px-2"><PriorityBadge priority={project.priority} onChange={(v) => onUpdate(project.id, "priority", v)} size="xs" /></td>
@@ -1137,7 +1142,7 @@ function ByOwnerView({ projects, onUpdate, onDelete, onAdd, ownerOptions, onAddO
   return (
     <div className="space-y-6">
       {Object.entries(ownerGroups).filter(([, ps]) => ps.length > 0).map(([owner, ps]) => {
-        const initials = owner === "Unassigned" ? "?" : String(owner || "").split(" ").map(n => n[0]).join("");
+        const initials = owner === "Unassigned" ? "?" : owner.split(" ").map(n => n[0]).join("");
         const highCount = ps.filter(p => p.priority === "High").length;
         const blockedCount = ps.filter(p => p.status === "Blocked" || p.status === "On Hold").length;
 
@@ -1201,7 +1206,7 @@ function OwnerSection({ owner, initials, projects, highCount, blockedCount, onUp
             </tbody>
           </table>
           <button onClick={() => onAdd(owner)} className="w-full text-left px-6 py-2 text-xs text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors border-t border-gray-50 flex items-center gap-2">
-            <Plus size={12} /> Add project for {String(owner || "").split(" ")[0]}
+            <Plus size={12} /> Add project for {owner.split(" ")[0]}
           </button>
         </div>
       )}
@@ -1752,12 +1757,12 @@ function ITProjectDashboard({ goHome }) {
   const [filterDept, setFilterDept] = useState("All");
   const [filterTier, setFilterTier] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
-  const [showNewProjectModal, setShowNewProjectModal] = useState(false);
   const [exportMsg, setExportMsg] = useState("");
   const [changeLog, setChangeLog] = useState([]);
   const [showExportDialog, setShowExportDialog] = useState(false);
   const [customOwners, setCustomOwners] = useState([]);
   const [customDepartments, setCustomDepartments] = useState([]);
+  const [showNewProjectModal, setShowNewProjectModal] = useState(false);
 
   const allOwners = useMemo(() => [...OWNER_OPTIONS, ...customOwners.filter(o => !OWNER_OPTIONS.includes(o))], [customOwners]);
   const allDepartments = useMemo(() => [...DEPARTMENTS, ...customDepartments.filter(d => !DEPARTMENTS.includes(d))], [customDepartments]);
@@ -1921,8 +1926,7 @@ function ITProjectDashboard({ goHome }) {
       date: "",
       roadblocks: "",
       milestones: "",
-      nextSteps: "",
-      notes: item.notes || `Promoted from Inbox (${item.source}, added ${item.addedDate})`,
+      nextSteps: item.notes || `Promoted from Inbox (${item.source}, added ${item.addedDate})`,
       completedDate: "",
       subtasks: [],
       tier: tier || "project",
@@ -1990,7 +1994,7 @@ function ITProjectDashboard({ goHome }) {
   const handleUndoChange = useCallback((entry) => {
     if (!window.confirm(`Undo "${entry.field}" on "${entry.projectName}"? Revert to "${entry.oldValue}"?`)) return;
     const rv=entry.oldValue==="(empty)"?"":entry.oldValue;
-    const fv=entry.field==="departments"?String(rv || "").split(", ").filter(Boolean):(entry.field==="pct"?Number(rv):rv);
+    const fv=entry.field==="departments"?rv.split(", ").filter(Boolean):(entry.field==="pct"?Number(rv):rv);
     handleUpdate(entry.projectId, entry.field, fv);
     setChangeLog(prev=>prev.filter(e=>e.id!==entry.id));
   }, [handleUpdate]);
@@ -2223,7 +2227,7 @@ const SECTIONS = [
   {
     id: "payment-history",
     label: "Payment History",
-    description: "View and filter all authorized payments — AP invoices & CC expenses",
+    description: "View and filter all authorized payments ÃÂ¢ÃÂÃÂ AP invoices & CC expenses",
     icon: History,
     gradient: "from-slate-500 to-slate-700",
     hoverGradient: "from-slate-600 to-slate-800",
@@ -2358,7 +2362,7 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
   const overdue = dueDate && dueDate < new Date() && inv.status === "pending";
   const dueLabel = dueDate
     ? dueDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
-    : inv.paymentDue || "—";
+    : inv.paymentDue || "ÃÂ¢ÃÂÃÂ";
 
   const handleDecision = (action) => {
     onDecision(inv.id, action, category, comment);
@@ -2387,7 +2391,7 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
   const detailRow = (label, value, light = false) => (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "5px 0", borderBottom: "1px solid #f3f4f6", gap: 12 }}>
       <span style={{ color: "#9ca3af", fontSize: ".78rem", flexShrink: 0 }}>{label}</span>
-      <span style={{ color: light ? "#6b7280" : "#111827", fontSize: ".78rem", fontWeight: 500, textAlign: "right" }}>{value || "—"}</span>
+      <span style={{ color: light ? "#6b7280" : "#111827", fontSize: ".78rem", fontWeight: 500, textAlign: "right" }}>{value || "ÃÂ¢ÃÂÃÂ"}</span>
     </div>
   );
 
@@ -2400,11 +2404,11 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
           <div style={{ fontSize: "1.1rem", fontWeight: 700, color: "#111827", letterSpacing: "-.01em" }}>{inv.vendor}</div>
           <div style={{ fontSize: ".8rem", color: "#6b7280", display: "flex", gap: 14, flexWrap: "wrap", marginTop: 4 }}>
             <span>Invoice #{inv.invoiceNumber}</span>
-            <span>·</span>
-            <span>Store {inv.storeNumber}{inv.location ? ` — ${inv.location}` : ""}</span>
-            <span>·</span>
+            <span>ÃÂÃÂ·</span>
+            <span>Store {inv.storeNumber}{inv.location ? ` ÃÂ¢ÃÂÃÂ ${inv.location}` : ""}</span>
+            <span>ÃÂÃÂ·</span>
             <span>Vendor #{inv.vendorNumber}</span>
-            {inv.docNumber && <><span>·</span><span style={{ color: "#9ca3af" }}>{inv.docNumber}</span></>}
+            {inv.docNumber && <><span>ÃÂÃÂ·</span><span style={{ color: "#9ca3af" }}>{inv.docNumber}</span></>}
           </div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -2415,8 +2419,8 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
               color: displayStatus === "approved" ? "#166534" : displayStatus === "rejected" ? "#991b1b" : "#4b5563",
               border: `1px solid ${displayStatus === "approved" ? "#bbf7d0" : displayStatus === "rejected" ? "#fecaca" : "#e5e7eb"}`
             }}>
-              {decision && "⏳ "}
-              {displayStatus === "approved" ? "✓ Approved" : displayStatus === "rejected" ? "✗ Rejected" : "Pending"}
+              {decision && "ÃÂ¢ÃÂÃÂ³ "}
+              {displayStatus === "approved" ? "ÃÂ¢ÃÂÃÂ Approved" : displayStatus === "rejected" ? "ÃÂ¢ÃÂÃÂ Rejected" : "Pending"}
               {decision && " (unsaved)"}
             </span>
           )}
@@ -2429,7 +2433,7 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
         {inv.glNumber && chip(`GL: ${inv.glNumber}`, "#4338ca", "#eef2ff")}
         {inv.projectNumber && chip(`Project: ${inv.projectNumber}`, "#0369a1", "#e0f2fe")}
         {chip(
-          `Due: ${dueLabel}${overdue ? " — OVERDUE ⚠" : ""}`,
+          `Due: ${dueLabel}${overdue ? " ÃÂ¢ÃÂÃÂ OVERDUE ÃÂ¢ÃÂÃÂ " : ""}`,
           overdue ? "#dc2626" : "#374151",
           overdue ? "#fef2f2" : "#f9fafb"
         )}
@@ -2450,14 +2454,14 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
               padding: "7px 14px", borderRadius: 6, cursor: "pointer", fontSize: ".82rem", fontWeight: 500,
               transition: "all .15s"
             }}>
-              {panel === "preview" ? "📄 View Invoice" : "🔍 Full Details"}
+              {panel === "preview" ? "ÃÂ°ÃÂÃÂÃÂ View Invoice" : "ÃÂ°ÃÂÃÂÃÂ Full Details"}
             </button>
           );
         })}
         {inv.jiffyUrl && (
           <a href={inv.jiffyUrl} target="_blank" rel="noopener noreferrer"
             style={{ background: "#f3f4f6", color: "#374151", border: "1px solid #e5e7eb", padding: "7px 14px", borderRadius: 6, fontSize: ".82rem", fontWeight: 500, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 5 }}>
-            🔗 Open in Jiffy
+            ÃÂ°ÃÂÃÂÃÂ Open in Jiffy
           </a>
         )}
       </div>
@@ -2489,7 +2493,7 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
               />
             ))}
             <div data-fallback style={{ display: "none", fontSize: ".8rem", color: "#999", textAlign: "center", fontStyle: "italic", marginBottom: 12 }}>
-              Invoice image not available — use "Open in Jiffy" to view original
+              Invoice image not available ÃÂ¢ÃÂÃÂ use "Open in Jiffy" to view original
             </div>
             <div style={{ display: "flex", gap: 16, flexWrap: "wrap", background: "#f5f5f5", padding: 10, borderRadius: 4, marginBottom: 14 }}>
               <div><div style={{ fontSize: ".68rem", textTransform: "uppercase", color: "#888" }}>Amount Due</div><strong>{fmt(inv.amount)}</strong></div>
@@ -2525,7 +2529,7 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
               {detailRow("Invoice #", inv.invoiceNumber)}
               {detailRow("Invoice Date", inv.invoiceDate)}
               {detailRow("GL Code", inv.glNumber)}
-              {detailRow("Project #", inv.projectNumber || "—")}
+              {detailRow("Project #", inv.projectNumber || "ÃÂ¢ÃÂÃÂ")}
             </div>
 
             {/* Payment Info */}
@@ -2570,7 +2574,7 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
         </div>
       )}
 
-      {/* Controls — only show for pending invoices (not yet saved to Firestore) */}
+      {/* Controls ÃÂ¢ÃÂÃÂ only show for pending invoices (not yet saved to Firestore) */}
       {inv.status === "pending" && (
         <div style={{ padding: "14px 20px", display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", background: decision ? (decision.action === "approved" ? "#f0fdf4" : decision.action === "rejected" ? "#fef2f2" : "#f9fafb") : "#fafafa", borderTop: "1px solid #f3f4f6" }}>
           <select
@@ -2596,16 +2600,16 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
           <div style={{ display: "flex", gap: 8, marginLeft: "auto" }}>
             <button onClick={() => handleDecision("approved")}
               style={{ background: decision?.action === "approved" ? "#0f5132" : "#166534", color: "#fff", border: decision?.action === "approved" ? "2px solid #16a34a" : "none", padding: "9px 20px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem" }}>
-              ✓ Approve
+              ÃÂ¢ÃÂÃÂ Approve
             </button>
             <button onClick={() => handleDecision("rejected")}
               style={{ background: decision?.action === "rejected" ? "#7f1d1d" : "#991b1b", color: "#fff", border: decision?.action === "rejected" ? "2px solid #dc2626" : "none", padding: "9px 20px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem" }}>
-              ✗ Reject
+              ÃÂ¢ÃÂÃÂ Reject
             </button>
             {decision && (
               <button onClick={() => onClearDecision(inv.id)}
                 style={{ background: "#fff", color: "#dc2626", border: "1px solid #fecaca", padding: "9px 14px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem" }}>
-                ↩ Undo
+                ÃÂ¢ÃÂÃÂ© Undo
               </button>
             )}
           </div>
@@ -2636,7 +2640,7 @@ const APInvoices = ({ goHome, goHistory }) => {
     })();
   }, []);
 
-  // Local-only — updates batch decisions state (nothing saved to Firestore yet)
+  // Local-only ÃÂ¢ÃÂÃÂ updates batch decisions state (nothing saved to Firestore yet)
   const handleDecision = (invoiceId, action, category, comment) => {
     setDecisions(prev => ({ ...prev, [invoiceId]: { action, category, comment } }));
   };
@@ -2645,42 +2649,19 @@ const APInvoices = ({ goHome, goHistory }) => {
     setDecisions(prev => { const next = { ...prev }; delete next[invoiceId]; return next; });
   };
 
-  // Batch submit — writes ALL decisions to Firestore and queues for Jiffy
+  // Batch submit ÃÂ¢ÃÂÃÂ writes ALL decisions to Firestore and queues for Jiffy
   const submitAll = async () => {
     const entries = Object.entries(decisions);
     if (entries.length === 0) return;
     setSubmitting(true);
     try {
       for (const [invoiceId, { action, category, comment }] of entries) {
-        const inv = invoices.find(i => i.id === invoiceId) || {};
-        const now = serverTimestamp();
-        // Update the live invoice record
         await updateDoc(doc(db, "ap_invoices", invoiceId), {
           status: action, category, comment,
-          actionedAt: now,
+          actionedAt: serverTimestamp(),
           actionedBy: "scott@aubuchon.com",
           jiffyAction: "pending",
           jiffyGroup: category || "Expense in Budget",
-        });
-        // Write a permanent history record — this is the audit trail
-        await addDoc(collection(db, "ap_payment_history"), {
-          invoiceId,
-          invoiceNumber: inv.invoiceNumber || invoiceId,
-          vendor: inv.vendor || "—",
-          amount: Number(inv.amount || 0),
-          storeNumber: inv.storeNumber || "",
-          location: inv.location || "",
-          glNumber: inv.glNumber || "",
-          projectNumber: inv.projectNumber || "",
-          paymentDue: inv.paymentDue || "",
-          invoiceDate: inv.invoiceDate || "",
-          description: inv.description || inv.remarks || "",
-          invoiceGroup: category || inv.invoiceGroup || "—",
-          status: action,
-          comment: comment || "",
-          actionedAt: now,
-          actionedBy: "scott@aubuchon.com",
-          type: "AP",
         });
       }
       setInvoices(prev => prev.map(inv => {
@@ -2688,7 +2669,7 @@ const APInvoices = ({ goHome, goHistory }) => {
         return d ? { ...inv, status: d.action, category: d.category, comment: d.comment, jiffyAction: "pending" } : inv;
       }));
       setDecisions({});
-      alert(`Submitted ${entries.length} invoice${entries.length !== 1 ? "s" : ""} — queued for Jiffy approval.`);
+      alert(`Submitted ${entries.length} invoice${entries.length !== 1 ? "s" : ""} ÃÂ¢ÃÂÃÂ queued for Jiffy approval.`);
     } catch (e) {
       alert("Error submitting invoices: " + e.message);
     } finally {
@@ -2723,7 +2704,7 @@ const APInvoices = ({ goHome, goHistory }) => {
           <div style={{ width: 1, height: 24, background: "#e5e7eb" }} />
           <div>
             <h1 style={{ fontSize: "1.15rem", color: "#111827", margin: 0, fontWeight: 700 }}>AP Invoice Approval</h1>
-            <div style={{ fontSize: ".73rem", color: "#6b7280" }}>Aubuchon Hardware — Accounts Payable</div>
+            <div style={{ fontSize: ".73rem", color: "#6b7280" }}>Aubuchon Hardware ÃÂ¢ÃÂÃÂ Accounts Payable</div>
           </div>
           {goHistory && (
             <>
@@ -2750,13 +2731,13 @@ const APInvoices = ({ goHome, goHistory }) => {
       </div>
 
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "24px 16px" }}>
-        {loading && <div style={{ textAlign: "center", padding: "60px 0", color: "#6b7280" }}>Loading invoices…</div>}
+        {loading && <div style={{ textAlign: "center", padding: "60px 0", color: "#6b7280" }}>Loading invoicesÃÂ¢ÃÂÃÂ¦</div>}
         {error && <div style={{ textAlign: "center", padding: "60px 0", color: "#dc2626" }}>Error: {error}</div>}
 
         {!loading && overdueCount > 0 && (
           <div style={{ background: "linear-gradient(90deg,#fef2f2,#fff5f5)", border: "1px solid #fecaca", color: "#991b1b", padding: "12px 20px", borderRadius: 10, marginBottom: 20, fontWeight: 600, display: "flex", alignItems: "center", gap: 10 }}>
-            <span style={{ fontSize: "1.2rem" }}>⚠</span>
-            <span>OVERDUE: {overdueCount} invoice{overdueCount !== 1 ? "s are" : " is"} past due — immediate action recommended.</span>
+            <span style={{ fontSize: "1.2rem" }}>ÃÂ¢ÃÂÃÂ </span>
+            <span>OVERDUE: {overdueCount} invoice{overdueCount !== 1 ? "s are" : " is"} past due ÃÂ¢ÃÂÃÂ immediate action recommended.</span>
           </div>
         )}
 
@@ -2786,9 +2767,9 @@ const APInvoices = ({ goHome, goHistory }) => {
             </div>
             <div style={{ fontSize: ".78rem", opacity: .85 }}>
               {Object.values(decisions).filter(d => d.action === "approved").length} approved
-              {" · "}
+              {" ÃÂÃÂ· "}
               {Object.values(decisions).filter(d => d.action === "rejected").length} rejected
-              {" · "}
+              {" ÃÂÃÂ· "}
               Total: {fmt(Object.entries(decisions).reduce((sum, [id, d]) => {
                 const inv = invoices.find(i => i.id === id);
                 return sum + (Number(inv?.amount || 0));
@@ -2802,7 +2783,7 @@ const APInvoices = ({ goHome, goHistory }) => {
             </button>
             <button onClick={submitAll} disabled={submitting}
               style={{ background: "#fff", color: "#065f46", border: "none", padding: "10px 30px", borderRadius: 8, fontWeight: 700, cursor: "pointer", fontSize: ".92rem", opacity: submitting ? .6 : 1, boxShadow: "0 2px 8px rgba(0,0,0,0.15)" }}>
-              {submitting ? "Submitting…" : `Submit All (${Object.keys(decisions).length})`}
+              {submitting ? "SubmittingÃÂ¢ÃÂÃÂ¦" : `Submit All (${Object.keys(decisions).length})`}
             </button>
           </div>
         </div>
@@ -2810,6 +2791,10 @@ const APInvoices = ({ goHome, goHistory }) => {
     </div>
   );
 };
+
+/* =====================================================================
+   WELLS CC  --  Corporate credit card transaction review & classification
+   ===================================================================== */
 
 const CC_CATEGORIES = [
   "Business Meals & Entertainment",
@@ -3129,7 +3114,6 @@ const WellsCC = ({ goHome, goHistory }) => {
   );
 };
 
-
 /* =====================================================================
    PAYMENT HISTORY  --  Unified view of all authorized payments (AP + CC)
    ===================================================================== */
@@ -3145,20 +3129,20 @@ const PaymentHistory = ({ goHome, goBack }) => {
   const [filterStore, setFilterStore] = useState("");
   const [filterGL, setFilterGL] = useState("");
   const [filterGroup, setFilterGroup] = useState("All");
-  const [sortCol, setSortCol] = useState("actioned");
+  const [sortCol, setSortCol] = useState("date");
   const [sortDir, setSortDir] = useState("desc");
 
   useEffect(() => {
     (async () => {
       try {
-        // Load permanent AP payment history (written on every approve/reject submit)
-        const apSnap = await getDocs(query(collection(db, "ap_payment_history"), orderBy("actionedAt", "desc")));
+        // Load AP invoices
+        const apSnap = await getDocs(collection(db, "ap_invoices"));
         const apRows = apSnap.docs.map(d => {
           const data = d.data();
           return {
             id: d.id,
-            type: data.type || "AP",
-            vendor: data.vendor || "—",
+            type: "AP",
+            vendor: data.vendor || "ÃÂ¢ÃÂÃÂ",
             amount: Number(data.amount || 0),
             store: data.storeNumber || "",
             location: data.location || "",
@@ -3167,41 +3151,52 @@ const PaymentHistory = ({ goHome, goBack }) => {
             dueDate: data.paymentDue || "",
             invoiceDate: data.invoiceDate || "",
             status: data.status || "pending",
-            description: data.description || "",
-            group: data.invoiceGroup || "—",
+            description: data.description || data.remarks || "",
+            group: data.invoiceGroup || data.category || "ÃÂ¢ÃÂÃÂ",
             invoiceNumber: data.invoiceNumber || "",
             actionedAt: data.actionedAt || null,
-            actionedBy: data.actionedBy || "",
-            comment: data.comment || "",
           };
         });
 
-                // Load CC expenses
+        // Load CC expenses
         const ccSnap = await getDocs(collection(db, "cc_expenses"));
-        const ccRows = ccSnap.docs.map(d => {
+        const ccRowsRaw = ccSnap.docs.map(d => {
           const data = d.data();
           const fmtTs = (val) => {
             if (!val) return "";
             if (val.toDate) return val.toDate().toLocaleDateString("en-US");
             return String(val);
           };
+          // "reviewed" in WellsCC === "approved" for Payment History purposes
+          const rawStatus = data.status || "pending";
+          const status = rawStatus === "reviewed" ? "approved" : rawStatus;
           return {
             id: d.id,
             type: "CC",
             vendor: data.merchant || "--",
             amount: Number(data.amount || 0),
-            store: "",
+            store: data.cardLast4 ? `Card ...${data.cardLast4}` : "",
             location: data.cardHolder || "",
             gl: data.glCode || "",
             project: "",
             dueDate: fmtTs(data.transactionDate),
             invoiceDate: fmtTs(data.transactionDate),
-            status: data.status || "pending",
-            description: (data.cardLast4 ? "Card ..." + data.cardLast4 + " - " : "") + (data.notes || data.category || ""),
+            status,
+            description: data.notes || data.category || "",
             group: data.category || "--",
             invoiceNumber: "",
             actionedAt: data.reviewedAt || null,
           };
+        });
+
+        // Deduplicate CC rows: same merchant + amount + date may appear multiple times
+        // if the same transaction was imported more than once. Keep the first occurrence.
+        const ccSeen = new Set();
+        const ccRows = ccRowsRaw.filter(r => {
+          const key = `${r.vendor}|${r.amount}|${r.dueDate}`;
+          if (ccSeen.has(key)) return false;
+          ccSeen.add(key);
+          return true;
         });
 
         setRows([...apRows, ...ccRows]);
@@ -3227,7 +3222,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
 
   const fmtDate = (val) => {
     const d = parseDateStr(val);
-    return d && !isNaN(d) ? d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : (val || "—");
+    return d && !isNaN(d) ? d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : (val || "ÃÂ¢ÃÂÃÂ");
   };
 
   // Unique values for filter dropdowns
@@ -3254,11 +3249,6 @@ const PaymentHistory = ({ goHome, goBack }) => {
       case "status": aVal = a.status; bVal = b.status; break;
       case "type": aVal = a.type; bVal = b.type; break;
       case "gl": aVal = a.gl; bVal = b.gl; break;
-      case "group": aVal = a.group; bVal = b.group; break;
-      case "actioned":
-        aVal = parseDateStr(a.actionedAt) || new Date(0);
-        bVal = parseDateStr(b.actionedAt) || new Date(0);
-        break;
       default: // date
         aVal = parseDateStr(a.dueDate) || new Date(0);
         bVal = parseDateStr(b.dueDate) || new Date(0);
@@ -3300,7 +3290,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
     return <span style={{ background: c.bg, color: c.color, border: `1px solid ${c.border}`, padding: "2px 8px", borderRadius: 10, fontSize: ".7rem", fontWeight: 700 }}>{type}</span>;
   };
 
-  const sortIcon = (col) => sortCol === col ? (sortDir === "asc" ? " ▲" : " ▼") : "";
+  const sortIcon = (col) => sortCol === col ? (sortDir === "asc" ? " ÃÂ¢ÃÂÃÂ²" : " ÃÂ¢ÃÂÃÂ¼") : "";
 
   const selectStyle = { padding: "6px 10px", borderRadius: 6, border: "1px solid #d1d5db", fontSize: ".8rem", background: "#fff", color: "#374151", minWidth: 90 };
   const inputStyle = { ...selectStyle, minWidth: 100 };
@@ -3319,7 +3309,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
             <h1 style={{ fontSize: "1.15rem", color: "#111827", margin: 0, fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>
               <History size={18} /> Payment History
             </h1>
-            <div style={{ fontSize: ".73rem", color: "#6b7280" }}>All authorized payments — AP Invoices & CC Expenses</div>
+            <div style={{ fontSize: ".73rem", color: "#6b7280" }}>All authorized payments ÃÂ¢ÃÂÃÂ AP Invoices & CC Expenses</div>
           </div>
         </div>
         <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
@@ -3368,7 +3358,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
           )}
         </div>
 
-        {loading && <div style={{ textAlign: "center", padding: "60px 0", color: "#6b7280" }}>Loading payment history…</div>}
+        {loading && <div style={{ textAlign: "center", padding: "60px 0", color: "#6b7280" }}>Loading payment historyÃÂ¢ÃÂÃÂ¦</div>}
 
         {!loading && (
           <div style={{ background: "#fff", borderRadius: 10, border: "1px solid #e5e7eb", overflow: "hidden" }}>
@@ -3380,12 +3370,13 @@ const PaymentHistory = ({ goHome, goBack }) => {
                       { key: "type", label: "Type", w: 60 },
                       { key: "vendor", label: "Vendor", w: 160 },
                       { key: "amount", label: "Amount", w: 100 },
-                      { key: "store", label: "Store", w: 70 },
+                      { key: "store", label: "Store / Location", w: 130 },
+                      { key: "gl", label: "GL #", w: 110 },
+                      { key: "project", label: "Project #", w: 80 },
                       { key: "date", label: "Due Date", w: 100 },
-                      { key: "actioned", label: "Actioned On", w: 110 },
-                      { key: "status", label: "Decision", w: 90 },
-                      { key: "group", label: "Category", w: 130 },
-                      { key: "comment", label: "Comment", w: 180 },
+                      { key: "status", label: "Status", w: 90 },
+                      { key: "desc", label: "Description", w: 180 },
+                      { key: "group", label: "Group", w: 100 },
                     ].map(col => (
                       <th key={col.key}
                         onClick={() => toggleSort(col.key)}
@@ -3397,26 +3388,20 @@ const PaymentHistory = ({ goHome, goBack }) => {
                 </thead>
                 <tbody>
                   {sorted.length === 0 && (
-                    <tr><td colSpan={9} style={{ textAlign: "center", padding: "50px 0", color: "#9ca3af" }}>
-                      {rows.length === 0
-                        ? "No history yet — records appear here after you submit approvals or rejections."
-                        : "No records match the current filters."}
-                    </td></tr>
+                    <tr><td colSpan={10} style={{ textAlign: "center", padding: "40px 0", color: "#9ca3af" }}>No records match the current filters.</td></tr>
                   )}
                   {sorted.map((r, idx) => (
                     <tr key={r.id} style={{ borderBottom: "1px solid #f3f4f6", background: idx % 2 === 0 ? "#fff" : "#fafafa" }}>
                       <td style={{ padding: "10px 12px" }}>{typeBadge(r.type)}</td>
-                      <td style={{ padding: "10px 12px", fontWeight: 600, color: "#111827" }}>
-                        <div>{r.vendor}</div>
-                        {r.invoiceNumber && <div style={{ fontSize: ".72rem", color: "#9ca3af", fontWeight: 400 }}>#{r.invoiceNumber}</div>}
-                      </td>
+                      <td style={{ padding: "10px 12px", fontWeight: 600, color: "#111827" }}>{r.vendor}</td>
                       <td style={{ padding: "10px 12px", textAlign: "right", fontWeight: 700, color: "#0f766e", fontVariantNumeric: "tabular-nums" }}>{fmt(r.amount)}</td>
-                      <td style={{ padding: "10px 12px", color: "#374151" }}>{r.store ? `#${r.store}` : "—"}</td>
+                      <td style={{ padding: "10px 12px", color: "#374151" }}>{r.store}{r.location ? ` ÃÂ¢ÃÂÃÂ ${r.location}` : ""}</td>
+                      <td style={{ padding: "10px 12px", color: "#4338ca", fontFamily: "monospace", fontSize: ".78rem" }}>{r.gl || "ÃÂ¢ÃÂÃÂ"}</td>
+                      <td style={{ padding: "10px 12px", color: "#374151" }}>{r.project || "ÃÂ¢ÃÂÃÂ"}</td>
                       <td style={{ padding: "10px 12px", color: "#374151", whiteSpace: "nowrap" }}>{fmtDate(r.dueDate)}</td>
-                      <td style={{ padding: "10px 12px", color: "#374151", whiteSpace: "nowrap", fontSize: ".78rem" }}>{fmtDate(r.actionedAt)}</td>
                       <td style={{ padding: "10px 12px" }}>{statusBadge(r.status)}</td>
-                      <td style={{ padding: "10px 12px", color: "#374151", fontSize: ".78rem" }}>{r.group || "—"}</td>
-                      <td style={{ padding: "10px 12px", color: "#6b7280", maxWidth: 220, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.comment || "—"}</td>
+                      <td style={{ padding: "10px 12px", color: "#6b7280", maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.description || "ÃÂ¢ÃÂÃÂ"}</td>
+                      <td style={{ padding: "10px 12px", color: "#374151", fontSize: ".78rem" }}>{r.group || "ÃÂ¢ÃÂÃÂ"}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -3460,10 +3445,12 @@ export default function App() {
 
   if (activeSection === "payment-history") return <PaymentHistory goHome={() => setActiveSection(null)} goBack={() => setActiveSection(null)} />;
 
+  if (activeSection === "wells-cc") return <WellsCC goHome={() => setActiveSection(null)} goHistory={() => setActiveSection("payment-history")} />;
+
   // Future sections:
-  // if (activeSection === "wells-cc") return <WellsCC goHome={() => setActiveSection(null)} goHistory={() => setActiveSection("payment-history")} />;
   // if (activeSection === "yoda") return <YODADashboard goHome={() => setActiveSection(null)} />;
 
   return <HomeScreen onNavigate={setActiveSection} />;
 }
 
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
