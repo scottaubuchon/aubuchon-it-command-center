@@ -2218,7 +2218,7 @@ const SECTIONS = [
     border: "border-red-200",
     text: "text-red-700",
     shadow: "shadow-red-200/50",
-    active: false,
+    active: true,
   },
   {
     id: "payment-history",
@@ -2810,6 +2810,325 @@ const APInvoices = ({ goHome, goHistory }) => {
     </div>
   );
 };
+
+const CC_CATEGORIES = [
+  "Business Meals & Entertainment",
+  "Travel & Lodging",
+  "Office Supplies",
+  "IT Equipment",
+  "IT Software / Subscriptions",
+  "Marketing & Advertising",
+  "Training & Education",
+  "Utilities",
+  "Shipping & Freight",
+  "Maintenance & Repairs",
+  "Other Business Expense",
+];
+
+const WellsCCCard = ({ txn, decision, onDecision, onClearDecision }) => {
+  const [category, setCategory] = useState(decision?.category || txn.category || "Other Business Expense");
+  const [glCode, setGlCode] = useState(decision?.glCode || txn.glCode || "");
+  const [notes, setNotes] = useState(decision?.notes || txn.notes || "");
+  const [receiptSubmitted, setReceiptSubmitted] = useState(decision?.receiptSubmitted ?? txn.receiptSubmitted ?? false);
+
+  const displayStatus = decision ? decision.status : (txn.status || "pending");
+
+  const fmt = n => "$" + Number(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  const fmtDate = (val) => {
+    if (!val) return "--";
+    if (val && val.toDate) return val.toDate().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    if (typeof val === "string") return val;
+    return new Date(val).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  };
+
+  const handleReview = () => {
+    onDecision(txn.id, { status: "reviewed", category, glCode, notes, receiptSubmitted });
+  };
+
+  useEffect(() => {
+    if (decision) onDecision(txn.id, { status: decision.status, category, glCode, notes, receiptSubmitted });
+  }, [category, glCode, notes, receiptSubmitted]);
+
+  const cardStyle = {
+    background: displayStatus === "reviewed" ? "#f0fdf4" : "#fff",
+    borderRadius: 12,
+    marginBottom: 18,
+    overflow: "hidden",
+    border: `1px solid ${displayStatus === "reviewed" ? "#86efac" : "#e5e7eb"}`,
+    boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
+    fontFamily: "'Segoe UI', system-ui, sans-serif",
+  };
+
+  return (
+    <div style={cardStyle}>
+      {/* Header */}
+      <div style={{ background: "linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%)", padding: "14px 20px", display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 10, borderBottom: "1px solid #f3e8ff" }}>
+        <div>
+          <div style={{ fontSize: "1.05rem", fontWeight: 700, color: "#111827" }}>{txn.merchant}</div>
+          <div style={{ fontSize: ".78rem", color: "#6b7280", display: "flex", gap: 10, flexWrap: "wrap", marginTop: 3 }}>
+            <span>{fmtDate(txn.transactionDate)}</span>
+            {txn.cardHolder && <><span>&middot;</span><span>{txn.cardHolder}</span></>}
+            {txn.cardLast4 && <><span>&middot;</span><span>Card ending {txn.cardLast4}</span></>}
+            {txn.postDate && <><span>&middot;</span><span style={{ color: "#9ca3af" }}>Posted: {fmtDate(txn.postDate)}</span></>}
+          </div>
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          {displayStatus === "reviewed" && (
+            <span style={{ background: "#dcfce7", color: "#166534", border: "1px solid #bbf7d0", fontSize: ".78rem", fontWeight: 700, padding: "4px 12px", borderRadius: 20 }}>
+              {decision ? "~ Reviewed (unsaved)" : "Reviewed"}
+            </span>
+          )}
+          <div style={{ fontSize: "1.4rem", fontWeight: 800, color: "#be185d" }}>{fmt(txn.amount)}</div>
+        </div>
+      </div>
+
+      {/* Already-reviewed summary row */}
+      {txn.status === "reviewed" && !decision && (
+        <div style={{ padding: "10px 20px", fontSize: ".8rem", color: "#6b7280", background: "#f0fdf4", display: "flex", gap: 16, flexWrap: "wrap" }}>
+          {txn.category && <span><strong>Category:</strong> {txn.category}</span>}
+          {txn.glCode && <span><strong>GL:</strong> {txn.glCode}</span>}
+          {txn.notes && <span><strong>Notes:</strong> {txn.notes}</span>}
+          <span style={{ color: txn.receiptSubmitted ? "#15803d" : "#dc2626", fontWeight: 600 }}>
+            {txn.receiptSubmitted ? "Receipt submitted" : "No receipt on file"}
+          </span>
+        </div>
+      )}
+
+      {/* Classification controls -- show for pending OR when editing a reviewed txn */}
+      {(txn.status !== "reviewed" || decision) && (
+        <div style={{ padding: "14px 20px", display: "flex", flexWrap: "wrap", gap: 10, alignItems: "center", background: displayStatus === "reviewed" ? "#f0fdf4" : "#fafafa", borderTop: "1px solid #f3f4f6" }}>
+          <select
+            value={category}
+            onChange={e => setCategory(e.target.value)}
+            style={{ background: "#fff", color: "#374151", border: "1px solid #d1d5db", padding: "7px 10px", borderRadius: 6, fontSize: ".83rem" }}
+          >
+            {CC_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+          </select>
+          <input
+            type="text"
+            value={glCode}
+            onChange={e => setGlCode(e.target.value)}
+            placeholder="GL Code..."
+            style={{ background: "#fff", color: "#374151", border: "1px solid #d1d5db", padding: "7px 10px", borderRadius: 6, fontSize: ".83rem", width: 120 }}
+          />
+          <input
+            type="text"
+            value={notes}
+            onChange={e => setNotes(e.target.value)}
+            placeholder="Notes / purpose (optional)"
+            style={{ background: "#fff", color: "#374151", border: "1px solid #d1d5db", padding: "7px 10px", borderRadius: 6, fontSize: ".83rem", flex: 1, minWidth: 160 }}
+          />
+          <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: ".83rem", color: "#374151", cursor: "pointer", userSelect: "none" }}>
+            <input type="checkbox" checked={receiptSubmitted} onChange={e => setReceiptSubmitted(e.target.checked)} />
+            Receipt submitted to WF
+          </label>
+          <div style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
+            <button onClick={handleReview}
+              style={{ background: decision?.status === "reviewed" ? "#15803d" : "#166534", color: "#fff", border: decision?.status === "reviewed" ? "2px solid #22c55e" : "none", padding: "9px 20px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem" }}>
+              Mark Reviewed
+            </button>
+            {decision && (
+              <button onClick={() => onClearDecision(txn.id)}
+                style={{ background: "#fff", color: "#dc2626", border: "1px solid #fecaca", padding: "9px 14px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem" }}>
+                Undo
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const WellsCC = ({ goHome, goHistory }) => {
+  const [transactions, setTransactions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [decisions, setDecisions] = useState({});
+  const [submitting, setSubmitting] = useState(false);
+  const [filter, setFilter] = useState("pending");
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const q = query(collection(db, "cc_expenses"), orderBy("transactionDate", "desc"));
+        const snap = await getDocs(q);
+        setTransactions(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+      } catch (e) {
+        setError(e.message);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  const handleDecision = (txnId, data) => {
+    setDecisions(prev => ({ ...prev, [txnId]: data }));
+  };
+
+  const clearDecision = (txnId) => {
+    setDecisions(prev => { const next = { ...prev }; delete next[txnId]; return next; });
+  };
+
+  const submitAll = async () => {
+    const entries = Object.entries(decisions);
+    if (entries.length === 0) return;
+    setSubmitting(true);
+    try {
+      for (const [txnId, data] of entries) {
+        await updateDoc(doc(db, "cc_expenses", txnId), {
+          status: "reviewed",
+          category: data.category,
+          glCode: data.glCode || "",
+          notes: data.notes || "",
+          receiptSubmitted: data.receiptSubmitted || false,
+          reviewedAt: serverTimestamp(),
+          reviewedBy: "scott@aubuchon.com",
+        });
+      }
+      setTransactions(prev => prev.map(t => {
+        const d = decisions[t.id];
+        return d ? { ...t, status: "reviewed", category: d.category, glCode: d.glCode, notes: d.notes, receiptSubmitted: d.receiptSubmitted } : t;
+      }));
+      setDecisions({});
+      alert(`Saved ${entries.length} transaction${entries.length !== 1 ? "s" : ""} as reviewed.`);
+    } catch (e) {
+      alert("Error saving: " + e.message);
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const fmt = n => "$" + Number(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+  const pendingTxns = transactions.filter(t => (t.status || "pending") !== "reviewed");
+  const reviewedTxns = transactions.filter(t => t.status === "reviewed");
+  const displayTxns = filter === "all" ? transactions : filter === "reviewed" ? reviewedTxns : pendingTxns;
+  const pendingTotal = pendingTxns.reduce((s, t) => s + Number(t.amount || 0), 0);
+
+  return (
+    <div style={{ minHeight: "100vh", background: "#f1f5f9", color: "#111827", fontFamily: "'Segoe UI', system-ui, sans-serif" }}>
+
+      {/* Sticky header */}
+      <div style={{ background: "#fff", padding: "16px 32px", display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #e5e7eb", position: "sticky", top: 0, zIndex: 100, boxShadow: "0 1px 4px rgba(0,0,0,0.06)", flexWrap: "wrap", gap: 10 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+          <button onClick={goHome} style={{ background: "none", border: "none", cursor: "pointer", color: "#6b7280", display: "flex", alignItems: "center", gap: 6, fontSize: ".85rem", fontWeight: 500 }}>
+            <ArrowLeft size={16} /> Back
+          </button>
+          <div style={{ width: 1, height: 24, background: "#e5e7eb" }} />
+          <div>
+            <h1 style={{ fontSize: "1.15rem", color: "#111827", margin: 0, fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>
+              <CreditCard size={18} /> Wells Fargo CC
+            </h1>
+            <div style={{ fontSize: ".73rem", color: "#6b7280" }}>Corporate Credit Card -- Review & Classify</div>
+          </div>
+          {goHistory && (
+            <>
+              <div style={{ width: 1, height: 24, background: "#e5e7eb" }} />
+              <button onClick={goHistory} style={{ background: "#f3f4f6", border: "1px solid #e5e7eb", cursor: "pointer", color: "#374151", display: "flex", alignItems: "center", gap: 6, fontSize: ".82rem", fontWeight: 600, padding: "7px 14px", borderRadius: 8 }}>
+                <History size={14} /> Payment History
+              </button>
+            </>
+          )}
+        </div>
+        <div style={{ display: "flex", gap: 28, alignItems: "center" }}>
+          {[
+            ["Transactions", transactions.length, "#374151"],
+            ["Pending Total", fmt(pendingTotal), "#be185d"],
+            ["Need Review", pendingTxns.length, pendingTxns.length > 0 ? "#dc2626" : "#16a34a"],
+          ].map(([lbl, val, color]) => (
+            <div key={lbl} style={{ textAlign: "center" }}>
+              <div style={{ fontSize: "1.4rem", fontWeight: 800, color }}>{val}</div>
+              <div style={{ fontSize: ".7rem", color: "#9ca3af", textTransform: "uppercase", letterSpacing: ".05em" }}>{lbl}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div style={{ maxWidth: 1100, margin: "0 auto", padding: "24px 16px" }}>
+
+        {/* Filter tabs */}
+        <div style={{ display: "flex", gap: 8, marginBottom: 20 }}>
+          {[
+            ["pending", `Needs Review (${pendingTxns.length})`],
+            ["reviewed", `Reviewed (${reviewedTxns.length})`],
+            ["all", `All (${transactions.length})`],
+          ].map(([val, label]) => (
+            <button key={val} onClick={() => setFilter(val)}
+              style={{ background: filter === val ? "#be185d" : "#fff", color: filter === val ? "#fff" : "#374151", border: `1px solid ${filter === val ? "#be185d" : "#e5e7eb"}`, padding: "8px 18px", borderRadius: 8, cursor: "pointer", fontSize: ".83rem", fontWeight: 600, transition: "all .15s" }}>
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {loading && <div style={{ textAlign: "center", padding: "60px 0", color: "#6b7280" }}>Loading transactions...</div>}
+        {error && <div style={{ textAlign: "center", padding: "60px 0", color: "#dc2626" }}>Error: {error}</div>}
+
+        {!loading && transactions.length === 0 && (
+          <div style={{ textAlign: "center", padding: "80px 0", color: "#6b7280" }}>
+            <div style={{ fontSize: 48, marginBottom: 12, opacity: .3 }}>CC</div>
+            <div style={{ fontWeight: 600, marginBottom: 6, fontSize: "1.05rem" }}>No transactions loaded yet</div>
+            <div style={{ fontSize: ".85rem", maxWidth: 340, margin: "0 auto", lineHeight: 1.6 }}>
+              Transactions will appear here once imported from the Wells Fargo portal.
+            </div>
+          </div>
+        )}
+
+        {!loading && displayTxns.length === 0 && transactions.length > 0 && (
+          <div style={{ textAlign: "center", padding: "40px 0", color: "#9ca3af", fontSize: ".9rem" }}>
+            No transactions in this view.
+          </div>
+        )}
+
+        {displayTxns.map(txn => (
+          <WellsCCCard
+            key={txn.id}
+            txn={txn}
+            decision={decisions[txn.id]}
+            onDecision={handleDecision}
+            onClearDecision={clearDecision}
+          />
+        ))}
+
+        {Object.keys(decisions).length > 0 && <div style={{ height: 100 }} />}
+      </div>
+
+      {/* Sticky save bar */}
+      {Object.keys(decisions).length > 0 && (
+        <div style={{
+          position: "fixed", bottom: 0, left: 0, right: 0, zIndex: 200,
+          background: "linear-gradient(135deg, #be185d 0%, #9d174d 100%)",
+          padding: "14px 32px", display: "flex", justifyContent: "space-between", alignItems: "center",
+          boxShadow: "0 -4px 20px rgba(0,0,0,0.15)", borderTop: "2px solid #ec4899",
+        }}>
+          <div style={{ color: "#fff" }}>
+            <div style={{ fontWeight: 700, fontSize: "1rem" }}>
+              {Object.keys(decisions).length} transaction{Object.keys(decisions).length !== 1 ? "s" : ""} ready to save
+            </div>
+            <div style={{ fontSize: ".78rem", opacity: .85 }}>
+              Total: {fmt(Object.entries(decisions).reduce((sum, [id]) => {
+                const txn = transactions.find(t => t.id === id);
+                return sum + Number(String(txn?.amount || 0));
+              }, 0))}
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: 12 }}>
+            <button onClick={() => setDecisions({})}
+              style={{ background: "rgba(255,255,255,0.15)", color: "#fff", border: "1px solid rgba(255,255,255,0.3)", padding: "10px 22px", borderRadius: 8, fontWeight: 600, cursor: "pointer", fontSize: ".88rem" }}>
+              Clear All
+            </button>
+            <button onClick={submitAll} disabled={submitting}
+              style={{ background: "#fff", color: "#9d174d", border: "none", padding: "10px 30px", borderRadius: 8, fontWeight: 700, cursor: "pointer", fontSize: ".92rem", opacity: submitting ? .6 : 1, boxShadow: "0 2px 8px rgba(0,0,0,0.15)" }}>
+              {submitting ? "Saving..." : `Save All (${Object.keys(decisions).length})`}
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 
 /* =====================================================================
    PAYMENT HISTORY  --  Unified view of all authorized payments (AP + CC)
