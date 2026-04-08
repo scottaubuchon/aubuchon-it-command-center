@@ -2605,7 +2605,7 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
             {decision && (
               <button onClick={() => onClearDecision(inv.id)}
                 style={{ background: "#fff", color: "#dc2626", border: "1px solid #fecaca", padding: "9px 14px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem" }}>
-                ÃÂ¢ÃÂÃÂ© Undo
+                ↩ Undo
               </button>
             )}
           </div>
@@ -2981,7 +2981,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
     return <span style={{ background: c.bg, color: c.color, border: `1px solid ${c.border}`, padding: "2px 8px", borderRadius: 10, fontSize: ".7rem", fontWeight: 700 }}>{type}</span>;
   };
 
-  const sortIcon = (col) => sortCol === col ? (sortDir === "asc" ? " ÃÂ¢ÃÂÃÂ²" : " ÃÂ¢ÃÂÃÂ¼") : "";
+  const sortIcon = (col) => sortCol === col ? (sortDir === "asc" ? " ▲" : " ▼") : "";
 
   const selectStyle = { padding: "6px 10px", borderRadius: 6, border: "1px solid #d1d5db", fontSize: ".8rem", background: "#fff", color: "#374151", minWidth: 90 };
   const inputStyle = { ...selectStyle, minWidth: 100 };
