@@ -83,7 +83,7 @@ const VIEWS = [
    ===================================================================== */
 
 const initialProjects = [
-  // Enterprise Systems — Active Projects
+  // Enterprise Systems â Active Projects
   { id: 40, departments: ["Enterprise Systems"], name: "Merchant 2025.3 Update", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "4/8/2026", roadblocks: "External teams not responding to feedback requests; caused deferral", milestones: "", nextSteps: "", notes: "Upgrade Mi9 Merchant/MMS to version 2025.3 on the live environment", completedDate: "", subtasks: [], tier: "project" },
   { id: 41, departments: ["Enterprise Systems"], name: "Customer History Lookup v2 (Pre-Acquisition POS)", owner: "Dave Faucher", status: "In Progress", priority: "Low", pct: 0, date: "4/10/2026", roadblocks: "", milestones: "", nextSteps: "", notes: "Extend customer history lookup to include data from pre-acquisition POS systems: EPICOR, Rock Solid, Spruce, and others", completedDate: "", subtasks: [], tier: "project" },
   { id: 42, departments: ["Enterprise Systems"], name: "SpacePlan v2.0 Store (Mobile First)", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "4/9/2026", roadblocks: "UX feedback cycles may extend timeline", milestones: "Beta Release", nextSteps: "", notes: "Redevelop the store-facing SpacePlan tool with a mobile-first responsive UI", completedDate: "", subtasks: [], tier: "project" },
@@ -92,7 +92,7 @@ const initialProjects = [
   { id: 45, departments: ["Enterprise Systems"], name: "Price Change Tracking & Forecasting", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "4/22/2026", roadblocks: "IT Team bandwidth", milestones: "", nextSteps: "", notes: "Centralized price change tracking feeds: bin ticket printing, EZ-Commerce, TCB APIs, YODA, and Promo Management. Enables consistent pricing across all channels.", completedDate: "", subtasks: [], tier: "project" },
   { id: 46, departments: ["Enterprise Systems"], name: "Cookie Cutter Store Network Initiative", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "6/1/2026", roadblocks: "IT Team bandwidth", milestones: "", nextSteps: "", notes: "Standardize and template store networks and intranet sites for new store acquisitions beyond Store #244", completedDate: "", subtasks: [], tier: "project" },
   { id: 47, departments: ["Enterprise Systems"], name: "Price Ticket Generation Automation", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "6/8/2026", roadblocks: "Depends on completion of Price Change Tracking & Forecasting project", milestones: "", nextSteps: "", notes: "Fully automate price ticket generation sent to stores. Includes review of removing Bar Tender application from the technology stack.", completedDate: "", subtasks: [], tier: "project" },
-  // Enterprise Systems — Ongoing Support & Operations
+  // Enterprise Systems â Ongoing Support & Operations
   { id: 48, departments: ["Enterprise Systems"], name: "EDI Technical Support", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Ongoing operational support for EDI data exchange (OpenText / EricWare). Includes monitoring, troubleshooting, and documentation.", completedDate: "", subtasks: [], tier: "support" },
   { id: 49, departments: ["Enterprise Systems"], name: "Promotion Support", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Continuous support for promotion configuration, testing, and issue resolution within Mi9 Merchant, Ace, and the Marketing Dept.", completedDate: "", subtasks: [], tier: "support" },
   { id: 50, departments: ["Enterprise Systems"], name: "Mi9 Merchant Support", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Day-to-day support for Mi9 Merchant operations including upgrade coordination, break-fix, and vendor escalation.", completedDate: "", subtasks: [], tier: "support" },
@@ -102,7 +102,7 @@ const initialProjects = [
   { id: 54, departments: ["Enterprise Systems"], name: "Toolbox Initiative", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Centralized, secure, role-based portal for internal tools and data collection forms.", completedDate: "", subtasks: [], tier: "support" },
   { id: 55, departments: ["Enterprise Systems"], name: "New Store / Acquisitions Support", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "End-to-end technical support for new stores and acquisitions: customer data loading, EPICOR Bridge integration, and full store setup in Mi9 ecosystem.", completedDate: "", subtasks: [], tier: "support" },
   { id: 56, departments: ["Enterprise Systems"], name: "Documenting EricWare", owner: "Dave Faucher", status: "In Progress", priority: "Low", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Ongoing documentation effort for EricWare systems, with emphasis on EDI processes.", completedDate: "", subtasks: [], tier: "support" },
-  // Enterprise Systems — Backlog
+  // Enterprise Systems â Backlog
   { id: 57, departments: ["Enterprise Systems"], name: "Unified Bin Ticket Printing", owner: "Dave Faucher", status: "Not Started", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Consolidate bin ticket printing across all systems into a single, consistent workflow leveraging the Price Change Tracking initiative.", completedDate: "", subtasks: [], tier: "project" },
   { id: 58, departments: ["Enterprise Systems"], name: "Customer History Lookup v3 (Mi9 Customer History)", owner: "Dave Faucher", status: "Not Started", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Extend lookup to include Mi9 native customer transaction history.", completedDate: "", subtasks: [], tier: "project" },
   { id: 59, departments: ["Enterprise Systems"], name: "Customer History Lookup v4 (Service History: EPICOR / Ideal)", owner: "Dave Faucher", status: "Not Started", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Add service history from EPICOR and Ideal systems to the customer history lookup.", completedDate: "", subtasks: [], tier: "project" },
@@ -115,7 +115,7 @@ const initialProjects = [
   { id: 66, departments: ["Enterprise Systems"], name: "Unified Store Hours Management", owner: "Dave Faucher", status: "Not Started", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Single source of truth for store hours propagated to SPORT, Merchant, HS.com, Google My Business, SOCi, AH.com, and Yelp.", completedDate: "", subtasks: [], tier: "project" },
   { id: 67, departments: ["Enterprise Systems"], name: "ITSM", owner: "Dave Faucher", status: "Not Started", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Implement a formal IT service management platform covering ticketing, assigned equipment inventory, and a self-service portal for staff.", completedDate: "", subtasks: [], tier: "project" },
   { id: 68, departments: ["Enterprise Systems"], name: "Invalid Bin Ticket ID & Reprinting via Elvis", owner: "Dave Faucher", status: "Not Started", priority: "Low", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Automate identification and reprinting of invalid bin tickets using the Elvis devices.", completedDate: "", subtasks: [], tier: "project" },
-  // Enterprise Systems — Recently Completed
+  // Enterprise Systems â Recently Completed
   { id: 69, departments: ["Enterprise Systems"], name: "FindMyElvis v1.0", owner: "Dave Faucher", status: "Done", priority: "Medium", pct: 100, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Elvis store device locator", completedDate: "2026", subtasks: [], tier: "project" },
   { id: 70, departments: ["Enterprise Systems"], name: "Google SSO Login For Intranet Sites", owner: "Dave Faucher", status: "Done", priority: "Medium", pct: 100, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Google Single Sign-On authentication for internal websites", completedDate: "2026", subtasks: [], tier: "project" },
   { id: 71, departments: ["Enterprise Systems"], name: "Customer History Lookup v1", owner: "Dave Faucher", status: "Done", priority: "Medium", pct: 100, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "EPICOR-only customer history lookup", completedDate: "2026", subtasks: [], tier: "project" },
@@ -2223,7 +2223,7 @@ const SECTIONS = [
   {
     id: "payment-history",
     label: "Payment History",
-    description: "View and filter all authorized payments — AP invoices & CC expenses",
+    description: "View and filter all authorized payments â AP invoices & CC expenses",
     icon: History,
     gradient: "from-slate-500 to-slate-700",
     hoverGradient: "from-slate-600 to-slate-800",
@@ -2358,7 +2358,7 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
   const overdue = dueDate && dueDate < new Date() && inv.status === "pending";
   const dueLabel = dueDate
     ? dueDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
-    : inv.paymentDue || "—";
+    : inv.paymentDue || "â";
 
   const handleDecision = (action) => {
     onDecision(inv.id, action, category, comment);
@@ -2387,7 +2387,7 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
   const detailRow = (label, value, light = false) => (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "5px 0", borderBottom: "1px solid #f3f4f6", gap: 12 }}>
       <span style={{ color: "#9ca3af", fontSize: ".78rem", flexShrink: 0 }}>{label}</span>
-      <span style={{ color: light ? "#6b7280" : "#111827", fontSize: ".78rem", fontWeight: 500, textAlign: "right" }}>{value || "—"}</span>
+      <span style={{ color: light ? "#6b7280" : "#111827", fontSize: ".78rem", fontWeight: 500, textAlign: "right" }}>{value || "â"}</span>
     </div>
   );
 
@@ -2400,11 +2400,11 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
           <div style={{ fontSize: "1.1rem", fontWeight: 700, color: "#111827", letterSpacing: "-.01em" }}>{inv.vendor}</div>
           <div style={{ fontSize: ".8rem", color: "#6b7280", display: "flex", gap: 14, flexWrap: "wrap", marginTop: 4 }}>
             <span>Invoice #{inv.invoiceNumber}</span>
-            <span>ÃÂ·</span>
-            <span>Store {inv.storeNumber}{inv.location ? ` — ${inv.location}` : ""}</span>
-            <span>ÃÂ·</span>
+            <span>·</span>
+            <span>Store {inv.storeNumber}{inv.location ? ` â ${inv.location}` : ""}</span>
+            <span>·</span>
             <span>Vendor #{inv.vendorNumber}</span>
-            {inv.docNumber && <><span>ÃÂ·</span><span style={{ color: "#9ca3af" }}>{inv.docNumber}</span></>}
+            {inv.docNumber && <><span>·</span><span style={{ color: "#9ca3af" }}>{inv.docNumber}</span></>}
           </div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -2415,8 +2415,8 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
               color: displayStatus === "approved" ? "#166534" : displayStatus === "rejected" ? "#991b1b" : "#4b5563",
               border: `1px solid ${displayStatus === "approved" ? "#bbf7d0" : displayStatus === "rejected" ? "#fecaca" : "#e5e7eb"}`
             }}>
-              {decision && "Ã¢ÂÂ³ "}
-              {displayStatus === "approved" ? "Ã¢ÂÂ Approved" : displayStatus === "rejected" ? "Ã¢ÂÂ Rejected" : "Pending"}
+              {decision && "⏳ "}
+              {displayStatus === "approved" ? "✓ Approved" : displayStatus === "rejected" ? "✗ Rejected" : "Pending"}
               {decision && " (unsaved)"}
             </span>
           )}
@@ -2429,7 +2429,7 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
         {inv.glNumber && chip(`GL: ${inv.glNumber}`, "#4338ca", "#eef2ff")}
         {inv.projectNumber && chip(`Project: ${inv.projectNumber}`, "#0369a1", "#e0f2fe")}
         {chip(
-          `Due: ${dueLabel}${overdue ? " — OVERDUE Ã¢ÂÂ " : ""}`,
+          `Due: ${dueLabel}${overdue ? " â OVERDUE ⚠" : ""}`,
           overdue ? "#dc2626" : "#374151",
           overdue ? "#fef2f2" : "#f9fafb"
         )}
@@ -2450,14 +2450,14 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
               padding: "7px 14px", borderRadius: 6, cursor: "pointer", fontSize: ".82rem", fontWeight: 500,
               transition: "all .15s"
             }}>
-              {panel === "preview" ? "Ã°ÂÂÂ View Invoice" : "Ã°ÂÂÂ Full Details"}
+              {panel === "preview" ? "📄 View Invoice" : "🔍 Full Details"}
             </button>
           );
         })}
         {inv.jiffyUrl && (
           <a href={inv.jiffyUrl} target="_blank" rel="noopener noreferrer"
             style={{ background: "#f3f4f6", color: "#374151", border: "1px solid #e5e7eb", padding: "7px 14px", borderRadius: 6, fontSize: ".82rem", fontWeight: 500, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 5 }}>
-            Ã°ÂÂÂ Open in Jiffy
+            🔗 Open in Jiffy
           </a>
         )}
       </div>
@@ -2489,7 +2489,7 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
               />
             ))}
             <div data-fallback style={{ display: "none", fontSize: ".8rem", color: "#999", textAlign: "center", fontStyle: "italic", marginBottom: 12 }}>
-              Invoice image not available — use "Open in Jiffy" to view original
+              Invoice image not available â use "Open in Jiffy" to view original
             </div>
             <div style={{ display: "flex", gap: 16, flexWrap: "wrap", background: "#f5f5f5", padding: 10, borderRadius: 4, marginBottom: 14 }}>
               <div><div style={{ fontSize: ".68rem", textTransform: "uppercase", color: "#888" }}>Amount Due</div><strong>{fmt(inv.amount)}</strong></div>
@@ -2525,7 +2525,7 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
               {detailRow("Invoice #", inv.invoiceNumber)}
               {detailRow("Invoice Date", inv.invoiceDate)}
               {detailRow("GL Code", inv.glNumber)}
-              {detailRow("Project #", inv.projectNumber || "—")}
+              {detailRow("Project #", inv.projectNumber || "â")}
             </div>
 
             {/* Payment Info */}
@@ -2570,7 +2570,7 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
         </div>
       )}
 
-      {/* Controls — only show for pending invoices (not yet saved to Firestore) */}
+      {/* Controls â only show for pending invoices (not yet saved to Firestore) */}
       {inv.status === "pending" && (
         <div style={{ padding: "14px 20px", display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", background: decision ? (decision.action === "approved" ? "#f0fdf4" : decision.action === "rejected" ? "#fef2f2" : "#f9fafb") : "#fafafa", borderTop: "1px solid #f3f4f6" }}>
           <select
@@ -2596,16 +2596,16 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
           <div style={{ display: "flex", gap: 8, marginLeft: "auto" }}>
             <button onClick={() => handleDecision("approved")}
               style={{ background: decision?.action === "approved" ? "#0f5132" : "#166534", color: "#fff", border: decision?.action === "approved" ? "2px solid #16a34a" : "none", padding: "9px 20px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem" }}>
-              Ã¢ÂÂ Approve
+              ✓ Approve
             </button>
             <button onClick={() => handleDecision("rejected")}
               style={{ background: decision?.action === "rejected" ? "#7f1d1d" : "#991b1b", color: "#fff", border: decision?.action === "rejected" ? "2px solid #dc2626" : "none", padding: "9px 20px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem" }}>
-              Ã¢ÂÂ Reject
+              ✗ Reject
             </button>
             {decision && (
               <button onClick={() => onClearDecision(inv.id)}
                 style={{ background: "#fff", color: "#dc2626", border: "1px solid #fecaca", padding: "9px 14px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem" }}>
-                Ã¢ÂÂ© Undo
+                ÃÂ¢ÃÂÃÂ© Undo
               </button>
             )}
           </div>
@@ -2636,7 +2636,7 @@ const APInvoices = ({ goHome, goHistory }) => {
     })();
   }, []);
 
-  // Local-only — updates batch decisions state (nothing saved to Firestore yet)
+  // Local-only â updates batch decisions state (nothing saved to Firestore yet)
   const handleDecision = (invoiceId, action, category, comment) => {
     setDecisions(prev => ({ ...prev, [invoiceId]: { action, category, comment } }));
   };
@@ -2645,7 +2645,7 @@ const APInvoices = ({ goHome, goHistory }) => {
     setDecisions(prev => { const next = { ...prev }; delete next[invoiceId]; return next; });
   };
 
-  // Batch submit — writes ALL decisions to Firestore and queues for Jiffy
+  // Batch submit â writes ALL decisions to Firestore and queues for Jiffy
   const submitAll = async () => {
     const entries = Object.entries(decisions);
     if (entries.length === 0) return;
@@ -2662,11 +2662,11 @@ const APInvoices = ({ goHome, goHistory }) => {
           jiffyAction: "pending",
           jiffyGroup: category || "Expense in Budget",
         });
-        // Write a permanent history record — this is the audit trail
+        // Write a permanent history record â this is the audit trail
         await addDoc(collection(db, "ap_payment_history"), {
           invoiceId,
           invoiceNumber: inv.invoiceNumber || invoiceId,
-          vendor: inv.vendor || "—",
+          vendor: inv.vendor || "â",
           amount: Number(inv.amount || 0),
           storeNumber: inv.storeNumber || "",
           location: inv.location || "",
@@ -2675,7 +2675,7 @@ const APInvoices = ({ goHome, goHistory }) => {
           paymentDue: inv.paymentDue || "",
           invoiceDate: inv.invoiceDate || "",
           description: inv.description || inv.remarks || "",
-          invoiceGroup: category || inv.invoiceGroup || "—",
+          invoiceGroup: category || inv.invoiceGroup || "â",
           status: action,
           comment: comment || "",
           actionedAt: now,
@@ -2688,7 +2688,7 @@ const APInvoices = ({ goHome, goHistory }) => {
         return d ? { ...inv, status: d.action, category: d.category, comment: d.comment, jiffyAction: "pending" } : inv;
       }));
       setDecisions({});
-      alert(`Submitted ${entries.length} invoice${entries.length !== 1 ? "s" : ""} — queued for Jiffy approval.`);
+      alert(`Submitted ${entries.length} invoice${entries.length !== 1 ? "s" : ""} â queued for Jiffy approval.`);
     } catch (e) {
       alert("Error submitting invoices: " + e.message);
     } finally {
@@ -2723,7 +2723,7 @@ const APInvoices = ({ goHome, goHistory }) => {
           <div style={{ width: 1, height: 24, background: "#e5e7eb" }} />
           <div>
             <h1 style={{ fontSize: "1.15rem", color: "#111827", margin: 0, fontWeight: 700 }}>AP Invoice Approval</h1>
-            <div style={{ fontSize: ".73rem", color: "#6b7280" }}>Aubuchon Hardware — Accounts Payable</div>
+            <div style={{ fontSize: ".73rem", color: "#6b7280" }}>Aubuchon Hardware â Accounts Payable</div>
           </div>
           {goHistory && (
             <>
@@ -2750,13 +2750,13 @@ const APInvoices = ({ goHome, goHistory }) => {
       </div>
 
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "24px 16px" }}>
-        {loading && <div style={{ textAlign: "center", padding: "60px 0", color: "#6b7280" }}>Loading invoicesÃ¢ÂÂ¦</div>}
+        {loading && <div style={{ textAlign: "center", padding: "60px 0", color: "#6b7280" }}>Loading invoices…</div>}
         {error && <div style={{ textAlign: "center", padding: "60px 0", color: "#dc2626" }}>Error: {error}</div>}
 
         {!loading && overdueCount > 0 && (
           <div style={{ background: "linear-gradient(90deg,#fef2f2,#fff5f5)", border: "1px solid #fecaca", color: "#991b1b", padding: "12px 20px", borderRadius: 10, marginBottom: 20, fontWeight: 600, display: "flex", alignItems: "center", gap: 10 }}>
-            <span style={{ fontSize: "1.2rem" }}>Ã¢ÂÂ </span>
-            <span>OVERDUE: {overdueCount} invoice{overdueCount !== 1 ? "s are" : " is"} past due — immediate action recommended.</span>
+            <span style={{ fontSize: "1.2rem" }}>⚠</span>
+            <span>OVERDUE: {overdueCount} invoice{overdueCount !== 1 ? "s are" : " is"} past due â immediate action recommended.</span>
           </div>
         )}
 
@@ -2786,9 +2786,9 @@ const APInvoices = ({ goHome, goHistory }) => {
             </div>
             <div style={{ fontSize: ".78rem", opacity: .85 }}>
               {Object.values(decisions).filter(d => d.action === "approved").length} approved
-              {" ÃÂ· "}
+              {" · "}
               {Object.values(decisions).filter(d => d.action === "rejected").length} rejected
-              {" ÃÂ· "}
+              {" · "}
               Total: {fmt(Object.entries(decisions).reduce((sum, [id, d]) => {
                 const inv = invoices.find(i => i.id === id);
                 return sum + (Number(inv?.amount || 0));
@@ -2802,7 +2802,7 @@ const APInvoices = ({ goHome, goHistory }) => {
             </button>
             <button onClick={submitAll} disabled={submitting}
               style={{ background: "#fff", color: "#065f46", border: "none", padding: "10px 30px", borderRadius: 8, fontWeight: 700, cursor: "pointer", fontSize: ".92rem", opacity: submitting ? .6 : 1, boxShadow: "0 2px 8px rgba(0,0,0,0.15)" }}>
-              {submitting ? "SubmittingÃ¢ÂÂ¦" : `Submit All (${Object.keys(decisions).length})`}
+              {submitting ? "Submitting…" : `Submit All (${Object.keys(decisions).length})`}
             </button>
           </div>
         </div>
@@ -2839,7 +2839,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
           return {
             id: d.id,
             type: data.type || "AP",
-            vendor: data.vendor || "—",
+            vendor: data.vendor || "â",
             amount: Number(data.amount || 0),
             store: data.storeNumber || "",
             location: data.location || "",
@@ -2849,7 +2849,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
             invoiceDate: data.invoiceDate || "",
             status: data.status || "pending",
             description: data.description || "",
-            group: data.invoiceGroup || "—",
+            group: data.invoiceGroup || "â",
             invoiceNumber: data.invoiceNumber || "",
             actionedAt: data.actionedAt || null,
             actionedBy: data.actionedBy || "",
@@ -2878,7 +2878,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
             dueDate: fmtTs(data.transactionDate),
             invoiceDate: fmtTs(data.transactionDate),
             status: data.status || "pending",
-            description: (data.cardLast4 ? `Card •••${data.cardLast4} – ` : "") + (data.notes || data.category || ""),
+            description: (data.cardLast4 ? `Card â¢â¢â¢${data.cardLast4} â ` : "") + (data.notes || data.category || ""),
             group: data.category || "--",
             invoiceNumber: "",
             actionedAt: data.reviewedAt || null,
@@ -2908,7 +2908,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
 
   const fmtDate = (val) => {
     const d = parseDateStr(val);
-    return d && !isNaN(d) ? d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : (val || "—");
+    return d && !isNaN(d) ? d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : (val || "â");
   };
 
   // Unique values for filter dropdowns
@@ -2981,7 +2981,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
     return <span style={{ background: c.bg, color: c.color, border: `1px solid ${c.border}`, padding: "2px 8px", borderRadius: 10, fontSize: ".7rem", fontWeight: 700 }}>{type}</span>;
   };
 
-  const sortIcon = (col) => sortCol === col ? (sortDir === "asc" ? " Ã¢ÂÂ²" : " Ã¢ÂÂ¼") : "";
+  const sortIcon = (col) => sortCol === col ? (sortDir === "asc" ? " ÃÂ¢ÃÂÃÂ²" : " ÃÂ¢ÃÂÃÂ¼") : "";
 
   const selectStyle = { padding: "6px 10px", borderRadius: 6, border: "1px solid #d1d5db", fontSize: ".8rem", background: "#fff", color: "#374151", minWidth: 90 };
   const inputStyle = { ...selectStyle, minWidth: 100 };
@@ -3000,7 +3000,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
             <h1 style={{ fontSize: "1.15rem", color: "#111827", margin: 0, fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>
               <History size={18} /> Payment History
             </h1>
-            <div style={{ fontSize: ".73rem", color: "#6b7280" }}>All authorized payments — AP Invoices & CC Expenses</div>
+            <div style={{ fontSize: ".73rem", color: "#6b7280" }}>All authorized payments â AP Invoices & CC Expenses</div>
           </div>
         </div>
         <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
@@ -3049,7 +3049,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
           )}
         </div>
 
-        {loading && <div style={{ textAlign: "center", padding: "60px 0", color: "#6b7280" }}>Loading payment historyÃ¢ÂÂ¦</div>}
+        {loading && <div style={{ textAlign: "center", padding: "60px 0", color: "#6b7280" }}>Loading payment history…</div>}
 
         {!loading && (
           <div style={{ background: "#fff", borderRadius: 10, border: "1px solid #e5e7eb", overflow: "hidden" }}>
@@ -3080,7 +3080,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
                   {sorted.length === 0 && (
                     <tr><td colSpan={9} style={{ textAlign: "center", padding: "50px 0", color: "#9ca3af" }}>
                       {rows.length === 0
-                        ? "No history yet — records appear here after you submit approvals or rejections."
+                        ? "No history yet â records appear here after you submit approvals or rejections."
                         : "No records match the current filters."}
                     </td></tr>
                   )}
@@ -3092,12 +3092,12 @@ const PaymentHistory = ({ goHome, goBack }) => {
                         {r.invoiceNumber && <div style={{ fontSize: ".72rem", color: "#9ca3af", fontWeight: 400 }}>#{r.invoiceNumber}</div>}
                       </td>
                       <td style={{ padding: "10px 12px", textAlign: "right", fontWeight: 700, color: "#0f766e", fontVariantNumeric: "tabular-nums" }}>{fmt(r.amount)}</td>
-                      <td style={{ padding: "10px 12px", color: "#374151" }}>#{r.store}</td>
+                      <td style={{ padding: "10px 12px", color: "#374151" }}>{r.store ? `#${r.store}` : "—"}</td>
                       <td style={{ padding: "10px 12px", color: "#374151", whiteSpace: "nowrap" }}>{fmtDate(r.dueDate)}</td>
                       <td style={{ padding: "10px 12px", color: "#374151", whiteSpace: "nowrap", fontSize: ".78rem" }}>{fmtDate(r.actionedAt)}</td>
                       <td style={{ padding: "10px 12px" }}>{statusBadge(r.status)}</td>
-                      <td style={{ padding: "10px 12px", color: "#374151", fontSize: ".78rem" }}>{r.group || "—"}</td>
-                      <td style={{ padding: "10px 12px", color: "#6b7280", maxWidth: 220, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.comment || "—"}</td>
+                      <td style={{ padding: "10px 12px", color: "#374151", fontSize: ".78rem" }}>{r.group || "â"}</td>
+                      <td style={{ padding: "10px 12px", color: "#6b7280", maxWidth: 220, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.comment || "â"}</td>
                     </tr>
                   ))}
                 </tbody>
