@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import { getStorage } from "firebase/storage";
 
 // Firebase configuration â replace with your project's config from Firebase Console
 const firebaseConfig = {
@@ -15,6 +16,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const storage = getStorage(app);
 const googleProvider = new GoogleAuthProvider();
 
 // Only allow these email addresses
@@ -23,4 +25,4 @@ const ALLOWED_EMAILS = [
   "scott@theaubuchonfamily.com",
 ];
 
-export { auth, googleProvider, signInWithPopup, signOut, ALLOWED_EMAILS, db };
+export { auth, googleProvider, signInWithPopup, signOut, ALLOWED_EMAILS, db, storage };

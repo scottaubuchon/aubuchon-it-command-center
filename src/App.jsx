@@ -9,8 +9,9 @@ import {
   ListChecks, CircleDot, RotateCcw, ArrowUpDown,
   Home, CreditCard, TrendingUp, Database, Lock, ArrowLeft, Link2, FolderKanban
 } from "lucide-react";
-import { auth, signOut, db } from "./firebase";
+import { auth, signOut, db, storage } from "./firebase";
 import { doc, getDoc, setDoc, addDoc, collection, getDocs, query, orderBy, updateDoc, deleteDoc, serverTimestamp } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 /* =====================================================================
    CONFIGURATION
@@ -2830,6 +2831,30 @@ const WellsCCCard = ({ txn, decision, onDecision, onClearDecision }) => {
   const [glCode, setGlCode] = useState(decision?.glCode || txn.glCode || "");
   const [notes, setNotes] = useState(decision?.notes || txn.notes || "");
   const [receiptSubmitted, setReceiptSubmitted] = useState(decision?.receiptSubmitted ?? txn.receiptSubmitted ?? false);
+  const [receiptUrl, setReceiptUrl] = useState(txn.receiptUrl || "");
+  const [uploading, setUploading] = useState(false);
+  const [uploadError, setUploadError] = useState("");
+
+  const handleReceiptUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploading(true);
+    setUploadError("");
+    try {
+      const ext = file.name.split(".").pop();
+      const path = `cc_receipts/${txn.id}_${Date.now()}.${ext}`;
+      const storageRef = ref(storage, path);
+      await uploadBytes(storageRef, file);
+      const url = await getDownloadURL(storageRef);
+      // Save URL immediately to Firestore so it persists regardless of review state
+      await updateDoc(doc(db, "cc_expenses", txn.id), { receiptUrl: url });
+      setReceiptUrl(url);
+    } catch (err) {
+      setUploadError("Upload failed: " + err.message);
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const displayStatus = decision ? decision.status : (txn.status || "pending");
 
@@ -2889,9 +2914,12 @@ const WellsCCCard = ({ txn, decision, onDecision, onClearDecision }) => {
           {txn.category && <span><strong>Category:</strong> {txn.category}</span>}
           {txn.glCode && <span><strong>GL:</strong> {txn.glCode}</span>}
           {txn.notes && <span><strong>Notes:</strong> {txn.notes}</span>}
-          <span style={{ color: txn.receiptSubmitted ? "#15803d" : "#dc2626", fontWeight: 600 }}>
-            {txn.receiptSubmitted ? "Receipt submitted" : "No receipt on file"}
-          </span>
+          {receiptUrl
+            ? <a href={receiptUrl} target="_blank" rel="noopener noreferrer" style={{ color: "#1d4ed8", fontWeight: 600, textDecoration: "none" }}>📄 View Receipt</a>
+            : <span style={{ color: txn.receiptSubmitted ? "#15803d" : "#9ca3af", fontWeight: 600 }}>
+                {txn.receiptSubmitted ? "Receipt on file (WF)" : "No receipt"}
+              </span>
+          }
         </div>
       )}
 
@@ -2919,9 +2947,25 @@ const WellsCCCard = ({ txn, decision, onDecision, onClearDecision }) => {
             placeholder="Notes / purpose (optional)"
             style={{ background: "#fff", color: "#374151", border: "1px solid #d1d5db", padding: "7px 10px", borderRadius: 6, fontSize: ".83rem", flex: 1, minWidth: 160 }}
           />
+          {/* Receipt upload */}
+          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+            {receiptUrl
+              ? <a href={receiptUrl} target="_blank" rel="noopener noreferrer"
+                  style={{ color: "#1d4ed8", fontSize: ".8rem", fontWeight: 600, textDecoration: "none", background: "#eff6ff", border: "1px solid #bfdbfe", padding: "5px 10px", borderRadius: 6, whiteSpace: "nowrap" }}>
+                  📄 View Receipt
+                </a>
+              : null}
+            <label style={{ display: "inline-flex", alignItems: "center", gap: 6, cursor: "pointer",
+              background: uploading ? "#f3f4f6" : "#f8fafc", border: "1px solid #d1d5db",
+              borderRadius: 6, padding: "5px 10px", fontSize: ".8rem", color: "#374151", fontWeight: 500, whiteSpace: "nowrap" }}>
+              <input type="file" accept="image/*,application/pdf" style={{ display: "none" }} onChange={handleReceiptUpload} disabled={uploading} />
+              {uploading ? "⏳ Uploading..." : receiptUrl ? "🔄 Replace" : "📎 Attach Receipt"}
+            </label>
+            {uploadError && <span style={{ color: "#dc2626", fontSize: ".75rem" }}>{uploadError}</span>}
+          </div>
           <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: ".83rem", color: "#374151", cursor: "pointer", userSelect: "none" }}>
             <input type="checkbox" checked={receiptSubmitted} onChange={e => setReceiptSubmitted(e.target.checked)} />
-            Receipt submitted to WF
+            Submitted to WF
           </label>
           <div style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
             <button onClick={handleReview}
@@ -3209,6 +3253,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
             group: data.category || "--",
             invoiceNumber: data.cardLast4 ? `Card ...${data.cardLast4}` : "",
             receiptSubmitted: data.receiptSubmitted || false,
+            receiptUrl: data.receiptUrl || "",
             actionedAt: data.reviewedAt || null,
           };
         });
@@ -3445,11 +3490,14 @@ const PaymentHistory = ({ goHome, goBack }) => {
                               style={{ color: "#1d4ed8", fontSize: ".75rem", fontWeight: 600, textDecoration: "none", background: "#eff6ff", border: "1px solid #bfdbfe", padding: "3px 8px", borderRadius: 5, whiteSpace: "nowrap" }}>
                               📄 View
                             </a>
-                          : r.type === "CC"
-                            ? <span style={{ fontSize: ".75rem", fontWeight: 600, color: r.receiptSubmitted ? "#15803d" : "#9ca3af" }}>
-                                {r.receiptSubmitted ? "✓ On file" : "—"}
-                              </span>
-                            : "—"}
+                          : r.type === "CC" && r.receiptUrl
+                            ? <a href={r.receiptUrl} target="_blank" rel="noopener noreferrer"
+                                style={{ color: "#1d4ed8", fontSize: ".75rem", fontWeight: 600, textDecoration: "none", background: "#eff6ff", border: "1px solid #bfdbfe", padding: "3px 8px", borderRadius: 5, whiteSpace: "nowrap" }}>
+                                📄 View
+                              </a>
+                            : r.type === "CC"
+                              ? <span style={{ fontSize: ".75rem", color: "#9ca3af" }}>—</span>
+                              : "—"}
                       </td>
                       <td style={{ padding: "10px 12px", color: "#6b7280", maxWidth: 220, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.comment || "—"}</td>
                     </tr>
