@@ -1,4 +1,4 @@
-﻿import { Fragment, useState, useMemo, useCallback, useEffect, useRef } from "react";
+import { Fragment, useState, useMemo, useCallback, useEffect, useRef } from "react";
 import {
   ChevronDown, ChevronRight, Plus, Trash2, Download, AlertTriangle, Clock,
   CheckCircle, XCircle, Pause, FlaskConical, BarChart3, Calendar, Edit3,
@@ -304,6 +304,125 @@ function NewProjectModal({ onSave, onClose, ownerOptions, allDepartments }) {
         <div className="px-5 py-3 bg-gray-50 border-t border-gray-100 flex justify-end gap-2">
           <button onClick={onClose} className="px-3.5 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-800 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">Cancel</button>
           <button onClick={handleSave} className="px-3.5 py-1.5 text-xs font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors shadow-sm">Create Project</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ReviewProjectsModal({ projects, onUpdate, onClose }) {
+  const [idx, setIdx] = useState(0);
+  const [localStatus, setLocalStatus] = useState(projects[0]?.status || "");
+  const [localPct, setLocalPct] = useState(projects[0]?.pct || 0);
+  const [dirty, setDirty] = useState(false);
+  const total = projects.length;
+  const p = projects[idx];
+
+  const syncLocal = (i) => {
+    setLocalStatus(projects[i]?.status || "");
+    setLocalPct(projects[i]?.pct || 0);
+    setDirty(false);
+  };
+
+  const saveAndNext = () => {
+    if (dirty && p) {
+      if (localStatus !== p.status) onUpdate(p.id, "status", localStatus);
+      if (localPct !== p.pct) onUpdate(p.id, "pct", localPct);
+    }
+    if (idx < total - 1) { const next = idx + 1; setIdx(next); syncLocal(next); }
+    else onClose();
+  };
+
+  const skip = () => {
+    if (idx < total - 1) { const next = idx + 1; setIdx(next); syncLocal(next); }
+    else onClose();
+  };
+
+  if (!p) return null;
+
+  const sc = STATUS_CONFIG[localStatus] || STATUS_CONFIG["Not Started"];
+  const StatusIcon = sc.icon;
+  const pctColor = localPct >= 75 ? "bg-emerald-500" : localPct >= 40 ? "bg-blue-500" : localPct > 0 ? "bg-amber-500" : "bg-gray-300";
+  const tc = TIER_CONFIG[p.tier] || TIER_CONFIG["project"];
+  const pc = PRIORITY_CONFIG[p.priority] || PRIORITY_CONFIG["Medium"];
+
+  return (
+    <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center" onClick={onClose}>
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden" onClick={e => e.stopPropagation()}>
+        {/* Header */}
+        <div className="bg-gradient-to-r from-indigo-600 to-blue-700 px-5 py-3.5 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Eye size={16} className="text-white/80" />
+            <h3 className="text-sm font-bold text-white">Review Projects</h3>
+          </div>
+          <span className="text-xs text-white/70 font-medium">{idx + 1} of {total}</span>
+        </div>
+
+        {/* Progress bar across top */}
+        <div className="h-1 bg-gray-100">          <div className="h-full bg-indigo-500 transition-all duration-300" style={{ width: `${((idx + 1) / total) * 100}%` }} />
+        </div>
+
+        {/* Project info */}
+        <div className="px-5 py-4">
+          <div className="flex items-start justify-between mb-3">
+            <div>
+              <h4 className="text-sm font-bold text-gray-900 leading-tight">{p.name}</h4>
+              <div className="flex items-center gap-2 mt-1.5">
+                <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-[10px] rounded-full font-semibold ${tc.color} border ${tc.border}`}>{tc.label}</span>
+                <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-[10px] rounded-full font-semibold ${pc.color} border ${pc.border}`}>{p.priority}</span>
+              </div>
+            </div>
+            <span className="text-[11px] text-gray-400 font-medium">{String(p.owner || "Unassigned")}</span>
+          </div>
+
+          {p.roadblocks && (
+            <div className="bg-red-50 border border-red-100 rounded-lg px-3 py-2 mb-3">
+              <div className="flex items-center gap-1.5 text-[10px] font-semibold text-red-600 uppercase tracking-wider mb-0.5"><AlertTriangle size={11} />Roadblock</div>
+              <p className="text-xs text-red-700 leading-relaxed">{p.roadblocks}</p>
+            </div>
+          )}
+
+          {/* Editable fields */}
+          <div className="space-y-3 mt-4">
+            <div>
+              <label className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Status</label>
+              <select value={localStatus} onChange={e => { setLocalStatus(e.target.value); setDirty(true); }}
+                className="w-full px-3 py-2 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
+                {STATUS_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Progress</label>
+              <div className="flex items-center gap-3">
+                <input type="range" min="0" max="100" step="5" value={localPct} onChange={e => { setLocalPct(parseInt(e.target.value)); setDirty(true); }}
+                  className="flex-1 h-2 accent-indigo-600" />
+                <div className="flex items-center gap-1.5 min-w-[60px]">
+                  <input type="number" min="0" max="100" value={localPct} onChange={e => { setLocalPct(Math.min(100, Math.max(0, parseInt(e.target.value) || 0))); setDirty(true); }}
+                    className="w-12 text-center text-xs font-semibold border border-gray-200 rounded-md py-1 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                  <span className="text-[10px] text-gray-400">%</span>
+                </div>
+              </div>
+              <div className="mt-1.5 h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div className={`h-full rounded-full transition-all duration-300 ${pctColor}`} style={{ width: `${Math.max(localPct, 2)}%` }} />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="px-5 py-3 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
+          <button onClick={onClose} className="px-3 py-1.5 text-xs font-medium text-gray-500 hover:text-gray-700 transition-colors">
+            Close
+          </button>
+          <div className="flex items-center gap-2">
+            <button onClick={skip} className="px-3.5 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-800 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+              Skip
+            </button>
+            <button onClick={saveAndNext}
+              className={`px-3.5 py-1.5 text-xs font-medium text-white rounded-lg shadow-sm transition-colors ${dirty ? "bg-indigo-600 hover:bg-indigo-700" : "bg-gray-900 hover:bg-gray-800"}`}>
+              {dirty ? (idx < total - 1 ? "Save & Next" : "Save & Finish") : (idx < total - 1 ? "Next" : "Finish")}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -1754,6 +1873,7 @@ function ITProjectDashboard({ goHome }) {
   const [filterTier, setFilterTier] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [showNewProjectModal, setShowNewProjectModal] = useState(false);
+  const [showReviewModal, setShowReviewModal] = useState(false);
   const [exportMsg, setExportMsg] = useState("");
   const [changeLog, setChangeLog] = useState([]);
   const [showExportDialog, setShowExportDialog] = useState(false);
@@ -2023,6 +2143,7 @@ function ITProjectDashboard({ goHome }) {
             </div>
 
             <div className="flex items-center gap-2">
+              <button onClick={()=>setShowReviewModal(true)} className="flex items-center gap-1.5 bg-indigo-600 text-white px-3.5 py-2 rounded-lg text-xs font-medium hover:bg-indigo-700 transition-colors shadow-sm"><Eye size={13}/>Review</button>
               <button onClick={()=>setShowExportDialog(true)} className="flex items-center gap-1.5 bg-gray-900 text-white px-3.5 py-2 rounded-lg text-xs font-medium hover:bg-gray-800 transition-colors shadow-sm"><Download size={13}/>Export</button>
               <span className="text-[10px] text-gray-300 px-1">Auto-saved</span>
               <button onClick={() => signOut(auth)} className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors" title="Sign out">
@@ -2165,6 +2286,14 @@ function ITProjectDashboard({ goHome }) {
             allDepartments={allDepartments}
             onClose={() => setShowNewProjectModal(false)}
             onSave={(data) => { handleAddProject(data); clearFilters(); setActiveView("projects"); }}
+          />
+        )}
+
+        {showReviewModal && activeProjects.length > 0 && (
+          <ReviewProjectsModal
+            projects={activeProjects}
+            onUpdate={handleUpdate}
+            onClose={() => setShowReviewModal(false)}
           />
         )}
 
