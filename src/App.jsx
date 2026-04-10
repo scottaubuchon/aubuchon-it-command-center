@@ -317,6 +317,7 @@ function ReviewProjectsModal({ projects, onUpdate, onClose, allDepartments }) {
   const [localStatus, setLocalStatus] = useState("");
   const [localPct, setLocalPct] = useState(0);
   const [localNotes, setLocalNotes] = useState("");
+  const [newUpdate, setNewUpdate] = useState("");
   const [dirty, setDirty] = useState(false);
   const total = filtered.length;
   const p = filtered[idx];
@@ -326,6 +327,7 @@ function ReviewProjectsModal({ projects, onUpdate, onClose, allDepartments }) {
       setLocalStatus(filtered[idx].status || "");
       setLocalPct(filtered[idx].pct || 0);
       setLocalNotes(filtered[idx].notes || "");
+      setNewUpdate("");
       setDirty(false);
     }
   }, [idx, filtered]);
@@ -333,10 +335,16 @@ function ReviewProjectsModal({ projects, onUpdate, onClose, allDepartments }) {
   useEffect(() => { setIdx(0); }, [deptFilter]);
 
   const saveAndNext = () => {
-    if (dirty && p) {
-      if (localStatus !== p.status) onUpdate(p.id, "status", localStatus);
-      if (localPct !== p.pct) onUpdate(p.id, "pct", localPct);
-      if (localNotes !== p.notes) onUpdate(p.id, "notes", localNotes);
+    if (p) {
+      if (dirty) {
+        if (localStatus !== p.status) onUpdate(p.id, "status", localStatus);
+        if (localPct !== p.pct) onUpdate(p.id, "pct", localPct);
+        if (localNotes !== p.notes) onUpdate(p.id, "notes", localNotes);
+      }
+      if (newUpdate.trim()) {
+        const entry = { date: new Date().toLocaleDateString("en-US"), notes: newUpdate.trim(), links: [], author: "Scott" };
+        onUpdate(p.id, "updateLog", [...(p.updateLog || []), entry]);
+      }
     }
     if (idx < total - 1) setIdx(idx + 1);
     else onClose();
@@ -346,6 +354,8 @@ function ReviewProjectsModal({ projects, onUpdate, onClose, allDepartments }) {
     if (idx < total - 1) setIdx(idx + 1);
     else onClose();
   };
+
+  const hasChanges = dirty || newUpdate.trim().length > 0;
 
   if (!p || total === 0) return (
     <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center" onClick={onClose}>
@@ -359,11 +369,13 @@ function ReviewProjectsModal({ projects, onUpdate, onClose, allDepartments }) {
   const tc = TIER_CONFIG[p.tier] || TIER_CONFIG["project"];
   const pc = PRIORITY_CONFIG[p.priority] || PRIORITY_CONFIG["Medium"];
   const pctColor = localPct >= 75 ? "bg-emerald-500" : localPct >= 40 ? "bg-blue-500" : localPct > 0 ? "bg-amber-500" : "bg-gray-300";
+  const existingUpdates = p.updateLog || [];
+  const lastUpdate = existingUpdates.length > 0 ? existingUpdates[existingUpdates.length - 1] : null;
 
   return (
     <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center" onClick={onClose}>
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden" onClick={e => e.stopPropagation()}>
-        <div className="bg-gradient-to-r from-indigo-600 to-blue-700 px-5 py-3.5 flex items-center justify-between">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
+        <div className="bg-gradient-to-r from-indigo-600 to-blue-700 px-5 py-3.5 flex items-center justify-between flex-shrink-0">
           <div className="flex items-center gap-2">
             <Eye size={16} className="text-white/80" />
             <h3 className="text-sm font-bold text-white">Review Projects</h3>
@@ -378,11 +390,11 @@ function ReviewProjectsModal({ projects, onUpdate, onClose, allDepartments }) {
           </div>
         </div>
 
-        <div className="h-1 bg-gray-100">
+        <div className="h-1 bg-gray-100 flex-shrink-0">
           <div className="h-full bg-indigo-500 transition-all duration-300" style={{ width: `${((idx + 1) / total) * 100}%` }} />
         </div>
 
-        <div className="px-5 py-4">
+        <div className="px-5 py-4 overflow-y-auto flex-1">
           <div className="flex items-start justify-between mb-3">
             <div>
               <h4 className="text-sm font-bold text-gray-900 leading-tight">{p.name}</h4>
@@ -426,20 +438,37 @@ function ReviewProjectsModal({ projects, onUpdate, onClose, allDepartments }) {
             </div>
             <div>
               <label className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Notes</label>
-              <textarea value={localNotes} onChange={e => { setLocalNotes(e.target.value); setDirty(true); }} rows={3}
+              <textarea value={localNotes} onChange={e => { setLocalNotes(e.target.value); setDirty(true); }} rows={2}
                 className="w-full px-3 py-2 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
-                placeholder="Add notes..." />
+                placeholder="Project notes..." />
+            </div>
+            <div className="border-t border-gray-100 pt-3">
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider flex items-center gap-1">
+                  <History size={10} /> Add Update
+                  {existingUpdates.length > 0 && <span className="text-gray-300">({existingUpdates.length} existing)</span>}
+                </label>
+              </div>
+              {lastUpdate && (
+                <div className="bg-gray-50 rounded-md px-2.5 py-1.5 mb-2 border border-gray-100">
+                  <span className="text-[9px] text-gray-400 font-medium">{lastUpdate.date}</span>
+                  <p className="text-[11px] text-gray-600 leading-relaxed line-clamp-2">{lastUpdate.notes}</p>
+                </div>
+              )}
+              <textarea value={newUpdate} onChange={e => setNewUpdate(e.target.value)} rows={2}
+                className="w-full px-3 py-2 text-xs border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent resize-none"
+                placeholder="What's the latest on this project?" />
             </div>
           </div>
         </div>
 
-        <div className="px-5 py-3 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
+        <div className="px-5 py-3 bg-gray-50 border-t border-gray-100 flex items-center justify-between flex-shrink-0">
           <button onClick={onClose} className="px-3 py-1.5 text-xs font-medium text-gray-500 hover:text-gray-700 transition-colors">Close</button>
           <div className="flex items-center gap-2">
             <button onClick={skip} className="px-3.5 py-1.5 text-xs font-medium text-gray-600 hover:text-gray-800 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">Skip</button>
             <button onClick={saveAndNext}
-              className={`px-3.5 py-1.5 text-xs font-medium text-white rounded-lg shadow-sm transition-colors ${dirty ? "bg-indigo-600 hover:bg-indigo-700" : "bg-gray-900 hover:bg-gray-800"}`}>
-              {dirty ? (idx < total - 1 ? "Save & Next" : "Save & Finish") : (idx < total - 1 ? "Next" : "Finish")}
+              className={`px-3.5 py-1.5 text-xs font-medium text-white rounded-lg shadow-sm transition-colors ${hasChanges ? "bg-indigo-600 hover:bg-indigo-700" : "bg-gray-900 hover:bg-gray-800"}`}>
+              {hasChanges ? (idx < total - 1 ? "Save & Next" : "Save & Finish") : (idx < total - 1 ? "Next" : "Finish")}
             </button>
           </div>
         </div>
