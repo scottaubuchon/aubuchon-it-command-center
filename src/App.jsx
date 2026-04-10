@@ -3174,6 +3174,55 @@ const WellsCC = ({ goHome, goHistory }) => {
 };
 
 
+/* ReceiptCell: handles upload + view for a single CC row in Payment History */
+const ReceiptCell = ({ row }) => {
+  const [url, setUrl] = useState(row.receiptUrl || "");
+  const [uploading, setUploading] = useState(false);
+
+  const handleUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop();
+      const path = `cc_receipts/${row.id}_${Date.now()}.${ext}`;
+      const storageRef = ref(storage, path);
+      await uploadBytes(storageRef, file);
+      const downloadUrl = await getDownloadURL(storageRef);
+      await updateDoc(doc(db, "cc_expenses", row.id), { receiptUrl: downloadUrl });
+      setUrl(downloadUrl);
+    } catch (err) {
+      alert("Upload failed: " + err.message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  if (url) {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+        <a href={url} target="_blank" rel="noopener noreferrer"
+          style={{ color: "#1d4ed8", fontSize: ".75rem", fontWeight: 600, textDecoration: "none",
+            background: "#eff6ff", border: "1px solid #bfdbfe", padding: "3px 8px", borderRadius: 5, whiteSpace: "nowrap" }}>
+          📄 View
+        </a>
+        <label style={{ cursor: "pointer", fontSize: ".68rem", color: "#9ca3af" }}>
+          <input type="file" accept="image/*,application/pdf" style={{ display: "none" }} onChange={handleUpload} disabled={uploading} />
+          replace
+        </label>
+      </div>
+    );
+  }
+  return (
+    <label style={{ cursor: uploading ? "default" : "pointer", display: "inline-flex", alignItems: "center", gap: 4,
+      background: "#f8fafc", border: "1px dashed #d1d5db", borderRadius: 5,
+      padding: "3px 8px", fontSize: ".72rem", color: uploading ? "#9ca3af" : "#6b7280", whiteSpace: "nowrap" }}>
+      <input type="file" accept="image/*,application/pdf" style={{ display: "none" }} onChange={handleUpload} disabled={uploading} />
+      {uploading ? "⏳…" : "📎 Upload"}
+    </label>
+  );
+};
+
 /* =====================================================================
    PAYMENT HISTORY  --  Unified view of all authorized payments (AP + CC)
    ===================================================================== */
@@ -3490,14 +3539,9 @@ const PaymentHistory = ({ goHome, goBack }) => {
                               style={{ color: "#1d4ed8", fontSize: ".75rem", fontWeight: 600, textDecoration: "none", background: "#eff6ff", border: "1px solid #bfdbfe", padding: "3px 8px", borderRadius: 5, whiteSpace: "nowrap" }}>
                               📄 View
                             </a>
-                          : r.type === "CC" && r.receiptUrl
-                            ? <a href={r.receiptUrl} target="_blank" rel="noopener noreferrer"
-                                style={{ color: "#1d4ed8", fontSize: ".75rem", fontWeight: 600, textDecoration: "none", background: "#eff6ff", border: "1px solid #bfdbfe", padding: "3px 8px", borderRadius: 5, whiteSpace: "nowrap" }}>
-                                📄 View
-                              </a>
-                            : r.type === "CC"
-                              ? <span style={{ fontSize: ".75rem", color: "#9ca3af" }}>—</span>
-                              : "—"}
+                          : r.type === "CC"
+                            ? <ReceiptCell row={r} />
+                            : "—"}
                       </td>
                       <td style={{ padding: "10px 12px", color: "#6b7280", maxWidth: 220, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.comment || "—"}</td>
                     </tr>
