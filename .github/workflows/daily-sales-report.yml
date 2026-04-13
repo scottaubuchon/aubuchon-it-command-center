@@ -1,0 +1,90 @@
+name: Daily Sales Report
+
+on:
+  schedule:
+    # 7:00 AM America/New_York
+    # EDT (UTC-4) Mar–Nov: 11:00 UTC
+    # EST (UTC-5) Nov–Mar: 12:00 UTC
+    # Run twice; build_report.py is idempotent (overwrites latest, dated file is yesterday's date).
+    - cron: '0 11 * * *'
+    - cron: '0 12 * * *'
+  workflow_dispatch:
+    inputs:
+      report_date:
+        description: 'Override report date (YYYY-MM-DD). Blank = yesterday.'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Skip duplicate run when DST mismatch
+        id: dst-gate
+        run: |
+          # Compute current US/Eastern hour. Only proceed if it's exactly 7 AM ET.
+          HOUR_ET=$(TZ=America/New_York date +%H)
+          echo "current ET hour: $HOUR_ET"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "go=true" >> "$GITHUB_OUTPUT"
+          elif [ "$HOUR_ET" = "07" ]; then
+            echo "go=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "go=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout
+        if: steps.dst-gate.outputs.go == 'true'
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Python
+        if: steps.dst-gate.outputs.go == 'true'
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install deps
+        if: steps.dst-gate.outputs.go == 'true'
+        working-directory: scripts/daily-sales-report
+        run: pip install -r requirements.txt
+
+      - name: Build report
+        if: steps.dst-gate.outputs.go == 'true'
+        working-directory: scripts/daily-sales-report
+        run: |
+          if [ -n "${{ github.event.inputs.report_date }}" ]; then
+            python build_report.py --date "${{ github.event.inputs.report_date }}"
+          else
+            # Yesterday in America/New_York
+            REPORT_DATE=$(TZ=America/New_York date -d "yesterday" +%Y-%m-%d)
+            echo "Building for $REPORT_DATE"
+            python build_report.py --date "$REPORT_DATE"
+          fi
+          ls -la output/
+
+      - name: Copy HTML into repo
+        if: steps.dst-gate.outputs.go == 'true'
+        run: |
+          mkdir -p public/reports
+          cp scripts/daily-sales-report/output/daily-sales-latest.html public/reports/daily-sales-latest.html
+          cp scripts/daily-sales-report/output/daily-sales-*.html public/reports/
+
+      - name: Commit and push
+        if: steps.dst-gate.outputs.go == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/reports/
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            REPORT_DATE=$(TZ=America/New_York date -d "yesterday" +%Y-%m-%d)
+            git commit -m "report: daily sales $REPORT_DATE [skip ci]"
+            git push
+          fi
