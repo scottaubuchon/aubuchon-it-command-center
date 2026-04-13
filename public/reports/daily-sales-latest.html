@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aubuchon Daily Sales Report — April 12, 2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --red: #d63b31; --red-light: #fde8e7;
+  --green: #16a34a; --green-light: #dcfce7;
+  --amber: #d97706; --amber-light: #fef3c7;
+  --blue: #2563eb; --blue-light: #dbeafe;
+  --gray-50: #f9fafb; --gray-100: #f3f4f6; --gray-200: #e5e7eb;
+  --gray-300: #d1d5db; --gray-500: #6b7280; --gray-700: #374151; --gray-900: #111827;
+}
+body { font-family: 'Inter', -apple-system, sans-serif; background: #f0f2f5; color: var(--gray-900); min-width: 800px; padding: 28px; }
+.header { background: white; border-radius: 16px; padding: 24px 28px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04); }
+.header-left { display: flex; align-items: center; gap: 16px; }
+.logo { background: var(--red); color: white; width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 900; box-shadow: 0 4px 12px rgba(214,59,49,0.3); }
+.title h1 { font-size: 20px; font-weight: 800; color: var(--gray-900); }
+.title p { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
+.header-right { text-align: right; }
+.date-big { font-size: 24px; font-weight: 800; color: var(--gray-900); }
+.date-sub { font-size: 12px; color: var(--gray-500); margin-top: 3px; }
+.status-pill { display: inline-flex; align-items: center; gap: 5px; background: var(--green-light); color: var(--green); font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 100px; margin-top: 6px; }
+.status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+.scorecard { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
+.sc-card { background: white; border-radius: 14px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border-top: 4px solid transparent; position: relative; }
+.sc-card.day { border-top-color: #2563eb; }
+.sc-card.week { border-top-color: #7c3aed; }
+.sc-card.month { border-top-color: #d97706; }
+.sc-card.year { border-top-color: #16a34a; }
+.sc-period { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-500); margin-bottom: 10px; }
+.sc-sales { font-size: 32px; font-weight: 900; color: var(--gray-900); letter-spacing: -1.5px; line-height: 1; }
+.sc-plan { font-size: 12px; color: var(--gray-500); margin-top: 6px; }
+.sc-plan strong { color: var(--gray-700); }
+.sc-badges { display: flex; gap: 6px; margin-top: 14px; flex-wrap: wrap; }
+.sc-badge { padding: 5px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 3px; }
+.sc-badge.neg { background: var(--red-light); color: var(--red); }
+.sc-badge.pos { background: var(--green-light); color: var(--green); }
+.sc-badge small { font-size: 10px; font-weight: 500; opacity: 0.75; margin-left: 2px; }
+.sc-progress { margin-top: 12px; height: 4px; background: var(--gray-100); border-radius: 4px; overflow: visible; position: relative; }
+.sc-progress-fill { height: 100%; border-radius: 4px; }
+.day .sc-progress-fill { background: #2563eb; }
+.week .sc-progress-fill { background: #7c3aed; }
+.month .sc-progress-fill { background: #d97706; }
+.year .sc-progress-fill { background: #16a34a; }
+.cohort-panel { background: white; border-radius: 14px; padding: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; margin-bottom: 20px; }
+.panel-header { padding: 16px 20px; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: space-between; }
+.panel-title { font-size: 13px; font-weight: 700; color: var(--gray-700); text-transform: uppercase; letter-spacing: 0.5px; }
+.panel-hint { font-size: 11px; color: var(--gray-500); }
+.cohort-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
+.cohort-col { padding: 20px; border-right: 1px solid var(--gray-100); }
+.cohort-col:last-child { border-right: none; }
+.cohort-header { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
+.cohort-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+.total-icon { background: #dbeafe; } .same-icon { background: #dcfce7; } .acq-icon { background: #fef3c7; }
+.cohort-col-title { font-size: 13px; font-weight: 700; color: var(--gray-900); }
+.cohort-col-sub { font-size: 11px; color: var(--gray-500); }
+.period-rows { display: flex; flex-direction: column; gap: 10px; }
+.period-row { display: flex; align-items: center; padding: 10px 12px; background: var(--gray-50); border-radius: 8px; gap: 8px; }
+.pr-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray-500); width: 36px; flex-shrink: 0; }
+.pr-sales { flex: 1; font-size: 14px; font-weight: 800; color: var(--gray-900); }
+.pr-badges { display: flex; gap: 4px; }
+.pr-badge { font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 5px; }
+.pr-badge.pos { background: var(--green-light); color: var(--green); }
+.pr-badge.neg { background: var(--red-light); color: var(--red); }
+.metrics-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
+.metric-card { background: white; border-radius: 14px; padding: 18px 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.metric-icon-row { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+.metric-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 17px; }
+.metric-trend-pill { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 100px; }
+.metric-trend-pill.pos { background: var(--green-light); color: var(--green); }
+.metric-trend-pill.neg { background: var(--red-light); color: var(--red); }
+.metric-val { font-size: 28px; font-weight: 900; color: var(--gray-900); letter-spacing: -1px; }
+.metric-lbl { font-size: 11px; color: var(--gray-500); margin-top: 3px; }
+.metric-vs { display: flex; gap: 12px; margin-top: 10px; border-top: 1px solid var(--gray-100); padding-top: 8px; }
+.mv-item { font-size: 11px; }
+.mv-item .lbl { color: var(--gray-500); }
+.mv-item .val { font-weight: 700; }
+.mv-item .val.pos { color: var(--green); }
+.mv-item .val.neg { color: var(--red); }
+.stores-panel { background: white; border-radius: 14px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); margin-bottom: 20px; }
+.stores-table { width: 100%; border-collapse: collapse; }
+.stores-table thead tr { background: var(--gray-50); border-bottom: 2px solid var(--gray-100); }
+.stores-table th { padding: 11px 14px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray-500); text-align: right; }
+.stores-table th:first-child { text-align: left; }
+.stores-table tbody tr { border-bottom: 1px solid var(--gray-100); }
+.stores-table tbody tr:hover { background: var(--gray-50); }
+.stores-table tbody tr:last-child { border-bottom: none; }
+.stores-table td { padding: 11px 14px; font-size: 13px; text-align: right; color: var(--gray-700); }
+.stores-table td:first-child { text-align: left; }
+.rank-num { font-size: 11px; font-weight: 700; color: var(--gray-300); width: 24px; display: inline-block; }
+.store-name-link { font-weight: 700; color: var(--gray-900); font-size: 13px; }
+.store-cohort-tag { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 4px; margin-left: 6px; }
+.tag-same { background: #dcfce7; color: #16a34a; }
+.tag-acq { background: #fef3c7; color: #d97706; }
+.sales-num { font-weight: 700; color: var(--gray-900); }
+.var-pill { font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 6px; display: inline-block; }
+.var-pill.pos { background: var(--green-light); color: var(--green); }
+.var-pill.neg { background: var(--red-light); color: var(--red); }
+.footer { text-align: center; font-size: 11px; color: var(--gray-500); padding: 16px; background: white; border-radius: 14px; }
+.footer a { color: var(--red); text-decoration: none; font-weight: 600; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <div class="logo">A</div>
+    <div class="title">
+      <h1>Daily Sales Report</h1>
+      <p>Aubuchon Hardware · 136 Stores · New England &amp; Mid-Atlantic</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="date-big">April 12, 2026</div>
+    <div class="date-sub">Sunday · Week 15 · Q2 · Day 102 of 365</div>
+    <div class="status-pill"><div class="status-dot"></div> Live Data · YODA</div>
+  </div>
+</div>
+
+<div class="scorecard">
+  
+<div class="sc-card day">
+  <div class="sc-period">📅 Sun Apr 12</div>
+  <div class="sc-sales">$1.28M</div>
+  <div class="sc-plan">of <strong>$1.26M</strong> plan</div>
+  <div class="sc-badges">
+    <div class="sc-badge pos">▲ 1.7% <small>vs Plan</small></div>
+    <div class="sc-badge pos">▲ 76.6% <small>vs LY</small></div>
+  </div>
+  <div class="sc-progress"><div class="sc-progress-fill" style="width:100.0%"></div></div>
+</div>
+
+  
+<div class="sc-card week">
+  <div class="sc-period">📆 Week-to-Date · Wk 15</div>
+  <div class="sc-sales">$1.28M</div>
+  <div class="sc-plan">of <strong>$1.26M</strong> plan</div>
+  <div class="sc-badges">
+    <div class="sc-badge pos">▲ 1.7% <small>vs Plan</small></div>
+    <div class="sc-badge pos">▲ 76.6% <small>vs LY</small></div>
+  </div>
+  <div class="sc-progress"><div class="sc-progress-fill" style="width:100.0%"></div></div>
+</div>
+
+  
+<div class="sc-card month">
+  <div class="sc-period">🗓 Month-to-Date · April</div>
+  <div class="sc-sales">$12.00M</div>
+  <div class="sc-plan">of <strong>$13.30M</strong> plan</div>
+  <div class="sc-badges">
+    <div class="sc-badge neg">▼ 9.8% <small>vs Plan</small></div>
+    <div class="sc-badge pos">▲ 31.6% <small>vs LY</small></div>
+  </div>
+  <div class="sc-progress"><div class="sc-progress-fill" style="width:90.2%"></div></div>
+</div>
+
+  
+<div class="sc-card year">
+  <div class="sc-period">📊 Year-to-Date · 2026</div>
+  <div class="sc-sales">$85.35M</div>
+  <div class="sc-plan">of <strong>$83.59M</strong> plan</div>
+  <div class="sc-badges">
+    <div class="sc-badge pos">▲ 2.1% <small>vs Plan</small></div>
+    <div class="sc-badge pos">▲ 21.0% <small>vs LY</small></div>
+  </div>
+  <div class="sc-progress"><div class="sc-progress-fill" style="width:100.0%"></div></div>
+</div>
+
+</div>
+
+<div class="cohort-panel">
+  <div class="panel-header">
+    <div class="panel-title">Sales by Store Group</div>
+    <div class="panel-hint">vs Plan &nbsp;|&nbsp; vs LY &nbsp; across all periods</div>
+  </div>
+  <div class="cohort-cards">
+    <div class="cohort-col">
+      <div class="cohort-header">
+        <div class="cohort-icon total-icon">🏢</div>
+        <div><div class="cohort-col-title">Total Company</div><div class="cohort-col-sub">All 136 stores</div></div>
+      </div>
+      <div class="period-rows">
+<div class="period-row">
+  <div class="pr-label">DAY</div>
+  <div class="pr-sales">$1,284,691</div>
+  <div class="pr-badges">
+    <div class="pr-badge pos">+1.7% P</div>
+    <div class="pr-badge pos">+76.6% LY</div>
+  </div>
+</div>
+
+<div class="period-row">
+  <div class="pr-label">WTD</div>
+  <div class="pr-sales">$1.28M</div>
+  <div class="pr-badges">
+    <div class="pr-badge pos">+1.7% P</div>
+    <div class="pr-badge pos">+76.6% LY</div>
+  </div>
+</div>
+
+<div class="period-row">
+  <div class="pr-label">MTD</div>
+  <div class="pr-sales">$12.00M</div>
+  <div class="pr-badges">
+    <div class="pr-badge neg">-9.8% P</div>
+    <div class="pr-badge pos">+31.6% LY</div>
+  </div>
+</div>
+
+<div class="period-row">
+  <div class="pr-label">YTD</div>
+  <div class="pr-sales">$85.35M</div>
+  <div class="pr-badges">
+    <div class="pr-badge pos">+2.1% P</div>
+    <div class="pr-badge pos">+21.0% LY</div>
+  </div>
+</div></div>
+    </div>
+    <div class="cohort-col">
+      <div class="cohort-header">
+        <div class="cohort-icon same-icon">🏪</div>
+        <div><div class="cohort-col-title">Same Store</div><div class="cohort-col-sub">109 stores · comp ≥ 1yr</div></div>
+      </div>
+      <div class="period-rows">
+<div class="period-row">
+  <div class="pr-label">DAY</div>
+  <div class="pr-sales">$993,472</div>
+  <div class="pr-badges">
+    <div class="pr-badge pos">+5.3% P</div>
+    <div class="pr-badge pos">+66.6% LY</div>
+  </div>
+</div>
+
+<div class="period-row">
+  <div class="pr-label">WTD</div>
+  <div class="pr-sales">$993K</div>
+  <div class="pr-badges">
+    <div class="pr-badge pos">+5.3% P</div>
+    <div class="pr-badge pos">+66.6% LY</div>
+  </div>
+</div>
+
+<div class="period-row">
+  <div class="pr-label">MTD</div>
+  <div class="pr-sales">$8.89M</div>
+  <div class="pr-badges">
+    <div class="pr-badge neg">-9.0% P</div>
+    <div class="pr-badge pos">+20.0% LY</div>
+  </div>
+</div>
+
+<div class="period-row">
+  <div class="pr-label">YTD</div>
+  <div class="pr-sales">$63.88M</div>
+  <div class="pr-badges">
+    <div class="pr-badge pos">+3.0% P</div>
+    <div class="pr-badge pos">+10.9% LY</div>
+  </div>
+</div></div>
+    </div>
+    <div class="cohort-col">
+      <div class="cohort-header">
+        <div class="cohort-icon acq-icon">🆕</div>
+        <div><div class="cohort-col-title">Acquisition Stores</div><div class="cohort-col-sub">27 stores · non-comp</div></div>
+      </div>
+      <div class="period-rows">
+<div class="period-row">
+  <div class="pr-label">DAY</div>
+  <div class="pr-sales">$291,219</div>
+  <div class="pr-badges">
+    <div class="pr-badge neg">-9.2% P</div>
+    <div class="pr-badge pos">+122.1% LY</div>
+  </div>
+</div>
+
+<div class="period-row">
+  <div class="pr-label">WTD</div>
+  <div class="pr-sales">$291K</div>
+  <div class="pr-badges">
+    <div class="pr-badge neg">-9.2% P</div>
+    <div class="pr-badge pos">+122.1% LY</div>
+  </div>
+</div>
+
+<div class="period-row">
+  <div class="pr-label">MTD</div>
+  <div class="pr-sales">$3.12M</div>
+  <div class="pr-badges">
+    <div class="pr-badge neg">-12.1% P</div>
+    <div class="pr-badge pos">+81.7% LY</div>
+  </div>
+</div>
+
+<div class="period-row">
+  <div class="pr-label">YTD</div>
+  <div class="pr-sales">$21.47M</div>
+  <div class="pr-badges">
+    <div class="pr-badge neg">-0.6% P</div>
+    <div class="pr-badge pos">+65.9% LY</div>
+  </div>
+</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="metrics-strip">
+  <div class="metric-card">
+    <div class="metric-icon-row">
+      <div class="metric-icon" style="background:#dbeafe">🛒</div>
+      <div class="metric-trend-pill pos">▲ 54.5% LY</div>
+    </div>
+    <div class="metric-val">33,060</div>
+    <div class="metric-lbl">Transactions · Yesterday</div>
+    <div class="metric-vs">
+      <div class="mv-item"><span class="lbl">vs Plan: </span><span class="val neg">n/a</span></div>
+      <div class="mv-item"><span class="lbl">Plan: </span><span class="val">0</span></div>
+    </div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-icon-row">
+      <div class="metric-icon" style="background:#f3e8ff">💰</div>
+      <div class="metric-trend-pill pos">▲ 14.3% LY</div>
+    </div>
+    <div class="metric-val">$38.86</div>
+    <div class="metric-lbl">Avg. Sale · Yesterday</div>
+    <div class="metric-vs">
+      <div class="mv-item"><span class="lbl">LY: </span><span class="val">$34.00</span></div>
+    </div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-icon-row">
+      <div class="metric-icon" style="background:#fef9c3">📦</div>
+      <div class="metric-trend-pill pos">▲ 4.4% LY</div>
+    </div>
+    <div class="metric-val">3.10</div>
+    <div class="metric-lbl">Units per Transaction · Yesterday</div>
+    <div class="metric-vs">
+      <div class="mv-item"><span class="lbl">LY: </span><span class="val">2.97</span></div>
+    </div>
+  </div>
+  <div class="metric-card">
+    <div class="metric-icon-row">
+      <div class="metric-icon" style="background:#dcfce7">🎯</div>
+      <div class="metric-trend-pill pos">Live</div>
+    </div>
+    <div class="metric-val">33,060</div>
+    <div class="metric-lbl">Total Txns (confirmed)</div>
+    <div class="metric-vs">
+      <div class="mv-item"><span class="lbl">LY Txns: </span><span class="val">21,393</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="stores-panel" style="margin-bottom:20px">
+  <div class="panel-header">
+    <div class="panel-title">Sales by State · Yesterday vs Plan</div>
+    <div class="panel-hint">Color = % vs Plan · hover for details</div>
+  </div>
+  <div style="display:flex;gap:24px;align-items:flex-start;padding:16px 20px 12px;flex-wrap:wrap">
+    <div style="position:relative;flex:0 0 auto"><svg viewBox="0 0 520 310" xmlns="http://www.w3.org/2000/svg" style="width:540px;max-width:100%;height:auto;display:block;border-radius:6px;overflow:hidden"><rect width="520" height="310" fill="#f1f5f9" rx="6"/>
+<path d="M374.0,149.0 L371.4,145.5 L362.5,140.1 L361.4,109.1 L358.5,78.8 L382.4,64.2 L370.3,41.4 L426.3,10.8 L480.2,23.1 L479.4,67.1 L492.0,101.2 L458.0,116.1 L438.1,109.8 L426.7,124.0 L394.2,130.0 L374.0,149.0Z" fill="#cec235" stroke="#fff" stroke-width="1.5"><title>Maine: +4.8% vs Plan | $165K sales | 19 stores</title></path>
+<text x="431" y="72" text-anchor="middle" font-size="8.5" font-weight="700" fill="#1f2937" font-family="Arial,sans-serif">ME</text>
+<text x="431" y="83" text-anchor="middle" font-size="8" fill="#1f2937" font-family="Arial,sans-serif">+4.8%</text>
+<path d="M358.5,78.8 L323.4,78.8 L323.4,133.5 L338.2,148.0 L343.0,149.9 L350.7,161.3 L362.5,155.9 L362.5,140.1 L361.4,109.1 L358.5,78.8Z" fill="#f2b732" stroke="#fff" stroke-width="1.5"><title>New Hampshire: -4.0% vs Plan | $142K sales | 18 stores</title></path>
+<text x="341" y="117" text-anchor="middle" font-size="8.5" font-weight="700" fill="#1f2937" font-family="Arial,sans-serif">NH</text>
+<text x="341" y="128" text-anchor="middle" font-size="8" fill="#1f2937" font-family="Arial,sans-serif">-4.0%</text>
+<path d="M323.4,78.8 L275.1,88.3 L273.6,94.9 L277.7,113.9 L273.6,133.5 L307.6,160.4 L323.4,133.5 L323.4,78.8Z" fill="#ea8932" stroke="#fff" stroke-width="1.5"><title>Vermont: -14.9% vs Plan | $226K sales | 28 stores</title></path>
+<text x="299" y="113" text-anchor="middle" font-size="8.5" font-weight="700" fill="#1f2937" font-family="Arial,sans-serif">VT</text>
+<text x="299" y="124" text-anchor="middle" font-size="8" fill="#1f2937" font-family="Arial,sans-serif">-14.9%</text>
+<path d="M400.9,181.3 L388.0,187.3 L374.3,192.0 L343.0,192.0 L347.4,190.4 L331.9,183.2 L294.7,182.5 L269.6,181.9 L277.7,160.1 L307.6,160.4 L323.4,133.5 L338.2,148.0 L343.0,149.9 L350.7,161.3 L362.5,155.9 L374.0,164.5 L400.9,181.3Z" fill="#3aad43" stroke="#fff" stroke-width="1.5"><title>Massachusetts: +23.2% vs Plan | $385K sales | 34 stores</title></path>
+<text x="336" y="166" text-anchor="middle" font-size="8.5" font-weight="700" fill="#1f2937" font-family="Arial,sans-serif">MA</text>
+<text x="336" y="177" text-anchor="middle" font-size="8" fill="#1f2937" font-family="Arial,sans-serif">+23.2%</text>
+<path d="M347.4,190.4 L343.0,192.0 L331.9,183.2 L331.9,205.0 L347.4,205.0 L347.4,190.4Z" fill="#2cab45" stroke="#fff" stroke-width="1.5"><title>Rhode Island: +50.4% vs Plan | $21K sales | 2 stores</title></path>
+<line x1="347" y1="197" x2="375" y2="190" stroke="#6b7280" stroke-width="0.8"/>
+<text x="390" y="188" text-anchor="middle" font-size="8" font-weight="700" fill="#16a34a" font-family="Arial,sans-serif">RI +50.4%</text>
+<path d="M267.4,205.9 L294.7,182.5 L331.9,183.2 L331.9,205.0 L284.7,216.7 L267.4,205.9Z" fill="#2cab45" stroke="#fff" stroke-width="1.5"><title>Connecticut: +31.6% vs Plan | $47K sales | 5 stores</title></path>
+<text x="302" y="193" text-anchor="middle" font-size="8.5" font-weight="700" fill="#1f2937" font-family="Arial,sans-serif">CT</text>
+<text x="302" y="204" text-anchor="middle" font-size="8" fill="#1f2937" font-family="Arial,sans-serif">+31.6%</text>
+<path d="M267.4,205.9 L269.6,181.9 L277.7,160.1 L275.1,88.3 L323.4,78.8 L358.5,78.8 L374.0,149.0 L343.0,149.9 L338.2,148.0 L323.4,133.5 L307.6,160.4 L269.6,181.9 L254.8,221.4 L225.0,203.7 L201.0,183.5 L69.7,180.9 L56.1,166.1 L38.4,137.6 L143.5,88.3 L275.1,88.3 L273.6,94.9 L277.7,113.9 L273.6,133.5 L267.4,205.9Z" fill="#dc3532" stroke="#fff" stroke-width="1.5"><title>New York: -43.0% vs Plan | $81K sales | 13 stores</title></path>
+<text x="172" y="154" text-anchor="middle" font-size="8.5" font-weight="700" fill="#fff" font-family="Arial,sans-serif">NY</text>
+<text x="172" y="165" text-anchor="middle" font-size="8" fill="#fff" font-family="Arial,sans-serif">-43.0%</text>
+<path d="M193.2,263.8 L193.2,227.4 L206.5,217.6 L225.0,203.7 L254.8,221.4 L250.0,244.5 L235.7,267.0 L193.2,263.8Z" fill="#d3c335" stroke="#fff" stroke-width="1.5"><title>New Jersey: +4.2% vs Plan | $11K sales | 1 stores</title></path>
+<text x="228" y="236" text-anchor="middle" font-size="8.5" font-weight="700" fill="#fff" font-family="Arial,sans-serif">NJ</text>
+<text x="228" y="247" text-anchor="middle" font-size="8" fill="#fff" font-family="Arial,sans-serif">+4.2%</text>
+<path d="M10.3,173.0 L38.4,166.1 L56.1,166.1 L69.7,180.9 L201.0,183.5 L206.5,217.6 L193.2,227.4 L193.2,255.6 L48.7,255.6 L10.3,226.5 L10.3,173.0Z" fill="#3dad43" stroke="#fff" stroke-width="1.5"><title>Pennsylvania: +22.8% vs Plan | $157K sales | 11 stores</title></path>
+<text x="112" y="211" text-anchor="middle" font-size="8.5" font-weight="700" fill="#1f2937" font-family="Arial,sans-serif">PA</text>
+<text x="112" y="222" text-anchor="middle" font-size="8" fill="#1f2937" font-family="Arial,sans-serif">+22.8%</text>
+<path d="M184.8,295.4 L184.8,255.6 L48.7,255.6 L48.7,271.7 L96.6,279.3 L135.7,280.3 L141.6,295.8 L157.5,306.8 L176.3,309.1 L184.8,295.4Z" fill="#cbc235" stroke="#fff" stroke-width="1.5"><title>Maryland: +5.2% vs Plan | $38K sales | 2 stores</title></path>
+<text x="118" y="268" text-anchor="middle" font-size="8.5" font-weight="700" fill="#1f2937" font-family="Arial,sans-serif">MD  +5.2%</text>
+<path d="M122.8,282.2 L135.7,280.3 L139.0,285.3 L128.0,287.2 L122.8,282.2Z" fill="#e67132" stroke="#fff" stroke-width="1.5"><title>Virginia (Alexandria): -20.5% vs Plan | $11K sales | 1 stores</title></path>
+<defs><linearGradient id="legGrad" x1="0" x2="1" y1="0" y2="0"><stop offset="0%" stop-color="#dc3532"/><stop offset="50%" stop-color="#f5c832"/><stop offset="100%" stop-color="#2cab45"/></linearGradient></defs>
+<rect x="12" y="282" width="120" height="10" rx="3" fill="url(#legGrad)"/>
+<text x="12" y="278" font-size="7.5" fill="#6b7280" font-family="Arial,sans-serif">-35%</text>
+<text x="66" y="278" text-anchor="middle" font-size="7.5" fill="#6b7280" font-family="Arial,sans-serif">0%</text>
+<text x="132" y="278" text-anchor="end" font-size="7.5" fill="#6b7280" font-family="Arial,sans-serif">+25%</text>
+<text x="66" y="307" text-anchor="middle" font-size="7" fill="#9ca3af" font-family="Arial,sans-serif">vs Plan %</text></svg></div>
+    <div style="flex:1;min-width:190px;padding-top:4px">
+      <div style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">State Summary</div>
+      <table style="width:100%;border-collapse:collapse;font-size:12px;">
+        <thead><tr style="border-bottom:2px solid #e5e7eb">
+          <th style="text-align:left;padding:4px 8px 4px 0;color:#6b7280;font-weight:600;font-size:11px">State</th>
+          <th style="text-align:right;padding:4px 4px;color:#6b7280;font-weight:600;font-size:11px">Sales</th>
+          <th style="text-align:right;padding:4px 4px;color:#6b7280;font-weight:600;font-size:11px">vs Plan</th>
+          <th style="text-align:right;padding:4px 0 4px 4px;color:#6b7280;font-weight:600;font-size:11px">Stores</th>
+        </tr></thead>
+        <tbody><tr style="border-bottom:1px solid #f3f4f6"><td style="padding:5px 8px 5px 0;font-weight:600">Rhode Island</td><td style="text-align:right;padding:5px 4px">$21,329</td><td style="text-align:right;padding:5px 4px;font-weight:700;color:#16a34a">+50.4%</td><td style="text-align:right;padding:5px 0 5px 4px;color:#6b7280">2</td></tr><tr style="border-bottom:1px solid #f3f4f6"><td style="padding:5px 8px 5px 0;font-weight:600">Connecticut</td><td style="text-align:right;padding:5px 4px">$47,193</td><td style="text-align:right;padding:5px 4px;font-weight:700;color:#16a34a">+31.6%</td><td style="text-align:right;padding:5px 0 5px 4px;color:#6b7280">5</td></tr><tr style="border-bottom:1px solid #f3f4f6"><td style="padding:5px 8px 5px 0;font-weight:600">Massachusetts</td><td style="text-align:right;padding:5px 4px">$385,059</td><td style="text-align:right;padding:5px 4px;font-weight:700;color:#16a34a">+23.2%</td><td style="text-align:right;padding:5px 0 5px 4px;color:#6b7280">34</td></tr><tr style="border-bottom:1px solid #f3f4f6"><td style="padding:5px 8px 5px 0;font-weight:600">Pennsylvania</td><td style="text-align:right;padding:5px 4px">$157,470</td><td style="text-align:right;padding:5px 4px;font-weight:700;color:#16a34a">+22.8%</td><td style="text-align:right;padding:5px 0 5px 4px;color:#6b7280">11</td></tr><tr style="border-bottom:1px solid #f3f4f6"><td style="padding:5px 8px 5px 0;font-weight:600">Maryland</td><td style="text-align:right;padding:5px 4px">$37,729</td><td style="text-align:right;padding:5px 4px;font-weight:700;color:#16a34a">+5.2%</td><td style="text-align:right;padding:5px 0 5px 4px;color:#6b7280">2</td></tr><tr style="border-bottom:1px solid #f3f4f6"><td style="padding:5px 8px 5px 0;font-weight:600">Maine</td><td style="text-align:right;padding:5px 4px">$164,724</td><td style="text-align:right;padding:5px 4px;font-weight:700;color:#16a34a">+4.8%</td><td style="text-align:right;padding:5px 0 5px 4px;color:#6b7280">19</td></tr><tr style="border-bottom:1px solid #f3f4f6"><td style="padding:5px 8px 5px 0;font-weight:600">New Jersey</td><td style="text-align:right;padding:5px 4px">$11,406</td><td style="text-align:right;padding:5px 4px;font-weight:700;color:#16a34a">+4.2%</td><td style="text-align:right;padding:5px 0 5px 4px;color:#6b7280">1</td></tr><tr style="border-bottom:1px solid #f3f4f6"><td style="padding:5px 8px 5px 0;font-weight:600">New Hampshire</td><td style="text-align:right;padding:5px 4px">$142,469</td><td style="text-align:right;padding:5px 4px;font-weight:700;color:#dc2626">-4.0%</td><td style="text-align:right;padding:5px 0 5px 4px;color:#6b7280">18</td></tr><tr style="border-bottom:1px solid #f3f4f6"><td style="padding:5px 8px 5px 0;font-weight:600">Vermont</td><td style="text-align:right;padding:5px 4px">$225,874</td><td style="text-align:right;padding:5px 4px;font-weight:700;color:#dc2626">-14.9%</td><td style="text-align:right;padding:5px 0 5px 4px;color:#6b7280">28</td></tr><tr style="border-bottom:1px solid #f3f4f6"><td style="padding:5px 8px 5px 0;font-weight:600">Virginia</td><td style="text-align:right;padding:5px 4px">$10,564</td><td style="text-align:right;padding:5px 4px;font-weight:700;color:#dc2626">-20.5%</td><td style="text-align:right;padding:5px 0 5px 4px;color:#6b7280">1</td></tr><tr style="border-bottom:1px solid #f3f4f6"><td style="padding:5px 8px 5px 0;font-weight:600">New York</td><td style="text-align:right;padding:5px 4px">$80,873</td><td style="text-align:right;padding:5px 4px;font-weight:700;color:#dc2626">-43.0%</td><td style="text-align:right;padding:5px 0 5px 4px;color:#6b7280">13</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="stores-panel">
+  <div class="panel-header">
+    <div class="panel-title">Store Performance · Yesterday vs Plan</div>
+    <div class="panel-hint">Top 5 and Bottom 5 · ranked by vs Plan</div>
+  </div>
+  <table class="stores-table">
+    <thead><tr>
+      <th style="text-align:left; width:220px; padding-left:20px">Store</th>
+      <th>Sales</th><th>vs Plan</th><th>vs LY</th><th>Txns</th><th>Avg Sale</th>
+    </tr></thead>
+    <tbody>
+      
+<tr style="background:#f0fdf4">
+  <td style="padding-left:20px">
+    <span class="rank-num">🏆</span>
+    <span class="store-name-link">Mount Joy</span>
+    <span class="store-cohort-tag tag-same">Same</span>
+    <div style="font-size:11px; color:#6b7280; margin-left:24px; margin-top:2px">PA</div>
+  </td>
+  <td><span class="sales-num">$28,802</span></td>
+  <td><span class="var-pill pos">+212.8%</span></td>
+  <td><span class="var-pill" style="background:#f3f4f6;color:#6b7280">N/A</span></td>
+  <td>588</td>
+  <td>$48.98</td>
+</tr>
+<tr style="background:#f0fdf4">
+  <td style="padding-left:20px">
+    <span class="rank-num">#2</span>
+    <span class="store-name-link">Woodbury</span>
+    <span class="store-cohort-tag tag-acq">Acq</span>
+    <div style="font-size:11px; color:#6b7280; margin-left:24px; margin-top:2px">CT</div>
+  </td>
+  <td><span class="sales-num">$13,618</span></td>
+  <td><span class="var-pill pos">+110.5%</span></td>
+  <td><span class="var-pill" style="background:#f3f4f6;color:#6b7280">N/A</span></td>
+  <td>258</td>
+  <td>$52.78</td>
+</tr>
+<tr style="background:#f0fdf4">
+  <td style="padding-left:20px">
+    <span class="rank-num">#3</span>
+    <span class="store-name-link">Cumberland</span>
+    <span class="store-cohort-tag tag-acq">Acq</span>
+    <div style="font-size:11px; color:#6b7280; margin-left:24px; margin-top:2px">RI</div>
+  </td>
+  <td><span class="sales-num">$11,528</span></td>
+  <td><span class="var-pill pos">+56.5%</span></td>
+  <td><span class="var-pill" style="background:#f3f4f6;color:#6b7280">N/A</span></td>
+  <td>264</td>
+  <td>$43.67</td>
+</tr>
+<tr style="background:#f0fdf4">
+  <td style="padding-left:20px">
+    <span class="rank-num">#4</span>
+    <span class="store-name-link">Fitchburg</span>
+    <span class="store-cohort-tag tag-same">Same</span>
+    <div style="font-size:11px; color:#6b7280; margin-left:24px; margin-top:2px">MA</div>
+  </td>
+  <td><span class="sales-num">$6,745</span></td>
+  <td><span class="var-pill pos">+56.0%</span></td>
+  <td><span class="var-pill pos">+137.0%</span></td>
+  <td>204</td>
+  <td>$33.06</td>
+</tr>
+<tr style="background:#f0fdf4">
+  <td style="padding-left:20px">
+    <span class="rank-num">#5</span>
+    <span class="store-name-link">Wareham</span>
+    <span class="store-cohort-tag tag-same">Same</span>
+    <div style="font-size:11px; color:#6b7280; margin-left:24px; margin-top:2px">MA</div>
+  </td>
+  <td><span class="sales-num">$6,883</span></td>
+  <td><span class="var-pill pos">+51.4%</span></td>
+  <td><span class="var-pill pos">+111.3%</span></td>
+  <td>168</td>
+  <td>$40.97</td>
+</tr>
+      <tr style="background:#f9fafb"><td colspan="6" style="text-align:center; padding:6px; font-size:10px; color:#9ca3af; letter-spacing:1px; text-transform:uppercase">— · · · — Bottom Performers — · · · —</td></tr>
+      
+<tr>
+  <td style="padding-left:20px">
+    <span class="rank-num">↓</span>
+    <span class="store-name-link">Plattsburgh</span>
+    <span class="store-cohort-tag tag-same">Same</span>
+    <div style="font-size:11px; color:#6b7280; margin-left:24px; margin-top:2px">NY</div>
+  </td>
+  <td><span class="sales-num">$1,798</span></td>
+  <td><span class="var-pill neg">-51.7%</span></td>
+  <td><span class="var-pill neg">-20.0%</span></td>
+  <td>88</td>
+  <td>$20.43</td>
+</tr>
+<tr>
+  <td style="padding-left:20px">
+    <span class="rank-num">↓</span>
+    <span class="store-name-link">Carthage</span>
+    <span class="store-cohort-tag tag-same">Same</span>
+    <div style="font-size:11px; color:#6b7280; margin-left:24px; margin-top:2px">NY</div>
+  </td>
+  <td><span class="sales-num">$4,173</span></td>
+  <td><span class="var-pill neg">-46.0%</span></td>
+  <td><span class="var-pill neg">-46.0%</span></td>
+  <td>126</td>
+  <td>$33.12</td>
+</tr>
+<tr>
+  <td style="padding-left:20px">
+    <span class="rank-num">↓</span>
+    <span class="store-name-link">Gouverneur</span>
+    <span class="store-cohort-tag tag-same">Same</span>
+    <div style="font-size:11px; color:#6b7280; margin-left:24px; margin-top:2px">NY</div>
+  </td>
+  <td><span class="sales-num">$1,901</span></td>
+  <td><span class="var-pill neg">-44.8%</span></td>
+  <td><span class="var-pill neg">-50.4%</span></td>
+  <td>59</td>
+  <td>$32.21</td>
+</tr>
+<tr>
+  <td style="padding-left:20px">
+    <span class="rank-num">↓</span>
+    <span class="store-name-link">Colchester</span>
+    <span class="store-cohort-tag tag-acq">Acq</span>
+    <div style="font-size:11px; color:#6b7280; margin-left:24px; margin-top:2px">VT</div>
+  </td>
+  <td><span class="sales-num">$8,229</span></td>
+  <td><span class="var-pill neg">-39.6%</span></td>
+  <td><span class="var-pill neg">-6.7%</span></td>
+  <td>234</td>
+  <td>$35.17</td>
+</tr>
+<tr>
+  <td style="padding-left:20px">
+    <span class="rank-num">↓</span>
+    <span class="store-name-link">Milton</span>
+    <span class="store-cohort-tag tag-same">Same</span>
+    <div style="font-size:11px; color:#6b7280; margin-left:24px; margin-top:2px">VT</div>
+  </td>
+  <td><span class="sales-num">$3,446</span></td>
+  <td><span class="var-pill neg">-37.9%</span></td>
+  <td><span class="var-pill neg">-17.2%</span></td>
+  <td>130</td>
+  <td>$26.50</td>
+</tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="footer">
+  Powered by YODA · Aubuchon Hardware · Report questions? <a href="mailto:scott@aubuchon.com">Contact Scott Aubuchon</a>
+</div>
+
+</body>
+</html>
