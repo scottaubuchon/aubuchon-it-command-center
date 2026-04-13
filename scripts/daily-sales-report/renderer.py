@@ -39,7 +39,7 @@ def _badge_class(v):
 def _arrow(v):
     if v is None:
         return ""
-    return "â²" if v >= 0 else "â¼"
+    return "Ã¢ÂÂ²" if v >= 0 else "Ã¢ÂÂ¼"
 
 
 def _pct(part, whole):
@@ -211,13 +211,13 @@ def _render_header(d: date) -> str:
     <div class="logo">A</div>
     <div class="title">
       <h1>Daily Sales Report</h1>
-      <p>Aubuchon Hardware Â· 136 Stores Â· New England &amp; Mid-Atlantic</p>
+      <p>Aubuchon Hardware ÃÂ· 136 Stores ÃÂ· New England &amp; Mid-Atlantic</p>
     </div>
   </div>
   <div class="header-right">
     <div class="date-big">{pretty}</div>
-    <div class="date-sub">{weekday} Â· Week {wk} Â· Q{q} Â· Day {doy} of 365</div>
-    <div class="status-pill"><div class="status-dot"></div> Live Data Â· YODA</div>
+    <div class="date-sub">{weekday} ÃÂ· Week {wk} ÃÂ· Q{q} ÃÂ· Day {doy} of 365</div>
+    <div class="status-pill"><div class="status-dot"></div> Live Data ÃÂ· YODA</div>
   </div>
 </div>
 """
@@ -227,11 +227,13 @@ def _sc_card(kind, label, sales, plan, ly):
     vsP = _pct(sales, plan)
     vsLY = _pct(sales, ly)
     width = 0 if not plan else min(100, max(0, (sales / plan) * 100))
+    # Day card shows full dollars so it matches YODA exactly; other periods stay compact.
+    use_compact = (kind != "day")
     return f"""
 <div class="sc-card {kind}">
   <div class="sc-period">{label}</div>
-  <div class="sc-sales">{_fmt_money(sales, compact=True)}</div>
-  <div class="sc-plan">of <strong>{_fmt_money(plan, compact=True)}</strong> plan</div>
+  <div class="sc-sales">{_fmt_money(sales, compact=use_compact)}</div>
+  <div class="sc-plan">of <strong>{_fmt_money(plan, compact=use_compact)}</strong> plan</div>
   <div class="sc-badges">
     <div class="sc-badge {_badge_class(vsP)}">{_arrow(vsP)} {_fmt_pct(abs(vsP) if vsP is not None else None, 1, plus=False)} <small>vs Plan</small></div>
     <div class="sc-badge {_badge_class(vsLY)}">{_arrow(vsLY)} {_fmt_pct(abs(vsLY) if vsLY is not None else None, 1, plus=False)} <small>vs LY</small></div>
@@ -242,19 +244,19 @@ def _sc_card(kind, label, sales, plan, ly):
 
 
 def _render_scorecard(p, d: date):
-    day_label = f"ð Yesterday ({d.strftime('%b %-d')})" if d else "ð Yesterday"
+    day_label = f"Ã°ÂÂÂ Yesterday ({d.strftime('%b %-d')})" if d else "Ã°ÂÂÂ Yesterday"
     try:
-        day_label = f"ð {d.strftime('%a %b %-d')}"
+        day_label = f"Ã°ÂÂÂ {d.strftime('%a %b %-d')}"
     except Exception:
-        day_label = f"ð {d.strftime('%a %b %#d')}"
+        day_label = f"Ã°ÂÂÂ {d.strftime('%a %b %#d')}"
     wk = week_number(d)
     month_name = d.strftime("%B")
     return f"""
 <div class="scorecard">
   {_sc_card("day",   day_label, p["DAY_TY"],  p["DAY_PLAN"],  p["DAY_LY"])}
-  {_sc_card("week",  f"ð Week-to-Date Â· Wk {wk}", p["WTD_TY"], p["WTD_PLAN"], p["WTD_LY"])}
-  {_sc_card("month", f"ð Month-to-Date Â· {month_name}", p["MTD_TY"], p["MTD_PLAN"], p["MTD_LY"])}
-  {_sc_card("year",  f"ð Year-to-Date Â· {d.year}", p["YTD_TY"], p["YTD_PLAN"], p["YTD_LY"])}
+  {_sc_card("week",  f"Ã°ÂÂÂ Week-to-Date ÃÂ· Wk {wk}", p["WTD_TY"], p["WTD_PLAN"], p["WTD_LY"])}
+  {_sc_card("month", f"Ã°ÂÂÂ Month-to-Date ÃÂ· {month_name}", p["MTD_TY"], p["MTD_PLAN"], p["MTD_LY"])}
+  {_sc_card("year",  f"Ã°ÂÂÂ Year-to-Date ÃÂ· {d.year}", p["YTD_TY"], p["YTD_PLAN"], p["YTD_LY"])}
 </div>
 """
 
@@ -294,22 +296,22 @@ def _render_cohorts(p, c):
   <div class="cohort-cards">
     <div class="cohort-col">
       <div class="cohort-header">
-        <div class="cohort-icon total-icon">ð¢</div>
+        <div class="cohort-icon total-icon">Ã°ÂÂÂ¢</div>
         <div><div class="cohort-col-title">Total Company</div><div class="cohort-col-sub">All 136 stores</div></div>
       </div>
       <div class="period-rows">{_cohort_rows("", c, p)}</div>
     </div>
     <div class="cohort-col">
       <div class="cohort-header">
-        <div class="cohort-icon same-icon">ðª</div>
-        <div><div class="cohort-col-title">Same Store</div><div class="cohort-col-sub">109 stores Â· comp â¥ 1yr</div></div>
+        <div class="cohort-icon same-icon">Ã°ÂÂÂª</div>
+        <div><div class="cohort-col-title">Same Store</div><div class="cohort-col-sub">109 stores ÃÂ· comp Ã¢ÂÂ¥ 1yr</div></div>
       </div>
       <div class="period-rows">{_cohort_rows("SS_", c, p)}</div>
     </div>
     <div class="cohort-col">
       <div class="cohort-header">
-        <div class="cohort-icon acq-icon">ð</div>
-        <div><div class="cohort-col-title">Acquisition Stores</div><div class="cohort-col-sub">27 stores Â· non-comp</div></div>
+        <div class="cohort-icon acq-icon">Ã°ÂÂÂ</div>
+        <div><div class="cohort-col-title">Acquisition Stores</div><div class="cohort-col-sub">27 stores ÃÂ· non-comp</div></div>
       </div>
       <div class="period-rows">{_cohort_rows("AC_", c, p)}</div>
     </div>
@@ -330,11 +332,11 @@ def _render_metrics(m, plan_txn):
 <div class="metrics-strip">
   <div class="metric-card">
     <div class="metric-icon-row">
-      <div class="metric-icon" style="background:#dbeafe">ð</div>
+      <div class="metric-icon" style="background:#dbeafe">Ã°ÂÂÂ</div>
       <div class="metric-trend-pill {_badge_class(txn_vs_ly)}">{_arrow(txn_vs_ly)} {_fmt_pct(abs(txn_vs_ly) if txn_vs_ly is not None else None, 1, plus=False)} LY</div>
     </div>
     <div class="metric-val">{int(txn_ty):,}</div>
-    <div class="metric-lbl">Transactions Â· Yesterday</div>
+    <div class="metric-lbl">Transactions ÃÂ· Yesterday</div>
     <div class="metric-vs">
       <div class="mv-item"><span class="lbl">vs Plan: </span><span class="val {_badge_class(txn_vs_plan)}">{_fmt_pct(txn_vs_plan, 1)}</span></div>
       <div class="mv-item"><span class="lbl">Plan: </span><span class="val">{int(plan_txn):,}</span></div>
@@ -342,29 +344,29 @@ def _render_metrics(m, plan_txn):
   </div>
   <div class="metric-card">
     <div class="metric-icon-row">
-      <div class="metric-icon" style="background:#f3e8ff">ð°</div>
+      <div class="metric-icon" style="background:#f3e8ff">Ã°ÂÂÂ°</div>
       <div class="metric-trend-pill {_badge_class(avg_vs_ly)}">{_arrow(avg_vs_ly)} {_fmt_pct(abs(avg_vs_ly) if avg_vs_ly is not None else None, 1, plus=False)} LY</div>
     </div>
     <div class="metric-val">${avg_ty:.2f}</div>
-    <div class="metric-lbl">Avg. Sale Â· Yesterday</div>
+    <div class="metric-lbl">Avg. Sale ÃÂ· Yesterday</div>
     <div class="metric-vs">
       <div class="mv-item"><span class="lbl">LY: </span><span class="val">${avg_ly:.2f}</span></div>
     </div>
   </div>
   <div class="metric-card">
     <div class="metric-icon-row">
-      <div class="metric-icon" style="background:#fef9c3">ð¦</div>
+      <div class="metric-icon" style="background:#fef9c3">Ã°ÂÂÂ¦</div>
       <div class="metric-trend-pill {_badge_class(upt_vs_ly)}">{_arrow(upt_vs_ly)} {_fmt_pct(abs(upt_vs_ly) if upt_vs_ly is not None else None, 1, plus=False)} LY</div>
     </div>
     <div class="metric-val">{upt_ty:.2f}</div>
-    <div class="metric-lbl">Units per Transaction Â· Yesterday</div>
+    <div class="metric-lbl">Units per Transaction ÃÂ· Yesterday</div>
     <div class="metric-vs">
       <div class="mv-item"><span class="lbl">LY: </span><span class="val">{upt_ly:.2f}</span></div>
     </div>
   </div>
   <div class="metric-card">
     <div class="metric-icon-row">
-      <div class="metric-icon" style="background:#dcfce7">ð¯</div>
+      <div class="metric-icon" style="background:#dcfce7">Ã°ÂÂÂ¯</div>
       <div class="metric-trend-pill pos">Live</div>
     </div>
     <div class="metric-val">{int(txn_ty):,}</div>
@@ -423,7 +425,7 @@ def _render_state_map(state_data):
 
     svg = '<svg viewBox="0 0 520 310" xmlns="http://www.w3.org/2000/svg" style="width:540px;max-width:100%;height:auto;display:block;border-radius:6px;overflow:hidden">' + "\n".join(svg_paths) + "</svg>"
 
-    # Summary table rows (sorted best â worst)
+    # Summary table rows (sorted best Ã¢ÂÂ worst)
     name_map = {s["code"]: s["name"] for s in STATES}
     name_map["VA"] = "Virginia"
     table_rows = []
@@ -434,8 +436,8 @@ def _render_state_map(state_data):
     return f"""
 <div class="stores-panel" style="margin-bottom:20px">
   <div class="panel-header">
-    <div class="panel-title">Sales by State Â· Yesterday vs Plan</div>
-    <div class="panel-hint">Color = % vs Plan Â· hover for details</div>
+    <div class="panel-title">Sales by State ÃÂ· Yesterday vs Plan</div>
+    <div class="panel-hint">Color = % vs Plan ÃÂ· hover for details</div>
   </div>
   <div style="display:flex;gap:24px;align-items:flex-start;padding:16px 20px 12px;flex-wrap:wrap">
     <div style="position:relative;flex:0 0 auto">{svg}</div>
@@ -484,20 +486,20 @@ def _store_row(rank_sym, r, bg=""):
 def _render_stores(ranked):
     top = ranked[:5]
     bottom = list(reversed(ranked[-5:]))  # show worst-first? Keep mockup order: worst at top of bottom section
-    bottom = ranked[-5:][::-1]  # sorted descending vsP â last 5 are worst; reverse so worst is first
+    bottom = ranked[-5:][::-1]  # sorted descending vsP Ã¢ÂÂ last 5 are worst; reverse so worst is first
     # Mockup shows bottom sorted worst-first
     bottom = sorted(ranked[-5:], key=lambda x: x["vsP"])
     top_rows = []
     for i, r in enumerate(top):
-        sym = "ð" if i == 0 else f"#{i+1}"
+        sym = "Ã°ÂÂÂ" if i == 0 else f"#{i+1}"
         top_rows.append(_store_row(sym, r, bg="#f0fdf4"))
-    bot_rows = [_store_row("â", r) for r in bottom]
+    bot_rows = [_store_row("Ã¢ÂÂ", r) for r in bottom]
 
     return f"""
 <div class="stores-panel">
   <div class="panel-header">
-    <div class="panel-title">Store Performance Â· Yesterday vs Plan</div>
-    <div class="panel-hint">Top 5 and Bottom 5 Â· ranked by vs Plan</div>
+    <div class="panel-title">Store Performance ÃÂ· Yesterday vs Plan</div>
+    <div class="panel-hint">Top 5 and Bottom 5 ÃÂ· ranked by vs Plan</div>
   </div>
   <table class="stores-table">
     <thead><tr>
@@ -506,7 +508,7 @@ def _render_stores(ranked):
     </tr></thead>
     <tbody>
       {''.join(top_rows)}
-      <tr style="background:#f9fafb"><td colspan="6" style="text-align:center; padding:6px; font-size:10px; color:#9ca3af; letter-spacing:1px; text-transform:uppercase">â Â· Â· Â· â Bottom Performers â Â· Â· Â· â</td></tr>
+      <tr style="background:#f9fafb"><td colspan="6" style="text-align:center; padding:6px; font-size:10px; color:#9ca3af; letter-spacing:1px; text-transform:uppercase">Ã¢ÂÂ ÃÂ· ÃÂ· ÃÂ· Ã¢ÂÂ Bottom Performers Ã¢ÂÂ ÃÂ· ÃÂ· ÃÂ· Ã¢ÂÂ</td></tr>
       {''.join(bot_rows)}
     </tbody>
   </table>
@@ -528,7 +530,7 @@ def render_report(report_date: date, totals, cohorts, metrics, state_data, store
         + _render_stores(store_ranked)
         + """
 <div class="footer">
-  Powered by YODA Â· Aubuchon Hardware Â· Report questions? <a href="mailto:scott@aubuchon.com">Contact Scott Aubuchon</a>
+  Powered by YODA ÃÂ· Aubuchon Hardware ÃÂ· Report questions? <a href="mailto:scott@aubuchon.com">Contact Scott Aubuchon</a>
 </div>
 """
     )
@@ -537,7 +539,7 @@ def render_report(report_date: date, totals, cohorts, metrics, state_data, store
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aubuchon Daily Sales Report â {title_date}</title>
+<title>Aubuchon Daily Sales Report Ã¢ÂÂ {title_date}</title>
 <style>{CSS}</style>
 </head>
 <body>
