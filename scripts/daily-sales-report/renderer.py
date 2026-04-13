@@ -79,13 +79,13 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: #f0f2f5; col
 .sc-card.year { border-top-color: #16a34a; }
 .sc-period { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: var(--gray-500); margin-bottom: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .sc-sales { font-size: 52px; font-weight: 800; color: var(--gray-900); letter-spacing: -2px; line-height: 1; margin: 2px 0 6px; }
-.sc-plan { font-size: 12px; color: var(--gray-500); font-weight: 500; }
+.sc-plan { font-size: 14px; color: var(--gray-500); font-weight: 500; }
 .sc-plan strong { color: var(--gray-700); font-weight: 700; }
 .sc-badges { display: flex; gap: 6px; margin-top: auto; padding-top: 14px; padding-bottom: 14px; flex-wrap: wrap; }
-.sc-badge { padding: 4px 9px; border-radius: 6px; font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; gap: 3px; line-height: 1.3; }
+.sc-badge { padding: 5px 10px; border-radius: 6px; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; line-height: 1.3; }
 .sc-badge.neg { background: var(--red-light); color: var(--red); }
 .sc-badge.pos { background: var(--green-light); color: var(--green); }
-.sc-badge small { font-size: 10px; font-weight: 500; opacity: 0.75; margin-left: 2px; }
+.sc-badge small { font-size: 11px; font-weight: 500; opacity: 0.8; margin-left: 2px; }
 .sc-progress { position: absolute; left: 0; right: 0; bottom: 0; height: 5px; background: var(--gray-100); }
 .sc-progress-fill { height: 100%; transition: width 0.3s ease; }
 .day .sc-progress-fill { background: #2563eb; }
@@ -94,22 +94,22 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: #f0f2f5; col
 .year .sc-progress-fill { background: #16a34a; }
 .cohort-panel { background: white; border-radius: 14px; padding: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; margin-bottom: 20px; }
 .panel-header { padding: 16px 20px; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: space-between; }
-.panel-title { font-size: 13px; font-weight: 700; color: var(--gray-700); text-transform: uppercase; letter-spacing: 0.5px; }
-.panel-hint { font-size: 11px; color: var(--gray-500); }
+.panel-title { font-size: 14px; font-weight: 700; color: var(--gray-700); text-transform: uppercase; letter-spacing: 0.6px; }
+.panel-hint { font-size: 12px; color: var(--gray-500); }
 .cohort-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
 .cohort-col { padding: 20px; border-right: 1px solid var(--gray-100); }
 .cohort-col:last-child { border-right: none; }
 .cohort-header { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
 .cohort-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
 .total-icon { background: #dbeafe; } .same-icon { background: #dcfce7; } .acq-icon { background: #fef3c7; }
-.cohort-col-title { font-size: 13px; font-weight: 700; color: var(--gray-900); }
-.cohort-col-sub { font-size: 11px; color: var(--gray-500); }
+.cohort-col-title { font-size: 15px; font-weight: 700; color: var(--gray-900); }
+.cohort-col-sub { font-size: 12px; color: var(--gray-500); }
 .period-rows { display: flex; flex-direction: column; gap: 10px; }
 .period-row { display: flex; align-items: center; padding: 10px 12px; background: var(--gray-50); border-radius: 8px; gap: 8px; }
 .pr-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray-500); width: 36px; flex-shrink: 0; }
-.pr-sales { flex: 1; font-size: 14px; font-weight: 800; color: var(--gray-900); }
+.pr-sales { flex: 1; font-size: 18px; font-weight: 800; color: var(--gray-900); letter-spacing: -0.5px; }
 .pr-badges { display: flex; gap: 4px; }
-.pr-badge { font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 5px; }
+.pr-badge { font-size: 13px; font-weight: 700; padding: 3px 9px; border-radius: 5px; }
 .pr-badge.pos { background: var(--green-light); color: var(--green); }
 .pr-badge.neg { background: var(--red-light); color: var(--red); }
 .metrics-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
@@ -119,10 +119,10 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: #f0f2f5; col
 .metric-trend-pill { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 100px; }
 .metric-trend-pill.pos { background: var(--green-light); color: var(--green); }
 .metric-trend-pill.neg { background: var(--red-light); color: var(--red); }
-.metric-val { font-size: 28px; font-weight: 900; color: var(--gray-900); letter-spacing: -1px; }
-.metric-lbl { font-size: 11px; color: var(--gray-500); margin-top: 3px; }
-.metric-vs { display: flex; gap: 12px; margin-top: 10px; border-top: 1px solid var(--gray-100); padding-top: 8px; }
-.mv-item { font-size: 11px; }
+.metric-val { font-size: 38px; font-weight: 800; color: var(--gray-900); letter-spacing: -1.5px; line-height: 1; }
+.metric-lbl { font-size: 12px; color: var(--gray-500); margin-top: 5px; font-weight: 500; }
+.metric-vs { display: flex; gap: 12px; margin-top: 12px; border-top: 1px solid var(--gray-100); padding-top: 10px; }
+.mv-item { font-size: 12px; }
 .mv-item .lbl { color: var(--gray-500); }
 .mv-item .val { font-weight: 700; }
 .mv-item .val.pos { color: var(--green); }
@@ -130,20 +130,20 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: #f0f2f5; col
 .stores-panel { background: white; border-radius: 14px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); margin-bottom: 20px; }
 .stores-table { width: 100%; border-collapse: collapse; }
 .stores-table thead tr { background: var(--gray-50); border-bottom: 2px solid var(--gray-100); }
-.stores-table th { padding: 11px 14px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray-500); text-align: right; }
+.stores-table th { padding: 11px 14px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray-500); text-align: right; }
 .stores-table th:first-child { text-align: left; }
 .stores-table tbody tr { border-bottom: 1px solid var(--gray-100); }
 .stores-table tbody tr:hover { background: var(--gray-50); }
 .stores-table tbody tr:last-child { border-bottom: none; }
-.stores-table td { padding: 11px 14px; font-size: 13px; text-align: right; color: var(--gray-700); }
+.stores-table td { padding: 12px 14px; font-size: 15px; text-align: right; color: var(--gray-700); }
 .stores-table td:first-child { text-align: left; }
 .rank-num { font-size: 11px; font-weight: 700; color: var(--gray-300); width: 24px; display: inline-block; }
-.store-name-link { font-weight: 700; color: var(--gray-900); font-size: 13px; }
+.store-name-link { font-weight: 700; color: var(--gray-900); font-size: 15px; }
 .store-cohort-tag { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 4px; margin-left: 6px; }
 .tag-same { background: #dcfce7; color: #16a34a; }
 .tag-acq { background: #fef3c7; color: #d97706; }
 .sales-num { font-weight: 700; color: var(--gray-900); }
-.var-pill { font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 6px; display: inline-block; }
+.var-pill { font-size: 14px; font-weight: 700; padding: 4px 10px; border-radius: 6px; display: inline-block; }
 .var-pill.pos { background: var(--green-light); color: var(--green); }
 .var-pill.neg { background: var(--red-light); color: var(--red); }
 .footer { text-align: center; font-size: 11px; color: var(--gray-500); padding: 16px; background: white; border-radius: 14px; }
@@ -171,7 +171,7 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: #f0f2f5; col
   .sc-plan { font-size: 11px; }
   .sc-badge { font-size: 11px; padding: 4px 8px; }
   .metric-card { padding: 14px; }
-  .metric-val { font-size: 22px; }
+  .metric-val { font-size: 30px; letter-spacing: -1px; }
   .metric-icon { width: 32px; height: 32px; font-size: 15px; }
   .panel-header { padding: 12px 14px; flex-direction: column; align-items: flex-start; gap: 4px; }
   .panel-title { font-size: 12px; }
@@ -182,15 +182,15 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: #f0f2f5; col
   /* Scrollable tables on narrow screens */
   .stores-panel { overflow-x: auto; }
   .stores-table { min-width: 560px; }
-  .stores-table th, .stores-table td { padding: 9px 8px; font-size: 12px; }
+  .stores-table th, .stores-table td { padding: 10px 8px; font-size: 13px; }
   .stores-table th:first-child, .stores-table td:first-child { padding-left: 12px; }
-  .store-name-link { font-size: 12px; }
+  .store-name-link { font-size: 14px; }
 }
 @media (max-width: 480px) {
   .scorecard { grid-template-columns: 1fr; }
   .metrics-strip { grid-template-columns: 1fr; }
   .sc-sales { font-size: 40px; letter-spacing: -1.5px; }
-  .metric-val { font-size: 26px; }
+  .metric-val { font-size: 34px; letter-spacing: -1.2px; }
   .date-big { font-size: 18px; }
 }
 """
