@@ -2414,8 +2414,8 @@ const SECTIONS = [
   },
   {
     id: "yoda",
-    label: "YODA",
-    description: "Power BI analytics -- store performance, KPIs, and operational data",
+    label: "YODA Reports",
+    description: "Daily sales, scorecard and operational reports powered by YODA",
     icon: Database,
     gradient: "from-emerald-500 to-emerald-700",
     hoverGradient: "from-emerald-600 to-emerald-800",
@@ -2423,7 +2423,7 @@ const SECTIONS = [
     border: "border-emerald-200",
     text: "text-emerald-700",
     shadow: "shadow-emerald-200/50",
-    active: false,
+    active: true,
   },
 ];
 
@@ -3754,6 +3754,75 @@ const PaymentHistory = ({ goHome, goBack }) => {
   );
 };
 
+/* ============================================================
+   YODA REPORTS MENU
+   Add new report entries to YODA_REPORTS as they come online.
+   ============================================================ */
+const YODA_REPORTS = [
+  {
+    id: "daily-sales",
+    label: "Daily Sales Report",
+    description: "Yesterday's sales vs. last year — scorecard, cohorts, store map, and store ranks",
+    url: "https://aubuchon-it-command-center.vercel.app/reports/daily-sales-latest.html",
+    icon: TrendingUp,
+  },
+];
+
+function YODAReports({ goHome }) {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50 to-slate-100 p-8">
+      <div className="max-w-5xl mx-auto">
+        <div className="flex items-center gap-4 mb-8">
+          <button
+            onClick={goHome}
+            className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium shadow-sm"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back
+          </button>
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center shadow-lg">
+              <Database className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-slate-900">YODA Reports</h1>
+              <p className="text-slate-600 text-sm">Operational reports powered by YODA / Power BI data</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {YODA_REPORTS.map(rpt => {
+            const Icon = rpt.icon || FileText;
+            return (
+              <a
+                key={rpt.id}
+                href={rpt.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group bg-white rounded-xl border border-slate-200 p-5 hover:border-emerald-400 hover:shadow-lg transition-all"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center flex-shrink-0">
+                    <Icon className="w-5 h-5 text-emerald-700" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-semibold text-slate-900 group-hover:text-emerald-700">{rpt.label}</h3>
+                      <Link2 className="w-4 h-4 text-slate-400 group-hover:text-emerald-600" />
+                    </div>
+                    <p className="text-sm text-slate-600 mt-1">{rpt.description}</p>
+                  </div>
+                </div>
+              </a>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [activeSection, setActiveSection] = useState(null);
 
@@ -3765,10 +3834,10 @@ export default function App() {
 
   if (activeSection === "payment-history") return <PaymentHistory goHome={() => setActiveSection(null)} goBack={() => setActiveSection(null)} />;
 
+  if (activeSection === "yoda") return <YODAReports goHome={() => setActiveSection(null)} />;
+
   // Future sections:
   // if (activeSection === "wells-cc") return <WellsCC goHome={() => setActiveSection(null)} goHistory={() => setActiveSection("payment-history")} />;
-  // if (activeSection === "yoda") return <YODADashboard goHome={() => setActiveSection(null)} />;
 
   return <HomeScreen onNavigate={setActiveSection} />;
 }
-
