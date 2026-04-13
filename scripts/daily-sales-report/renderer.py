@@ -177,7 +177,9 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: #f0f2f5; col
   .panel-title { font-size: 12px; }
   .panel-hint { font-size: 10px; }
   .cohort-col { padding: 14px; }
+  /* State map panel: stack svg above table */
   .stores-panel > div[style*="display:flex"] { flex-direction: column; gap: 12px !important; padding: 12px !important; }
+  /* Scrollable tables on narrow screens */
   .stores-panel { overflow-x: auto; }
   .stores-table { min-width: 560px; }
   .stores-table th, .stores-table td { padding: 9px 8px; font-size: 12px; }
