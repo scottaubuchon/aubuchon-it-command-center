@@ -1550,7 +1550,48 @@ function TrashView({ trashedProjects, onRestore, onPermanentDelete }) {
    VIEW: HISTORY (completed projects)
    ===================================================================== */
 
-function HistoryView({ completedProjects, onUpdate }) {
+/* =====================================================================
+   MARK-DONE CONFIRMATION MODAL
+   ===================================================================== */
+function MarkDoneModal({ project, onConfirm, onCancel }) {
+  const [note, setNote] = useState("");
+  if (!project) return null;
+  return (
+    <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center" onClick={onCancel}>
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-md mx-4 overflow-hidden" onClick={e => e.stopPropagation()}>
+        <div className="bg-gradient-to-r from-emerald-600 to-green-700 px-5 py-3.5 flex items-center gap-2">
+          <CheckCircle size={16} className="text-white" />
+          <h3 className="text-sm font-bold text-white">Mark Project as Done?</h3>
+        </div>
+        <div className="px-5 py-4 space-y-3">
+          <p className="text-sm text-gray-700">
+            Are you sure you want to mark <span className="font-semibold">"{project.name}"</span> as Done? It will move to the History tab.
+          </p>
+          <div>
+            <label className="block text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1">Final Notes (optional)</label>
+            <textarea
+              autoFocus
+              value={note}
+              onChange={e => setNote(e.target.value)}
+              rows={4}
+              placeholder="Any closing notes, outcomes, lessons learned..."
+              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none"
+            />
+            <p className="text-[10px] text-gray-400 mt-1">This will be added to the project's update log.</p>
+          </div>
+        </div>
+        <div className="px-5 py-3 bg-gray-50 border-t border-gray-200 flex items-center justify-end gap-2">
+          <button onClick={onCancel} className="px-3 py-1.5 text-xs font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:bg-gray-50">Cancel</button>
+          <button onClick={() => onConfirm(note.trim())} className="px-3 py-1.5 text-xs font-medium text-white bg-emerald-600 rounded-lg hover:bg-emerald-700 flex items-center gap-1.5">
+            <CheckCircle size={12} />Mark as Done
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function HistoryView({ completedProjects, onUpdate, onRestore }) {
   const [expanded, setExpanded] = useState({});
   const toggle = (id) => setExpanded(prev => ({ ...prev, [id]: !prev[id] }));
 
@@ -1580,6 +1621,7 @@ function HistoryView({ completedProjects, onUpdate }) {
             <th className="py-2.5 px-2 text-left">Priority</th>
             <th className="py-2.5 px-2 text-left">Completed</th>
             <th className="py-2.5 px-2 text-left">Notes</th>
+            <th className="py-2.5 px-2 w-24"></th>
           </tr>
         </thead>
         <tbody>
@@ -1594,10 +1636,17 @@ function HistoryView({ completedProjects, onUpdate }) {
               <td className="py-3 px-2"><PriorityBadge priority={p.priority} onChange={(v) => onUpdate(p.id, "priority", v)} size="xs" /></td>
               <td className="py-3 px-2 text-xs text-gray-500">{p.completedDate || "--"}</td>
               <td className="py-3 px-2 text-xs text-gray-400 max-w-xs truncate">{p.notes || p.milestones || "--"}</td>
+              <td className="py-3 px-2 text-right" onClick={e => e.stopPropagation()}>
+                <button
+                  onClick={() => { if (window.confirm(`Move "${p.name}" back to Active Projects? This will clear its completed date.`)) onRestore(p.id); }}
+                  className="text-[10px] font-medium text-blue-600 hover:text-white hover:bg-blue-600 border border-blue-200 hover:border-blue-600 px-2 py-1 rounded transition-colors inline-flex items-center gap-1"
+                  title="Move back to active"
+                ><RotateCcw size={10}/>Reactivate</button>
+              </td>
             </tr>
             {expanded[p.id] && (
               <tr className="bg-gray-50/30">
-                <td colSpan={7} className="px-6 py-4">
+                <td colSpan={8} className="px-6 py-4">
                   <div className="grid grid-cols-2 gap-x-8 gap-y-3 text-xs">
                     <div><span className="font-semibold text-gray-500 uppercase text-[10px] block mb-0.5">Roadblocks</span><span className="text-gray-700">{p.roadblocks || "None"}</span></div>
                     <div><span className="font-semibold text-gray-500 uppercase text-[10px] block mb-0.5">Milestones</span><span className="text-gray-700">{p.milestones || "None"}</span></div>
@@ -1608,6 +1657,31 @@ function HistoryView({ completedProjects, onUpdate }) {
                     )}
                     <div><span className="font-semibold text-gray-500 uppercase text-[10px] block mb-0.5">Est. Date</span><span className="text-gray-700">{p.date || "N/A"}</span></div>
                     <div><span className="font-semibold text-gray-500 uppercase text-[10px] block mb-0.5">Last Updated</span><span className="text-gray-700">{p.lastUpdated || "N/A"}</span></div>
+                    <div className="col-span-2">
+                      <span className="font-semibold text-gray-500 uppercase text-[10px] block mb-1">Update Log ({(p.updateLog || []).length})</span>
+                      {(p.updateLog || []).length === 0 ? (
+                        <span className="text-gray-400 italic">No updates were logged for this project.</span>
+                      ) : (
+                        <div className="space-y-1.5 max-h-64 overflow-y-auto border border-gray-200 rounded-lg bg-white p-2">
+                          {[...(p.updateLog || [])].reverse().map((u, i) => (
+                            <div key={i} className="border-l-2 border-blue-300 pl-2 py-1">
+                              <div className="flex items-center gap-2 text-[10px] text-gray-500">
+                                <span className="font-semibold text-gray-600">{u.date || "--"}</span>
+                                {u.author && <span>by {u.author}</span>}
+                              </div>
+                              <div className="text-gray-700 whitespace-pre-wrap">{u.notes || ""}</div>
+                              {Array.isArray(u.links) && u.links.length > 0 && (
+                                <div className="flex flex-wrap gap-1.5 mt-1">
+                                  {u.links.map((lk, j) => (
+                                    <a key={j} href={lk.url || lk} target="_blank" rel="noreferrer" className="text-[10px] text-blue-600 hover:underline inline-flex items-center gap-0.5"><Link2 size={9}/>{lk.label || lk.url || lk}</a>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </td>
               </tr>
@@ -1927,6 +2001,7 @@ function ITProjectDashboard({ goHome }) {
   const [showExportDialog, setShowExportDialog] = useState(false);
   const [customOwners, setCustomOwners] = useState([]);
   const [customDepartments, setCustomDepartments] = useState([]);
+  const [markDonePending, setMarkDonePending] = useState(null); // {id, name} | null
 
   const allOwners = useMemo(() => [...OWNER_OPTIONS, ...customOwners.filter(o => !OWNER_OPTIONS.includes(o))], [customOwners]);
   const allDepartments = useMemo(() => [...DEPARTMENTS, ...customDepartments.filter(d => !DEPARTMENTS.includes(d))], [customDepartments]);
@@ -2016,6 +2091,14 @@ function ITProjectDashboard({ goHome }) {
 
   // Handlers
   const handleUpdate = useCallback((id, field, value) => {
+    // Intercept: when moving a project to Done, require confirmation via modal.
+    if (field === "status" && value === "Done") {
+      const proj = projects.find(p => p.id === id);
+      if (proj && proj.status !== "Done") {
+        setMarkDonePending({ id, name: proj.name });
+        return;
+      }
+    }
     const now = new Date();
     const ts = now.toLocaleDateString("en-US")+" "+now.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
     setProjects(prev => prev.map(p => {
@@ -2028,6 +2111,40 @@ function ITProjectDashboard({ goHome }) {
         const fmt=(v)=>Array.isArray(v)?v.join(", "):(v===""||v===null||v===undefined?"(empty)":String(v));
         setChangeLog(prev=>[{id:Date.now(),timestamp:ts,projectId:id,projectName:p.name,field,oldValue:fmt(oldVal),newValue:fmt(value),user:auth.currentUser?.displayName||auth.currentUser?.email||"Unknown"},...prev].slice(0,500));
       }
+      return updated;
+    }));
+  }, [projects]);
+
+  // Confirm marking a project as Done (called by MarkDoneModal)
+  const confirmMarkDone = useCallback((finalNote) => {
+    if (!markDonePending) return;
+    const id = markDonePending.id;
+    const now = new Date();
+    const ts = now.toLocaleDateString("en-US")+" "+now.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
+    const todayStr = new Date().toLocaleDateString("en-US");
+    setProjects(prev => prev.map(p => {
+      if (p.id !== id) return p;
+      const oldStatus = p.status;
+      const updated = { ...p, status: "Done", pct: 100, completedDate: todayStr, lastUpdated: ts };
+      if (finalNote) {
+        const entry = { date: todayStr, notes: finalNote, links: [], author: auth.currentUser?.displayName || auth.currentUser?.email || "Scott" };
+        updated.updateLog = [...(p.updateLog || []), entry];
+      }
+      const fmt=(v)=>Array.isArray(v)?v.join(", "):(v===""||v===null||v===undefined?"(empty)":String(v));
+      setChangeLog(prevCL=>[{id:Date.now(),timestamp:ts,projectId:id,projectName:p.name,field:"status",oldValue:fmt(oldStatus),newValue:"Done",user:auth.currentUser?.displayName||auth.currentUser?.email||"Unknown"},...prevCL].slice(0,500));
+      return updated;
+    }));
+    setMarkDonePending(null);
+  }, [markDonePending]);
+
+  // Reactivate a completed project (move it back to Active)
+  const handleReactivate = useCallback((id) => {
+    const now = new Date();
+    const ts = now.toLocaleDateString("en-US")+" "+now.toLocaleTimeString("en-US",{hour:"numeric",minute:"2-digit"});
+    setProjects(prev => prev.map(p => {
+      if (p.id !== id) return p;
+      const updated = { ...p, status: "In Progress", completedDate: "", lastUpdated: ts };
+      setChangeLog(prevCL=>[{id:Date.now(),timestamp:ts,projectId:id,projectName:p.name,field:"status",oldValue:"Done",newValue:"In Progress (Reactivated)",user:auth.currentUser?.displayName||auth.currentUser?.email||"Unknown"},...prevCL].slice(0,500));
       return updated;
     }));
   }, []);
@@ -2322,7 +2439,7 @@ function ITProjectDashboard({ goHome }) {
           <TrashView trashedProjects={trashedProjects} onRestore={handleRestore} onPermanentDelete={handlePermanentDelete} />
         )}
 
-        {activeView === "history" && (<HistoryView completedProjects={completedProjects} onUpdate={handleUpdate} />)}
+        {activeView === "history" && (<HistoryView completedProjects={completedProjects} onUpdate={handleUpdate} onRestore={handleReactivate} />)}
 
         {activeView === "changelog" && (<ChangeLogView changeLog={changeLog} onUndo={handleUndoChange} />)}
 
@@ -2334,6 +2451,14 @@ function ITProjectDashboard({ goHome }) {
             allDepartments={allDepartments}
             onClose={() => setShowNewProjectModal(false)}
             onSave={(data) => { handleAddProject(data); clearFilters(); setActiveView("projects"); }}
+          />
+        )}
+
+        {markDonePending && (
+          <MarkDoneModal
+            project={markDonePending}
+            onCancel={() => setMarkDonePending(null)}
+            onConfirm={confirmMarkDone}
           />
         )}
 
