@@ -72,21 +72,21 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: #f0f2f5; col
 .status-pill { display: inline-flex; align-items: center; gap: 5px; background: var(--green-light); color: var(--green); font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 100px; margin-top: 6px; }
 .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
 .scorecard { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
-.sc-card { background: white; border-radius: 14px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border-top: 4px solid transparent; position: relative; }
+.sc-card { background: white; border-radius: 14px; padding: 14px 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border-top: 4px solid transparent; position: relative; }
 .sc-card.day { border-top-color: #2563eb; }
 .sc-card.week { border-top-color: #7c3aed; }
 .sc-card.month { border-top-color: #d97706; }
 .sc-card.year { border-top-color: #16a34a; }
-.sc-period { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-500); margin-bottom: 10px; }
-.sc-sales { font-size: 32px; font-weight: 900; color: var(--gray-900); letter-spacing: -1.5px; line-height: 1; }
-.sc-plan { font-size: 12px; color: var(--gray-500); margin-top: 6px; }
+.sc-period { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-500); margin-bottom: 6px; }
+.sc-sales { font-size: 40px; font-weight: 900; color: var(--gray-900); letter-spacing: -1.5px; line-height: 1.02; }
+.sc-plan { font-size: 12px; color: var(--gray-500); margin-top: 4px; }
 .sc-plan strong { color: var(--gray-700); }
-.sc-badges { display: flex; gap: 6px; margin-top: 14px; flex-wrap: wrap; }
+.sc-badges { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
 .sc-badge { padding: 5px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 3px; }
 .sc-badge.neg { background: var(--red-light); color: var(--red); }
 .sc-badge.pos { background: var(--green-light); color: var(--green); }
 .sc-badge small { font-size: 10px; font-weight: 500; opacity: 0.75; margin-left: 2px; }
-.sc-progress { margin-top: 12px; height: 4px; background: var(--gray-100); border-radius: 4px; overflow: visible; position: relative; }
+.sc-progress { margin-top: 8px; height: 4px; background: var(--gray-100); border-radius: 4px; overflow: visible; position: relative; }
 .sc-progress-fill { height: 100%; border-radius: 4px; }
 .day .sc-progress-fill { background: #2563eb; }
 .week .sc-progress-fill { background: #7c3aed; }
@@ -229,8 +229,8 @@ def _sc_card(kind, label, sales, plan, ly):
     vsP = _pct(sales, plan)
     vsLY = _pct(sales, ly)
     width = 0 if not plan else min(100, max(0, (sales / plan) * 100))
-    # Day card uses 3-decimal compact ($1.329M) so value is legible but matches YODA closely.
-    dec = 3 if kind == "day" else 2
+    # All cards use 3-decimal compact (e.g. $1.329M) so values are legible and match YODA closely.
+    dec = 3
     return f"""
 <div class="sc-card {kind}">
   <div class="sc-period">{label}</div>
