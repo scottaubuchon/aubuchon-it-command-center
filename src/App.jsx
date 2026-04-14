@@ -2559,10 +2559,11 @@ const SECTIONS = [
    Structure: { users: { "email": { name, role, sections[], readOnly } } }
    ===================================================================== */
 
-const SUPER_ADMIN_EMAIL = "scott@aubuchon.com";
+const SUPER_ADMIN_EMAILS = ["scott@aubuchon.com", "scott@theaubuchonfamily.com"];
 
 const DEFAULT_ACCESS = {
-  [SUPER_ADMIN_EMAIL]: { name: "Scott Aubuchon", role: "admin", sections: ["all"], readOnly: false },
+  "scott@aubuchon.com": { name: "Scott Aubuchon", role: "admin", sections: ["all"], readOnly: false },
+  "scott@theaubuchonfamily.com": { name: "Scott Aubuchon", role: "admin", sections: ["all"], readOnly: false },
   "will@aubuchon.com": { name: "Will Aubuchon", role: "viewer", sections: ["yoda"], readOnly: true },
 };
 
@@ -2583,7 +2584,7 @@ function useUserAccess() {
           const me = users[userEmail];
           if (me) {
             setUserAccess(me);
-          } else if (userEmail === SUPER_ADMIN_EMAIL) {
+          } else if (SUPER_ADMIN_EMAILS.includes(userEmail)) {
             const adminEntry = { name: "Scott Aubuchon", role: "admin", sections: ["all"], readOnly: false };
             users[userEmail] = adminEntry;
             await setDoc(docRef, { users }, { merge: true });
@@ -2599,7 +2600,7 @@ function useUserAccess() {
         }
       } catch (e) {
         console.error("Failed to load user access:", e);
-        if (userEmail === SUPER_ADMIN_EMAIL) {
+        if (SUPER_ADMIN_EMAILS.includes(userEmail)) {
           setUserAccess({ name: "Scott Aubuchon", role: "admin", sections: ["all"], readOnly: false });
         } else {
           setUserAccess(false);
@@ -2629,9 +2630,11 @@ function useUserAccess() {
 
   const saveAllUsers = useCallback(async (updatedUsers) => {
     // Safety: never allow removing super admin
-    if (!updatedUsers[SUPER_ADMIN_EMAIL]) {
-      updatedUsers[SUPER_ADMIN_EMAIL] = { name: "Scott Aubuchon", role: "admin", sections: ["all"], readOnly: false };
-    }
+    SUPER_ADMIN_EMAILS.forEach(email => {
+      if (!updatedUsers[email]) {
+        updatedUsers[email] = { name: "Scott Aubuchon", role: "admin", sections: ["all"], readOnly: false };
+      }
+    });
     await setDoc(doc(db, "dashboards", "user-access"), { users: updatedUsers });
     setAllUsers(updatedUsers);
     const me = updatedUsers[userEmail];
@@ -2731,7 +2734,7 @@ function AdminPanel({ goHome, allUsers, saveAllUsers }) {
   };
 
   const handleDelete = async (email) => {
-    if (email === SUPER_ADMIN_EMAIL) return;
+    if (SUPER_ADMIN_EMAILS.includes(email)) return;
     setSaving(true);
     try {
       const updated = { ...users };
@@ -2915,7 +2918,7 @@ function AdminPanel({ goHome, allUsers, saveAllUsers }) {
                   <button onClick={() => startEdit(email)} className="p-2 text-gray-400 hover:text-indigo-600 rounded-lg hover:bg-indigo-50 transition-colors" title="Edit">
                     <Edit3 size={15} />
                   </button>
-                  {email !== SUPER_ADMIN_EMAIL && (
+                  {!SUPER_ADMIN_EMAILS.includes(email) && (
                     confirmDelete === email ? (
                       <div className="flex items-center gap-1">
                         <button onClick={() => handleDelete(email)} className="px-2 py-1 text-xs text-red-600 bg-red-50 rounded font-medium hover:bg-red-100">Remove</button>
