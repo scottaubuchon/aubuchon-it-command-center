@@ -13,10 +13,10 @@ from date_ranges import week_number, quarter, day_of_year
 
 # ---------- Formatting helpers ----------
 
-def _fmt_money(v: float, compact=False, decimals=2) -> str:
+def _fmt_money(v: float, compact=False) -> str:
     if compact:
         if v >= 1_000_000:
-            return f"${v/1_000_000:.{decimals}f}M"
+            return f"${v/1_000_000:.2f}M"
         if v >= 1_000:
             return f"${v/1_000:.0f}K"
         return f"${v:,.0f}"
@@ -60,7 +60,7 @@ CSS = r"""
   --gray-50: #f9fafb; --gray-100: #f3f4f6; --gray-200: #e5e7eb;
   --gray-300: #d1d5db; --gray-500: #6b7280; --gray-700: #374151; --gray-900: #111827;
 }
-body { font-family: 'Inter', -apple-system, sans-serif; background: #f0f2f5; color: var(--gray-900); padding: 28px; }
+body { font-family: 'Inter', -apple-system, sans-serif; background: #f0f2f5; color: var(--gray-900); min-width: 800px; padding: 28px; }
 .header { background: white; border-radius: 16px; padding: 24px 28px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04); }
 .header-left { display: flex; align-items: center; gap: 16px; }
 .logo { background: var(--red); color: white; width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 900; box-shadow: 0 4px 12px rgba(214,59,49,0.3); }
@@ -72,44 +72,44 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: #f0f2f5; col
 .status-pill { display: inline-flex; align-items: center; gap: 5px; background: var(--green-light); color: var(--green); font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 100px; margin-top: 6px; }
 .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
 .scorecard { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
-.sc-card { background: white; border-radius: 14px; padding: 18px 20px 0; box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04); border-top: 3px solid transparent; position: relative; display: flex; flex-direction: column; min-height: 168px; overflow: hidden; }
+.sc-card { background: white; border-radius: 14px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border-top: 4px solid transparent; position: relative; }
 .sc-card.day { border-top-color: #2563eb; }
 .sc-card.week { border-top-color: #7c3aed; }
 .sc-card.month { border-top-color: #d97706; }
 .sc-card.year { border-top-color: #16a34a; }
-.sc-period { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: var(--gray-500); margin-bottom: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.sc-sales { font-size: 52px; font-weight: 800; color: var(--gray-900); letter-spacing: -2px; line-height: 1; margin: 2px 0 6px; }
-.sc-plan { font-size: 14px; color: var(--gray-500); font-weight: 500; }
-.sc-plan strong { color: var(--gray-700); font-weight: 700; }
-.sc-badges { display: flex; gap: 6px; margin-top: auto; padding-top: 14px; padding-bottom: 14px; flex-wrap: wrap; }
-.sc-badge { padding: 5px 10px; border-radius: 6px; font-size: 13px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; line-height: 1.3; }
+.sc-period { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-500); margin-bottom: 10px; }
+.sc-sales { font-size: 32px; font-weight: 900; color: var(--gray-900); letter-spacing: -1.5px; line-height: 1; }
+.sc-plan { font-size: 12px; color: var(--gray-500); margin-top: 6px; }
+.sc-plan strong { color: var(--gray-700); }
+.sc-badges { display: flex; gap: 6px; margin-top: 14px; flex-wrap: wrap; }
+.sc-badge { padding: 5px 10px; border-radius: 8px; font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 3px; }
 .sc-badge.neg { background: var(--red-light); color: var(--red); }
 .sc-badge.pos { background: var(--green-light); color: var(--green); }
-.sc-badge small { font-size: 11px; font-weight: 500; opacity: 0.8; margin-left: 2px; }
-.sc-progress { position: absolute; left: 0; right: 0; bottom: 0; height: 5px; background: var(--gray-100); }
-.sc-progress-fill { height: 100%; transition: width 0.3s ease; }
+.sc-badge small { font-size: 10px; font-weight: 500; opacity: 0.75; margin-left: 2px; }
+.sc-progress { margin-top: 12px; height: 4px; background: var(--gray-100); border-radius: 4px; overflow: visible; position: relative; }
+.sc-progress-fill { height: 100%; border-radius: 4px; }
 .day .sc-progress-fill { background: #2563eb; }
 .week .sc-progress-fill { background: #7c3aed; }
 .month .sc-progress-fill { background: #d97706; }
 .year .sc-progress-fill { background: #16a34a; }
 .cohort-panel { background: white; border-radius: 14px; padding: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; margin-bottom: 20px; }
 .panel-header { padding: 16px 20px; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: space-between; }
-.panel-title { font-size: 14px; font-weight: 700; color: var(--gray-700); text-transform: uppercase; letter-spacing: 0.6px; }
-.panel-hint { font-size: 12px; color: var(--gray-500); }
+.panel-title { font-size: 13px; font-weight: 700; color: var(--gray-700); text-transform: uppercase; letter-spacing: 0.5px; }
+.panel-hint { font-size: 11px; color: var(--gray-500); }
 .cohort-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
 .cohort-col { padding: 20px; border-right: 1px solid var(--gray-100); }
 .cohort-col:last-child { border-right: none; }
 .cohort-header { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
 .cohort-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
 .total-icon { background: #dbeafe; } .same-icon { background: #dcfce7; } .acq-icon { background: #fef3c7; }
-.cohort-col-title { font-size: 15px; font-weight: 700; color: var(--gray-900); }
-.cohort-col-sub { font-size: 12px; color: var(--gray-500); }
+.cohort-col-title { font-size: 13px; font-weight: 700; color: var(--gray-900); }
+.cohort-col-sub { font-size: 11px; color: var(--gray-500); }
 .period-rows { display: flex; flex-direction: column; gap: 10px; }
 .period-row { display: flex; align-items: center; padding: 10px 12px; background: var(--gray-50); border-radius: 8px; gap: 8px; }
 .pr-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray-500); width: 36px; flex-shrink: 0; }
-.pr-sales { flex: 1; font-size: 18px; font-weight: 800; color: var(--gray-900); letter-spacing: -0.5px; }
+.pr-sales { flex: 1; font-size: 14px; font-weight: 800; color: var(--gray-900); }
 .pr-badges { display: flex; gap: 4px; }
-.pr-badge { font-size: 13px; font-weight: 700; padding: 3px 9px; border-radius: 5px; }
+.pr-badge { font-size: 11px; font-weight: 700; padding: 2px 7px; border-radius: 5px; }
 .pr-badge.pos { background: var(--green-light); color: var(--green); }
 .pr-badge.neg { background: var(--red-light); color: var(--red); }
 .metrics-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
@@ -119,10 +119,10 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: #f0f2f5; col
 .metric-trend-pill { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 100px; }
 .metric-trend-pill.pos { background: var(--green-light); color: var(--green); }
 .metric-trend-pill.neg { background: var(--red-light); color: var(--red); }
-.metric-val { font-size: 38px; font-weight: 800; color: var(--gray-900); letter-spacing: -1.5px; line-height: 1; }
-.metric-lbl { font-size: 12px; color: var(--gray-500); margin-top: 5px; font-weight: 500; }
-.metric-vs { display: flex; gap: 12px; margin-top: 12px; border-top: 1px solid var(--gray-100); padding-top: 10px; }
-.mv-item { font-size: 12px; }
+.metric-val { font-size: 28px; font-weight: 900; color: var(--gray-900); letter-spacing: -1px; }
+.metric-lbl { font-size: 11px; color: var(--gray-500); margin-top: 3px; }
+.metric-vs { display: flex; gap: 12px; margin-top: 10px; border-top: 1px solid var(--gray-100); padding-top: 8px; }
+.mv-item { font-size: 11px; }
 .mv-item .lbl { color: var(--gray-500); }
 .mv-item .val { font-weight: 700; }
 .mv-item .val.pos { color: var(--green); }
@@ -130,69 +130,24 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: #f0f2f5; col
 .stores-panel { background: white; border-radius: 14px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.06); margin-bottom: 20px; }
 .stores-table { width: 100%; border-collapse: collapse; }
 .stores-table thead tr { background: var(--gray-50); border-bottom: 2px solid var(--gray-100); }
-.stores-table th { padding: 11px 14px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray-500); text-align: right; }
+.stores-table th { padding: 11px 14px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--gray-500); text-align: right; }
 .stores-table th:first-child { text-align: left; }
 .stores-table tbody tr { border-bottom: 1px solid var(--gray-100); }
 .stores-table tbody tr:hover { background: var(--gray-50); }
 .stores-table tbody tr:last-child { border-bottom: none; }
-.stores-table td { padding: 12px 14px; font-size: 15px; text-align: right; color: var(--gray-700); }
+.stores-table td { padding: 11px 14px; font-size: 13px; text-align: right; color: var(--gray-700); }
 .stores-table td:first-child { text-align: left; }
 .rank-num { font-size: 11px; font-weight: 700; color: var(--gray-300); width: 24px; display: inline-block; }
-.store-name-link { font-weight: 700; color: var(--gray-900); font-size: 15px; }
+.store-name-link { font-weight: 700; color: var(--gray-900); font-size: 13px; }
 .store-cohort-tag { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 4px; margin-left: 6px; }
 .tag-same { background: #dcfce7; color: #16a34a; }
 .tag-acq { background: #fef3c7; color: #d97706; }
 .sales-num { font-weight: 700; color: var(--gray-900); }
-.var-pill { font-size: 14px; font-weight: 700; padding: 4px 10px; border-radius: 6px; display: inline-block; }
+.var-pill { font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 6px; display: inline-block; }
 .var-pill.pos { background: var(--green-light); color: var(--green); }
 .var-pill.neg { background: var(--red-light); color: var(--red); }
 .footer { text-align: center; font-size: 11px; color: var(--gray-500); padding: 16px; background: white; border-radius: 14px; }
 .footer a { color: var(--red); text-decoration: none; font-weight: 600; }
-
-/* ---------- Responsive / Mobile ---------- */
-@media (max-width: 900px) {
-  .scorecard { grid-template-columns: repeat(2, 1fr); }
-  .metrics-strip { grid-template-columns: repeat(2, 1fr); }
-  .cohort-cards { grid-template-columns: 1fr; }
-  .cohort-col { border-right: none; border-bottom: 1px solid var(--gray-100); }
-  .cohort-col:last-child { border-bottom: none; }
-}
-@media (max-width: 768px) {
-  body { padding: 12px; }
-  .header { padding: 16px; flex-direction: column; align-items: flex-start; gap: 12px; }
-  .header-right { text-align: left; width: 100%; }
-  .title h1 { font-size: 17px; }
-  .title p { font-size: 11px; }
-  .date-big { font-size: 20px; }
-  .date-sub { font-size: 11px; }
-  .logo { width: 42px; height: 42px; font-size: 18px; }
-  .sc-card { padding: 14px 16px 0; min-height: 140px; }
-  .sc-sales { font-size: 34px; letter-spacing: -1.2px; }
-  .sc-plan { font-size: 11px; }
-  .sc-badge { font-size: 11px; padding: 4px 8px; }
-  .metric-card { padding: 14px; }
-  .metric-val { font-size: 30px; letter-spacing: -1px; }
-  .metric-icon { width: 32px; height: 32px; font-size: 15px; }
-  .panel-header { padding: 12px 14px; flex-direction: column; align-items: flex-start; gap: 4px; }
-  .panel-title { font-size: 12px; }
-  .panel-hint { font-size: 10px; }
-  .cohort-col { padding: 14px; }
-  /* State map panel: stack svg above table */
-  .stores-panel > div[style*="display:flex"] { flex-direction: column; gap: 12px !important; padding: 12px !important; }
-  /* Scrollable tables on narrow screens */
-  .stores-panel { overflow-x: auto; }
-  .stores-table { min-width: 560px; }
-  .stores-table th, .stores-table td { padding: 10px 8px; font-size: 13px; }
-  .stores-table th:first-child, .stores-table td:first-child { padding-left: 12px; }
-  .store-name-link { font-size: 14px; }
-}
-@media (max-width: 480px) {
-  .scorecard { grid-template-columns: 1fr; }
-  .metrics-strip { grid-template-columns: 1fr; }
-  .sc-sales { font-size: 40px; letter-spacing: -1.5px; }
-  .metric-val { font-size: 34px; letter-spacing: -1.2px; }
-  .date-big { font-size: 18px; }
-}
 """
 
 
@@ -208,6 +163,14 @@ def _render_header(d: date) -> str:
     except Exception:
         pretty = d.strftime("%B %#d, %Y")
     return f"""
+<div style="margin-bottom:12px">
+  <a href="https://aubuchon-it-command-center.vercel.app/"
+     style="display:inline-flex;align-items:center;gap:8px;padding:8px 16px;background:white;border:1px solid #e2e8f0;border-radius:8px;color:#475569;font-family:Inter,sans-serif;font-size:14px;font-weight:500;text-decoration:none;box-shadow:0 1px 2px rgba(0,0,0,0.05);cursor:pointer;"
+     onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='white'">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+    Back to Workbench
+  </a>
+</div>
 <div class="header">
   <div class="header-left">
     <div class="logo">A</div>
@@ -229,13 +192,11 @@ def _sc_card(kind, label, sales, plan, ly):
     vsP = _pct(sales, plan)
     vsLY = _pct(sales, ly)
     width = 0 if not plan else min(100, max(0, (sales / plan) * 100))
-    # All cards use 3-decimal compact (e.g. $1.329M) so values are legible and match YODA closely.
-    dec = 3
     return f"""
 <div class="sc-card {kind}">
   <div class="sc-period">{label}</div>
-  <div class="sc-sales">{_fmt_money(sales, compact=True, decimals=dec)}</div>
-  <div class="sc-plan">of <strong>{_fmt_money(plan, compact=True, decimals=dec)}</strong> plan</div>
+  <div class="sc-sales">{_fmt_money(sales, compact=True)}</div>
+  <div class="sc-plan">of <strong>{_fmt_money(plan, compact=True)}</strong> plan</div>
   <div class="sc-badges">
     <div class="sc-badge {_badge_class(vsP)}">{_arrow(vsP)} {_fmt_pct(abs(vsP) if vsP is not None else None, 1, plus=False)} <small>vs Plan</small></div>
     <div class="sc-badge {_badge_class(vsLY)}">{_arrow(vsLY)} {_fmt_pct(abs(vsLY) if vsLY is not None else None, 1, plus=False)} <small>vs LY</small></div>
