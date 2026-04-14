@@ -5154,8 +5154,6 @@ function YODAReports({ goHome }) {
               <a
                 key={rpt.id}
                 href={rpt.url}
-                target="_blank"
-                rel="noopener noreferrer"
                 className="group bg-white rounded-xl border border-slate-200 p-5 hover:border-emerald-400 hover:shadow-lg transition-all"
               >
                 <div className="flex items-start gap-3">
