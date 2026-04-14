@@ -4835,13 +4835,10 @@ const YODA_REPORTS = [
 /* ============================================================
    LIVE SALES VIEW — fetches today's data from YODA proxy
    ============================================================ */
-const YODA_PROXY = "https://yoda-aubuchon.duckdns.org:5088";
-const YODA_KEY = "aubuchon-yoda-2026";
-
 function runDAX(dax) {
-  return fetch(YODA_PROXY + "/query", {
+  return fetch("/api/yoda", {
     method: "POST",
-    headers: { "Content-Type": "application/json", "X-API-Key": YODA_KEY },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ dax }),
   })
     .then(function (r) { return r.json(); })
