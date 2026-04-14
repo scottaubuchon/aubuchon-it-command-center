@@ -70,10 +70,19 @@ const DEPT_SHORT = {
   "Resource Center & Support": "Support",
 };
 
+const VOTING_SECTIONS = [
+  { id: "pos", label: "POS & Store Technology", depts: ["POS & Store Technology"], icon: Monitor, gradient: "from-violet-600 to-purple-600", bg: "bg-violet-50", border: "border-violet-200", text: "text-violet-700", dotFill: "bg-violet-500", dotRing: "border-violet-300", dotHover: "hover:bg-violet-100" },
+  { id: "systems", label: "Enterprise Systems", depts: ["Enterprise Systems"], icon: Server, gradient: "from-blue-600 to-indigo-600", bg: "bg-blue-50", border: "border-blue-200", text: "text-blue-700", dotFill: "bg-blue-500", dotRing: "border-blue-300", dotHover: "hover:bg-blue-100" },
+  { id: "cyber", label: "Infrastructure & Cyber Security", depts: ["Infrastructure & Cyber Security"], icon: Shield, gradient: "from-emerald-600 to-teal-600", bg: "bg-emerald-50", border: "border-emerald-200", text: "text-emerald-700", dotFill: "bg-emerald-500", dotRing: "border-emerald-300", dotHover: "hover:bg-emerald-100" },
+];
+const DOTS_PER_SECTION = 5;
+const MAX_DOTS_PER_PROJECT = 2;
+
 const VIEWS = [
   { id: "projects", label: "All Projects", icon: Briefcase },
   { id: "owner",    label: "By Owner",     icon: Users },
   { id: "dept",     label: "By Dept",      icon: Building2 },
+  { id: "voting",   label: "Voting",       icon: CircleDot },
   { id: "inbox",    label: "Inbox",        icon: Inbox },
   { id: "trash",    label: "Trash",        icon: Trash2 },
   { id: "history",  label: "History",       icon: Archive },
@@ -769,6 +778,110 @@ function useSortableProjects(projects) {
 }
 
 /* =====================================================================
+   VOTING HOOK — Firestore doc: dashboards/project-votes
+   ===================================================================== */
+
+function useVoting(projects) {
+  const [votesData, setVotesData] = useState(null);
+  const [votingLoaded, setVotingLoaded] = useState(false);
+  const userEmail = (auth.currentUser?.email || "").toLowerCase();
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const snap = await getDoc(doc(db, "dashboards", "project-votes"));
+        if (snap.exists()) { setVotesData(snap.data()); }
+        else { setVotesData({ votes: {}, config: { nonVoteable: [], voterRights: {} } }); }
+      } catch (err) {
+        console.warn("Voting load failed:", err);
+        setVotesData({ votes: {}, config: { nonVoteable: [], voterRights: {} } });
+      }
+      setVotingLoaded(true);
+    })();
+  }, []);
+
+  const myVotes = useMemo(() => {
+    if (!votesData) return { pos: {}, systems: {}, cyber: {} };
+    return votesData.votes?.[userEmail] || { pos: {}, systems: {}, cyber: {} };
+  }, [votesData, userEmail]);
+
+  const allVotes = useMemo(() => votesData?.votes || {}, [votesData]);
+  const votingConfig = useMemo(() => votesData?.config || { nonVoteable: [], voterRights: {} }, [votesData]);
+
+  const canVoteIn = useCallback((sectionId) => {
+    return (votingConfig.voterRights?.[userEmail] || []).includes(sectionId);
+  }, [votingConfig, userEmail]);
+
+  const dotsRemaining = useCallback((sectionId) => {
+    return DOTS_PER_SECTION - Object.values(myVotes[sectionId] || {}).reduce((s, c) => s + c, 0);
+  }, [myVotes]);
+
+  const sectionDotsForProject = useCallback((sectionId, projectId) => {
+    const pid = String(projectId || "");
+    let total = 0;
+    Object.values(allVotes).forEach(uv => { total += (uv[sectionId]?.[pid] || 0); });
+    return total;
+  }, [allVotes]);
+
+  const totalDotsForProject = useCallback((projectId) => {
+    const pid = String(projectId || "");
+    let total = 0;
+    Object.values(allVotes).forEach(uv => {
+      VOTING_SECTIONS.forEach(({ id }) => { total += (uv[id]?.[pid] || 0); });
+    });
+    return total;
+  }, [allVotes]);
+
+  const saveVotes = useCallback(async (updated) => {
+    setVotesData(updated);
+    try { await setDoc(doc(db, "dashboards", "project-votes"), updated); } catch (err) { console.warn("Vote save failed:", err); }
+  }, []);
+
+  const addDot = useCallback(async (sectionId, projectId) => {
+    if (!votesData || !canVoteIn(sectionId)) return false;
+    const pid = String(projectId || "");
+    const current = myVotes[sectionId]?.[pid] || 0;
+    if (current >= MAX_DOTS_PER_PROJECT || dotsRemaining(sectionId) <= 0) return false;
+    if ((votingConfig.nonVoteable || []).includes(projectId)) return false;
+    const updated = JSON.parse(JSON.stringify(votesData));
+    if (!updated.votes[userEmail]) updated.votes[userEmail] = { pos: {}, systems: {}, cyber: {} };
+    if (!updated.votes[userEmail][sectionId]) updated.votes[userEmail][sectionId] = {};
+    updated.votes[userEmail][sectionId][pid] = current + 1;
+    await saveVotes(updated);
+    return true;
+  }, [votesData, userEmail, myVotes, canVoteIn, dotsRemaining, votingConfig, saveVotes]);
+
+  const removeDot = useCallback(async (sectionId, projectId) => {
+    if (!votesData) return false;
+    const pid = String(projectId || "");
+    const current = myVotes[sectionId]?.[pid] || 0;
+    if (current <= 0) return false;
+    const updated = JSON.parse(JSON.stringify(votesData));
+    if (current - 1 === 0) { delete updated.votes[userEmail][sectionId][pid]; }
+    else { updated.votes[userEmail][sectionId][pid] = current - 1; }
+    await saveVotes(updated);
+    return true;
+  }, [votesData, userEmail, myVotes, saveVotes]);
+
+  const setNonVoteable = useCallback(async (projectIds) => {
+    if (!votesData) return;
+    const updated = JSON.parse(JSON.stringify(votesData));
+    updated.config.nonVoteable = projectIds;
+    await saveVotes(updated);
+  }, [votesData, saveVotes]);
+
+  const setVoterRights = useCallback(async (email, sectionIds) => {
+    if (!votesData) return;
+    const updated = JSON.parse(JSON.stringify(votesData));
+    if (!updated.config.voterRights) updated.config.voterRights = {};
+    updated.config.voterRights[(email || "").toLowerCase()] = sectionIds;
+    await saveVotes(updated);
+  }, [votesData, saveVotes]);
+
+  return { myVotes, allVotes, votingConfig, addDot, removeDot, dotsRemaining, setNonVoteable, setVoterRights, canVoteIn, totalDotsForProject, sectionDotsForProject, votingLoaded, userEmail };
+}
+
+/* =====================================================================
    SUBTASK LIST (inside projects)
    ===================================================================== */
 
@@ -1258,6 +1371,233 @@ function ProjectRow({ project, onUpdate, onDelete, showDepts = true, showOwner =
         </tr>
       )}
     </>
+  );
+}
+
+/* =====================================================================
+   VIEW: VOTING — Dot voting for project prioritization
+   ===================================================================== */
+
+function VotingView({ projects, votingHook }) {
+  const { myVotes, dotsRemaining, addDot, removeDot, canVoteIn, votingConfig, votingLoaded } = votingHook;
+
+  if (!votingLoaded) return <div className="flex items-center justify-center py-20"><div className="w-8 h-8 border-3 border-gray-200 border-t-indigo-500 rounded-full animate-spin" /></div>;
+
+  const getProjects = (sectionId) => {
+    const vs = VOTING_SECTIONS.find(s => s.id === sectionId);
+    if (!vs) return [];
+    return projects.filter(p => {
+      const hasDept = vs.depts.some(d => p.departments.includes(d));
+      const isActive = p.status !== "Done";
+      const isVoteable = !(votingConfig.nonVoteable || []).includes(p.id);
+      return hasDept && isActive && isVoteable;
+    });
+  };
+
+  const hasAnyRights = VOTING_SECTIONS.some(s => canVoteIn(s.id));
+
+  return (
+    <div className="space-y-6">
+      {/* Summary Bar */}
+      <div className="bg-white rounded-xl border border-gray-200 p-5">
+        <h2 className="text-sm font-bold text-gray-700 mb-4 flex items-center gap-2"><CircleDot size={15} className="text-indigo-500" /> Your Voting Summary</h2>
+        {!hasAnyRights ? (
+          <p className="text-xs text-gray-500 italic">You don't have voting rights for any section yet. Ask your admin for access.</p>
+        ) : (
+          <div className="grid grid-cols-3 gap-4">
+            {VOTING_SECTIONS.map(({ id, label, gradient, text }) => {
+              const used = DOTS_PER_SECTION - dotsRemaining(id);
+              const pct = (used / DOTS_PER_SECTION) * 100;
+              const hasRights = canVoteIn(id);
+              return (
+                <div key={id} className={hasRights ? "" : "opacity-40"}>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="text-[11px] font-medium text-gray-600 truncate">{label}</span>
+                    <span className={`text-xs font-bold ${text}`}>{hasRights ? `${used}/${DOTS_PER_SECTION}` : "\u2014"}</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+                    <div className={`h-full bg-gradient-to-r ${gradient} transition-all duration-300`} style={{ width: `${hasRights ? pct : 0}%` }} />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Voting Sections */}
+      {VOTING_SECTIONS.map(({ id, label, icon: Icon, bg, border, text, dotFill, dotRing, dotHover, gradient }) => {
+        const sectionProjects = getProjects(id);
+        const hasRights = canVoteIn(id);
+        const remaining = dotsRemaining(id);
+
+        return (
+          <div key={id} className={`rounded-xl border-2 ${border} overflow-hidden`}>
+            <div className={`${bg} px-5 py-4 flex items-center justify-between`}>
+              <div className="flex items-center gap-3">
+                <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${gradient} flex items-center justify-center shadow-sm`}><Icon size={18} className="text-white" /></div>
+                <div>
+                  <h2 className={`text-sm font-bold ${text}`}>{label}</h2>
+                  <p className="text-[10px] text-gray-500">{sectionProjects.length} project{sectionProjects.length !== 1 ? "s" : ""} to vote on</p>
+                </div>
+              </div>
+              {hasRights && (
+                <div className="flex items-center gap-1.5">
+                  {Array.from({ length: DOTS_PER_SECTION }).map((_, i) => (
+                    <div key={i} className={`w-3 h-3 rounded-full transition-all ${i < (DOTS_PER_SECTION - remaining) ? dotFill : "bg-white border-2 " + dotRing}`} />
+                  ))}
+                  <span className={`text-[10px] font-semibold ${text} ml-1`}>{remaining} left</span>
+                </div>
+              )}
+            </div>
+
+            <div className="bg-white p-4">
+              {!hasRights ? (
+                <div className="text-center py-6">
+                  <Lock size={20} className="text-gray-300 mx-auto mb-2" />
+                  <p className="text-xs text-gray-400">You don't have voting rights for this section</p>
+                </div>
+              ) : sectionProjects.length === 0 ? (
+                <p className="text-xs text-gray-400 py-4 text-center">No active voteable projects in this section</p>
+              ) : (
+                <div className="space-y-2">
+                  {sectionProjects.map(p => {
+                    const pid = String(p.id || "");
+                    const myDots = myVotes[id]?.[pid] || 0;
+                    const statusCfg = STATUS_CONFIG[p.status] || STATUS_CONFIG["Not Started"];
+                    const priCfg = PRIORITY_CONFIG[p.priority] || PRIORITY_CONFIG["Medium"];
+                    return (
+                      <div key={p.id} className="flex items-center gap-3 p-3 rounded-lg border border-gray-100 hover:border-gray-200 hover:shadow-sm transition-all">
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-medium text-gray-900 truncate">{p.name}</div>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-[10px] text-gray-500">{String(p.owner || "")}</span>
+                            <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${statusCfg.color}`}>{p.status}</span>
+                            <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${priCfg.color}`}>{p.priority}</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1.5 flex-shrink-0">
+                          {Array.from({ length: MAX_DOTS_PER_PROJECT }).map((_, i) => {
+                            const filled = i < myDots;
+                            return (
+                              <button key={i} onClick={() => filled ? removeDot(id, p.id) : addDot(id, p.id)}
+                                disabled={!filled && remaining <= 0}
+                                className={`w-7 h-7 rounded-full transition-all flex items-center justify-center ${
+                                  filled
+                                    ? `${dotFill} text-white shadow-md hover:shadow-lg hover:scale-110`
+                                    : remaining > 0
+                                      ? `bg-white border-2 ${dotRing} ${dotHover} hover:scale-110 cursor-pointer`
+                                      : "bg-gray-50 border-2 border-gray-200 cursor-not-allowed opacity-40"
+                                }`}
+                                title={filled ? "Click to remove vote" : remaining > 0 ? "Click to add vote" : "No dots remaining"}>
+                                {filled && <Check size={12} />}
+                              </button>
+                            );
+                          })}
+                          <span className="text-[10px] font-medium text-gray-400 w-4 text-center">{myDots}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/* =====================================================================
+   VIEW: VOTING RESULTS — Admin-only stack rank per section
+   ===================================================================== */
+
+function VotingResultsView({ projects, votingHook }) {
+  const { allVotes, sectionDotsForProject, votingConfig, votingLoaded } = votingHook;
+
+  if (!votingLoaded) return <div className="flex items-center justify-center py-20"><div className="w-8 h-8 border-3 border-gray-200 border-t-indigo-500 rounded-full animate-spin" /></div>;
+
+  const voterCount = Object.keys(votingConfig.voterRights || {}).filter(email => {
+    const rights = votingConfig.voterRights[email];
+    return rights && rights.length > 0;
+  }).length;
+
+  return (
+    <div className="space-y-8">
+      <div className="bg-white rounded-xl border border-gray-200 p-4 flex items-center gap-4">
+        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-sm"><Eye size={18} className="text-white" /></div>
+        <div>
+          <h2 className="text-sm font-bold text-gray-900">Priority Vote Results</h2>
+          <p className="text-[11px] text-gray-500">{voterCount} voter{voterCount !== 1 ? "s" : ""} configured \u2022 Results are live</p>
+        </div>
+      </div>
+
+      {VOTING_SECTIONS.map(({ id, label, icon: Icon, bg, border, text, gradient }) => {
+        const vs = VOTING_SECTIONS.find(s => s.id === id);
+        const sectionProjects = projects.filter(p => {
+          const hasDept = vs.depts.some(d => p.departments.includes(d));
+          return hasDept && p.status !== "Done";
+        });
+
+        const ranked = sectionProjects.map(p => ({
+          project: p,
+          votes: sectionDotsForProject(id, p.id),
+          isVoteable: !(votingConfig.nonVoteable || []).includes(p.id),
+        })).sort((a, b) => b.votes - a.votes);
+
+        const maxVotes = Math.max(...ranked.map(r => r.votes), 1);
+
+        return (
+          <div key={id} className={`rounded-xl border-2 ${border} overflow-hidden`}>
+            <div className={`${bg} px-5 py-4 flex items-center gap-3`}>
+              <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${gradient} flex items-center justify-center shadow-sm`}><Icon size={18} className="text-white" /></div>
+              <h2 className={`text-sm font-bold ${text}`}>{label}</h2>
+              <span className={`text-[10px] ${text} ml-auto font-medium`}>{ranked.filter(r => r.votes > 0).length} with votes</span>
+            </div>
+            <div className="bg-white divide-y divide-gray-100">
+              {ranked.length === 0 ? (
+                <p className="text-xs text-gray-400 py-6 text-center">No active projects in this section</p>
+              ) : ranked.map(({ project, votes, isVoteable }, idx) => {
+                const barPct = maxVotes > 0 ? (votes / maxVotes) * 100 : 0;
+                const voters = [];
+                Object.entries(allVotes).forEach(([email, uv]) => {
+                  const cnt = uv[id]?.[String(project.id || "")] || 0;
+                  if (cnt > 0) voters.push({ email, cnt });
+                });
+                return (
+                  <div key={project.id} className={`px-5 py-3 flex items-center gap-4 ${!isVoteable ? "opacity-50" : ""} ${votes === 0 ? "bg-gray-50/50" : ""}`}>
+                    <span className={`text-sm font-bold w-7 text-center ${votes > 0 && idx === 0 ? "text-amber-500" : votes > 0 ? "text-gray-600" : "text-gray-300"}`}>
+                      {idx + 1}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className={`text-sm font-medium ${votes === 0 ? "text-gray-400" : "text-gray-900"} truncate`}>{project.name}</span>
+                        {!isVoteable && <span className="text-[9px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded font-medium">Non-voteable</span>}
+                      </div>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className="text-[10px] text-gray-500">{String(project.owner || "")}</span>
+                        {voters.length > 0 && (
+                          <span className="text-[10px] text-gray-400">
+                            ({voters.map(v => `${v.email.split("@")[0]}:${v.cnt}`).join(", ")})
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="w-40 flex items-center gap-2">
+                      <div className="flex-1 bg-gray-200 rounded-full h-5 overflow-hidden">
+                        {votes > 0 && <div className={`h-full bg-gradient-to-r ${gradient} rounded-full transition-all`} style={{ width: `${barPct}%` }} />}
+                      </div>
+                      <span className={`text-xs font-bold w-6 text-right ${votes > 0 ? "text-gray-700" : "text-gray-300"}`}>{votes}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+    </div>
   );
 }
 
@@ -1983,7 +2323,7 @@ function InboxView({ inboxItems, setInboxItems, onPromote, ownerOptions, onAddOw
    MAIN DASHBOARD
    ===================================================================== */
 
-function ITProjectDashboard({ goHome }) {
+function ITProjectDashboard({ goHome, isAdmin, allAccessUsers }) {
   const [projects, setProjects] = useState(initialProjects);
   const [inboxItems, setInboxItems] = useState(initialInboxItems);
   const [trashedProjects, setTrashedProjects] = useState([]);
@@ -2006,6 +2346,8 @@ function ITProjectDashboard({ goHome }) {
 
   const allOwners = useMemo(() => [...OWNER_OPTIONS, ...customOwners.filter(o => !OWNER_OPTIONS.includes(o))], [customOwners]);
   const allDepartments = useMemo(() => [...DEPARTMENTS, ...customDepartments.filter(d => !DEPARTMENTS.includes(d))], [customDepartments]);
+
+  const votingHook = useVoting(projects);
 
   const handleAddOwner = useCallback((name) => {
     setCustomOwners(prev => prev.includes(name) ? prev : [...prev, name]);
@@ -2319,8 +2661,8 @@ function ITProjectDashboard({ goHome }) {
           </div>
 
           {/* View tabs */}
-          <div className="flex items-center gap-1 mt-3 -mb-px">
-            {VIEWS.map(v => {
+          <div className="flex items-center gap-1 mt-3 -mb-px flex-wrap">
+            {[...VIEWS, ...(isAdmin ? [{ id: "voteResults", label: "Vote Results", icon: Eye }] : [])].map(v => {
               const Icon = v.icon;
               const isActive = activeView === v.id;
               return (
@@ -2354,7 +2696,7 @@ function ITProjectDashboard({ goHome }) {
         </div>
 
         {/* ALERTS */}
-        {alerts.length > 0 && activeView !== "history" && activeView !== "changelog" && (
+        {alerts.length > 0 && activeView !== "history" && activeView !== "changelog" && activeView !== "voting" && activeView !== "voteResults" && (
           <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-5 flex items-start gap-3">
             <AlertTriangle size={16} className="text-red-500 mt-0.5 flex-shrink-0" />
             <div>
@@ -2365,7 +2707,7 @@ function ITProjectDashboard({ goHome }) {
         )}
 
         {/* FILTERS */}
-        {activeView !== "history" && activeView !== "changelog" && (
+        {activeView !== "history" && activeView !== "changelog" && activeView !== "voting" && activeView !== "voteResults" && (
           <div className="flex items-center gap-2 mb-5 flex-wrap">
             <div className="flex items-center gap-1.5 bg-white rounded-lg px-3 py-2 border border-gray-200 flex-1 max-w-xs">
               <Search size={14} className="text-gray-400" />
@@ -2443,6 +2785,10 @@ function ITProjectDashboard({ goHome }) {
         {activeView === "history" && (<HistoryView completedProjects={completedProjects} onUpdate={handleUpdate} onRestore={handleReactivate} />)}
 
         {activeView === "changelog" && (<ChangeLogView changeLog={changeLog} onUndo={handleUndoChange} />)}
+
+        {activeView === "voting" && (<VotingView projects={projects} votingHook={votingHook} />)}
+
+        {activeView === "voteResults" && isAdmin && (<VotingResultsView projects={projects} votingHook={votingHook} allUsers={allAccessUsers} />)}
 
         {showExportDialog && (<ExportPDFDialog onClose={()=>setShowExportDialog(false)} projects={projects} stats={stats} alerts={alerts} completedProjects={completedProjects} changeLog={changeLog} ownerOptions={allOwners} />)}
 
@@ -2673,6 +3019,7 @@ function AccessDeniedScreen() {
    ===================================================================== */
 
 function AdminPanel({ goHome, allUsers, saveAllUsers }) {
+  const [adminTab, setAdminTab] = useState("users"); // "users" or "voting"
   const [users, setUsers] = useState({});
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingEmail, setEditingEmail] = useState(null);
@@ -2787,19 +3134,31 @@ function AdminPanel({ goHome, allUsers, saveAllUsers }) {
                 <Shield size={22} className="text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900 tracking-tight">User Access Management</h1>
-                <p className="text-xs text-gray-400 mt-0.5">{userEntries.length} user{userEntries.length !== 1 ? "s" : ""} configured</p>
+                <h1 className="text-xl font-bold text-gray-900 tracking-tight">Admin Settings</h1>
+                <p className="text-xs text-gray-400 mt-0.5">Manage users, access, and voting configuration</p>
               </div>
             </div>
-            <button onClick={startAdd} className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors shadow-sm">
-              <UserPlus size={16} />
-              Add User
+            {adminTab === "users" && (
+              <button onClick={startAdd} className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors shadow-sm">
+                <UserPlus size={16} />
+                Add User
+              </button>
+            )}
+          </div>
+          {/* Admin Tabs */}
+          <div className="flex gap-1 mt-4 -mb-px">
+            <button onClick={() => setAdminTab("users")} className={`flex items-center gap-1.5 px-4 py-2 text-xs font-medium rounded-t-lg border-b-2 transition-all ${adminTab === "users" ? "border-indigo-600 text-indigo-700 bg-indigo-50/50" : "border-transparent text-gray-400 hover:text-gray-600"}`}>
+              <Users size={14} /> Users ({userEntries.length})
+            </button>
+            <button onClick={() => setAdminTab("voting")} className={`flex items-center gap-1.5 px-4 py-2 text-xs font-medium rounded-t-lg border-b-2 transition-all ${adminTab === "voting" ? "border-indigo-600 text-indigo-700 bg-indigo-50/50" : "border-transparent text-gray-400 hover:text-gray-600"}`}>
+              <CircleDot size={14} /> Voting Config
             </button>
           </div>
         </div>
       </div>
 
       <div className="max-w-4xl mx-auto px-6 py-8">
+      {adminTab === "users" && (<div>
         {/* Add/Edit Form */}
         {showAddForm && (
           <div className="bg-white rounded-2xl border-2 border-indigo-200 p-6 mb-8 shadow-sm">
@@ -2945,7 +3304,170 @@ function AdminPanel({ goHome, allUsers, saveAllUsers }) {
             Scott's admin access cannot be removed as a safety measure.
           </p>
         </div>
+      </div>)}
+
+      {adminTab === "voting" && (
+        <VotingAdminPanelStandalone allUsers={users} />
+      )}
       </div>
+    </div>
+  );
+}
+
+/* =====================================================================
+   VOTING ADMIN (STANDALONE) — Self-contained, loads own data from Firestore
+   ===================================================================== */
+
+function VotingAdminPanelStandalone({ allUsers }) {
+  const [tab, setTab] = useState("rights");
+  const [votesData, setVotesData] = useState(null);
+  const [projectList, setProjectList] = useState([]);
+  const [loaded, setLoaded] = useState(false);
+
+  // Load voting data and projects from Firestore
+  useEffect(() => {
+    (async () => {
+      try {
+        const [vSnap, pSnap] = await Promise.all([
+          getDoc(doc(db, "dashboards", "project-votes")),
+          getDoc(doc(db, "dashboards", "it-command-center")),
+        ]);
+        if (vSnap.exists()) {
+          setVotesData(vSnap.data());
+        } else {
+          setVotesData({ votes: {}, config: { nonVoteable: [], voterRights: {} } });
+        }
+        if (pSnap.exists() && pSnap.data().projects) {
+          setProjectList(pSnap.data().projects);
+        }
+      } catch (err) {
+        console.warn("Voting admin load failed:", err);
+        setVotesData({ votes: {}, config: { nonVoteable: [], voterRights: {} } });
+      }
+      setLoaded(true);
+    })();
+  }, []);
+
+  const votingConfig = votesData?.config || { nonVoteable: [], voterRights: {} };
+  const nonVoteableIds = votingConfig.nonVoteable || [];
+
+  const saveConfig = async (updated) => {
+    setVotesData(updated);
+    try { await setDoc(doc(db, "dashboards", "project-votes"), updated); } catch (err) { console.warn("Voting config save failed:", err); }
+  };
+
+  const toggleVoteable = async (projectId) => {
+    if (!votesData) return;
+    const updated = JSON.parse(JSON.stringify(votesData));
+    const list = updated.config.nonVoteable || [];
+    updated.config.nonVoteable = list.includes(projectId) ? list.filter(id => id !== projectId) : [...list, projectId];
+    await saveConfig(updated);
+  };
+
+  const toggleRight = async (email, sectionId, enabled) => {
+    if (!votesData) return;
+    const updated = JSON.parse(JSON.stringify(votesData));
+    if (!updated.config.voterRights) updated.config.voterRights = {};
+    const normalizedEmail = (email || "").toLowerCase();
+    const current = updated.config.voterRights[normalizedEmail] || [];
+    updated.config.voterRights[normalizedEmail] = enabled ? [...new Set([...current, sectionId])] : current.filter(s => s !== sectionId);
+    await saveConfig(updated);
+  };
+
+  const toggleAllRights = async (email, enable) => {
+    if (!votesData) return;
+    const updated = JSON.parse(JSON.stringify(votesData));
+    if (!updated.config.voterRights) updated.config.voterRights = {};
+    const normalizedEmail = (email || "").toLowerCase();
+    updated.config.voterRights[normalizedEmail] = enable ? VOTING_SECTIONS.map(s => s.id) : [];
+    await saveConfig(updated);
+  };
+
+  if (!loaded) return <div className="flex items-center justify-center py-20"><div className="w-8 h-8 border-3 border-gray-200 border-t-indigo-500 rounded-full animate-spin" /></div>;
+
+  const userEntries = Object.entries(allUsers || {}).sort((a, b) => a[0].localeCompare(b[0]));
+  const activeProjects = projectList.filter(p => p.status !== "Done");
+
+  return (
+    <div>
+      {/* Sub-tabs */}
+      <div className="flex gap-1 mb-6 border-b border-gray-200">
+        {[{ id: "rights", label: "Voter Rights", icon: Users }, { id: "projects", label: "Voteable Projects", icon: ToggleRight }].map(t => (
+          <button key={t.id} onClick={() => setTab(t.id)} className={`flex items-center gap-1.5 px-4 py-2 text-xs font-medium border-b-2 transition-all ${tab === t.id ? "border-indigo-600 text-indigo-700" : "border-transparent text-gray-400 hover:text-gray-600"}`}>
+            <t.icon size={13} /> {t.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Voter Rights */}
+      {tab === "rights" && (
+        <div className="space-y-3">
+          <p className="text-xs text-gray-500 mb-4">Grant voting rights per department. Each voter gets {DOTS_PER_SECTION} dots per section they have access to, max {MAX_DOTS_PER_PROJECT} per project.</p>
+          {userEntries.length === 0 && <p className="text-xs text-gray-400 py-6 text-center">No users configured. Add users in the Users tab first.</p>}
+          {userEntries.map(([email, userData]) => {
+            const rights = votingConfig.voterRights?.[email] || [];
+            const allEnabled = VOTING_SECTIONS.every(s => rights.includes(s.id));
+            return (
+              <div key={email} className="p-4 bg-white rounded-xl border border-gray-200 hover:shadow-sm transition-all">
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    <div className={`w-9 h-9 rounded-full flex items-center justify-center text-white text-[11px] font-bold ${userData.role === "admin" ? "bg-gradient-to-br from-indigo-500 to-purple-600" : "bg-gradient-to-br from-gray-600 to-gray-800"}`}>
+                      {String(userData.name || email || "").split(" ").map(n => (n[0] || "").toUpperCase()).join("").slice(0, 2)}
+                    </div>
+                    <div>
+                      <div className="text-sm font-medium text-gray-900">{userData.name || email}</div>
+                      <div className="text-[10px] text-gray-400">{email}</div>
+                    </div>
+                  </div>
+                  <button onClick={() => toggleAllRights(email, !allEnabled)} className={`text-[10px] font-medium px-2.5 py-1 rounded-lg transition-all ${allEnabled ? "bg-indigo-100 text-indigo-700 hover:bg-indigo-200" : "bg-gray-100 text-gray-500 hover:bg-gray-200"}`}>
+                    {allEnabled ? "Remove All" : "Grant All"}
+                  </button>
+                </div>
+                <div className="flex gap-2">
+                  {VOTING_SECTIONS.map(({ id, label, text: sText, bg: sBg, border: sBorder }) => {
+                    const has = rights.includes(id);
+                    return (
+                      <button key={id} onClick={() => toggleRight(email, id, !has)}
+                        className={`flex items-center gap-1 px-3 py-1.5 text-[10px] font-medium rounded-lg border transition-all ${has ? `${sBg} ${sText} ${sBorder}` : "bg-gray-50 text-gray-400 border-gray-200 hover:bg-gray-100"}`}>
+                        {has && <Check size={10} />}{label.split("&")[0].trim()}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Voteable Projects */}
+      {tab === "projects" && (
+        <div className="space-y-2">
+          <p className="text-xs text-gray-500 mb-4">Toggle projects on or off for voting. Non-voteable projects won't appear in the voting view.</p>
+          {activeProjects.sort((a, b) => {
+            const aDept = (a.departments || [])[0] || "";
+            const bDept = (b.departments || [])[0] || "";
+            return aDept.localeCompare(bDept) || a.name.localeCompare(b.name);
+          }).map(p => {
+            const isOff = nonVoteableIds.includes(p.id);
+            return (
+              <div key={p.id} className="flex items-center gap-3 p-3 bg-white rounded-lg border border-gray-200 hover:shadow-sm transition-all">
+                <button onClick={() => toggleVoteable(p.id)} className="flex-shrink-0">
+                  {isOff ? <ToggleLeft size={24} className="text-gray-300" /> : <ToggleRight size={24} className="text-emerald-500" />}
+                </button>
+                <div className="flex-1 min-w-0">
+                  <span className={`text-sm font-medium block truncate ${isOff ? "text-gray-400" : "text-gray-900"}`}>{p.name}</span>
+                  <span className="text-[10px] text-gray-500">{String(p.owner || "")} • {(p.departments || []).join(", ")}</span>
+                </div>
+                <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0 ${isOff ? "bg-gray-100 text-gray-500" : "bg-emerald-50 text-emerald-700"}`}>
+                  {isOff ? "Off" : "Voteable"}
+                </span>
+              </div>
+            );
+          })}
+          {activeProjects.length === 0 && <p className="text-xs text-gray-400 py-6 text-center">No active projects found.</p>}
+        </div>
+      )}
     </div>
   );
 }
@@ -4300,11 +4822,289 @@ const YODA_REPORTS = [
     url: "https://aubuchon-it-command-center.vercel.app/reports/daily-sales-latest.html",
     icon: TrendingUp,
   },
+  {
+    id: "live-sales",
+    label: "Live Sales",
+    description: "Today's sales vs. plan — company total, top 20 stores, and top 20 products",
+    icon: Zap,
+    view: "live-sales",
+  },
 ];
 
-function YODAReports({ goHome }) {
+
+/* ============================================================
+   LIVE SALES VIEW — fetches today's data from YODA proxy
+   ============================================================ */
+const YODA_PROXY = "https://yoda-aubuchon.duckdns.org:5088";
+const YODA_KEY = "aubuchon-yoda-2026";
+
+function runDAX(dax) {
+  return fetch(YODA_PROXY + "/query", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "X-API-Key": YODA_KEY },
+    body: JSON.stringify({ dax }),
+  })
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      if (d.status === "ok") return d.rows;
+      throw new Error(d.error || "YODA query failed");
+    });
+}
+
+function LiveSalesView({ goBack }) {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [companyTotal, setCompanyTotal] = useState(null);
+  const [topStores, setTopStores] = useState([]);
+  const [topProducts, setTopProducts] = useState([]);
+  const [asOf, setAsOf] = useState("");
+
+  useEffect(function () {
+    var now = new Date();
+    var y = now.getFullYear(), m = now.getMonth() + 1, d = now.getDate();
+    setAsOf(now.toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" }));
+
+    var dateFilter = "DATE(" + y + ", " + m + ", " + d + ")";
+
+    var storeQuery = "EVALUATE FILTER(SELECTCOLUMNS(RPT_SCORECARD_BY_DAY, \"Store\", RPT_SCORECARD_BY_DAY[LOCATION_CD], \"Sales\", RPT_SCORECARD_BY_DAY[ACTUAL_SALES_AMT], \"Plan\", RPT_SCORECARD_BY_DAY[TARGET_DAILY_SALES_AMT], \"GP\", RPT_SCORECARD_BY_DAY[GROSS_PROFIT_AMT], \"TxnCnt\", RPT_SCORECARD_BY_DAY[TRANSACTION_CNT], \"Date\", RPT_SCORECARD_BY_DAY[TRANSACTION_DT]), [Date] = " + dateFilter + ")";
+
+    var dimQuery = "EVALUATE SELECTCOLUMNS(DIM_STORE, \"Code\", DIM_STORE[STORE_CD], \"Name\", DIM_STORE[STORE_NM], \"City\", DIM_STORE[STORE_CITY_NM], \"State\", DIM_STORE[STORE_STATE_CD])";
+
+    var productQuery = "EVALUATE CALCULATETABLE(TOPN(20, ADDCOLUMNS(VALUES(DIM_PRODUCT[PRODUCT_DESC]), \"Sales\", [Net Sales GL Line]), [Sales], DESC), DIM_TRANSACTION_DATE[TRANSACTION_FULL_DT] = " + dateFilter + ")";
+
+    Promise.all([
+      runDAX(storeQuery),
+      runDAX(dimQuery),
+      runDAX(productQuery).catch(function () { return []; }),
+    ])
+      .then(function (results) {
+        var storeRows = results[0], dimRows = results[1], prodRows = results[2];
+
+        var nameMap = {};
+        dimRows.forEach(function (r) { nameMap[String(r.Code).replace(/^0+/, "")] = r; });
+
+        var totalSales = 0, totalPlan = 0, totalGP = 0, totalTxn = 0;
+        storeRows.forEach(function (r) {
+          totalSales += (r.Sales || 0);
+          totalPlan += (r.Plan || 0);
+          totalGP += (r.GP || 0);
+          totalTxn += (r.TxnCnt || 0);
+        });
+        setCompanyTotal({ sales: totalSales, plan: totalPlan, gp: totalGP, txn: totalTxn });
+
+        var sorted = storeRows.slice()
+          .sort(function (a, b) { return (b.Sales || 0) - (a.Sales || 0); })
+          .slice(0, 20)
+          .map(function (r) {
+            var info = nameMap[String(r.Store)] || {};
+            return { code: r.Store, name: info.Name || "Store " + r.Store, city: info.City || "", state: info.State || "", sales: r.Sales || 0, plan: r.Plan || 0, gp: r.GP || 0, txnCnt: r.TxnCnt || 0 };
+          });
+        setTopStores(sorted);
+
+        var products = (prodRows || [])
+          .filter(function (r) { return r.Sales && r.Sales > 0; })
+          .sort(function (a, b) { return (b.Sales || 0) - (a.Sales || 0); })
+          .slice(0, 20)
+          .map(function (r, i) {
+            var desc = r["DIM_PRODUCT[PRODUCT_DESC"] || r.PRODUCT_DESC || "Unknown";
+            return { rank: i + 1, desc: desc, sales: r.Sales || 0 };
+          });
+        setTopProducts(products);
+
+        setLoading(false);
+      })
+      .catch(function (err) {
+        setError(err.message);
+        setLoading(false);
+      });
+  }, []);
+
+  var fmtD = function (n) { return "$" + Math.round(n || 0).toLocaleString(); };
+  var fmtPct = function (actual, plan) {
+    if (!plan) return "\u2014";
+    return ((actual / plan) * 100).toFixed(1) + "%";
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-amber-50 to-slate-100 p-4 md:p-8">
+        <div className="max-w-5xl mx-auto">
+          <button onClick={goBack} className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium shadow-sm mb-6">
+            <ArrowLeft className="w-4 h-4" /> Back to Reports
+          </button>
+          <div className="flex flex-col items-center justify-center py-24">
+            <div className="w-10 h-10 border-3 border-amber-200 border-t-amber-600 rounded-full animate-spin mb-4" />
+            <p className="text-slate-600 font-medium">Fetching live sales from YODA...</p>
+            <p className="text-slate-400 text-sm mt-1">Querying today's data across all stores</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-red-50 to-slate-100 p-4 md:p-8">
+        <div className="max-w-5xl mx-auto">
+          <button onClick={goBack} className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium shadow-sm mb-6">
+            <ArrowLeft className="w-4 h-4" /> Back to Reports
+          </button>
+          <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
+            <AlertTriangle className="w-8 h-8 text-red-500 mx-auto mb-3" />
+            <h3 className="text-lg font-bold text-red-800 mb-2">Unable to load live sales</h3>
+            <p className="text-red-600 text-sm">{error}</p>
+            <p className="text-red-400 text-xs mt-2">The YODA proxy may be unavailable, or today's data hasn't loaded yet.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  var vTotal = (companyTotal.sales || 0) - (companyTotal.plan || 0);
+  var vColor = vTotal >= 0 ? "text-emerald-700" : "text-red-600";
+  var vBg = vTotal >= 0 ? "bg-emerald-50 border-emerald-200" : "bg-red-50 border-red-200";
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50 to-slate-100 p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-amber-50 to-slate-100 p-4 md:p-8">
+      <div className="max-w-5xl mx-auto">
+        <div className="flex items-center gap-4 mb-6">
+          <button onClick={goBack} className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium shadow-sm">
+            <ArrowLeft className="w-4 h-4" /> Back
+          </button>
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg">
+              <Zap className="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold text-slate-900">Live Sales</h1>
+              <p className="text-slate-500 text-xs md:text-sm">As of {asOf}</p>
+            </div>
+          </div>
+        </div>
+
+        <div className={"rounded-xl border-2 p-5 md:p-6 mb-6 " + vBg}>
+          <div className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2">Company Total — Today vs Plan</div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div>
+              <div className="text-xs text-slate-500">Sales</div>
+              <div className="text-xl md:text-2xl font-bold text-slate-900">{fmtD(companyTotal.sales)}</div>
+            </div>
+            <div>
+              <div className="text-xs text-slate-500">Plan</div>
+              <div className="text-xl md:text-2xl font-bold text-slate-600">{fmtD(companyTotal.plan)}</div>
+            </div>
+            <div>
+              <div className="text-xs text-slate-500">Variance</div>
+              <div className={"text-xl md:text-2xl font-bold " + vColor}>{vTotal >= 0 ? "+" : ""}{fmtD(vTotal)}</div>
+            </div>
+            <div>
+              <div className="text-xs text-slate-500">% to Plan</div>
+              <div className={"text-xl md:text-2xl font-bold " + vColor}>{fmtPct(companyTotal.sales, companyTotal.plan)}</div>
+            </div>
+          </div>
+          <div className="flex flex-wrap gap-6 mt-3 pt-3 border-t border-slate-200 text-sm text-slate-600">
+            <span><strong>{Math.round(companyTotal.txn || 0).toLocaleString()}</strong> transactions</span>
+            <span><strong>{fmtD(companyTotal.gp)}</strong> gross profit</span>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm mb-6 overflow-hidden">
+          <div className="px-5 py-4 border-b border-slate-100 flex items-center gap-2">
+            <BarChart3 className="w-5 h-5 text-amber-600" />
+            <h2 className="font-bold text-slate-900">Top 20 Stores by Sales</h2>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-slate-50 text-left">
+                  <th className="px-3 py-2 font-semibold text-slate-600 text-xs">#</th>
+                  <th className="px-3 py-2 font-semibold text-slate-600 text-xs">Store</th>
+                  <th className="px-3 py-2 font-semibold text-slate-600 text-xs text-right">Sales</th>
+                  <th className="px-3 py-2 font-semibold text-slate-600 text-xs text-right">Plan</th>
+                  <th className="px-3 py-2 font-semibold text-slate-600 text-xs text-right">Var</th>
+                  <th className="px-3 py-2 font-semibold text-slate-600 text-xs text-right">% Plan</th>
+                  <th className="px-3 py-2 font-semibold text-slate-600 text-xs text-right hidden md:table-cell">Txns</th>
+                </tr>
+              </thead>
+              <tbody>
+                {topStores.map(function (s, i) {
+                  var v = (s.sales || 0) - (s.plan || 0);
+                  var vc = v >= 0 ? "text-emerald-700" : "text-red-600";
+                  var tc = function (str) { return String(str || "").replace(/\b\w+/g, function (w) { return w.charAt(0) + w.slice(1).toLowerCase(); }); };
+                  return (
+                    <tr key={s.code} className={i % 2 === 0 ? "bg-white" : "bg-slate-50/50"}>
+                      <td className="px-3 py-2 text-slate-400 font-medium">{i + 1}</td>
+                      <td className="px-3 py-2">
+                        <div className="font-semibold text-slate-900">{tc(s.name)}</div>
+                        <div className="text-xs text-slate-400">{tc(s.city)}{s.state ? ", " + s.state : ""} · #{s.code}</div>
+                      </td>
+                      <td className="px-3 py-2 text-right font-semibold text-slate-900">{fmtD(s.sales)}</td>
+                      <td className="px-3 py-2 text-right text-slate-500">{fmtD(s.plan)}</td>
+                      <td className={"px-3 py-2 text-right font-medium " + vc}>{v >= 0 ? "+" : ""}{fmtD(v)}</td>
+                      <td className={"px-3 py-2 text-right font-medium " + vc}>{fmtPct(s.sales, s.plan)}</td>
+                      <td className="px-3 py-2 text-right text-slate-500 hidden md:table-cell">{Math.round(s.txnCnt || 0).toLocaleString()}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {topProducts.length > 0 ? (
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm mb-6 overflow-hidden">
+            <div className="px-5 py-4 border-b border-slate-100 flex items-center gap-2">
+              <Tag className="w-5 h-5 text-amber-600" />
+              <h2 className="font-bold text-slate-900">Top 20 Products by Sales</h2>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-slate-50 text-left">
+                    <th className="px-3 py-2 font-semibold text-slate-600 text-xs">#</th>
+                    <th className="px-3 py-2 font-semibold text-slate-600 text-xs">Product</th>
+                    <th className="px-3 py-2 font-semibold text-slate-600 text-xs text-right">Net Sales GL</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {topProducts.map(function (p, i) {
+                    var tc = function (str) { return String(str || "").replace(/\b\w+/g, function (w) { return w.charAt(0) + w.slice(1).toLowerCase(); }); };
+                    return (
+                      <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-slate-50/50"}>
+                        <td className="px-3 py-2 text-slate-400 font-medium">{p.rank}</td>
+                        <td className="px-3 py-2 font-medium text-slate-900">{tc(p.desc)}</td>
+                        <td className="px-3 py-2 text-right font-semibold text-slate-900">{fmtD(p.sales)}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        ) : (
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm mb-6 p-6 text-center">
+            <Tag className="w-6 h-6 text-slate-300 mx-auto mb-2" />
+            <p className="text-slate-500 text-sm">Product-level data is not available for today yet.</p>
+          </div>
+        )}
+
+        <div className="text-center text-xs text-slate-400 py-4">
+          Data from YODA · Power BI / MDM Semantic Model
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function YODAReports({ goHome }) {
+  const [subView, setSubView] = useState(null);
+
+  if (subView === "live-sales") {
+    return <LiveSalesView goBack={function () { setSubView(null); }} />;
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50 to-slate-100 p-4 md:p-8">
       <div className="max-w-5xl mx-auto">
         <div className="flex items-center gap-4 mb-8">
           <button
@@ -4326,8 +5126,30 @@ function YODAReports({ goHome }) {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {YODA_REPORTS.map(rpt => {
-            const Icon = rpt.icon || FileText;
+          {YODA_REPORTS.map(function (rpt) {
+            var Icon = rpt.icon || FileText;
+            if (rpt.view) {
+              return (
+                <button
+                  key={rpt.id}
+                  onClick={function () { setSubView(rpt.view); }}
+                  className="group bg-white rounded-xl border border-slate-200 p-5 hover:border-emerald-400 hover:shadow-lg transition-all text-left cursor-pointer"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-center flex-shrink-0">
+                      <Icon className="w-5 h-5 text-amber-700" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-semibold text-slate-900 group-hover:text-emerald-700">{rpt.label}</h3>
+                        <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-emerald-600" />
+                      </div>
+                      <p className="text-sm text-slate-600 mt-1">{rpt.description}</p>
+                    </div>
+                  </div>
+                </button>
+              );
+            }
             return (
               <a
                 key={rpt.id}
@@ -4385,7 +5207,7 @@ export default function App() {
 
   // Section routing — only if user has access
   if (activeSection === "projects" && canAccessSection("projects")) {
-    return <ITProjectDashboard goHome={() => setActiveSection(null)} />;
+    return <ITProjectDashboard goHome={() => setActiveSection(null)} isAdmin={isAdmin} allAccessUsers={allUsers} />;
   }
 
   if (activeSection === "ap-invoices" && canAccessSection("ap-invoices")) {
