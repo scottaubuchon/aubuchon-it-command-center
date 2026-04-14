@@ -2559,11 +2559,11 @@ const SECTIONS = [
    Structure: { users: { "email": { name, role, sections[], readOnly } } }
    ===================================================================== */
 
-const SUPER_ADMIN_EMAILS = ["scott@aubuchon.com", "scott@theaubuchonfamily.com"];
+const SUPER_ADMIN_EMAILS = ["scott@aubuchon.com"];
 
 const DEFAULT_ACCESS = {
   "scott@aubuchon.com": { name: "Scott Aubuchon", role: "admin", sections: ["all"], readOnly: false },
-  "scott@theaubuchonfamily.com": { name: "Scott Aubuchon", role: "admin", sections: ["all"], readOnly: false },
+  "scott@theaubuchonfamily.com": { name: "Scott Aubuchon", role: "viewer", sections: ["yoda"], readOnly: true },
   "will@aubuchon.com": { name: "Will Aubuchon", role: "viewer", sections: ["yoda"], readOnly: true },
 };
 
