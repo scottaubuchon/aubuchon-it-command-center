@@ -4866,47 +4866,72 @@ function LiveSalesView({ goBack }) {
 
     var dateFilter = "DATE(" + y + ", " + m + ", " + d + ")";
 
-    var storeQuery = "EVALUATE FILTER(SELECTCOLUMNS(RPT_SCORECARD_BY_DAY, \"Store\", RPT_SCORECARD_BY_DAY[LOCATION_CD], \"Sales\", RPT_SCORECARD_BY_DAY[ACTUAL_SALES_AMT], \"Plan\", RPT_SCORECARD_BY_DAY[TARGET_DAILY_SALES_AMT], \"GP\", RPT_SCORECARD_BY_DAY[GROSS_PROFIT_AMT], \"TxnCnt\", RPT_SCORECARD_BY_DAY[TRANSACTION_CNT], \"Date\", RPT_SCORECARD_BY_DAY[TRANSACTION_DT]), [Date] = " + dateFilter + ")";
+    // FCT_LIVE_SALE has today's live store-level sales (refreshes every 15 min)
+    var liveStoreQuery = "EVALUATE SELECTCOLUMNS(FCT_LIVE_SALE, \"Store\", FCT_LIVE_SALE[STORE_CD], \"Sales\", FCT_LIVE_SALE[NET_SALES], \"Txns\", FCT_LIVE_SALE[TRANSACTION_CNT], \"COGS\", FCT_LIVE_SALE[COST_OF_GOODS], \"Customers\", FCT_LIVE_SALE[CUSTOMER_CNT], \"Updated\", FCT_LIVE_SALE[LAST_UPDATED_TS])";
+
+    // Plan from RPT_SCORECARD_BY_DAY for today
+    var planQuery = "EVALUATE FILTER(SELECTCOLUMNS(RPT_SCORECARD_BY_DAY, \"Store\", RPT_SCORECARD_BY_DAY[LOCATION_CD], \"Plan\", RPT_SCORECARD_BY_DAY[TARGET_DAILY_SALES_AMT], \"Date\", RPT_SCORECARD_BY_DAY[TRANSACTION_DT]), [Date] = " + dateFilter + ")";
 
     var dimQuery = "EVALUATE SELECTCOLUMNS(DIM_STORE, \"Code\", DIM_STORE[STORE_CD], \"Name\", DIM_STORE[STORE_NM], \"City\", DIM_STORE[STORE_CITY_NM], \"State\", DIM_STORE[STORE_STATE_CD])";
 
-    var productQuery = "EVALUATE CALCULATETABLE(TOPN(20, ADDCOLUMNS(VALUES(DIM_PRODUCT[PRODUCT_DESC]), \"Sales\", [Net Sales GL Line]), [Sales], DESC), DIM_TRANSACTION_DATE[TRANSACTION_FULL_DT] = " + dateFilter + ")";
+    // Top 20 products from live transaction lines
+    var productQuery = "EVALUATE TOPN(20, SUMMARIZE(FCT_LIVE_SALE_TRANSACTION_LINE, FCT_LIVE_SALE_TRANSACTION_LINE[PRODUCT_DESC], \"Sales\", SUM(FCT_LIVE_SALE_TRANSACTION_LINE[ITEM_EXTENDED_AMT])), [Sales], DESC)";
 
     Promise.all([
-      runDAX(storeQuery),
+      runDAX(liveStoreQuery),
+      runDAX(planQuery),
       runDAX(dimQuery),
       runDAX(productQuery).catch(function () { return []; }),
     ])
       .then(function (results) {
-        var storeRows = results[0], dimRows = results[1], prodRows = results[2];
+        var liveRows = results[0], planRows = results[1], dimRows = results[2], prodRows = results[3];
 
+        // Build lookups
         var nameMap = {};
         dimRows.forEach(function (r) { nameMap[String(r.Code).replace(/^0+/, "")] = r; });
+        var planMap = {};
+        planRows.forEach(function (r) { planMap[String(r.Store)] = r.Plan || 0; });
 
-        var totalSales = 0, totalPlan = 0, totalGP = 0, totalTxn = 0;
-        storeRows.forEach(function (r) {
+        // Find latest update timestamp
+        var latestUpdate = "";
+        liveRows.forEach(function (r) { if (r.Updated && r.Updated > latestUpdate) latestUpdate = r.Updated; });
+        if (latestUpdate) {
+          var ud = new Date(latestUpdate);
+          setAsOf(ud.toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" }) + " (live)");
+        }
+
+        // Company totals
+        var totalSales = 0, totalPlan = 0, totalCOGS = 0, totalTxn = 0, totalCust = 0;
+        liveRows.forEach(function (r) {
+          var storeKey = String(r.Store);
           totalSales += (r.Sales || 0);
-          totalPlan += (r.Plan || 0);
-          totalGP += (r.GP || 0);
-          totalTxn += (r.TxnCnt || 0);
+          totalCOGS += (r.COGS || 0);
+          totalTxn += (r.Txns || 0);
+          totalCust += (r.Customers || 0);
         });
-        setCompanyTotal({ sales: totalSales, plan: totalPlan, gp: totalGP, txn: totalTxn });
+        planRows.forEach(function (r) { totalPlan += (r.Plan || 0); });
+        var totalGP = totalSales - totalCOGS;
+        setCompanyTotal({ sales: totalSales, plan: totalPlan, gp: totalGP, txn: totalTxn, customers: totalCust });
 
-        var sorted = storeRows.slice()
+        // Top 20 stores by sales
+        var sorted = liveRows.slice()
           .sort(function (a, b) { return (b.Sales || 0) - (a.Sales || 0); })
           .slice(0, 20)
           .map(function (r) {
-            var info = nameMap[String(r.Store)] || {};
-            return { code: r.Store, name: info.Name || "Store " + r.Store, city: info.City || "", state: info.State || "", sales: r.Sales || 0, plan: r.Plan || 0, gp: r.GP || 0, txnCnt: r.TxnCnt || 0 };
+            var storeKey = String(r.Store);
+            var info = nameMap[storeKey] || {};
+            var plan = planMap[storeKey] || 0;
+            return { code: r.Store, name: info.Name || "Store " + r.Store, city: info.City || "", state: info.State || "", sales: r.Sales || 0, plan: plan, gp: (r.Sales || 0) - (r.COGS || 0), txnCnt: r.Txns || 0 };
           });
         setTopStores(sorted);
 
+        // Top 20 products
         var products = (prodRows || [])
           .filter(function (r) { return r.Sales && r.Sales > 0; })
           .sort(function (a, b) { return (b.Sales || 0) - (a.Sales || 0); })
           .slice(0, 20)
           .map(function (r, i) {
-            var desc = r["DIM_PRODUCT[PRODUCT_DESC"] || r.PRODUCT_DESC || "Unknown";
+            var desc = r["FCT_LIVE_SALE_TRANSACTION_LINE[PRODUCT_DESC"] || r.PRODUCT_DESC || "Unknown";
             return { rank: i + 1, desc: desc, sales: r.Sales || 0 };
           });
         setTopProducts(products);
