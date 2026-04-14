@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
-import { auth, googleProvider, signInWithPopup, signOut, ALLOWED_EMAILS } from "./firebase";
+import { auth, googleProvider, signInWithPopup, signOut } from "./firebase";
 import { Monitor, Wrench, LogOut, ShieldAlert } from "lucide-react";
 
 function LoginScreen() {
@@ -11,12 +11,7 @@ function LoginScreen() {
     setLoading(true);
     setError(null);
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const email = result.user.email.toLowerCase();
-      if (!ALLOWED_EMAILS.includes(email)) {
-        await signOut(auth);
-        setError("Access denied. This account is not authorized.");
-      }
+      await signInWithPopup(auth, googleProvider);
     } catch (err) {
       if (err.code === "auth/popup-closed-by-user") {
         setError(null);
@@ -39,7 +34,7 @@ function LoginScreen() {
           </div>
         </div>
 
-        <h1 className="text-2xl font-bold text-white mb-1">Scott's Workbench</h1>
+        <h1 className="text-2xl font-bold text-white mb-1">IT Workbench</h1>
         <p className="text-blue-200/70 text-sm mb-8">Aubuchon IT Operations Hub</p>
 
         {error && (
@@ -64,34 +59,6 @@ function LoginScreen() {
         </button>
 
         <p className="text-blue-300/40 text-xs mt-6">Authorized personnel only</p>
-      </div>
-    </div>
-  );
-}
-
-function UnauthorizedScreen({ user }) {
-  const handleSignOut = async () => {
-    await signOut(auth);
-  };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-red-950 to-slate-900 flex items-center justify-center p-4">
-      <div className="bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 p-8 max-w-sm w-full text-center">
-        <div className="flex justify-center mb-6">
-          <div className="w-16 h-16 bg-gradient-to-br from-red-500 to-red-700 rounded-2xl flex items-center justify-center shadow-lg">
-            <ShieldAlert size={30} className="text-white" />
-          </div>
-        </div>
-        <h1 className="text-2xl font-bold text-white mb-2">Access Denied</h1>
-        <p className="text-red-200/70 text-sm mb-2">Signed in as {user.email}</p>
-        <p className="text-red-200/50 text-xs mb-6">This account is not authorized to access Scott's Workbench.</p>
-        <button
-          onClick={handleSignOut}
-          className="w-full bg-white/10 hover:bg-white/20 text-white font-medium py-3 px-4 rounded-xl border border-white/20 transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
-        >
-          <LogOut size={16} />
-          Sign out and try another account
-        </button>
       </div>
     </div>
   );
@@ -124,9 +91,6 @@ export default function AuthGate({ children }) {
     return <LoginScreen />;
   }
 
-  if (!ALLOWED_EMAILS.includes(user.email.toLowerCase())) {
-    return <UnauthorizedScreen user={user} />;
-  }
-
+  // Access control is now handled by App.jsx using Firestore-based permissions
   return children;
 }
