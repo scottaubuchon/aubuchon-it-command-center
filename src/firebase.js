@@ -3,7 +3,7 @@ import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from "firebase/
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
-// Firebase configuration â replace with your project's config from Firebase Console
+// Firebase configuration - replace with your project's config from Firebase Console
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
   authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -19,10 +19,4 @@ const db = getFirestore(app);
 const storage = getStorage(app);
 const googleProvider = new GoogleAuthProvider();
 
-// Only allow these email addresses
-const ALLOWED_EMAILS = [
-  "scott@aubuchon.com",
-  "scott@theaubuchonfamily.com",
-];
-
-export { auth, googleProvider, signInWithPopup, signOut, ALLOWED_EMAILS, db, storage };
+export { auth, googleProvider, signInWithPopup, signOut, db, storage };
