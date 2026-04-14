@@ -7,7 +7,8 @@ import {
   FolderOpen, Filter, ChevronUp, Zap, MoveRight, LogOut, Users,
   Building2, History, FileText, Tag, Eye, Briefcase, Archive, Inbox,
   ListChecks, CircleDot, RotateCcw, ArrowUpDown,
-  Home, CreditCard, TrendingUp, Database, Lock, ArrowLeft, Link2, FolderKanban
+  Home, CreditCard, TrendingUp, Database, Lock, ArrowLeft, Link2, FolderKanban,
+  Settings, UserPlus, ToggleLeft, ToggleRight, Check
 } from "lucide-react";
 import { auth, signOut, db, storage } from "./firebase";
 import { doc, getDoc, setDoc, addDoc, collection, getDocs, query, orderBy, updateDoc, deleteDoc, serverTimestamp } from "firebase/firestore";
@@ -2552,9 +2553,407 @@ const SECTIONS = [
   },
 ];
 
-function HomeScreen({ onNavigate }) {
-  const [apInvoiceCount, setApInvoiceCount] = useState(null);
+/* =====================================================================
+   USER ACCESS CONTROL
+   Firestore doc: dashboards/user-access
+   Structure: { users: { "email": { name, role, sections[], readOnly } } }
+   ===================================================================== */
+
+const SUPER_ADMIN_EMAIL = "scott@aubuchon.com";
+
+const DEFAULT_ACCESS = {
+  [SUPER_ADMIN_EMAIL]: { name: "Scott Aubuchon", role: "admin", sections: ["all"], readOnly: false },
+  "will@aubuchon.com": { name: "Will Aubuchon", role: "viewer", sections: ["yoda"], readOnly: true },
+};
+
+function useUserAccess() {
+  const [userAccess, setUserAccess] = useState(null);   // null = loading, false = denied
+  const [allUsers, setAllUsers] = useState({});
+  const userEmail = (auth.currentUser?.email || "").toLowerCase();
+
   useEffect(() => {
+    if (!userEmail) return;
+    (async () => {
+      try {
+        const docRef = doc(db, "dashboards", "user-access");
+        const snap = await getDoc(docRef);
+        if (snap.exists()) {
+          const users = snap.data().users || {};
+          setAllUsers(users);
+          const me = users[userEmail];
+          if (me) {
+            setUserAccess(me);
+          } else if (userEmail === SUPER_ADMIN_EMAIL) {
+            const adminEntry = { name: "Scott Aubuchon", role: "admin", sections: ["all"], readOnly: false };
+            users[userEmail] = adminEntry;
+            await setDoc(docRef, { users }, { merge: true });
+            setUserAccess(adminEntry);
+            setAllUsers(users);
+          } else {
+            setUserAccess(false);
+          }
+        } else {
+          await setDoc(docRef, { users: DEFAULT_ACCESS });
+          setAllUsers(DEFAULT_ACCESS);
+          setUserAccess(DEFAULT_ACCESS[userEmail] || false);
+        }
+      } catch (e) {
+        console.error("Failed to load user access:", e);
+        if (userEmail === SUPER_ADMIN_EMAIL) {
+          setUserAccess({ name: "Scott Aubuchon", role: "admin", sections: ["all"], readOnly: false });
+        } else {
+          setUserAccess(false);
+        }
+      }
+    })();
+  }, [userEmail]);
+
+  const isAdmin = userAccess?.role === "admin";
+
+  const canAccessSection = useCallback((sectionId) => {
+    if (!userAccess) return false;
+    if (userAccess.sections?.includes("all")) return true;
+    return userAccess.sections?.includes(sectionId) || false;
+  }, [userAccess]);
+
+  const refreshUsers = useCallback(async () => {
+    try {
+      const snap = await getDoc(doc(db, "dashboards", "user-access"));
+      if (snap.exists()) {
+        const users = snap.data().users || {};
+        setAllUsers(users);
+        setUserAccess(users[userEmail] || false);
+      }
+    } catch (e) { console.error(e); }
+  }, [userEmail]);
+
+  const saveAllUsers = useCallback(async (updatedUsers) => {
+    // Safety: never allow removing super admin
+    if (!updatedUsers[SUPER_ADMIN_EMAIL]) {
+      updatedUsers[SUPER_ADMIN_EMAIL] = { name: "Scott Aubuchon", role: "admin", sections: ["all"], readOnly: false };
+    }
+    await setDoc(doc(db, "dashboards", "user-access"), { users: updatedUsers });
+    setAllUsers(updatedUsers);
+    const me = updatedUsers[userEmail];
+    if (me) setUserAccess(me);
+  }, [userEmail]);
+
+  return { userAccess, allUsers, isAdmin, canAccessSection, saveAllUsers, refreshUsers, userEmail };
+}
+
+/* =====================================================================
+   ACCESS DENIED SCREEN
+   ===================================================================== */
+
+function AccessDeniedScreen() {
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 flex items-center justify-center">
+      <div className="text-center max-w-md px-6">
+        <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+          <Lock size={28} className="text-red-400" />
+        </div>
+        <h1 className="text-xl font-bold text-gray-900 mb-2">Access Required</h1>
+        <p className="text-sm text-gray-500 mb-6">
+          Your account ({auth.currentUser?.email}) doesn't have access to this dashboard yet.
+          Please contact your administrator to request access.
+        </p>
+        <button onClick={() => signOut(auth)} className="px-4 py-2 bg-gray-800 text-white text-sm font-medium rounded-lg hover:bg-gray-700 transition-colors">
+          Sign Out
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* =====================================================================
+   ADMIN PANEL — User Access Management
+   ===================================================================== */
+
+function AdminPanel({ goHome, allUsers, saveAllUsers }) {
+  const [users, setUsers] = useState({});
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [editingEmail, setEditingEmail] = useState(null);
+  const [formEmail, setFormEmail] = useState("");
+  const [formName, setFormName] = useState("");
+  const [formRole, setFormRole] = useState("viewer");
+  const [formSections, setFormSections] = useState([]);
+  const [formReadOnly, setFormReadOnly] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(null);
+
+  useEffect(() => { setUsers({ ...allUsers }); }, [allUsers]);
+
+  const sectionOptions = SECTIONS.map(s => ({ id: s.id, label: s.label }));
+
+  const resetForm = () => {
+    setFormEmail(""); setFormName(""); setFormRole("viewer");
+    setFormSections([]); setFormReadOnly(true);
+    setShowAddForm(false); setEditingEmail(null);
+  };
+
+  const startEdit = (email) => {
+    const u = users[email];
+    if (!u) return;
+    setEditingEmail(email);
+    setFormEmail(email);
+    setFormName(u.name || "");
+    setFormRole(u.role || "viewer");
+    setFormSections(u.sections?.includes("all") ? sectionOptions.map(s => s.id) : (u.sections || []));
+    setFormReadOnly(u.readOnly !== false);
+    setShowAddForm(true);
+  };
+
+  const startAdd = () => {
+    resetForm();
+    setShowAddForm(true);
+  };
+
+  const handleSave = async () => {
+    const email = formEmail.toLowerCase().trim();
+    if (!email || !email.includes("@")) return;
+    setSaving(true);
+    try {
+      const updated = { ...users };
+      const isAll = formRole === "admin" || formSections.length === sectionOptions.length;
+      updated[email] = {
+        name: formName.trim(),
+        role: formRole,
+        sections: isAll ? ["all"] : formSections,
+        readOnly: formRole === "admin" ? false : formReadOnly,
+      };
+      await saveAllUsers(updated);
+      setUsers(updated);
+      resetForm();
+    } catch (e) {
+      console.error("Save failed:", e);
+    }
+    setSaving(false);
+  };
+
+  const handleDelete = async (email) => {
+    if (email === SUPER_ADMIN_EMAIL) return;
+    setSaving(true);
+    try {
+      const updated = { ...users };
+      delete updated[email];
+      await saveAllUsers(updated);
+      setUsers(updated);
+      setConfirmDelete(null);
+    } catch (e) { console.error(e); }
+    setSaving(false);
+  };
+
+  const toggleSection = (sectionId) => {
+    setFormSections(prev => prev.includes(sectionId) ? prev.filter(s => s !== sectionId) : [...prev, sectionId]);
+  };
+
+  const toggleAllSections = () => {
+    if (formSections.length === sectionOptions.length) {
+      setFormSections([]);
+    } else {
+      setFormSections(sectionOptions.map(s => s.id));
+    }
+  };
+
+  const userEntries = Object.entries(users).sort((a, b) => {
+    if (a[1].role === "admin" && b[1].role !== "admin") return -1;
+    if (b[1].role === "admin" && a[1].role !== "admin") return 1;
+    return a[0].localeCompare(b[0]);
+  });
+
+  const getSectionLabels = (sections) => {
+    if (!sections || sections.length === 0) return "None";
+    if (sections.includes("all")) return "All Sections";
+    return sections.map(id => {
+      const s = SECTIONS.find(sec => sec.id === id);
+      return s ? s.label : id;
+    }).join(", ");
+  };
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
+      {/* Header */}
+      <div className="bg-white border-b border-gray-200">
+        <div className="max-w-4xl mx-auto px-6 py-5">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <button onClick={goHome} className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
+                <ArrowLeft size={18} />
+              </button>
+              <div className="w-11 h-11 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                <Shield size={22} className="text-white" />
+              </div>
+              <div>
+                <h1 className="text-xl font-bold text-gray-900 tracking-tight">User Access Management</h1>
+                <p className="text-xs text-gray-400 mt-0.5">{userEntries.length} user{userEntries.length !== 1 ? "s" : ""} configured</p>
+              </div>
+            </div>
+            <button onClick={startAdd} className="flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors shadow-sm">
+              <UserPlus size={16} />
+              Add User
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-4xl mx-auto px-6 py-8">
+        {/* Add/Edit Form */}
+        {showAddForm && (
+          <div className="bg-white rounded-2xl border-2 border-indigo-200 p-6 mb-8 shadow-sm">
+            <h2 className="text-base font-bold text-gray-900 mb-4">{editingEmail ? "Edit User" : "Add New User"}</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-1">Email Address</label>
+                <input type="email" value={formEmail} onChange={e => setFormEmail(e.target.value)}
+                  disabled={!!editingEmail} placeholder="user@aubuchon.com"
+                  className={`w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 ${editingEmail ? "bg-gray-50 text-gray-400" : ""}`} />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-1">Display Name</label>
+                <input type="text" value={formName} onChange={e => setFormName(e.target.value)}
+                  placeholder="First Last"
+                  className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300" />
+              </div>
+            </div>
+
+            {/* Role */}
+            <div className="mb-4">
+              <label className="block text-xs font-medium text-gray-500 mb-2">Role</label>
+              <div className="flex gap-3">
+                {["admin", "viewer"].map(role => (
+                  <button key={role} onClick={() => { setFormRole(role); if (role === "admin") { setFormSections(sectionOptions.map(s => s.id)); setFormReadOnly(false); } }}
+                    className={`px-4 py-2 rounded-lg text-sm font-medium border-2 transition-all ${formRole === role
+                      ? role === "admin" ? "border-indigo-500 bg-indigo-50 text-indigo-700" : "border-emerald-500 bg-emerald-50 text-emerald-700"
+                      : "border-gray-200 text-gray-500 hover:border-gray-300"}`}>
+                    {role === "admin" ? "Admin" : "Viewer"}
+                  </button>
+                ))}
+              </div>
+              <p className="text-[11px] text-gray-400 mt-1">{formRole === "admin" ? "Full access to all sections + can manage users" : "Read-only access to selected sections"}</p>
+            </div>
+
+            {/* Section Access */}
+            {formRole !== "admin" && (
+              <div className="mb-4">
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-xs font-medium text-gray-500">Section Access</label>
+                  <button onClick={toggleAllSections} className="text-[11px] text-indigo-600 hover:text-indigo-800 font-medium">
+                    {formSections.length === sectionOptions.length ? "Deselect All" : "Select All"}
+                  </button>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {sectionOptions.map(sec => {
+                    const selected = formSections.includes(sec.id);
+                    const secDef = SECTIONS.find(s => s.id === sec.id);
+                    return (
+                      <button key={sec.id} onClick={() => toggleSection(sec.id)}
+                        className={`flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm border-2 transition-all text-left ${selected
+                          ? `${secDef?.border || "border-indigo-300"} ${secDef?.bg || "bg-indigo-50"} ${secDef?.text || "text-indigo-700"} font-medium`
+                          : "border-gray-200 text-gray-500 hover:border-gray-300"}`}>
+                        <div className={`w-4 h-4 rounded flex items-center justify-center flex-shrink-0 ${selected ? "bg-indigo-600" : "bg-gray-200"}`}>
+                          {selected && <Check size={12} className="text-white" />}
+                        </div>
+                        {sec.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* Read-Only Toggle */}
+            {formRole !== "admin" && (
+              <div className="mb-6">
+                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div>
+                    <span className="text-sm font-medium text-gray-700">Read-Only Mode</span>
+                    <p className="text-[11px] text-gray-400 mt-0.5">User can view data but cannot make changes</p>
+                  </div>
+                  <button onClick={() => setFormReadOnly(!formReadOnly)}
+                    className={`p-1 rounded-full transition-colors ${formReadOnly ? "text-emerald-600" : "text-gray-400"}`}>
+                    {formReadOnly ? <ToggleRight size={28} /> : <ToggleLeft size={28} />}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Buttons */}
+            <div className="flex justify-end gap-3">
+              <button onClick={resetForm} className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800 font-medium">Cancel</button>
+              <button onClick={handleSave} disabled={saving || !formEmail.trim()}
+                className="px-5 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 shadow-sm">
+                {saving ? "Saving..." : editingEmail ? "Update User" : "Add User"}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* User List */}
+        <div className="space-y-3">
+          {userEntries.map(([email, u]) => (
+            <div key={email} className="bg-white rounded-xl border border-gray-200 p-4 hover:shadow-md transition-shadow">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3 min-w-0">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold text-white flex-shrink-0 ${u.role === "admin" ? "bg-gradient-to-br from-indigo-500 to-purple-600" : "bg-gradient-to-br from-emerald-500 to-teal-600"}`}>
+                    {String(u.name || email).split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2)}
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-bold text-gray-900 truncate">{u.name || email}</span>
+                      <span className={`text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full ${u.role === "admin" ? "bg-indigo-100 text-indigo-700" : "bg-emerald-100 text-emerald-700"}`}>
+                        {u.role}
+                      </span>
+                      {u.readOnly && u.role !== "admin" && (
+                        <span className="text-[10px] font-semibold uppercase tracking-wider bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">Read-Only</span>
+                      )}
+                    </div>
+                    <p className="text-xs text-gray-400 truncate">{email}</p>
+                    <p className="text-[11px] text-gray-500 mt-0.5">{getSectionLabels(u.sections)}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  <button onClick={() => startEdit(email)} className="p-2 text-gray-400 hover:text-indigo-600 rounded-lg hover:bg-indigo-50 transition-colors" title="Edit">
+                    <Edit3 size={15} />
+                  </button>
+                  {email !== SUPER_ADMIN_EMAIL && (
+                    confirmDelete === email ? (
+                      <div className="flex items-center gap-1">
+                        <button onClick={() => handleDelete(email)} className="px-2 py-1 text-xs text-red-600 bg-red-50 rounded font-medium hover:bg-red-100">Remove</button>
+                        <button onClick={() => setConfirmDelete(null)} className="px-2 py-1 text-xs text-gray-500 rounded font-medium hover:bg-gray-100">Cancel</button>
+                      </div>
+                    ) : (
+                      <button onClick={() => setConfirmDelete(email)} className="p-2 text-gray-400 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors" title="Remove">
+                        <Trash2 size={15} />
+                      </button>
+                    )
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Info Box */}
+        <div className="mt-8 p-4 bg-indigo-50 border border-indigo-200 rounded-xl">
+          <p className="text-xs text-indigo-700 font-medium mb-1">How access works</p>
+          <p className="text-[11px] text-indigo-600 leading-relaxed">
+            Users log in with their Google account. If their email is on this list, they see only the sections assigned to them.
+            Admins can see everything and manage other users. Users not on this list will see an "Access Required" screen after login.
+            Scott's admin access cannot be removed as a safety measure.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function HomeScreen({ onNavigate, canAccessSection, isAdmin }) {
+  const [apInvoiceCount, setApInvoiceCount] = useState(null);
+  const displayName = auth.currentUser?.displayName || auth.currentUser?.email?.split("@")[0] || "User";
+  const visibleSections = SECTIONS.filter(s => canAccessSection(s.id));
+
+  useEffect(() => {
+    if (!canAccessSection("ap-invoices")) return;
     (async () => {
       try {
         const snap = await getDocs(collection(db, "ap_invoices"));
@@ -2562,7 +2961,7 @@ function HomeScreen({ onNavigate }) {
         setApInvoiceCount(pending);
       } catch (e) { /* silent */ }
     })();
-  }, []);
+  }, [canAccessSection]);
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
       {/* Header */}
@@ -2574,13 +2973,20 @@ function HomeScreen({ onNavigate }) {
                 <Home size={22} className="text-white" />
               </div>
               <div>
-                <h1 className="text-xl font-bold text-gray-900 tracking-tight">Scott's Workbench</h1>
+                <h1 className="text-xl font-bold text-gray-900 tracking-tight">{displayName}'s Workbench</h1>
                 <p className="text-xs text-gray-400 mt-0.5">The Aubuchon Company</p>
               </div>
             </div>
-            <button onClick={() => signOut(auth)} className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors" title="Sign out">
-              <LogOut size={16} />
-            </button>
+            <div className="flex items-center gap-2">
+              {isAdmin && (
+                <button onClick={() => onNavigate("admin")} className="p-2 text-gray-400 hover:text-indigo-600 rounded-lg hover:bg-indigo-50 transition-colors" title="User Access Management">
+                  <Settings size={16} />
+                </button>
+              )}
+              <button onClick={() => signOut(auth)} className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors" title="Sign out">
+                <LogOut size={16} />
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -2589,7 +2995,7 @@ function HomeScreen({ onNavigate }) {
       <div className="max-w-5xl mx-auto px-6 py-12">
         <p className="text-sm text-gray-500 mb-8 font-medium">Select a section to get started</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-          {SECTIONS.map((section) => {
+          {visibleSections.map((section) => {
             const Icon = section.icon;
             return (
               <button
@@ -3950,19 +4356,49 @@ function YODAReports({ goHome }) {
 
 export default function App() {
   const [activeSection, setActiveSection] = useState(null);
+  const { userAccess, allUsers, isAdmin, canAccessSection, saveAllUsers, userEmail } = useUserAccess();
 
-  if (activeSection === "projects") {
+  // Loading state
+  if (userAccess === null) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-10 h-10 border-3 border-gray-200 border-t-indigo-500 rounded-full animate-spin mx-auto mb-3" />
+          <p className="text-sm text-gray-400">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Access denied
+  if (userAccess === false) {
+    return <AccessDeniedScreen />;
+  }
+
+  // Admin panel (admin only)
+  if (activeSection === "admin" && isAdmin) {
+    return <AdminPanel goHome={() => setActiveSection(null)} allUsers={allUsers} saveAllUsers={saveAllUsers} />;
+  }
+
+  // Section routing — only if user has access
+  if (activeSection === "projects" && canAccessSection("projects")) {
     return <ITProjectDashboard goHome={() => setActiveSection(null)} />;
   }
 
-  if (activeSection === "ap-invoices") return <APInvoices goHome={() => setActiveSection(null)} goHistory={() => setActiveSection("payment-history")} />;
+  if (activeSection === "ap-invoices" && canAccessSection("ap-invoices")) {
+    return <APInvoices goHome={() => setActiveSection(null)} goHistory={() => setActiveSection("payment-history")} />;
+  }
 
-  if (activeSection === "payment-history") return <PaymentHistory goHome={() => setActiveSection(null)} goBack={() => setActiveSection(null)} />;
+  if (activeSection === "payment-history" && canAccessSection("payment-history")) {
+    return <PaymentHistory goHome={() => setActiveSection(null)} goBack={() => setActiveSection(null)} />;
+  }
 
-  if (activeSection === "yoda") return <YODAReports goHome={() => setActiveSection(null)} />;
+  if (activeSection === "yoda" && canAccessSection("yoda")) {
+    return <YODAReports goHome={() => setActiveSection(null)} />;
+  }
 
   // Future sections:
-  // if (activeSection === "wells-cc") return <WellsCC goHome={() => setActiveSection(null)} goHistory={() => setActiveSection("payment-history")} />;
+  // if (activeSection === "wells-cc" && canAccessSection("wells-cc")) return <WellsCC goHome={() => setActiveSection(null)} goHistory={() => setActiveSection("payment-history")} />;
 
-  return <HomeScreen onNavigate={setActiveSection} />;
+  return <HomeScreen onNavigate={setActiveSection} canAccessSection={canAccessSection} isAdmin={isAdmin} />;
 }
