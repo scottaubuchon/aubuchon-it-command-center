@@ -164,7 +164,7 @@ def _render_header(d: date) -> str:
         pretty = d.strftime("%B %#d, %Y")
     return f"""
 <div style="margin-bottom:16px">
-  <a href="https://aubuchon-it-command-center.vercel.app/"
+  <a href="https://aubuchon-it-command-center.vercel.app/?section=yoda"
      style="display:inline-flex;align-items:center;gap:8px;padding:8px 16px;background:white;border:1px solid #e2e8f0;border-radius:8px;color:#334155;font-family:Inter,system-ui,sans-serif;font-size:14px;font-weight:500;text-decoration:none;box-shadow:0 1px 2px rgba(0,0,0,0.05);cursor:pointer;transition:background 0.15s;"
      onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='white'">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
