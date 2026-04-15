@@ -4902,22 +4902,6 @@ function LiveSalesView({ goBack }) {
     return fetch(url).then(function (r) { return r.json(); });
   };
 
-  // Full refresh: fire the log endpoint, which refreshes YODA, appends the log,
-  // rebuilds the prediction, and writes current.json + prediction.json. Then
-  // re-read the static snapshot so we get the fresh prediction/snapshot data.
-  var loadFullRefresh = function () {
-    return fetch("/api/log-live-sales").then(function (r) { return r.json(); }).then(function (logResp) {
-      // log-live-sales returns { status, entry, prediction, ... } — shape it into a full payload.
-      if (logResp && logResp.status === "ok") {
-        // Re-read the fresh static snapshot (which includes top stores, products, etc.).
-        return loadStatic().then(function (snap) { return snap; }).catch(function () {
-          // If the snapshot somehow isn't available yet, fall back to live-sales without a forced YODA pull.
-          return loadLive(false);
-        });
-      }
-      return loadLive(true);
-    });
-  };
 
   // Initial mount: try static snapshot; fall back to /api/live-sales if needed.
   useEffect(function () {
@@ -4948,17 +4932,17 @@ function LiveSalesView({ goBack }) {
     return function () { cancelled = true; };
   }, []);
 
-  // Refresh button: fires the full log-live-sales cycle (YODA pull, log append,
-  // prediction rebuild, snapshot write) and then re-reads the static snapshot so
-  // we get the updated prediction alongside the fresh sales numbers.
+  // Refresh button: just re-read the pre-baked static snapshot. The scheduled
+  // task rebuilds current.json every 10 minutes, so this is always near-instant
+  // and already fresh. No YODA pull from the browser click.
   var handleRefresh = function () {
     if (refreshing) return;
     setRefreshing(true);
     setError(null);
-    loadFullRefresh()
+    loadStatic()
       .then(function (d) {
-        applyPayload(d, "Just refreshed");
-        setSourceLabel("api-fresh");
+        applyPayload(d, "Snapshot refreshed");
+        setSourceLabel("snapshot");
       })
       .catch(function (err) { setError(err.message); })
       .finally(function () { setRefreshing(false); });
