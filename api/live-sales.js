@@ -38,7 +38,7 @@ async function refreshData() {
 
   const liveStoreQuery = `EVALUATE SELECTCOLUMNS(FCT_LIVE_SALE, "Store", FCT_LIVE_SALE[STORE_CD], "Sales", FCT_LIVE_SALE[NET_SALES], "Txns", FCT_LIVE_SALE[TRANSACTION_CNT], "COGS", FCT_LIVE_SALE[COST_OF_GOODS], "Customers", FCT_LIVE_SALE[CUSTOMER_CNT], "Updated", FCT_LIVE_SALE[LAST_UPDATED_TS])`;
 
-  const planQuery = `EVALUATE FILTER(SELECTCOLUMNS(RPT_SCORECARD_BY_DAY, "Loc", RPT_SCORECARD_BY_DAY[LOCATION_CD], "Date", RPT_SCORECARD_BY_DAY[SCORECARD_DT], "Plan", RPT_SCORECARD_BY_DAY[TARGET_DAILY_SALES_AMT]), [Date] = DATE(${y}, ${m}, ${d}))`;
+  const planQuery = `EVALUATE FILTER(SELECTCOLUMNS(RPT_SCORECARD_BY_DAY, "Store", RPT_SCORECARD_BY_DAY[LOCATION_CD], "Plan", RPT_SCORECARD_BY_DAY[TARGET_DAILY_SALES_AMT], "Date", RPT_SCORECARD_BY_DAY[TRANSACTION_DT]), [Date] = DATE(${y}, ${m}, ${d}))`;
 
   const dimQuery = `EVALUATE SELECTCOLUMNS(DIM_STORE, "Code", DIM_STORE[STORE_CD], "Name", DIM_STORE[STORE_NM], "City", DIM_STORE[STORE_CITY_NM], "State", DIM_STORE[STORE_STATE_CD])`;
 
@@ -68,7 +68,7 @@ async function refreshData() {
   // Build plan map from RPT_SCORECARD_BY_DAY
   const planMap = {};
   planRows.forEach(r => {
-    const loc = String(r.Loc || '');
+    const loc = String(r.Store || '');
     planMap[loc] = Number(r.Plan || 0);
   });
 
