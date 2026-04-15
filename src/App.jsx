@@ -2897,22 +2897,6 @@ const SECTIONS = [
     shadow: "shadow-emerald-200/50",
     active: true,
   },
-  {
-    id: "lab",
-    label: "Concept Lab",
-    description: "Works in progress, mockups, and previews — a shared space for ideas before they land in production",
-    icon: FlaskConical,
-    gradient: "from-purple-500 to-purple-700",
-    hoverGradient: "from-purple-600 to-purple-800",
-    bg: "bg-purple-50",
-    border: "border-purple-200",
-    text: "text-purple-700",
-    shadow: "shadow-purple-200/50",
-    active: true,
-    externalUrl: "/lab/",
-    alwaysVisible: true,
-    badge: "Preview",
-  },
 ];
 
 /* =====================================================================
@@ -3491,7 +3475,7 @@ function VotingAdminPanelStandalone({ allUsers }) {
 function HomeScreen({ onNavigate, canAccessSection, isAdmin }) {
   const [apInvoiceCount, setApInvoiceCount] = useState(null);
   const displayName = auth.currentUser?.displayName || auth.currentUser?.email?.split("@")[0] || "User";
-  const visibleSections = SECTIONS.filter(s => s.alwaysVisible || canAccessSection(s.id));
+  const visibleSections = SECTIONS.filter(s => canAccessSection(s.id));
 
   useEffect(() => {
     if (!canAccessSection("ap-invoices")) return;
@@ -3541,14 +3525,7 @@ function HomeScreen({ onNavigate, canAccessSection, isAdmin }) {
             return (
               <button
                 key={section.id}
-                onClick={() => {
-                  if (!section.active) return;
-                  if (section.externalUrl) {
-                    window.open(section.externalUrl, "_blank", "noopener,noreferrer");
-                  } else {
-                    onNavigate(section.id);
-                  }
-                }}
+                onClick={() => section.active && onNavigate(section.id)}
                 className={`group relative text-left rounded-2xl border-2 p-6 transition-all duration-200
                   ${section.active
                     ? `${section.border} bg-white hover:shadow-xl hover:${section.shadow} hover:scale-[1.02] hover:border-transparent cursor-pointer`
@@ -3567,9 +3544,6 @@ function HomeScreen({ onNavigate, canAccessSection, isAdmin }) {
                       <h2 className="text-lg font-bold text-gray-900">{section.label}{section.id === "ap-invoices" && apInvoiceCount > 0 && ` (${apInvoiceCount})`}</h2>
                       {!section.active && (
                         <span className="text-[10px] font-semibold uppercase tracking-wider bg-gray-200 text-gray-500 px-2 py-0.5 rounded-full">Coming Soon</span>
-                      )}
-                      {section.badge && (
-                        <span className={`text-[10px] font-semibold uppercase tracking-wider ${section.bg} ${section.text} px-2 py-0.5 rounded-full border ${section.border}`}>{section.badge}</span>
                       )}
                     </div>
                     <p className="text-xs text-gray-500 mt-1 leading-relaxed">{section.description}</p>
@@ -4865,70 +4839,107 @@ const YODA_REPORTS = [
 
 function LiveSalesView({ goBack }) {
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState(null);
   const [companyTotal, setCompanyTotal] = useState(null);
   const [topStores, setTopStores] = useState([]);
   const [topProducts, setTopProducts] = useState([]);
   const [asOf, setAsOf] = useState("");
   const [cacheInfo, setCacheInfo] = useState("");
+  const [sourceLabel, setSourceLabel] = useState("");
 
+  // Shared renderer — takes an API-shaped payload and fans it out into state.
+  var applyPayload = function (d, sourceTag) {
+    if (!d || d.status !== "ok") throw new Error((d && d.error) || "Failed to load live sales");
+    setCompanyTotal({
+      sales: d.companyTotal.sales,
+      plan: d.companyTotal.plan,
+      gp: d.companyTotal.gp,
+      gpPct: d.companyTotal.gpPct,
+      txn: d.companyTotal.txns,
+      customers: d.companyTotal.customers,
+      storeCount: d.companyTotal.storeCount,
+      pctToPlan: d.companyTotal.pctToPlan,
+    });
+    var stores = (d.topStores || []).map(function (s) {
+      return {
+        code: s.store,
+        name: s.name || "Store " + s.store,
+        city: s.city || "",
+        state: s.state || "",
+        sales: s.sales, plan: s.plan, gp: s.gp, txnCnt: s.txns,
+      };
+    });
+    setTopStores(stores);
+    setTopProducts((d.topProducts || []).map(function (p, i) {
+      return { rank: i + 1, desc: p.product, sales: p.sales };
+    }));
+    if (d.asOfET) setAsOf(d.asOfET + " ET");
+    else if (d.asOf) setAsOf(d.asOf);
+    var info = sourceTag || (d.cached ? "Cached" : "Fresh");
+    if (d.stale) info = "Stale cache";
+    if (d.refreshedAt) info += " · refreshed " + new Date(d.refreshedAt).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+    setCacheInfo(info);
+  };
+
+  // Fast path: static snapshot from GitHub raw (baked every 10 min by the
+  // scheduled task). Falls through to /api/live-sales if the snapshot is
+  // missing or too old.
+  var loadStatic = function () {
+    var url = "https://raw.githubusercontent.com/scottaubuchon/aubuchon-it-command-center/main/public/data/live-sales/current.json?cb=" + Math.floor(Date.now() / 60000);
+    return fetch(url, { cache: "no-store" }).then(function (r) {
+      if (!r.ok) throw new Error("snapshot unavailable (" + r.status + ")");
+      return r.json();
+    });
+  };
+
+  var loadLive = function (force) {
+    var url = "/api/live-sales" + (force ? "?refresh=true" : "");
+    return fetch(url).then(function (r) { return r.json(); });
+  };
+
+  // Initial mount: try static snapshot; fall back to /api/live-sales if needed.
   useEffect(function () {
-    fetch("/api/live-sales")
-      .then(function (r) { return r.json(); })
+    var cancelled = false;
+    loadStatic()
       .then(function (d) {
-        if (d.status !== "ok") throw new Error(d.error || "Failed to load live sales");
-
-        // Company total
-        setCompanyTotal({
-          sales: d.companyTotal.sales,
-          plan: d.companyTotal.plan,
-          gp: d.companyTotal.gp,
-          gpPct: d.companyTotal.gpPct,
-          txn: d.companyTotal.txns,
-          customers: d.companyTotal.customers,
-          storeCount: d.companyTotal.storeCount,
-          pctToPlan: d.companyTotal.pctToPlan,
-        });
-
-        // Top stores — map API shape to render shape
-        var stores = (d.topStores || []).map(function (s, i) {
-          return {
-            code: s.store,
-            name: s.name || "Store " + s.store,
-            city: s.city || "",
-            state: s.state || "",
-            sales: s.sales,
-            plan: s.plan,
-            gp: s.gp,
-            txnCnt: s.txns,
-          };
-        });
-        setTopStores(stores);
-
-        // Top products
-        var prods = (d.topProducts || []).map(function (p, i) {
-          return { rank: i + 1, desc: p.product, sales: p.sales };
-        });
-        setTopProducts(prods);
-
-        // Timestamps — use pre-formatted Eastern Time from API
-        if (d.asOfET) {
-          setAsOf(d.asOfET + " ET (live)");
-        } else if (d.asOf) {
-          setAsOf(d.asOf);
-        }
-        var info = d.cached ? "Cached" : "Fresh";
-        if (d.stale) info = "Stale cache";
-        if (d.refreshedAt) info += " · refreshed " + new Date(d.refreshedAt).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
-        setCacheInfo(info);
-
+        if (cancelled) return;
+        applyPayload(d, "Cached snapshot");
+        setSourceLabel("snapshot");
         setLoading(false);
       })
-      .catch(function (err) {
-        setError(err.message);
-        setLoading(false);
+      .catch(function () {
+        if (cancelled) return;
+        // Fallback: hit the Vercel API (warm cache).
+        loadLive(false)
+          .then(function (d) {
+            if (cancelled) return;
+            applyPayload(d, d.cached ? "API cache" : "Fresh");
+            setSourceLabel("api");
+            setLoading(false);
+          })
+          .catch(function (err) {
+            if (cancelled) return;
+            setError(err.message);
+            setLoading(false);
+          });
       });
+    return function () { cancelled = true; };
   }, []);
+
+  // Refresh button: forces a live YODA pull via the API.
+  var handleRefresh = function () {
+    if (refreshing) return;
+    setRefreshing(true);
+    setError(null);
+    loadLive(true)
+      .then(function (d) {
+        applyPayload(d, "Just refreshed");
+        setSourceLabel("api-fresh");
+      })
+      .catch(function (err) { setError(err.message); })
+      .finally(function () { setRefreshing(false); });
+  };
 
   var fmtD = function (n) { return "$" + Math.round(n || 0).toLocaleString(); };
   var fmtPct = function (actual, plan) {
@@ -4946,7 +4957,7 @@ function LiveSalesView({ goBack }) {
           <div className="flex flex-col items-center justify-center py-24">
             <div className="w-10 h-10 border-3 border-amber-200 border-t-amber-600 rounded-full animate-spin mb-4" />
             <p className="text-slate-600 font-medium">Loading live sales...</p>
-            <p className="text-slate-400 text-sm mt-1">Fetching pre-computed report</p>
+            <p className="text-slate-400 text-sm mt-1">Loading latest snapshot</p>
           </div>
         </div>
       </div>
@@ -4982,16 +4993,25 @@ function LiveSalesView({ goBack }) {
           <button onClick={goBack} className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium shadow-sm">
             <ArrowLeft className="w-4 h-4" /> Back
           </button>
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg">
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-lg shrink-0">
               <Zap className="w-6 h-6 text-white" />
             </div>
-            <div>
+            <div className="min-w-0">
               <h1 className="text-2xl md:text-3xl font-bold text-slate-900">Live Sales</h1>
-              <p className="text-slate-500 text-xs md:text-sm">As of {asOf}</p>
-              {cacheInfo && <p className="text-slate-400 text-xs">{cacheInfo}</p>}
+              <p className="text-slate-500 text-xs md:text-sm truncate">As of {asOf}</p>
+              {cacheInfo && <p className="text-slate-400 text-xs truncate">{cacheInfo}</p>}
             </div>
           </div>
+          <button
+            onClick={handleRefresh}
+            disabled={refreshing}
+            title="Pull fresh data from YODA right now"
+            className={"flex items-center gap-2 px-4 py-2 rounded-lg font-medium shadow-sm border " + (refreshing ? "bg-slate-100 text-slate-400 border-slate-200 cursor-wait" : "bg-white text-slate-700 border-slate-200 hover:bg-amber-50 hover:border-amber-300")}
+          >
+            <RotateCcw className={"w-4 h-4 " + (refreshing ? "animate-spin" : "")} />
+            {refreshing ? "Refreshing…" : "Refresh"}
+          </button>
         </div>
 
         <div className={"rounded-xl border-2 p-5 md:p-6 mb-6 " + vBg}>
