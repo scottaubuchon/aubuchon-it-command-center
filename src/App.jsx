@@ -4847,10 +4847,14 @@ function LiveSalesView({ goBack }) {
   const [asOf, setAsOf] = useState("");
   const [cacheInfo, setCacheInfo] = useState("");
   const [sourceLabel, setSourceLabel] = useState("");
+  const [prediction, setPrediction] = useState(null);
 
   // Shared renderer — takes an API-shaped payload and fans it out into state.
   var applyPayload = function (d, sourceTag) {
     if (!d || d.status !== "ok") throw new Error((d && d.error) || "Failed to load live sales");
+    // Prediction is only present on current.json snapshots (not /api/live-sales).
+    // Leave whatever we already have in place when it's absent.
+    if (d.prediction && d.prediction.prediction) setPrediction(d.prediction);
     setCompanyTotal({
       sales: d.companyTotal.sales,
       plan: d.companyTotal.plan,
@@ -5040,6 +5044,72 @@ function LiveSalesView({ goBack }) {
             <span><strong>{companyTotal.storeCount || 0}</strong> stores reporting</span>
           </div>
         </div>
+
+        {(function () {
+          if (!prediction || !prediction.prediction) return null;
+          var p = prediction.prediction;
+          if (!p.available) return null;
+          var proj = Number(p.projectedEOD || 0);
+          var plan = Number((prediction.current && prediction.current.plan) || 0);
+          var projVar = plan > 0 ? proj - plan : 0;
+          var projPct = plan > 0 ? (proj / plan) * 100 : 0;
+          var above = projVar >= 0;
+          var pBg = above ? "bg-gradient-to-br from-emerald-50 to-white border-emerald-200" : "bg-gradient-to-br from-red-50 to-white border-red-200";
+          var pColor = above ? "text-emerald-700" : "text-red-600";
+          var conf = String(p.confidence || "low");
+          var confStyles = {
+            "very low": "bg-slate-100 text-slate-600 border-slate-200",
+            "low":      "bg-amber-100 text-amber-800 border-amber-200",
+            "medium":   "bg-blue-100 text-blue-800 border-blue-200",
+            "high":     "bg-emerald-100 text-emerald-800 border-emerald-200",
+          };
+          var confClass = confStyles[conf] || confStyles["low"];
+          var hasBand = p.band && (p.band.low || p.band.high);
+          return (
+            <div className={"rounded-xl border-2 p-5 md:p-6 mb-6 " + pBg}>
+              <div className="flex items-start justify-between gap-3 mb-3">
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="w-5 h-5 text-slate-700" />
+                  <h2 className="font-bold text-slate-900">EOD Forecast</h2>
+                  <span className={"text-[10px] uppercase tracking-wide font-semibold px-2 py-0.5 rounded-full border " + confClass}>
+                    {conf} confidence
+                  </span>
+                </div>
+                <div className="text-right text-xs text-slate-400">
+                  {prediction.updatedAtET ? "as of " + prediction.updatedAtET : ""}
+                </div>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div>
+                  <div className="text-xs text-slate-500">Projected EOD</div>
+                  <div className={"text-2xl md:text-3xl font-bold " + pColor}>{fmtD(proj)}</div>
+                  {hasBand ? (
+                    <div className="text-xs text-slate-400 mt-0.5">
+                      Range: {fmtD(p.band.low)} – {fmtD(p.band.high)}
+                    </div>
+                  ) : null}
+                </div>
+                <div>
+                  <div className="text-xs text-slate-500">Projected % to Plan</div>
+                  <div className={"text-2xl md:text-3xl font-bold " + pColor}>{projPct.toFixed(1)}%</div>
+                  <div className="text-xs text-slate-400 mt-0.5">Plan: {fmtD(plan)}</div>
+                </div>
+                <div className="col-span-2 md:col-span-1">
+                  <div className="text-xs text-slate-500">Projected Variance</div>
+                  <div className={"text-2xl md:text-3xl font-bold " + pColor}>{above ? "+" : ""}{fmtD(projVar)}</div>
+                  <div className="text-xs text-slate-400 mt-0.5">{above ? "over plan" : "under plan"}</div>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-x-6 gap-y-1 mt-3 pt-3 border-t border-slate-200 text-xs text-slate-500">
+                <span><strong className="text-slate-700">Method:</strong> {p.method}</span>
+                <span><strong className="text-slate-700">History days:</strong> {p.historyDays}</span>
+                {p.pctOfDayElapsed != null ? <span><strong className="text-slate-700">Day elapsed:</strong> {(p.pctOfDayElapsed * 100).toFixed(0)}%</span> : null}
+                {p.avgHistoricalEOD ? <span><strong className="text-slate-700">Avg prior EOD:</strong> {fmtD(p.avgHistoricalEOD)}</span> : null}
+              </div>
+              {p.note ? <div className="mt-2 text-xs text-slate-400 italic">{p.note}</div> : null}
+            </div>
+          );
+        })()}
 
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm mb-6 overflow-hidden">
           <div className="px-5 py-4 border-b border-slate-100 flex items-center gap-2">
