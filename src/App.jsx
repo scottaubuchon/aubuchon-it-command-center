@@ -2897,6 +2897,22 @@ const SECTIONS = [
     shadow: "shadow-emerald-200/50",
     active: true,
   },
+  {
+    id: "lp-demo",
+    label: "LP Dashboard Demo",
+    description: "Mockup preview of the new Loss Prevention scorecard — four visual treatments with live YODA sample data",
+    icon: Shield,
+    gradient: "from-purple-500 to-purple-700",
+    hoverGradient: "from-purple-600 to-purple-800",
+    bg: "bg-purple-50",
+    border: "border-purple-200",
+    text: "text-purple-700",
+    shadow: "shadow-purple-200/50",
+    active: true,
+    externalUrl: "/lp-demo/",
+    alwaysVisible: true,
+    badge: "Preview",
+  },
 ];
 
 /* =====================================================================
@@ -3475,7 +3491,7 @@ function VotingAdminPanelStandalone({ allUsers }) {
 function HomeScreen({ onNavigate, canAccessSection, isAdmin }) {
   const [apInvoiceCount, setApInvoiceCount] = useState(null);
   const displayName = auth.currentUser?.displayName || auth.currentUser?.email?.split("@")[0] || "User";
-  const visibleSections = SECTIONS.filter(s => canAccessSection(s.id));
+  const visibleSections = SECTIONS.filter(s => s.alwaysVisible || canAccessSection(s.id));
 
   useEffect(() => {
     if (!canAccessSection("ap-invoices")) return;
@@ -3525,7 +3541,14 @@ function HomeScreen({ onNavigate, canAccessSection, isAdmin }) {
             return (
               <button
                 key={section.id}
-                onClick={() => section.active && onNavigate(section.id)}
+                onClick={() => {
+                  if (!section.active) return;
+                  if (section.externalUrl) {
+                    window.open(section.externalUrl, "_blank", "noopener,noreferrer");
+                  } else {
+                    onNavigate(section.id);
+                  }
+                }}
                 className={`group relative text-left rounded-2xl border-2 p-6 transition-all duration-200
                   ${section.active
                     ? `${section.border} bg-white hover:shadow-xl hover:${section.shadow} hover:scale-[1.02] hover:border-transparent cursor-pointer`
@@ -3544,6 +3567,9 @@ function HomeScreen({ onNavigate, canAccessSection, isAdmin }) {
                       <h2 className="text-lg font-bold text-gray-900">{section.label}{section.id === "ap-invoices" && apInvoiceCount > 0 && ` (${apInvoiceCount})`}</h2>
                       {!section.active && (
                         <span className="text-[10px] font-semibold uppercase tracking-wider bg-gray-200 text-gray-500 px-2 py-0.5 rounded-full">Coming Soon</span>
+                      )}
+                      {section.badge && (
+                        <span className={`text-[10px] font-semibold uppercase tracking-wider ${section.bg} ${section.text} px-2 py-0.5 rounded-full border ${section.border}`}>{section.badge}</span>
                       )}
                     </div>
                     <p className="text-xs text-gray-500 mt-1 leading-relaxed">{section.description}</p>
