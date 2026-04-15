@@ -1,0 +1,29 @@
+{
+  "updatedAt": "2026-04-15T17:10:18.457Z",
+  "updatedAtET": "Apr 15, 2026, 1:10 PM",
+  "dateET": "2026-04-15",
+  "dow": 3,
+  "current": {
+    "ts": "2026-04-15T17:10:18.457Z",
+    "tsET": "Apr 15, 2026, 1:10 PM",
+    "dateET": "2026-04-15",
+    "hourET": 13,
+    "minuteET": 10,
+    "dow": 3,
+    "sales": 556869.0700000002,
+    "plan": 997060.8500000003,
+    "pctToPlan": 55.85106164784226,
+    "gp": 231846.79540000006,
+    "gpPct": 41.63398685439649,
+    "txns": 14868,
+    "customers": 13626,
+    "storeCount": 134,
+    "asOf": "2026-04-15T17:00:12.953000",
+    "asOfET": "Apr 15, 2026, 1:00 PM"
+  },
+  "prediction": {
+    "available": false,
+    "reason": "Need at least 1 prior same-day-of-week history file(s); have 0.",
+    "historyDays": 0
+  }
+}
