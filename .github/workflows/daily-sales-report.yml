@@ -26,12 +26,15 @@ jobs:
       - name: Skip duplicate run when DST mismatch
         id: dst-gate
         run: |
-          # Compute current US/Eastern hour. Only proceed if it's exactly 7 AM ET.
+          # Only build after YODA data is finalized (~6:45 AM ET) and within a delay-tolerant window.
+          # 07..12 ET covers the intended 7 AM slot plus up to ~5h of GitHub Actions scheduling lag.
+          # Build script is idempotent: the 11 UTC and 12 UTC crons both build "yesterday ET",
+          # second run no-ops if data hasn't changed.
           HOUR_ET=$(TZ=America/New_York date +%H)
           echo "current ET hour: $HOUR_ET"
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "go=true" >> "$GITHUB_OUTPUT"
-          elif [ "$HOUR_ET" = "07" ]; then
+          elif [ "$HOUR_ET" -ge "07" ] && [ "$HOUR_ET" -le "12" ]; then
             echo "go=true" >> "$GITHUB_OUTPUT"
           else
             echo "go=false" >> "$GITHUB_OUTPUT"
