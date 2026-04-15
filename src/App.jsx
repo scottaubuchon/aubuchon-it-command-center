@@ -4575,7 +4575,20 @@ const PaymentHistory = ({ goHome, goBack }) => {
           return true;
         });
 
-        setRows([...apRows, ...ccRowsDeduped]);
+        // Deduplicate AP rows by invoiceNumber (keep newest by actionedAt)
+        // — guards against jiffy-invoice-submit double-writing a history row on re-runs
+        const apByInv = {};
+        for (const r of apRows) {
+          const key = r.invoiceNumber || `__noinv_${r.id}`;
+          const existing = apByInv[key];
+          if (!existing) { apByInv[key] = r; continue; }
+          const aTs = r.actionedAt && r.actionedAt.toMillis ? r.actionedAt.toMillis() : (r.actionedAt ? new Date(r.actionedAt).getTime() : 0);
+          const bTs = existing.actionedAt && existing.actionedAt.toMillis ? existing.actionedAt.toMillis() : (existing.actionedAt ? new Date(existing.actionedAt).getTime() : 0);
+          if (aTs >= bTs) apByInv[key] = r;
+        }
+        const apRowsDeduped = Object.values(apByInv);
+
+        setRows([...apRowsDeduped, ...ccRowsDeduped]);
       } catch (e) {
         console.error("PaymentHistory load error:", e);
       } finally {
@@ -5357,3 +5370,4 @@ export default function App() {
 
   return <HomeScreen onNavigate={setActiveSection} canAccessSection={canAccessSection} isAdmin={isAdmin} />;
 }
+
