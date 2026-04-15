@@ -1,11 +1,12 @@
 name: Refresh Live Sales
 
 on:
+  # Cron here is a safety net. Primary trigger is workflow_dispatch fired by the
+  # Cowork hourly scheduled task (which then runs an internal 10-min loop for
+  # the full hour).
   schedule:
-    # Every 10 minutes during business hours. GitHub Actions cron is UTC.
-    # Covers 7am-9pm ET across both EDT (UTC-4) and EST (UTC-5).
-    - cron: '*/10 11-23 * * *'   # 11:00-23:59 UTC
-    - cron: '*/10 0-2 * * *'     # 00:00-02:59 UTC (covers evening ET)
+    - cron: '0 11-23 * * *'
+    - cron: '0 0-2 * * *'
   workflow_dispatch: {}
 
 concurrency:
@@ -15,29 +16,39 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 58
     steps:
-      - name: Hit /api/log-live-sales
+      - name: Ping /api/log-live-sales every 10 min for ~55 min
         run: |
-          set -e
+          set -u
           URL="https://aubuchon-it-command-center.vercel.app/api/log-live-sales"
-          echo "POST $URL"
-          HTTP_CODE=$(curl -s -o /tmp/resp.json -w "%{http_code}" --max-time 180 "$URL")
-          echo "HTTP $HTTP_CODE"
-          if [ "$HTTP_CODE" != "200" ]; then
-            echo "Non-200 response:"
-            cat /tmp/resp.json
-            exit 1
-          fi
-          python3 -c "
-          import json, sys
-          d = json.load(open('/tmp/resp.json'))
-          p = (d.get('prediction') or {}).get('prediction') or {}
-          print('status:', d.get('status'))
-          print('dateET:', d.get('dateET'))
-          print('tsET:', (d.get('entry') or {}).get('tsET'))
-          print('method:', p.get('method'))
-          print('projectedEOD:', p.get('projectedEOD'))
-          print('confidence:', p.get('confidence'))
-          print('historyDays:', p.get('historyDays'))
+          TOTAL_PINGS=6
+          SLEEP_SEC=600
+          for i in $(seq 1 $TOTAL_PINGS); do
+            echo "=== Ping $i/$TOTAL_PINGS at $(date -u +%FT%TZ) ==="
+            CODE=$(curl -s -o /tmp/resp.json -w "%{http_code}" --max-time 180 "$URL" || echo "curl_err")
+            echo "HTTP $CODE"
+            if [ "$CODE" = "200" ]; then
+              python3 -c "
+          import json
+          try:
+              d = json.load(open('/tmp/resp.json'))
+              p = (d.get('prediction') or {}).get('prediction') or {}
+              print('  status:', d.get('status'))
+              print('  tsET:', (d.get('entry') or {}).get('tsET'))
+              print('  method:', p.get('method'))
+              print('  projectedEOD:', p.get('projectedEOD'))
+              print('  confidence:', p.get('confidence'))
+              print('  historyDays:', p.get('historyDays'))
+          except Exception as e:
+              print('  parse err:', e)
           "
+            else
+              echo "  body: $(head -c 300 /tmp/resp.json 2>/dev/null || echo '-')"
+            fi
+            if [ "$i" -lt "$TOTAL_PINGS" ]; then
+              echo "  sleeping ${SLEEP_SEC}s..."
+              sleep $SLEEP_SEC
+            fi
+          done
+          echo "=== Loop complete ==="
