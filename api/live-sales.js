@@ -44,11 +44,13 @@ async function refreshData() {
 
   const productQuery = `EVALUATE TOPN(20, SUMMARIZE(FCT_LIVE_SALE_TRANSACTION_LINE, FCT_LIVE_SALE_TRANSACTION_LINE[PRODUCT_DESC], "Sales", SUM(FCT_LIVE_SALE_TRANSACTION_LINE[ITEM_EXTENDED_AMT])), [Sales], DESC)`;
 
-  // Run queries sequentially (single connection per query, avoids parallel timeout)
-  const liveResult = await queryYoda(liveStoreQuery);
-  const planResult = await queryYoda(planQuery);
-  const dimResult = await queryYoda(dimQuery);
-  const productResult = await queryYoda(productQuery);
+  // Run queries in parallel — wall time = longest single query (~18s) instead of sum (~60s)
+  const [liveResult, planResult, dimResult, productResult] = await Promise.all([
+    queryYoda(liveStoreQuery),
+    queryYoda(planQuery),
+    queryYoda(dimQuery),
+    queryYoda(productQuery).catch(() => ({ rows: [] })),
+  ]);
 
   // Extract rows from each result
   const liveRows = (liveResult && liveResult.rows) || [];
