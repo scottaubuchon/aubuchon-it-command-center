@@ -1,4 +1,4 @@
-﻿﻿import { Fragment, useState, useMemo, useCallback, useEffect, useRef } from "react";
+ï»¿ï»¿import { Fragment, useState, useMemo, useCallback, useEffect, useRef } from "react";
 import {
   ChevronDown, ChevronRight, Plus, Trash2, Download, AlertTriangle, Clock,
   CheckCircle, XCircle, Pause, FlaskConical, BarChart3, Calendar, Edit3,
@@ -94,7 +94,7 @@ const VIEWS = [
    ===================================================================== */
 
 const initialProjects = [
-  // Enterprise Systems — Active Projects
+  // Enterprise Systems â Active Projects
   { id: 40, departments: ["Enterprise Systems"], name: "Merchant 2025.3 Update", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "4/8/2026", roadblocks: "External teams not responding to feedback requests; caused deferral", milestones: "", nextSteps: "", notes: "Upgrade Mi9 Merchant/MMS to version 2025.3 on the live environment", completedDate: "", subtasks: [], tier: "project" },
   { id: 41, departments: ["Enterprise Systems"], name: "Customer History Lookup v2 (Pre-Acquisition POS)", owner: "Dave Faucher", status: "In Progress", priority: "Low", pct: 0, date: "4/10/2026", roadblocks: "", milestones: "", nextSteps: "", notes: "Extend customer history lookup to include data from pre-acquisition POS systems: EPICOR, Rock Solid, Spruce, and others", completedDate: "", subtasks: [], tier: "project" },
   { id: 42, departments: ["Enterprise Systems"], name: "SpacePlan v2.0 Store (Mobile First)", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "4/9/2026", roadblocks: "UX feedback cycles may extend timeline", milestones: "Beta Release", nextSteps: "", notes: "Redevelop the store-facing SpacePlan tool with a mobile-first responsive UI", completedDate: "", subtasks: [], tier: "project" },
@@ -103,7 +103,7 @@ const initialProjects = [
   { id: 45, departments: ["Enterprise Systems"], name: "Price Change Tracking & Forecasting", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "4/22/2026", roadblocks: "IT Team bandwidth", milestones: "", nextSteps: "", notes: "Centralized price change tracking feeds: bin ticket printing, EZ-Commerce, TCB APIs, YODA, and Promo Management. Enables consistent pricing across all channels.", completedDate: "", subtasks: [], tier: "project" },
   { id: 46, departments: ["Enterprise Systems"], name: "Cookie Cutter Store Network Initiative", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "6/1/2026", roadblocks: "IT Team bandwidth", milestones: "", nextSteps: "", notes: "Standardize and template store networks and intranet sites for new store acquisitions beyond Store #244", completedDate: "", subtasks: [], tier: "project" },
   { id: 47, departments: ["Enterprise Systems"], name: "Price Ticket Generation Automation", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "6/8/2026", roadblocks: "Depends on completion of Price Change Tracking & Forecasting project", milestones: "", nextSteps: "", notes: "Fully automate price ticket generation sent to stores. Includes review of removing Bar Tender application from the technology stack.", completedDate: "", subtasks: [], tier: "project" },
-  // Enterprise Systems — Ongoing Support & Operations
+  // Enterprise Systems â Ongoing Support & Operations
   { id: 48, departments: ["Enterprise Systems"], name: "EDI Technical Support", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Ongoing operational support for EDI data exchange (OpenText / EricWare). Includes monitoring, troubleshooting, and documentation.", completedDate: "", subtasks: [], tier: "support" },
   { id: 49, departments: ["Enterprise Systems"], name: "Promotion Support", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Continuous support for promotion configuration, testing, and issue resolution within Mi9 Merchant, Ace, and the Marketing Dept.", completedDate: "", subtasks: [], tier: "support" },
   { id: 50, departments: ["Enterprise Systems"], name: "Mi9 Merchant Support", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Day-to-day support for Mi9 Merchant operations including upgrade coordination, break-fix, and vendor escalation.", completedDate: "", subtasks: [], tier: "support" },
@@ -113,7 +113,7 @@ const initialProjects = [
   { id: 54, departments: ["Enterprise Systems"], name: "Toolbox Initiative", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Centralized, secure, role-based portal for internal tools and data collection forms.", completedDate: "", subtasks: [], tier: "support" },
   { id: 55, departments: ["Enterprise Systems"], name: "New Store / Acquisitions Support", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "End-to-end technical support for new stores and acquisitions: customer data loading, EPICOR Bridge integration, and full store setup in Mi9 ecosystem.", completedDate: "", subtasks: [], tier: "support" },
   { id: 56, departments: ["Enterprise Systems"], name: "Documenting EricWare", owner: "Dave Faucher", status: "In Progress", priority: "Low", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Ongoing documentation effort for EricWare systems, with emphasis on EDI processes.", completedDate: "", subtasks: [], tier: "support" },
-  // Enterprise Systems — Backlog
+  // Enterprise Systems â Backlog
   { id: 57, departments: ["Enterprise Systems"], name: "Unified Bin Ticket Printing", owner: "Dave Faucher", status: "Not Started", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Consolidate bin ticket printing across all systems into a single, consistent workflow leveraging the Price Change Tracking initiative.", completedDate: "", subtasks: [], tier: "project" },
   { id: 58, departments: ["Enterprise Systems"], name: "Customer History Lookup v3 (Mi9 Customer History)", owner: "Dave Faucher", status: "Not Started", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Extend lookup to include Mi9 native customer transaction history.", completedDate: "", subtasks: [], tier: "project" },
   { id: 59, departments: ["Enterprise Systems"], name: "Customer History Lookup v4 (Service History: EPICOR / Ideal)", owner: "Dave Faucher", status: "Not Started", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Add service history from EPICOR and Ideal systems to the customer history lookup.", completedDate: "", subtasks: [], tier: "project" },
@@ -126,7 +126,7 @@ const initialProjects = [
   { id: 66, departments: ["Enterprise Systems"], name: "Unified Store Hours Management", owner: "Dave Faucher", status: "Not Started", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Single source of truth for store hours propagated to SPORT, Merchant, HS.com, Google My Business, SOCi, AH.com, and Yelp.", completedDate: "", subtasks: [], tier: "project" },
   { id: 67, departments: ["Enterprise Systems"], name: "ITSM", owner: "Dave Faucher", status: "Not Started", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Implement a formal IT service management platform covering ticketing, assigned equipment inventory, and a self-service portal for staff.", completedDate: "", subtasks: [], tier: "project" },
   { id: 68, departments: ["Enterprise Systems"], name: "Invalid Bin Ticket ID & Reprinting via Elvis", owner: "Dave Faucher", status: "Not Started", priority: "Low", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Automate identification and reprinting of invalid bin tickets using the Elvis devices.", completedDate: "", subtasks: [], tier: "project" },
-  // Enterprise Systems — Recently Completed
+  // Enterprise Systems â Recently Completed
   { id: 69, departments: ["Enterprise Systems"], name: "FindMyElvis v1.0", owner: "Dave Faucher", status: "Done", priority: "Medium", pct: 100, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Elvis store device locator", completedDate: "2026", subtasks: [], tier: "project" },
   { id: 70, departments: ["Enterprise Systems"], name: "Google SSO Login For Intranet Sites", owner: "Dave Faucher", status: "Done", priority: "Medium", pct: 100, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Google Single Sign-On authentication for internal websites", completedDate: "2026", subtasks: [], tier: "project" },
   { id: 71, departments: ["Enterprise Systems"], name: "Customer History Lookup v1", owner: "Dave Faucher", status: "Done", priority: "Medium", pct: 100, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "EPICOR-only customer history lookup", completedDate: "2026", subtasks: [], tier: "project" },
@@ -778,7 +778,7 @@ function useSortableProjects(projects) {
 }
 
 /* =====================================================================
-   VOTING HOOK — Firestore doc: dashboards/project-votes
+   VOTING HOOK â Firestore doc: dashboards/project-votes
    ===================================================================== */
 
 function useVoting(projects) {
@@ -1375,7 +1375,7 @@ function ProjectRow({ project, onUpdate, onDelete, showDepts = true, showOwner =
 }
 
 /* =====================================================================
-   VIEW: VOTING — Dot voting for project prioritization
+   VIEW: VOTING â Dot voting for project prioritization
    ===================================================================== */
 
 function VotingView({ projects, votingHook }) {
@@ -1510,7 +1510,7 @@ function VotingView({ projects, votingHook }) {
 }
 
 /* =====================================================================
-   VIEW: VOTING RESULTS — Admin-only stack rank per section
+   VIEW: VOTING RESULTS â Admin-only stack rank per section
    ===================================================================== */
 
 function VotingResultsView({ projects, votingHook }) {
@@ -2874,7 +2874,7 @@ const SECTIONS = [
   {
     id: "payment-history",
     label: "Payment History",
-    description: "View and filter all authorized payments — AP invoices & CC expenses",
+    description: "View and filter all authorized payments â AP invoices & CC expenses",
     icon: History,
     gradient: "from-slate-500 to-slate-700",
     hoverGradient: "from-slate-600 to-slate-800",
@@ -3015,7 +3015,7 @@ function AccessDeniedScreen() {
 }
 
 /* =====================================================================
-   ADMIN PANEL — User Access Management
+   ADMIN PANEL â User Access Management
    ===================================================================== */
 
 function AdminPanel({ goHome, allUsers, saveAllUsers }) {
@@ -3315,7 +3315,7 @@ function AdminPanel({ goHome, allUsers, saveAllUsers }) {
 }
 
 /* =====================================================================
-   VOTING ADMIN (STANDALONE) — Self-contained, loads own data from Firestore
+   VOTING ADMIN (STANDALONE) â Self-contained, loads own data from Firestore
    ===================================================================== */
 
 function VotingAdminPanelStandalone({ allUsers }) {
@@ -3457,7 +3457,7 @@ function VotingAdminPanelStandalone({ allUsers }) {
                 </button>
                 <div className="flex-1 min-w-0">
                   <span className={`text-sm font-medium block truncate ${isOff ? "text-gray-400" : "text-gray-900"}`}>{p.name}</span>
-                  <span className="text-[10px] text-gray-500">{String(p.owner || "")} • {(p.departments || []).join(", ")}</span>
+                  <span className="text-[10px] text-gray-500">{String(p.owner || "")} â¢ {(p.departments || []).join(", ")}</span>
                 </div>
                 <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0 ${isOff ? "bg-gray-100 text-gray-500" : "bg-emerald-50 text-emerald-700"}`}>
                   {isOff ? "Off" : "Voteable"}
@@ -3593,7 +3593,7 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
   const overdue = dueDate && dueDate < new Date() && inv.status === "pending";
   const dueLabel = dueDate
     ? dueDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
-    : inv.paymentDue || "—";
+    : inv.paymentDue || "â";
 
   const handleDecision = (action) => {
     onDecision(inv.id, action, category, comment);
@@ -3622,7 +3622,7 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
   const detailRow = (label, value, light = false) => (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "5px 0", borderBottom: "1px solid #f3f4f6", gap: 12 }}>
       <span style={{ color: "#9ca3af", fontSize: ".78rem", flexShrink: 0 }}>{label}</span>
-      <span style={{ color: light ? "#6b7280" : "#111827", fontSize: ".78rem", fontWeight: 500, textAlign: "right" }}>{value || "—"}</span>
+      <span style={{ color: light ? "#6b7280" : "#111827", fontSize: ".78rem", fontWeight: 500, textAlign: "right" }}>{value || "â"}</span>
     </div>
   );
 
@@ -3635,11 +3635,11 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
           <div style={{ fontSize: "1.1rem", fontWeight: 700, color: "#111827", letterSpacing: "-.01em" }}>{inv.vendor}</div>
           <div style={{ fontSize: ".8rem", color: "#6b7280", display: "flex", gap: 14, flexWrap: "wrap", marginTop: 4 }}>
             <span>Invoice #{inv.invoiceNumber}</span>
-            <span>·</span>
-            <span>Store {inv.storeNumber}{inv.location ? ` — ${inv.location}` : ""}</span>
-            <span>·</span>
+            <span>Â·</span>
+            <span>Store {inv.storeNumber}{inv.location ? ` â ${inv.location}` : ""}</span>
+            <span>Â·</span>
             <span>Vendor #{inv.vendorNumber}</span>
-            {inv.docNumber && <><span>·</span><span style={{ color: "#9ca3af" }}>{inv.docNumber}</span></>}
+            {inv.docNumber && <><span>Â·</span><span style={{ color: "#9ca3af" }}>{inv.docNumber}</span></>}
           </div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -3650,8 +3650,8 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
               color: displayStatus === "approved" ? "#166534" : displayStatus === "rejected" ? "#991b1b" : "#4b5563",
               border: `1px solid ${displayStatus === "approved" ? "#bbf7d0" : displayStatus === "rejected" ? "#fecaca" : "#e5e7eb"}`
             }}>
-              {decision && "⏳ "}
-              {displayStatus === "approved" ? "✓ Approved" : displayStatus === "rejected" ? "✗ Rejected" : "Pending"}
+              {decision && "â³ "}
+              {displayStatus === "approved" ? "â Approved" : displayStatus === "rejected" ? "â Rejected" : "Pending"}
               {decision && " (unsaved)"}
             </span>
           )}
@@ -3664,7 +3664,7 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
         {inv.glNumber && chip(`GL: ${inv.glNumber}`, "#4338ca", "#eef2ff")}
         {inv.projectNumber && chip(`Project: ${inv.projectNumber}`, "#0369a1", "#e0f2fe")}
         {chip(
-          `Due: ${dueLabel}${overdue ? " — OVERDUE ⚠" : ""}`,
+          `Due: ${dueLabel}${overdue ? " â OVERDUE â " : ""}`,
           overdue ? "#dc2626" : "#374151",
           overdue ? "#fef2f2" : "#f9fafb"
         )}
@@ -3685,14 +3685,14 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
               padding: "7px 14px", borderRadius: 6, cursor: "pointer", fontSize: ".82rem", fontWeight: 500,
               transition: "all .15s"
             }}>
-              {panel === "preview" ? "📄 View Invoice" : "🔍 Full Details"}
+              {panel === "preview" ? "ð View Invoice" : "ð Full Details"}
             </button>
           );
         })}
         {inv.jiffyUrl && (
           <a href={inv.jiffyUrl} target="_blank" rel="noopener noreferrer"
             style={{ background: "#f3f4f6", color: "#374151", border: "1px solid #e5e7eb", padding: "7px 14px", borderRadius: 6, fontSize: ".82rem", fontWeight: 500, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 5 }}>
-            🔗 Open in Jiffy
+            ð Open in Jiffy
           </a>
         )}
       </div>
@@ -3724,7 +3724,7 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
               />
             ))}
             <div data-fallback style={{ display: "none", fontSize: ".8rem", color: "#999", textAlign: "center", fontStyle: "italic", marginBottom: 12 }}>
-              Invoice image not available — use "Open in Jiffy" to view original
+              Invoice image not available â use "Open in Jiffy" to view original
             </div>
             <div style={{ display: "flex", gap: 16, flexWrap: "wrap", background: "#f5f5f5", padding: 10, borderRadius: 4, marginBottom: 14 }}>
               <div><div style={{ fontSize: ".68rem", textTransform: "uppercase", color: "#888" }}>Amount Due</div><strong>{fmt(inv.amount)}</strong></div>
@@ -3760,7 +3760,7 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
               {detailRow("Invoice #", inv.invoiceNumber)}
               {detailRow("Invoice Date", inv.invoiceDate)}
               {detailRow("GL Code", inv.glNumber)}
-              {detailRow("Project #", inv.projectNumber || "—")}
+              {detailRow("Project #", inv.projectNumber || "â")}
             </div>
 
             {/* Payment Info */}
@@ -3805,7 +3805,7 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
         </div>
       )}
 
-      {/* Controls — only show for pending invoices (not yet saved to Firestore) */}
+      {/* Controls â only show for pending invoices (not yet saved to Firestore) */}
       {inv.status === "pending" && (
         <div style={{ padding: "14px 20px", display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", background: decision ? (decision.action === "approved" ? "#f0fdf4" : decision.action === "rejected" ? "#fef2f2" : "#f9fafb") : "#fafafa", borderTop: "1px solid #f3f4f6" }}>
           <select
@@ -3831,16 +3831,16 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
           <div style={{ display: "flex", gap: 8, marginLeft: "auto" }}>
             <button onClick={() => handleDecision("approved")}
               style={{ background: decision?.action === "approved" ? "#0f5132" : "#166534", color: "#fff", border: decision?.action === "approved" ? "2px solid #16a34a" : "none", padding: "9px 20px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem" }}>
-              ✓ Approve
+              â Approve
             </button>
             <button onClick={() => handleDecision("rejected")}
               style={{ background: decision?.action === "rejected" ? "#7f1d1d" : "#991b1b", color: "#fff", border: decision?.action === "rejected" ? "2px solid #dc2626" : "none", padding: "9px 20px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem" }}>
-              ✗ Reject
+              â Reject
             </button>
             {decision && (
               <button onClick={() => onClearDecision(inv.id)}
                 style={{ background: "#fff", color: "#dc2626", border: "1px solid #fecaca", padding: "9px 14px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem" }}>
-                ↩ Undo
+                â© Undo
               </button>
             )}
           </div>
@@ -3871,7 +3871,7 @@ const APInvoices = ({ goHome, goHistory }) => {
     })();
   }, []);
 
-  // Local-only — updates batch decisions state (nothing saved to Firestore yet)
+  // Local-only â updates batch decisions state (nothing saved to Firestore yet)
   const handleDecision = (invoiceId, action, category, comment) => {
     setDecisions(prev => ({ ...prev, [invoiceId]: { action, category, comment } }));
   };
@@ -3880,7 +3880,7 @@ const APInvoices = ({ goHome, goHistory }) => {
     setDecisions(prev => { const next = { ...prev }; delete next[invoiceId]; return next; });
   };
 
-  // Batch submit — writes ALL decisions to Firestore and queues for Jiffy
+  // Batch submit â writes ALL decisions to Firestore and queues for Jiffy
   const submitAll = async () => {
     const entries = Object.entries(decisions);
     if (entries.length === 0) return;
@@ -3897,11 +3897,11 @@ const APInvoices = ({ goHome, goHistory }) => {
           jiffyAction: "pending",
           jiffyGroup: category || "Expense in Budget",
         });
-        // Write a permanent history record — this is the audit trail
+        // Write a permanent history record â this is the audit trail
         await addDoc(collection(db, "ap_payment_history"), {
           invoiceId,
           invoiceNumber: inv.invoiceNumber || invoiceId,
-          vendor: inv.vendor || "—",
+          vendor: inv.vendor || "â",
           amount: Number(inv.amount || 0),
           storeNumber: inv.storeNumber || "",
           location: inv.location || "",
@@ -3910,7 +3910,7 @@ const APInvoices = ({ goHome, goHistory }) => {
           paymentDue: inv.paymentDue || "",
           invoiceDate: inv.invoiceDate || "",
           description: inv.description || inv.remarks || "",
-          invoiceGroup: category || inv.invoiceGroup || "—",
+          invoiceGroup: category || inv.invoiceGroup || "â",
           status: action,
           comment: comment || "",
           actionedAt: now,
@@ -3923,7 +3923,7 @@ const APInvoices = ({ goHome, goHistory }) => {
         return d ? { ...inv, status: d.action, category: d.category, comment: d.comment, jiffyAction: "pending" } : inv;
       }));
       setDecisions({});
-      alert(`Submitted ${entries.length} invoice${entries.length !== 1 ? "s" : ""} — queued for Jiffy approval.`);
+      alert(`Submitted ${entries.length} invoice${entries.length !== 1 ? "s" : ""} â queued for Jiffy approval.`);
     } catch (e) {
       alert("Error submitting invoices: " + e.message);
     } finally {
@@ -3958,7 +3958,7 @@ const APInvoices = ({ goHome, goHistory }) => {
           <div style={{ width: 1, height: 24, background: "#e5e7eb" }} />
           <div>
             <h1 style={{ fontSize: "1.15rem", color: "#111827", margin: 0, fontWeight: 700 }}>AP Invoice Approval</h1>
-            <div style={{ fontSize: ".73rem", color: "#6b7280" }}>Aubuchon Hardware — Accounts Payable</div>
+            <div style={{ fontSize: ".73rem", color: "#6b7280" }}>Aubuchon Hardware â Accounts Payable</div>
           </div>
           {goHistory && (
             <>
@@ -3985,13 +3985,13 @@ const APInvoices = ({ goHome, goHistory }) => {
       </div>
 
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "24px 16px" }}>
-        {loading && <div style={{ textAlign: "center", padding: "60px 0", color: "#6b7280" }}>Loading invoices…</div>}
+        {loading && <div style={{ textAlign: "center", padding: "60px 0", color: "#6b7280" }}>Loading invoicesâ¦</div>}
         {error && <div style={{ textAlign: "center", padding: "60px 0", color: "#dc2626" }}>Error: {error}</div>}
 
         {!loading && overdueCount > 0 && (
           <div style={{ background: "linear-gradient(90deg,#fef2f2,#fff5f5)", border: "1px solid #fecaca", color: "#991b1b", padding: "12px 20px", borderRadius: 10, marginBottom: 20, fontWeight: 600, display: "flex", alignItems: "center", gap: 10 }}>
-            <span style={{ fontSize: "1.2rem" }}>⚠</span>
-            <span>OVERDUE: {overdueCount} invoice{overdueCount !== 1 ? "s are" : " is"} past due — immediate action recommended.</span>
+            <span style={{ fontSize: "1.2rem" }}>â </span>
+            <span>OVERDUE: {overdueCount} invoice{overdueCount !== 1 ? "s are" : " is"} past due â immediate action recommended.</span>
           </div>
         )}
 
@@ -4021,9 +4021,9 @@ const APInvoices = ({ goHome, goHistory }) => {
             </div>
             <div style={{ fontSize: ".78rem", opacity: .85 }}>
               {Object.values(decisions).filter(d => d.action === "approved").length} approved
-              {" · "}
+              {" Â· "}
               {Object.values(decisions).filter(d => d.action === "rejected").length} rejected
-              {" · "}
+              {" Â· "}
               Total: {fmt(Object.entries(decisions).reduce((sum, [id, d]) => {
                 const inv = invoices.find(i => i.id === id);
                 return sum + (Number(inv?.amount || 0));
@@ -4037,7 +4037,7 @@ const APInvoices = ({ goHome, goHistory }) => {
             </button>
             <button onClick={submitAll} disabled={submitting}
               style={{ background: "#fff", color: "#065f46", border: "none", padding: "10px 30px", borderRadius: 8, fontWeight: 700, cursor: "pointer", fontSize: ".92rem", opacity: submitting ? .6 : 1, boxShadow: "0 2px 8px rgba(0,0,0,0.15)" }}>
-              {submitting ? "Submitting…" : `Submit All (${Object.keys(decisions).length})`}
+              {submitting ? "Submittingâ¦" : `Submit All (${Object.keys(decisions).length})`}
             </button>
           </div>
         </div>
@@ -4149,7 +4149,7 @@ const WellsCCCard = ({ txn, decision, onDecision, onClearDecision }) => {
           {txn.glCode && <span><strong>GL:</strong> {txn.glCode}</span>}
           {txn.notes && <span><strong>Notes:</strong> {txn.notes}</span>}
           {receiptUrl
-            ? <a href={receiptUrl} target="_blank" rel="noopener noreferrer" style={{ color: "#1d4ed8", fontWeight: 600, textDecoration: "none" }}>📄 View Receipt</a>
+            ? <a href={receiptUrl} target="_blank" rel="noopener noreferrer" style={{ color: "#1d4ed8", fontWeight: 600, textDecoration: "none" }}>ð View Receipt</a>
             : <span style={{ color: txn.receiptSubmitted ? "#15803d" : "#9ca3af", fontWeight: 600 }}>
                 {txn.receiptSubmitted ? "Receipt on file (WF)" : "No receipt"}
               </span>
@@ -4186,14 +4186,14 @@ const WellsCCCard = ({ txn, decision, onDecision, onClearDecision }) => {
             {receiptUrl
               ? <a href={receiptUrl} target="_blank" rel="noopener noreferrer"
                   style={{ color: "#1d4ed8", fontSize: ".8rem", fontWeight: 600, textDecoration: "none", background: "#eff6ff", border: "1px solid #bfdbfe", padding: "5px 10px", borderRadius: 6, whiteSpace: "nowrap" }}>
-                  📄 View Receipt
+                  ð View Receipt
                 </a>
               : null}
             <label style={{ display: "inline-flex", alignItems: "center", gap: 6, cursor: "pointer",
               background: uploading ? "#f3f4f6" : "#f8fafc", border: "1px solid #d1d5db",
               borderRadius: 6, padding: "5px 10px", fontSize: ".8rem", color: "#374151", fontWeight: 500, whiteSpace: "nowrap" }}>
               <input type="file" accept="image/*,application/pdf" style={{ display: "none" }} onChange={handleReceiptUpload} disabled={uploading} />
-              {uploading ? "⏳ Uploading..." : receiptUrl ? "🔄 Replace" : "📎 Attach Receipt"}
+              {uploading ? "â³ Uploading..." : receiptUrl ? "ð Replace" : "ð Attach Receipt"}
             </label>
             {uploadError && <span style={{ color: "#dc2626", fontSize: ".75rem" }}>{uploadError}</span>}
           </div>
@@ -4438,7 +4438,7 @@ const ReceiptCell = ({ row }) => {
         <a href={url} target="_blank" rel="noopener noreferrer"
           style={{ color: "#1d4ed8", fontSize: ".75rem", fontWeight: 600, textDecoration: "none",
             background: "#eff6ff", border: "1px solid #bfdbfe", padding: "3px 8px", borderRadius: 5, whiteSpace: "nowrap" }}>
-          📄 View
+          ð View
         </a>
         <label style={{ cursor: "pointer", fontSize: ".68rem", color: "#9ca3af" }}>
           <input type="file" accept="image/*,application/pdf" style={{ display: "none" }} onChange={handleUpload} disabled={uploading} />
@@ -4452,7 +4452,7 @@ const ReceiptCell = ({ row }) => {
       background: "#f8fafc", border: "1px dashed #d1d5db", borderRadius: 5,
       padding: "3px 8px", fontSize: ".72rem", color: uploading ? "#9ca3af" : "#6b7280", whiteSpace: "nowrap" }}>
       <input type="file" accept="image/*,application/pdf" style={{ display: "none" }} onChange={handleUpload} disabled={uploading} />
-      {uploading ? "⏳…" : "📎 Upload"}
+      {uploading ? "â³â¦" : "ð Upload"}
     </label>
   );
 };
@@ -4485,7 +4485,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
           return {
             id: d.id,
             type: data.type || "AP",
-            vendor: data.vendor || "—",
+            vendor: data.vendor || "â",
             amount: Number(data.amount || 0),
             store: data.storeNumber || "",
             location: data.location || "",
@@ -4495,7 +4495,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
             invoiceDate: data.invoiceDate || "",
             status: data.status || "pending",
             description: data.description || "",
-            group: data.invoiceGroup || "—",
+            group: data.invoiceGroup || "â",
             invoiceNumber: data.invoiceNumber || "",
             actionedAt: data.actionedAt || null,
             actionedBy: data.actionedBy || "",
@@ -4525,8 +4525,8 @@ const PaymentHistory = ({ goHome, goBack }) => {
             dueDate: fmtTs(data.transactionDate),
             invoiceDate: fmtTs(data.transactionDate),
             // Status logic: "reviewed" or "approved" from WellsCC = approved.
-            // Records from bulk import have a real category set but status=null — treat as approved.
-            // Records with NO date AND NO category are raw/duplicate import artifacts — excluded below.
+            // Records from bulk import have a real category set but status=null â treat as approved.
+            // Records with NO date AND NO category are raw/duplicate import artifacts â excluded below.
             status: (data.status === "reviewed" || data.status === "approved")
               ? "approved"
               : (data.category && data.category !== "--")
@@ -4541,7 +4541,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
           };
         });
 
-        // Remove raw/empty records (no date AND no meaningful category) — these are import artifacts
+        // Remove raw/empty records (no date AND no meaningful category) â these are import artifacts
         const ccCleaned = ccRows.filter(r => r.dueDate || (r.group && r.group !== "--"));
         // Deduplicate remaining rows by vendor+amount+date
         const ccSeen = new Set();
@@ -4575,7 +4575,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
 
   const fmtDate = (val) => {
     const d = parseDateStr(val);
-    return d && !isNaN(d) ? d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : (val || "—");
+    return d && !isNaN(d) ? d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : (val || "â");
   };
 
   // Unique values for filter dropdowns
@@ -4648,7 +4648,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
     return <span style={{ background: c.bg, color: c.color, border: `1px solid ${c.border}`, padding: "2px 8px", borderRadius: 10, fontSize: ".7rem", fontWeight: 700 }}>{type}</span>;
   };
 
-  const sortIcon = (col) => sortCol === col ? (sortDir === "asc" ? " ▲" : " ▼") : "";
+  const sortIcon = (col) => sortCol === col ? (sortDir === "asc" ? " â²" : " â¼") : "";
 
   const selectStyle = { padding: "6px 10px", borderRadius: 6, border: "1px solid #d1d5db", fontSize: ".8rem", background: "#fff", color: "#374151", minWidth: 90 };
   const inputStyle = { ...selectStyle, minWidth: 100 };
@@ -4667,7 +4667,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
             <h1 style={{ fontSize: "1.15rem", color: "#111827", margin: 0, fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>
               <History size={18} /> Payment History
             </h1>
-            <div style={{ fontSize: ".73rem", color: "#6b7280" }}>All authorized payments — AP Invoices & CC Expenses</div>
+            <div style={{ fontSize: ".73rem", color: "#6b7280" }}>All authorized payments â AP Invoices & CC Expenses</div>
           </div>
         </div>
         <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
@@ -4716,7 +4716,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
           )}
         </div>
 
-        {loading && <div style={{ textAlign: "center", padding: "60px 0", color: "#6b7280" }}>Loading payment history…</div>}
+        {loading && <div style={{ textAlign: "center", padding: "60px 0", color: "#6b7280" }}>Loading payment historyâ¦</div>}
 
         {!loading && (
           <div style={{ background: "#fff", borderRadius: 10, border: "1px solid #e5e7eb", overflow: "hidden" }}>
@@ -4749,7 +4749,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
                   {sorted.length === 0 && (
                     <tr><td colSpan={11} style={{ textAlign: "center", padding: "50px 0", color: "#9ca3af" }}>
                       {rows.length === 0
-                        ? "No history yet — records appear here after you submit approvals or rejections."
+                        ? "No history yet â records appear here after you submit approvals or rejections."
                         : "No records match the current filters."}
                     </td></tr>
                   )}
@@ -4761,23 +4761,23 @@ const PaymentHistory = ({ goHome, goBack }) => {
                         {r.invoiceNumber && <div style={{ fontSize: ".72rem", color: "#9ca3af", fontWeight: 400 }}>#{r.invoiceNumber}</div>}
                       </td>
                       <td style={{ padding: "10px 12px", textAlign: "right", fontWeight: 700, color: "#0f766e", fontVariantNumeric: "tabular-nums" }}>{fmt(r.amount)}</td>
-                      <td style={{ padding: "10px 12px", color: "#374151" }}>{r.store ? `#${r.store}` : "—"}</td>
+                      <td style={{ padding: "10px 12px", color: "#374151" }}>{r.store ? `#${r.store}` : "â"}</td>
                       <td style={{ padding: "10px 12px", color: "#374151", whiteSpace: "nowrap" }}>{fmtDate(r.dueDate)}</td>
                       <td style={{ padding: "10px 12px", color: "#374151", whiteSpace: "nowrap", fontSize: ".78rem" }}>{fmtDate(r.actionedAt)}</td>
                       <td style={{ padding: "10px 12px" }}>{statusBadge(r.status)}</td>
-                      <td style={{ padding: "10px 12px", color: "#374151", fontSize: ".78rem" }}>{r.group || "—"}</td>
-                      <td style={{ padding: "10px 12px", color: "#6b7280", maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: ".78rem" }}>{r.description || "—"}</td>
+                      <td style={{ padding: "10px 12px", color: "#374151", fontSize: ".78rem" }}>{r.group || "â"}</td>
+                      <td style={{ padding: "10px 12px", color: "#6b7280", maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: ".78rem" }}>{r.description || "â"}</td>
                       <td style={{ padding: "10px 12px", textAlign: "center" }}>
                         {r.type === "AP" && r.invoiceNumber
                           ? <a href={`/invoices/${r.invoiceNumber}.png`} target="_blank" rel="noopener noreferrer"
                               style={{ color: "#1d4ed8", fontSize: ".75rem", fontWeight: 600, textDecoration: "none", background: "#eff6ff", border: "1px solid #bfdbfe", padding: "3px 8px", borderRadius: 5, whiteSpace: "nowrap" }}>
-                              📄 View
+                              ð View
                             </a>
                           : r.type === "CC"
                             ? <ReceiptCell row={r} />
-                            : "—"}
+                            : "â"}
                       </td>
-                      <td style={{ padding: "10px 12px", color: "#6b7280", maxWidth: 220, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.comment || "—"}</td>
+                      <td style={{ padding: "10px 12px", color: "#6b7280", maxWidth: 220, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.comment || "â"}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -4818,14 +4818,14 @@ const YODA_REPORTS = [
   {
     id: "daily-sales",
     label: "Daily Sales Report",
-    description: "Yesterday's sales vs. last year — scorecard, cohorts, store map, and store ranks",
+    description: "Yesterday's sales vs. last year â scorecard, cohorts, store map, and store ranks",
     url: "https://aubuchon-it-command-center.vercel.app/reports/daily-sales-latest.html",
     icon: TrendingUp,
   },
   {
     id: "live-sales",
     label: "Live Sales",
-    description: "Today's sales vs. plan — company total, top 20 stores, and top 20 products",
+    description: "Today's sales vs. plan â company total, top 20 stores, and top 20 products",
     icon: Zap,
     view: "live-sales",
   },
@@ -4833,7 +4833,7 @@ const YODA_REPORTS = [
 
 
 /* ============================================================
-   LIVE SALES VIEW — reads pre-computed data from /api/live-sales
+   LIVE SALES VIEW â reads pre-computed data from /api/live-sales
    Refreshed every 10 min by a scheduled task. Loads instantly.
    ============================================================ */
 
@@ -4864,7 +4864,7 @@ function LiveSalesView({ goBack }) {
           pctToPlan: d.companyTotal.pctToPlan,
         });
 
-        // Top stores — map API shape to render shape
+        // Top stores â map API shape to render shape
         var stores = (d.topStores || []).map(function (s, i) {
           return {
             code: s.store,
@@ -4896,7 +4896,7 @@ function LiveSalesView({ goBack }) {
         }
         var info = d.cached ? "Cached" : "Fresh";
         if (d.stale) info = "Stale cache";
-        if (d.refreshedAt) info += " · refreshed " + new Date(d.refreshedAt).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+        if (d.refreshedAt) info += " Â· refreshed " + new Date(d.refreshedAt).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
         setCacheInfo(info);
 
         setLoading(false);
@@ -4972,7 +4972,7 @@ function LiveSalesView({ goBack }) {
         </div>
 
         <div className={"rounded-xl border-2 p-5 md:p-6 mb-6 " + vBg}>
-          <div className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2">Company Total — Today vs Plan</div>
+          <div className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2">Company Total â Today vs Plan</div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
               <div className="text-xs text-slate-500">Sales</div>
@@ -5026,7 +5026,7 @@ function LiveSalesView({ goBack }) {
                       <td className="px-3 py-2 text-slate-400 font-medium">{i + 1}</td>
                       <td className="px-3 py-2">
                         <div className="font-semibold text-slate-900">{tc(s.name)}</div>
-                        <div className="text-xs text-slate-400">{tc(s.city)}{s.state ? ", " + s.state : ""} · #{s.code}</div>
+                        <div className="text-xs text-slate-400">{tc(s.city)}{s.state ? ", " + s.state : ""} Â· #{s.code}</div>
                       </td>
                       <td className="px-3 py-2 text-right font-semibold text-slate-900">{fmtD(s.sales)}</td>
                       <td className="px-3 py-2 text-right text-slate-500">{fmtD(s.plan)}</td>
@@ -5079,7 +5079,7 @@ function LiveSalesView({ goBack }) {
         )}
 
         <div className="text-center text-xs text-slate-400 py-4">
-          Data from YODA · Power BI / MDM Semantic Model · Auto-refreshed every 10 min
+          Data from YODA Â· Power BI / MDM Semantic Model Â· Auto-refreshed every 10 min
         </div>
       </div>
     </div>
@@ -5168,7 +5168,10 @@ function YODAReports({ goHome }) {
 }
 
 export default function App() {
-  const [activeSection, setActiveSection] = useState(null);
+  const [activeSection, setActiveSection] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("section") || null;
+  });
   const { userAccess, allUsers, isAdmin, canAccessSection, saveAllUsers, userEmail } = useUserAccess();
 
   // Loading state
@@ -5193,7 +5196,7 @@ export default function App() {
     return <AdminPanel goHome={() => setActiveSection(null)} allUsers={allUsers} saveAllUsers={saveAllUsers} />;
   }
 
-  // Section routing — only if user has access
+  // Section routing â only if user has access
   if (activeSection === "projects" && canAccessSection("projects")) {
     return <ITProjectDashboard goHome={() => setActiveSection(null)} isAdmin={isAdmin} allAccessUsers={allUsers} />;
   }
