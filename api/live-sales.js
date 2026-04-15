@@ -30,12 +30,24 @@ function queryYoda(dax) {
   });
 }
 
+// Safe wrapper: always resolves, returns { rows: [], error?: string }
+function safeQuery(dax, label) {
+  return queryYoda(dax)
+    .then(result => {
+      if (result && result.status === 'ok' && Array.isArray(result.rows)) {
+        return { rows: result.rows, count: result.row_count || result.rows.length };
+      }
+      return { rows: [], error: label + ': ' + (result?.error || 'unexpected response') };
+    })
+    .catch(err => ({ rows: [], error: label + ': ' + err.message }));
+}
+
 async function refreshData() {
   // Use Eastern Time (Aubuchon HQ) — Vercel runs in UTC
-  const now = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }));
-  const y = now.getFullYear();
-  const m = now.getMonth() + 1;
-  const d = now.getDate();
+  const etNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }));
+  const y = etNow.getFullYear();
+  const m = etNow.getMonth() + 1;
+  const d = etNow.getDate();
 
   const liveStoreQuery = `EVALUATE SELECTCOLUMNS(FCT_LIVE_SALE, "Store", FCT_LIVE_SALE[STORE_CD], "Sales", FCT_LIVE_SALE[NET_SALES], "Txns", FCT_LIVE_SALE[TRANSACTION_CNT], "COGS", FCT_LIVE_SALE[COST_OF_GOODS], "Customers", FCT_LIVE_SALE[CUSTOMER_CNT], "Updated", FCT_LIVE_SALE[LAST_UPDATED_TS])`;
 
@@ -45,19 +57,23 @@ async function refreshData() {
 
   const productQuery = `EVALUATE TOPN(20, SUMMARIZE(FCT_LIVE_SALE_TRANSACTION_LINE, FCT_LIVE_SALE_TRANSACTION_LINE[PRODUCT_DESC], "Sales", SUM(FCT_LIVE_SALE_TRANSACTION_LINE[ITEM_EXTENDED_AMT])), [Sales], DESC)`;
 
-  // Run queries in parallel — wall time = longest single query (~18s) instead of sum (~60s)
-  const [liveResult, planResult, dimResult, productResult] = await Promise.all([
-    queryYoda(liveStoreQuery),
-    queryYoda(planQuery),
-    queryYoda(dimQuery),
-    queryYoda(productQuery).catch(() => ({ rows: [] })),
+  // Run queries in parallel with safe wrappers — each one catches its own errors
+  const [liveR, planR, dimR, prodR] = await Promise.all([
+    safeQuery(liveStoreQuery, 'live'),
+    safeQuery(planQuery, 'plan'),
+    safeQuery(dimQuery, 'dim'),
+    safeQuery(productQuery, 'product'),
   ]);
 
-  // Extract rows from each result
-  const liveRows = (liveResult && liveResult.rows) || [];
-  const planRows = (planResult && planResult.rows) || [];
-  const dimRows = (dimResult && dimResult.rows) || [];
-  const productRows = (productResult && productResult.rows) || [];
+  const liveRows = liveR.rows;
+  const planRows = planR.rows;
+  const dimRows = dimR.rows;
+  const productRows = prodR.rows;
+
+  // Collect any query errors for diagnostics
+  const queryErrors = [liveR, planR, dimR, prodR]
+    .filter(r => r.error)
+    .map(r => r.error);
 
   // Build name map from DIM_STORE
   const nameMap = {};
@@ -66,7 +82,7 @@ async function refreshData() {
     nameMap[code] = { name: r.Name || '', city: r.City || '', state: r.State || '' };
   });
 
-  // Build plan map from RPT_SCORECARD_BY_DAY
+  // Build plan map from RPT_SCORECARD_BY_DAY (LOCATION_CD = STORE_CD, same values)
   const planMap = {};
   planRows.forEach(r => {
     const loc = String(r.Store || '');
@@ -126,7 +142,6 @@ async function refreshData() {
 
   // Top 20 products by dollar sales
   const topProducts = productRows.map(r => {
-    // Key comes back as FCT_LIVE_SALE_TRANSACTION_LINE[PRODUCT_DESC (missing bracket)
     const desc = r['FCT_LIVE_SALE_TRANSACTION_LINE[PRODUCT_DESC'] || r['PRODUCT_DESC'] || r['FCT_LIVE_SALE_TRANSACTION_LINE[PRODUCT_DESC]'] || Object.values(r).find(v => typeof v === 'string') || 'Unknown';
     const sales = Number(r.Sales || r['[Sales]'] || 0);
     return { product: desc, sales };
@@ -139,18 +154,20 @@ async function refreshData() {
     asOf: latestUpdate || new Date().toISOString(),
     refreshedAt: new Date().toISOString(),
     storeCount: liveRows.length,
-    _debug: {
-      dateUsed: `${y}-${m}-${d}`,
-      planRowCount: planRows.length,
-      liveRowCount: liveRows.length,
-      dimRowCount: dimRows.length,
-      productRowCount: productRows.length,
-      planSample: planRows.slice(0, 3),
-      liveSample: liveRows.slice(0, 3),
-      planMapKeys: Object.keys(planMap).slice(0, 5),
+    _diag: {
+      dateET: `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`,
+      rows: { live: liveRows.length, plan: planRows.length, dim: dimRows.length, prod: productRows.length },
+      planMapSize: Object.keys(planMap).length,
+      planMapSample: Object.keys(planMap).slice(0, 5),
+      errors: queryErrors.length > 0 ? queryErrors : undefined,
     },
   };
 }
+
+// Vercel config: increase timeout to 120s (Pro plan supports up to 300s)
+export const config = {
+  maxDuration: 120,
+};
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
