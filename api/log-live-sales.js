@@ -25,8 +25,11 @@ const LIVE_SALES_URL = 'https://aubuchon-it-command-center.vercel.app/api/live-s
 const LOG_DIR = 'public/data/live-sales';
 // How many prior same-DOW files to consider when building the pace curve.
 const HISTORY_LOOKBACK_WEEKS = 8;
-// Minimum same-DOW history files required before we'll surface a prediction.
-const MIN_HISTORY_DAYS = 1;
+// How many prior calendar days to consider for the any-DOW fallback curve.
+const ANY_DOW_LOOKBACK_DAYS = 21;
+// Assumed business day for the cold-start linear method (ET).
+const BUSINESS_OPEN_HOUR = 7;   // 7 AM
+const BUSINESS_CLOSE_HOUR = 20; // 8 PM
 
 // --------- low-level HTTPS helpers (no external deps) ----------
 
@@ -113,13 +116,17 @@ function etParts(d = new Date()) {
 }
 
 function priorSameDowDates(fromDateStr, count) {
-  // fromDateStr is YYYY-MM-DD (ET). Walk back 7/14/... days.
+  return priorDates(fromDateStr, count, 7);
+}
+
+function priorDates(fromDateStr, count, step) {
+  // fromDateStr is YYYY-MM-DD (ET). Walk back `step` days at a time.
   const [y, m, d] = fromDateStr.split('-').map(Number);
   // Use noon UTC on that date to avoid DST drift when subtracting.
   const base = new Date(Date.UTC(y, m - 1, d, 12, 0, 0));
   const out = [];
   for (let i = 1; i <= count; i++) {
-    const t = new Date(base.getTime() - i * 7 * 24 * 60 * 60 * 1000);
+    const t = new Date(base.getTime() - i * step * 24 * 60 * 60 * 1000);
     const yy = t.getUTCFullYear();
     const mm = String(t.getUTCMonth() + 1).padStart(2, '0');
     const dd = String(t.getUTCDate()).padStart(2, '0');
@@ -156,8 +163,7 @@ async function appendLogLine(dateET, entry) {
   return { ok: false, error: `PUT ${path} -> ${put.status} ${put.raw?.slice(0, 200)}` };
 }
 
-async function loadHistoryForDow(todayDateET) {
-  const dates = priorSameDowDates(todayDateET, HISTORY_LOOKBACK_WEEKS);
+async function loadHistoryDays(dates) {
   const results = [];
   for (const d of dates) {
     const r = await ghGet(`${LOG_DIR}/${d}.jsonl`);
@@ -172,73 +178,101 @@ async function loadHistoryForDow(todayDateET) {
   return results;
 }
 
-function predictEOD(currentEntry, history) {
-  // currentEntry: { hourET, minuteET, sales, plan, ... }
-  // history: [{ date, rows: [...same shape...] }]
-  // For each history day, find EOD (max sales reading) and the pace at the
-  // current hour:minute (last reading <= current time, or linear-interp).
+// Build a pace-based projection from a set of history days. Returns null if
+// no usable paces can be derived.
+function paceProjection(currentEntry, history, label) {
   const curMin = minutesOfDay(currentEntry.hourET, currentEntry.minuteET);
   const paces = [];
   const eodList = [];
-  const byDow = [];
+  const byDay = [];
 
   for (const h of history) {
     const rows = [...h.rows].sort((a, b) => minutesOfDay(a.hourET, a.minuteET) - minutesOfDay(b.hourET, b.minuteET));
     const eod = Math.max(...rows.map(r => Number(r.sales || 0)));
     if (!eod || eod <= 0) continue;
     eodList.push(eod);
-
-    // Find the reading at or just before curMin.
     let at = null;
     for (const r of rows) {
       const mm = minutesOfDay(r.hourET, r.minuteET);
       if (mm <= curMin) at = r; else break;
     }
     if (!at) continue;
-    const atSales = Number(at.sales || 0);
-    const pace = atSales / eod; // 0..1
+    const pace = Number(at.sales || 0) / eod;
     if (pace > 0 && pace <= 1) paces.push(pace);
-
-    byDow.push({ date: h.date, eod, paceAtNow: pace, planHit: at.plan ? eod >= at.plan : null });
+    byDay.push({ date: h.date, eod, paceAtNow: pace, planHit: at.plan ? eod >= at.plan : null });
   }
 
-  if (paces.length < MIN_HISTORY_DAYS) {
-    return {
-      available: false,
-      reason: `Need at least ${MIN_HISTORY_DAYS} prior same-day-of-week history file(s); have ${paces.length}.`,
-      historyDays: paces.length,
-    };
-  }
+  if (!paces.length) return null;
 
-  // Trimmed mean of pace (drop extremes if we have >=4).
   let pacesSorted = [...paces].sort((a, b) => a - b);
   if (pacesSorted.length >= 4) pacesSorted = pacesSorted.slice(1, -1);
   const avgPace = pacesSorted.reduce((s, v) => s + v, 0) / pacesSorted.length;
-
   const projectedEOD = avgPace > 0 ? currentEntry.sales / avgPace : 0;
   const plan = Number(currentEntry.plan || 0);
-  const projectedPctToPlan = plan > 0 ? (projectedEOD / plan) * 100 : null;
-  const projectedVariance = plan > 0 ? projectedEOD - plan : null;
-  const avgEOD = eodList.reduce((s, v) => s + v, 0) / eodList.length;
-
-  // Confidence band from pace spread.
   const minPace = Math.min(...paces);
   const maxPace = Math.max(...paces);
-  const lowEOD = maxPace > 0 ? currentEntry.sales / maxPace : 0; // slower-pace day => lower EOD
-  const highEOD = minPace > 0 ? currentEntry.sales / minPace : 0;
+  const avgEOD = eodList.reduce((s, v) => s + v, 0) / eodList.length;
+
+  // Confidence: more history = higher confidence.
+  const confidence = paces.length >= 5 ? 'high' : paces.length >= 3 ? 'medium' : 'low';
 
   return {
     available: true,
+    method: label,
+    confidence,
     historyDays: paces.length,
     avgPaceAtNow: avgPace,
-    avgSameDowEOD: avgEOD,
+    avgHistoricalEOD: avgEOD,
     projectedEOD,
-    projectedPctToPlan,
-    projectedVariance,
-    band: { low: lowEOD, high: highEOD },
-    sameDowHistory: byDow,
-    method: 'trimmed-mean pace / same-day-of-week',
+    projectedPctToPlan: plan > 0 ? (projectedEOD / plan) * 100 : null,
+    projectedVariance: plan > 0 ? projectedEOD - plan : null,
+    band: {
+      low: maxPace > 0 ? currentEntry.sales / maxPace : 0,
+      high: minPace > 0 ? currentEntry.sales / minPace : 0,
+    },
+    historyDetail: byDay,
   };
+}
+
+// Cold-start method — no history required. Assumes sales accumulate in
+// proportion to elapsed business hours (7 AM – 8 PM ET). Useful on day 1
+// before any same-DOW or any-DOW history exists.
+function linearProjection(currentEntry) {
+  const curMin = minutesOfDay(currentEntry.hourET, currentEntry.minuteET);
+  const openMin = BUSINESS_OPEN_HOUR * 60;
+  const closeMin = BUSINESS_CLOSE_HOUR * 60;
+  const dayLen = closeMin - openMin;
+  const elapsed = Math.max(0, Math.min(dayLen, curMin - openMin));
+  const pctOfDay = elapsed / dayLen;
+  const projectedEOD = pctOfDay > 0 ? currentEntry.sales / pctOfDay : 0;
+  const plan = Number(currentEntry.plan || 0);
+  return {
+    available: true,
+    method: 'cold-start linear (business hours)',
+    confidence: 'very low',
+    historyDays: 0,
+    assumedBusinessHours: `${BUSINESS_OPEN_HOUR} AM – ${BUSINESS_CLOSE_HOUR - 12} PM ET`,
+    pctOfDayElapsed: pctOfDay,
+    projectedEOD,
+    projectedPctToPlan: plan > 0 ? (projectedEOD / plan) * 100 : null,
+    projectedVariance: plan > 0 ? projectedEOD - plan : null,
+    note: 'Sales assumed to accumulate evenly across business hours. This is a naive starting point — every new run, once any history exists, it will be replaced by a pace-curve projection.',
+  };
+}
+
+// Tiered prediction: pick the strongest method the current data supports.
+// Tier 1 (best): same-day-of-week pace curve (needs >=1 prior same-DOW day).
+// Tier 2 (fallback): any-day pace curve (needs >=1 prior day of any DOW).
+// Tier 3 (cold start): linear extrapolation from business hours.
+function buildPrediction(currentEntry, sameDowHistory, anyDowHistory) {
+  const sameDow = paceProjection(currentEntry, sameDowHistory, 'same-day-of-week pace');
+  if (sameDow) return sameDow;
+  const anyDow = paceProjection(currentEntry, anyDowHistory, 'any-day pace (DOW-agnostic fallback)');
+  if (anyDow) {
+    anyDow.note = 'No same-day-of-week history yet. Using all prior days to estimate pace — will switch to DOW-specific as soon as a matching day is logged.';
+    return anyDow;
+  }
+  return linearProjection(currentEntry);
 }
 
 async function writePrediction(obj) {
@@ -306,9 +340,14 @@ export default async function handler(req, res) {
     // 3) Append to today's log file.
     const appendResult = await appendLogLine(et.dateET, entry);
 
-    // 4) Learn from same-DOW history and predict EOD.
-    const history = await loadHistoryForDow(et.dateET);
-    const prediction = predictEOD(entry, history);
+    // 4) Learn from history (same-DOW preferred, fall back to any-day, then linear).
+    const sameDowDates = priorSameDowDates(et.dateET, HISTORY_LOOKBACK_WEEKS);
+    const anyDowDates = priorDates(et.dateET, ANY_DOW_LOOKBACK_DAYS, 1);
+    const [sameDowHistory, anyDowHistory] = await Promise.all([
+      loadHistoryDays(sameDowDates),
+      loadHistoryDays(anyDowDates),
+    ]);
+    const prediction = buildPrediction(entry, sameDowHistory, anyDowHistory);
 
     // 5) Persist prediction.json (even when unavailable — dashboard reads one file).
     const predictionDoc = {
