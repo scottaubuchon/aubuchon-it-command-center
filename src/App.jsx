@@ -1,4 +1,4 @@
-ï»¿ï»¿import { Fragment, useState, useMemo, useCallback, useEffect, useRef } from "react";
+﻿﻿import { Fragment, useState, useMemo, useCallback, useEffect, useRef } from "react";
 import {
   ChevronDown, ChevronRight, Plus, Trash2, Download, AlertTriangle, Clock,
   CheckCircle, XCircle, Pause, FlaskConical, BarChart3, Calendar, Edit3,
@@ -94,7 +94,7 @@ const VIEWS = [
    ===================================================================== */
 
 const initialProjects = [
-  // Enterprise Systems â Active Projects
+  // Enterprise Systems — Active Projects
   { id: 40, departments: ["Enterprise Systems"], name: "Merchant 2025.3 Update", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "4/8/2026", roadblocks: "External teams not responding to feedback requests; caused deferral", milestones: "", nextSteps: "", notes: "Upgrade Mi9 Merchant/MMS to version 2025.3 on the live environment", completedDate: "", subtasks: [], tier: "project" },
   { id: 41, departments: ["Enterprise Systems"], name: "Customer History Lookup v2 (Pre-Acquisition POS)", owner: "Dave Faucher", status: "In Progress", priority: "Low", pct: 0, date: "4/10/2026", roadblocks: "", milestones: "", nextSteps: "", notes: "Extend customer history lookup to include data from pre-acquisition POS systems: EPICOR, Rock Solid, Spruce, and others", completedDate: "", subtasks: [], tier: "project" },
   { id: 42, departments: ["Enterprise Systems"], name: "SpacePlan v2.0 Store (Mobile First)", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "4/9/2026", roadblocks: "UX feedback cycles may extend timeline", milestones: "Beta Release", nextSteps: "", notes: "Redevelop the store-facing SpacePlan tool with a mobile-first responsive UI", completedDate: "", subtasks: [], tier: "project" },
@@ -103,7 +103,7 @@ const initialProjects = [
   { id: 45, departments: ["Enterprise Systems"], name: "Price Change Tracking & Forecasting", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "4/22/2026", roadblocks: "IT Team bandwidth", milestones: "", nextSteps: "", notes: "Centralized price change tracking feeds: bin ticket printing, EZ-Commerce, TCB APIs, YODA, and Promo Management. Enables consistent pricing across all channels.", completedDate: "", subtasks: [], tier: "project" },
   { id: 46, departments: ["Enterprise Systems"], name: "Cookie Cutter Store Network Initiative", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "6/1/2026", roadblocks: "IT Team bandwidth", milestones: "", nextSteps: "", notes: "Standardize and template store networks and intranet sites for new store acquisitions beyond Store #244", completedDate: "", subtasks: [], tier: "project" },
   { id: 47, departments: ["Enterprise Systems"], name: "Price Ticket Generation Automation", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "6/8/2026", roadblocks: "Depends on completion of Price Change Tracking & Forecasting project", milestones: "", nextSteps: "", notes: "Fully automate price ticket generation sent to stores. Includes review of removing Bar Tender application from the technology stack.", completedDate: "", subtasks: [], tier: "project" },
-  // Enterprise Systems â Ongoing Support & Operations
+  // Enterprise Systems — Ongoing Support & Operations
   { id: 48, departments: ["Enterprise Systems"], name: "EDI Technical Support", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Ongoing operational support for EDI data exchange (OpenText / EricWare). Includes monitoring, troubleshooting, and documentation.", completedDate: "", subtasks: [], tier: "support" },
   { id: 49, departments: ["Enterprise Systems"], name: "Promotion Support", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Continuous support for promotion configuration, testing, and issue resolution within Mi9 Merchant, Ace, and the Marketing Dept.", completedDate: "", subtasks: [], tier: "support" },
   { id: 50, departments: ["Enterprise Systems"], name: "Mi9 Merchant Support", owner: "Dave Faucher", status: "In Progress", priority: "High", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Day-to-day support for Mi9 Merchant operations including upgrade coordination, break-fix, and vendor escalation.", completedDate: "", subtasks: [], tier: "support" },
@@ -113,7 +113,7 @@ const initialProjects = [
   { id: 54, departments: ["Enterprise Systems"], name: "Toolbox Initiative", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Centralized, secure, role-based portal for internal tools and data collection forms.", completedDate: "", subtasks: [], tier: "support" },
   { id: 55, departments: ["Enterprise Systems"], name: "New Store / Acquisitions Support", owner: "Dave Faucher", status: "In Progress", priority: "Medium", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "End-to-end technical support for new stores and acquisitions: customer data loading, EPICOR Bridge integration, and full store setup in Mi9 ecosystem.", completedDate: "", subtasks: [], tier: "support" },
   { id: 56, departments: ["Enterprise Systems"], name: "Documenting EricWare", owner: "Dave Faucher", status: "In Progress", priority: "Low", pct: 0, date: "Ongoing", roadblocks: "", milestones: "", nextSteps: "", notes: "Ongoing documentation effort for EricWare systems, with emphasis on EDI processes.", completedDate: "", subtasks: [], tier: "support" },
-  // Enterprise Systems â Backlog
+  // Enterprise Systems — Backlog
   { id: 57, departments: ["Enterprise Systems"], name: "Unified Bin Ticket Printing", owner: "Dave Faucher", status: "Not Started", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Consolidate bin ticket printing across all systems into a single, consistent workflow leveraging the Price Change Tracking initiative.", completedDate: "", subtasks: [], tier: "project" },
   { id: 58, departments: ["Enterprise Systems"], name: "Customer History Lookup v3 (Mi9 Customer History)", owner: "Dave Faucher", status: "Not Started", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Extend lookup to include Mi9 native customer transaction history.", completedDate: "", subtasks: [], tier: "project" },
   { id: 59, departments: ["Enterprise Systems"], name: "Customer History Lookup v4 (Service History: EPICOR / Ideal)", owner: "Dave Faucher", status: "Not Started", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Add service history from EPICOR and Ideal systems to the customer history lookup.", completedDate: "", subtasks: [], tier: "project" },
@@ -126,7 +126,7 @@ const initialProjects = [
   { id: 66, departments: ["Enterprise Systems"], name: "Unified Store Hours Management", owner: "Dave Faucher", status: "Not Started", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Single source of truth for store hours propagated to SPORT, Merchant, HS.com, Google My Business, SOCi, AH.com, and Yelp.", completedDate: "", subtasks: [], tier: "project" },
   { id: 67, departments: ["Enterprise Systems"], name: "ITSM", owner: "Dave Faucher", status: "Not Started", priority: "Medium", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Implement a formal IT service management platform covering ticketing, assigned equipment inventory, and a self-service portal for staff.", completedDate: "", subtasks: [], tier: "project" },
   { id: 68, departments: ["Enterprise Systems"], name: "Invalid Bin Ticket ID & Reprinting via Elvis", owner: "Dave Faucher", status: "Not Started", priority: "Low", pct: 0, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Automate identification and reprinting of invalid bin tickets using the Elvis devices.", completedDate: "", subtasks: [], tier: "project" },
-  // Enterprise Systems â Recently Completed
+  // Enterprise Systems — Recently Completed
   { id: 69, departments: ["Enterprise Systems"], name: "FindMyElvis v1.0", owner: "Dave Faucher", status: "Done", priority: "Medium", pct: 100, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Elvis store device locator", completedDate: "2026", subtasks: [], tier: "project" },
   { id: 70, departments: ["Enterprise Systems"], name: "Google SSO Login For Intranet Sites", owner: "Dave Faucher", status: "Done", priority: "Medium", pct: 100, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "Google Single Sign-On authentication for internal websites", completedDate: "2026", subtasks: [], tier: "project" },
   { id: 71, departments: ["Enterprise Systems"], name: "Customer History Lookup v1", owner: "Dave Faucher", status: "Done", priority: "Medium", pct: 100, date: "", roadblocks: "", milestones: "", nextSteps: "", notes: "EPICOR-only customer history lookup", completedDate: "2026", subtasks: [], tier: "project" },
@@ -778,7 +778,7 @@ function useSortableProjects(projects) {
 }
 
 /* =====================================================================
-   VOTING HOOK â Firestore doc: dashboards/project-votes
+   VOTING HOOK — Firestore doc: dashboards/project-votes
    ===================================================================== */
 
 function useVoting(projects) {
@@ -1375,7 +1375,7 @@ function ProjectRow({ project, onUpdate, onDelete, showDepts = true, showOwner =
 }
 
 /* =====================================================================
-   VIEW: VOTING â Dot voting for project prioritization
+   VIEW: VOTING — Dot voting for project prioritization
    ===================================================================== */
 
 function VotingView({ projects, votingHook }) {
@@ -1510,7 +1510,7 @@ function VotingView({ projects, votingHook }) {
 }
 
 /* =====================================================================
-   VIEW: VOTING RESULTS â Admin-only stack rank per section
+   VIEW: VOTING RESULTS — Admin-only stack rank per section
    ===================================================================== */
 
 function VotingResultsView({ projects, votingHook }) {
@@ -2874,7 +2874,7 @@ const SECTIONS = [
   {
     id: "payment-history",
     label: "Payment History",
-    description: "View and filter all authorized payments â AP invoices & CC expenses",
+    description: "View and filter all authorized payments — AP invoices & CC expenses",
     icon: History,
     gradient: "from-slate-500 to-slate-700",
     hoverGradient: "from-slate-600 to-slate-800",
@@ -3015,7 +3015,7 @@ function AccessDeniedScreen() {
 }
 
 /* =====================================================================
-   ADMIN PANEL â User Access Management
+   ADMIN PANEL — User Access Management
    ===================================================================== */
 
 function AdminPanel({ goHome, allUsers, saveAllUsers }) {
@@ -3315,7 +3315,7 @@ function AdminPanel({ goHome, allUsers, saveAllUsers }) {
 }
 
 /* =====================================================================
-   VOTING ADMIN (STANDALONE) â Self-contained, loads own data from Firestore
+   VOTING ADMIN (STANDALONE) — Self-contained, loads own data from Firestore
    ===================================================================== */
 
 function VotingAdminPanelStandalone({ allUsers }) {
@@ -3457,7 +3457,7 @@ function VotingAdminPanelStandalone({ allUsers }) {
                 </button>
                 <div className="flex-1 min-w-0">
                   <span className={`text-sm font-medium block truncate ${isOff ? "text-gray-400" : "text-gray-900"}`}>{p.name}</span>
-                  <span className="text-[10px] text-gray-500">{String(p.owner || "")} â¢ {(p.departments || []).join(", ")}</span>
+                  <span className="text-[10px] text-gray-500">{String(p.owner || "")} • {(p.departments || []).join(", ")}</span>
                 </div>
                 <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full flex-shrink-0 ${isOff ? "bg-gray-100 text-gray-500" : "bg-emerald-50 text-emerald-700"}`}>
                   {isOff ? "Off" : "Voteable"}
@@ -3593,7 +3593,7 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
   const overdue = dueDate && dueDate < new Date() && inv.status === "pending";
   const dueLabel = dueDate
     ? dueDate.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
-    : inv.paymentDue || "â";
+    : inv.paymentDue || "—";
 
   const handleDecision = (action) => {
     onDecision(inv.id, action, category, comment);
@@ -3622,7 +3622,7 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
   const detailRow = (label, value, light = false) => (
     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", padding: "5px 0", borderBottom: "1px solid #f3f4f6", gap: 12 }}>
       <span style={{ color: "#9ca3af", fontSize: ".78rem", flexShrink: 0 }}>{label}</span>
-      <span style={{ color: light ? "#6b7280" : "#111827", fontSize: ".78rem", fontWeight: 500, textAlign: "right" }}>{value || "â"}</span>
+      <span style={{ color: light ? "#6b7280" : "#111827", fontSize: ".78rem", fontWeight: 500, textAlign: "right" }}>{value || "—"}</span>
     </div>
   );
 
@@ -3635,11 +3635,11 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
           <div style={{ fontSize: "1.1rem", fontWeight: 700, color: "#111827", letterSpacing: "-.01em" }}>{inv.vendor}</div>
           <div style={{ fontSize: ".8rem", color: "#6b7280", display: "flex", gap: 14, flexWrap: "wrap", marginTop: 4 }}>
             <span>Invoice #{inv.invoiceNumber}</span>
-            <span>Â·</span>
-            <span>Store {inv.storeNumber}{inv.location ? ` â ${inv.location}` : ""}</span>
-            <span>Â·</span>
+            <span>·</span>
+            <span>Store {inv.storeNumber}{inv.location ? ` — ${inv.location}` : ""}</span>
+            <span>·</span>
             <span>Vendor #{inv.vendorNumber}</span>
-            {inv.docNumber && <><span>Â·</span><span style={{ color: "#9ca3af" }}>{inv.docNumber}</span></>}
+            {inv.docNumber && <><span>·</span><span style={{ color: "#9ca3af" }}>{inv.docNumber}</span></>}
           </div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -3650,8 +3650,8 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
               color: displayStatus === "approved" ? "#166534" : displayStatus === "rejected" ? "#991b1b" : "#4b5563",
               border: `1px solid ${displayStatus === "approved" ? "#bbf7d0" : displayStatus === "rejected" ? "#fecaca" : "#e5e7eb"}`
             }}>
-              {decision && "â³ "}
-              {displayStatus === "approved" ? "â Approved" : displayStatus === "rejected" ? "â Rejected" : "Pending"}
+              {decision && "⏳ "}
+              {displayStatus === "approved" ? "✓ Approved" : displayStatus === "rejected" ? "✗ Rejected" : "Pending"}
               {decision && " (unsaved)"}
             </span>
           )}
@@ -3664,7 +3664,7 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
         {inv.glNumber && chip(`GL: ${inv.glNumber}`, "#4338ca", "#eef2ff")}
         {inv.projectNumber && chip(`Project: ${inv.projectNumber}`, "#0369a1", "#e0f2fe")}
         {chip(
-          `Due: ${dueLabel}${overdue ? " â OVERDUE â " : ""}`,
+          `Due: ${dueLabel}${overdue ? " — OVERDUE ⚠" : ""}`,
           overdue ? "#dc2626" : "#374151",
           overdue ? "#fef2f2" : "#f9fafb"
         )}
@@ -3685,14 +3685,14 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
               padding: "7px 14px", borderRadius: 6, cursor: "pointer", fontSize: ".82rem", fontWeight: 500,
               transition: "all .15s"
             }}>
-              {panel === "preview" ? "ð View Invoice" : "ð Full Details"}
+              {panel === "preview" ? "📄 View Invoice" : "🔍 Full Details"}
             </button>
           );
         })}
         {inv.jiffyUrl && (
           <a href={inv.jiffyUrl} target="_blank" rel="noopener noreferrer"
             style={{ background: "#f3f4f6", color: "#374151", border: "1px solid #e5e7eb", padding: "7px 14px", borderRadius: 6, fontSize: ".82rem", fontWeight: 500, textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 5 }}>
-            ð Open in Jiffy
+            🔗 Open in Jiffy
           </a>
         )}
       </div>
@@ -3724,7 +3724,7 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
               />
             ))}
             <div data-fallback style={{ display: "none", fontSize: ".8rem", color: "#999", textAlign: "center", fontStyle: "italic", marginBottom: 12 }}>
-              Invoice image not available â use "Open in Jiffy" to view original
+              Invoice image not available — use "Open in Jiffy" to view original
             </div>
             <div style={{ display: "flex", gap: 16, flexWrap: "wrap", background: "#f5f5f5", padding: 10, borderRadius: 4, marginBottom: 14 }}>
               <div><div style={{ fontSize: ".68rem", textTransform: "uppercase", color: "#888" }}>Amount Due</div><strong>{fmt(inv.amount)}</strong></div>
@@ -3760,7 +3760,7 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
               {detailRow("Invoice #", inv.invoiceNumber)}
               {detailRow("Invoice Date", inv.invoiceDate)}
               {detailRow("GL Code", inv.glNumber)}
-              {detailRow("Project #", inv.projectNumber || "â")}
+              {detailRow("Project #", inv.projectNumber || "—")}
             </div>
 
             {/* Payment Info */}
@@ -3805,7 +3805,7 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
         </div>
       )}
 
-      {/* Controls â only show for pending invoices (not yet saved to Firestore) */}
+      {/* Controls — only show for pending invoices (not yet saved to Firestore) */}
       {inv.status === "pending" && (
         <div style={{ padding: "14px 20px", display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", background: decision ? (decision.action === "approved" ? "#f0fdf4" : decision.action === "rejected" ? "#fef2f2" : "#f9fafb") : "#fafafa", borderTop: "1px solid #f3f4f6" }}>
           <select
@@ -3831,16 +3831,16 @@ const APInvoiceCard = ({ inv, decision, onDecision, onClearDecision }) => {
           <div style={{ display: "flex", gap: 8, marginLeft: "auto" }}>
             <button onClick={() => handleDecision("approved")}
               style={{ background: decision?.action === "approved" ? "#0f5132" : "#166534", color: "#fff", border: decision?.action === "approved" ? "2px solid #16a34a" : "none", padding: "9px 20px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem" }}>
-              â Approve
+              ✓ Approve
             </button>
             <button onClick={() => handleDecision("rejected")}
               style={{ background: decision?.action === "rejected" ? "#7f1d1d" : "#991b1b", color: "#fff", border: decision?.action === "rejected" ? "2px solid #dc2626" : "none", padding: "9px 20px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem" }}>
-              â Reject
+              ✗ Reject
             </button>
             {decision && (
               <button onClick={() => onClearDecision(inv.id)}
                 style={{ background: "#fff", color: "#dc2626", border: "1px solid #fecaca", padding: "9px 14px", borderRadius: 6, fontWeight: 600, cursor: "pointer", fontSize: ".84rem" }}>
-                â© Undo
+                ↩ Undo
               </button>
             )}
           </div>
@@ -3871,7 +3871,7 @@ const APInvoices = ({ goHome, goHistory }) => {
     })();
   }, []);
 
-  // Local-only â updates batch decisions state (nothing saved to Firestore yet)
+  // Local-only — updates batch decisions state (nothing saved to Firestore yet)
   const handleDecision = (invoiceId, action, category, comment) => {
     setDecisions(prev => ({ ...prev, [invoiceId]: { action, category, comment } }));
   };
@@ -3880,7 +3880,7 @@ const APInvoices = ({ goHome, goHistory }) => {
     setDecisions(prev => { const next = { ...prev }; delete next[invoiceId]; return next; });
   };
 
-  // Batch submit â writes ALL decisions to Firestore and queues for Jiffy
+  // Batch submit — writes ALL decisions to Firestore and queues for Jiffy
   const submitAll = async () => {
     const entries = Object.entries(decisions);
     if (entries.length === 0) return;
@@ -3897,11 +3897,11 @@ const APInvoices = ({ goHome, goHistory }) => {
           jiffyAction: "pending",
           jiffyGroup: category || "Expense in Budget",
         });
-        // Write a permanent history record â this is the audit trail
+        // Write a permanent history record — this is the audit trail
         await addDoc(collection(db, "ap_payment_history"), {
           invoiceId,
           invoiceNumber: inv.invoiceNumber || invoiceId,
-          vendor: inv.vendor || "â",
+          vendor: inv.vendor || "—",
           amount: Number(inv.amount || 0),
           storeNumber: inv.storeNumber || "",
           location: inv.location || "",
@@ -3910,7 +3910,7 @@ const APInvoices = ({ goHome, goHistory }) => {
           paymentDue: inv.paymentDue || "",
           invoiceDate: inv.invoiceDate || "",
           description: inv.description || inv.remarks || "",
-          invoiceGroup: category || inv.invoiceGroup || "â",
+          invoiceGroup: category || inv.invoiceGroup || "—",
           status: action,
           comment: comment || "",
           actionedAt: now,
@@ -3923,7 +3923,7 @@ const APInvoices = ({ goHome, goHistory }) => {
         return d ? { ...inv, status: d.action, category: d.category, comment: d.comment, jiffyAction: "pending" } : inv;
       }));
       setDecisions({});
-      alert(`Submitted ${entries.length} invoice${entries.length !== 1 ? "s" : ""} â queued for Jiffy approval.`);
+      alert(`Submitted ${entries.length} invoice${entries.length !== 1 ? "s" : ""} — queued for Jiffy approval.`);
     } catch (e) {
       alert("Error submitting invoices: " + e.message);
     } finally {
@@ -3958,7 +3958,7 @@ const APInvoices = ({ goHome, goHistory }) => {
           <div style={{ width: 1, height: 24, background: "#e5e7eb" }} />
           <div>
             <h1 style={{ fontSize: "1.15rem", color: "#111827", margin: 0, fontWeight: 700 }}>AP Invoice Approval</h1>
-            <div style={{ fontSize: ".73rem", color: "#6b7280" }}>Aubuchon Hardware â Accounts Payable</div>
+            <div style={{ fontSize: ".73rem", color: "#6b7280" }}>Aubuchon Hardware — Accounts Payable</div>
           </div>
           {goHistory && (
             <>
@@ -3985,13 +3985,13 @@ const APInvoices = ({ goHome, goHistory }) => {
       </div>
 
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "24px 16px" }}>
-        {loading && <div style={{ textAlign: "center", padding: "60px 0", color: "#6b7280" }}>Loading invoicesâ¦</div>}
+        {loading && <div style={{ textAlign: "center", padding: "60px 0", color: "#6b7280" }}>Loading invoices…</div>}
         {error && <div style={{ textAlign: "center", padding: "60px 0", color: "#dc2626" }}>Error: {error}</div>}
 
         {!loading && overdueCount > 0 && (
           <div style={{ background: "linear-gradient(90deg,#fef2f2,#fff5f5)", border: "1px solid #fecaca", color: "#991b1b", padding: "12px 20px", borderRadius: 10, marginBottom: 20, fontWeight: 600, display: "flex", alignItems: "center", gap: 10 }}>
-            <span style={{ fontSize: "1.2rem" }}>â </span>
-            <span>OVERDUE: {overdueCount} invoice{overdueCount !== 1 ? "s are" : " is"} past due â immediate action recommended.</span>
+            <span style={{ fontSize: "1.2rem" }}>⚠</span>
+            <span>OVERDUE: {overdueCount} invoice{overdueCount !== 1 ? "s are" : " is"} past due — immediate action recommended.</span>
           </div>
         )}
 
@@ -4021,9 +4021,9 @@ const APInvoices = ({ goHome, goHistory }) => {
             </div>
             <div style={{ fontSize: ".78rem", opacity: .85 }}>
               {Object.values(decisions).filter(d => d.action === "approved").length} approved
-              {" Â· "}
+              {" · "}
               {Object.values(decisions).filter(d => d.action === "rejected").length} rejected
-              {" Â· "}
+              {" · "}
               Total: {fmt(Object.entries(decisions).reduce((sum, [id, d]) => {
                 const inv = invoices.find(i => i.id === id);
                 return sum + (Number(inv?.amount || 0));
@@ -4037,7 +4037,7 @@ const APInvoices = ({ goHome, goHistory }) => {
             </button>
             <button onClick={submitAll} disabled={submitting}
               style={{ background: "#fff", color: "#065f46", border: "none", padding: "10px 30px", borderRadius: 8, fontWeight: 700, cursor: "pointer", fontSize: ".92rem", opacity: submitting ? .6 : 1, boxShadow: "0 2px 8px rgba(0,0,0,0.15)" }}>
-              {submitting ? "Submittingâ¦" : `Submit All (${Object.keys(decisions).length})`}
+              {submitting ? "Submitting…" : `Submit All (${Object.keys(decisions).length})`}
             </button>
           </div>
         </div>
@@ -4149,7 +4149,7 @@ const WellsCCCard = ({ txn, decision, onDecision, onClearDecision }) => {
           {txn.glCode && <span><strong>GL:</strong> {txn.glCode}</span>}
           {txn.notes && <span><strong>Notes:</strong> {txn.notes}</span>}
           {receiptUrl
-            ? <a href={receiptUrl} target="_blank" rel="noopener noreferrer" style={{ color: "#1d4ed8", fontWeight: 600, textDecoration: "none" }}>ð View Receipt</a>
+            ? <a href={receiptUrl} target="_blank" rel="noopener noreferrer" style={{ color: "#1d4ed8", fontWeight: 600, textDecoration: "none" }}>📄 View Receipt</a>
             : <span style={{ color: txn.receiptSubmitted ? "#15803d" : "#9ca3af", fontWeight: 600 }}>
                 {txn.receiptSubmitted ? "Receipt on file (WF)" : "No receipt"}
               </span>
@@ -4186,14 +4186,14 @@ const WellsCCCard = ({ txn, decision, onDecision, onClearDecision }) => {
             {receiptUrl
               ? <a href={receiptUrl} target="_blank" rel="noopener noreferrer"
                   style={{ color: "#1d4ed8", fontSize: ".8rem", fontWeight: 600, textDecoration: "none", background: "#eff6ff", border: "1px solid #bfdbfe", padding: "5px 10px", borderRadius: 6, whiteSpace: "nowrap" }}>
-                  ð View Receipt
+                  📄 View Receipt
                 </a>
               : null}
             <label style={{ display: "inline-flex", alignItems: "center", gap: 6, cursor: "pointer",
               background: uploading ? "#f3f4f6" : "#f8fafc", border: "1px solid #d1d5db",
               borderRadius: 6, padding: "5px 10px", fontSize: ".8rem", color: "#374151", fontWeight: 500, whiteSpace: "nowrap" }}>
               <input type="file" accept="image/*,application/pdf" style={{ display: "none" }} onChange={handleReceiptUpload} disabled={uploading} />
-              {uploading ? "â³ Uploading..." : receiptUrl ? "ð Replace" : "ð Attach Receipt"}
+              {uploading ? "⏳ Uploading..." : receiptUrl ? "🔄 Replace" : "📎 Attach Receipt"}
             </label>
             {uploadError && <span style={{ color: "#dc2626", fontSize: ".75rem" }}>{uploadError}</span>}
           </div>
@@ -4438,7 +4438,7 @@ const ReceiptCell = ({ row }) => {
         <a href={url} target="_blank" rel="noopener noreferrer"
           style={{ color: "#1d4ed8", fontSize: ".75rem", fontWeight: 600, textDecoration: "none",
             background: "#eff6ff", border: "1px solid #bfdbfe", padding: "3px 8px", borderRadius: 5, whiteSpace: "nowrap" }}>
-          ð View
+          📄 View
         </a>
         <label style={{ cursor: "pointer", fontSize: ".68rem", color: "#9ca3af" }}>
           <input type="file" accept="image/*,application/pdf" style={{ display: "none" }} onChange={handleUpload} disabled={uploading} />
@@ -4452,7 +4452,7 @@ const ReceiptCell = ({ row }) => {
       background: "#f8fafc", border: "1px dashed #d1d5db", borderRadius: 5,
       padding: "3px 8px", fontSize: ".72rem", color: uploading ? "#9ca3af" : "#6b7280", whiteSpace: "nowrap" }}>
       <input type="file" accept="image/*,application/pdf" style={{ display: "none" }} onChange={handleUpload} disabled={uploading} />
-      {uploading ? "â³â¦" : "ð Upload"}
+      {uploading ? "⏳…" : "📎 Upload"}
     </label>
   );
 };
@@ -4485,7 +4485,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
           return {
             id: d.id,
             type: data.type || "AP",
-            vendor: data.vendor || "â",
+            vendor: data.vendor || "—",
             amount: Number(data.amount || 0),
             store: data.storeNumber || "",
             location: data.location || "",
@@ -4495,7 +4495,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
             invoiceDate: data.invoiceDate || "",
             status: data.status || "pending",
             description: data.description || "",
-            group: data.invoiceGroup || "â",
+            group: data.invoiceGroup || "—",
             invoiceNumber: data.invoiceNumber || "",
             actionedAt: data.actionedAt || null,
             actionedBy: data.actionedBy || "",
@@ -4525,8 +4525,8 @@ const PaymentHistory = ({ goHome, goBack }) => {
             dueDate: fmtTs(data.transactionDate),
             invoiceDate: fmtTs(data.transactionDate),
             // Status logic: "reviewed" or "approved" from WellsCC = approved.
-            // Records from bulk import have a real category set but status=null â treat as approved.
-            // Records with NO date AND NO category are raw/duplicate import artifacts â excluded below.
+            // Records from bulk import have a real category set but status=null — treat as approved.
+            // Records with NO date AND NO category are raw/duplicate import artifacts — excluded below.
             status: (data.status === "reviewed" || data.status === "approved")
               ? "approved"
               : (data.category && data.category !== "--")
@@ -4541,7 +4541,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
           };
         });
 
-        // Remove raw/empty records (no date AND no meaningful category) â these are import artifacts
+        // Remove raw/empty records (no date AND no meaningful category) — these are import artifacts
         const ccCleaned = ccRows.filter(r => r.dueDate || (r.group && r.group !== "--"));
         // Deduplicate remaining rows by vendor+amount+date
         const ccSeen = new Set();
@@ -4575,7 +4575,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
 
   const fmtDate = (val) => {
     const d = parseDateStr(val);
-    return d && !isNaN(d) ? d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : (val || "â");
+    return d && !isNaN(d) ? d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : (val || "—");
   };
 
   // Unique values for filter dropdowns
@@ -4648,7 +4648,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
     return <span style={{ background: c.bg, color: c.color, border: `1px solid ${c.border}`, padding: "2px 8px", borderRadius: 10, fontSize: ".7rem", fontWeight: 700 }}>{type}</span>;
   };
 
-  const sortIcon = (col) => sortCol === col ? (sortDir === "asc" ? " â²" : " â¼") : "";
+  const sortIcon = (col) => sortCol === col ? (sortDir === "asc" ? " ▲" : " ▼") : "";
 
   const selectStyle = { padding: "6px 10px", borderRadius: 6, border: "1px solid #d1d5db", fontSize: ".8rem", background: "#fff", color: "#374151", minWidth: 90 };
   const inputStyle = { ...selectStyle, minWidth: 100 };
@@ -4667,7 +4667,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
             <h1 style={{ fontSize: "1.15rem", color: "#111827", margin: 0, fontWeight: 700, display: "flex", alignItems: "center", gap: 8 }}>
               <History size={18} /> Payment History
             </h1>
-            <div style={{ fontSize: ".73rem", color: "#6b7280" }}>All authorized payments â AP Invoices & CC Expenses</div>
+            <div style={{ fontSize: ".73rem", color: "#6b7280" }}>All authorized payments — AP Invoices & CC Expenses</div>
           </div>
         </div>
         <div style={{ display: "flex", gap: 24, alignItems: "center" }}>
@@ -4716,7 +4716,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
           )}
         </div>
 
-        {loading && <div style={{ textAlign: "center", padding: "60px 0", color: "#6b7280" }}>Loading payment historyâ¦</div>}
+        {loading && <div style={{ textAlign: "center", padding: "60px 0", color: "#6b7280" }}>Loading payment history…</div>}
 
         {!loading && (
           <div style={{ background: "#fff", borderRadius: 10, border: "1px solid #e5e7eb", overflow: "hidden" }}>
@@ -4749,7 +4749,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
                   {sorted.length === 0 && (
                     <tr><td colSpan={11} style={{ textAlign: "center", padding: "50px 0", color: "#9ca3af" }}>
                       {rows.length === 0
-                        ? "No history yet â records appear here after you submit approvals or rejections."
+                        ? "No history yet — records appear here after you submit approvals or rejections."
                         : "No records match the current filters."}
                     </td></tr>
                   )}
@@ -4761,23 +4761,23 @@ const PaymentHistory = ({ goHome, goBack }) => {
                         {r.invoiceNumber && <div style={{ fontSize: ".72rem", color: "#9ca3af", fontWeight: 400 }}>#{r.invoiceNumber}</div>}
                       </td>
                       <td style={{ padding: "10px 12px", textAlign: "right", fontWeight: 700, color: "#0f766e", fontVariantNumeric: "tabular-nums" }}>{fmt(r.amount)}</td>
-                      <td style={{ padding: "10px 12px", color: "#374151" }}>{r.store ? `#${r.store}` : "â"}</td>
+                      <td style={{ padding: "10px 12px", color: "#374151" }}>{r.store ? `#${r.store}` : "—"}</td>
                       <td style={{ padding: "10px 12px", color: "#374151", whiteSpace: "nowrap" }}>{fmtDate(r.dueDate)}</td>
                       <td style={{ padding: "10px 12px", color: "#374151", whiteSpace: "nowrap", fontSize: ".78rem" }}>{fmtDate(r.actionedAt)}</td>
                       <td style={{ padding: "10px 12px" }}>{statusBadge(r.status)}</td>
-                      <td style={{ padding: "10px 12px", color: "#374151", fontSize: ".78rem" }}>{r.group || "â"}</td>
-                      <td style={{ padding: "10px 12px", color: "#6b7280", maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: ".78rem" }}>{r.description || "â"}</td>
+                      <td style={{ padding: "10px 12px", color: "#374151", fontSize: ".78rem" }}>{r.group || "—"}</td>
+                      <td style={{ padding: "10px 12px", color: "#6b7280", maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", fontSize: ".78rem" }}>{r.description || "—"}</td>
                       <td style={{ padding: "10px 12px", textAlign: "center" }}>
                         {r.type === "AP" && r.invoiceNumber
                           ? <a href={`/invoices/${r.invoiceNumber}.png`} target="_blank" rel="noopener noreferrer"
                               style={{ color: "#1d4ed8", fontSize: ".75rem", fontWeight: 600, textDecoration: "none", background: "#eff6ff", border: "1px solid #bfdbfe", padding: "3px 8px", borderRadius: 5, whiteSpace: "nowrap" }}>
-                              ð View
+                              📄 View
                             </a>
                           : r.type === "CC"
                             ? <ReceiptCell row={r} />
-                            : "â"}
+                            : "—"}
                       </td>
-                      <td style={{ padding: "10px 12px", color: "#6b7280", maxWidth: 220, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.comment || "â"}</td>
+                      <td style={{ padding: "10px 12px", color: "#6b7280", maxWidth: 220, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{r.comment || "—"}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -4818,14 +4818,14 @@ const YODA_REPORTS = [
   {
     id: "daily-sales",
     label: "Daily Sales Report",
-    description: "Yesterday's sales vs. last year â scorecard, cohorts, store map, and store ranks",
+    description: "Yesterday's sales vs. last year — scorecard, cohorts, store map, and store ranks",
     url: "https://aubuchon-it-command-center.vercel.app/reports/daily-sales-latest.html",
     icon: TrendingUp,
   },
   {
     id: "live-sales",
     label: "Live Sales",
-    description: "Today's sales vs. plan â company total, top 20 stores, and top 20 products",
+    description: "Today's sales vs. plan — company total, top 20 stores, and top 20 products",
     icon: Zap,
     view: "live-sales",
   },
@@ -4833,20 +4833,9 @@ const YODA_REPORTS = [
 
 
 /* ============================================================
-   LIVE SALES VIEW â fetches today's data from YODA proxy
+   LIVE SALES VIEW — reads pre-computed data from /api/live-sales
+   Refreshed every 10 min by a scheduled task. Loads instantly.
    ============================================================ */
-function runDAX(dax) {
-  return fetch("/api/yoda", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ dax }),
-  })
-    .then(function (r) { return r.json(); })
-    .then(function (d) {
-      if (d.status === "ok") return d.rows;
-      throw new Error(d.error || "YODA query failed");
-    });
-}
 
 function LiveSalesView({ goBack }) {
   const [loading, setLoading] = useState(true);
@@ -4855,83 +4844,60 @@ function LiveSalesView({ goBack }) {
   const [topStores, setTopStores] = useState([]);
   const [topProducts, setTopProducts] = useState([]);
   const [asOf, setAsOf] = useState("");
+  const [cacheInfo, setCacheInfo] = useState("");
 
   useEffect(function () {
-    var now = new Date();
-    var y = now.getFullYear(), m = now.getMonth() + 1, d = now.getDate();
-    setAsOf(now.toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" }));
+    fetch("/api/live-sales")
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d.status !== "ok") throw new Error(d.error || "Failed to load live sales");
 
-    var dateFilter = "DATE(" + y + ", " + m + ", " + d + ")";
-
-    // FCT_LIVE_SALE has today's live store-level sales (refreshes every 15 min)
-    var liveStoreQuery = "EVALUATE SELECTCOLUMNS(FCT_LIVE_SALE, \"Store\", FCT_LIVE_SALE[STORE_CD], \"Sales\", FCT_LIVE_SALE[NET_SALES], \"Txns\", FCT_LIVE_SALE[TRANSACTION_CNT], \"COGS\", FCT_LIVE_SALE[COST_OF_GOODS], \"Customers\", FCT_LIVE_SALE[CUSTOMER_CNT], \"Updated\", FCT_LIVE_SALE[LAST_UPDATED_TS])";
-
-    // Plan from RPT_SCORECARD_BY_DAY for today
-    var planQuery = "EVALUATE FILTER(SELECTCOLUMNS(RPT_SCORECARD_BY_DAY, \"Store\", RPT_SCORECARD_BY_DAY[LOCATION_CD], \"Plan\", RPT_SCORECARD_BY_DAY[TARGET_DAILY_SALES_AMT], \"Date\", RPT_SCORECARD_BY_DAY[TRANSACTION_DT]), [Date] = " + dateFilter + ")";
-
-    var dimQuery = "EVALUATE SELECTCOLUMNS(DIM_STORE, \"Code\", DIM_STORE[STORE_CD], \"Name\", DIM_STORE[STORE_NM], \"City\", DIM_STORE[STORE_CITY_NM], \"State\", DIM_STORE[STORE_STATE_CD])";
-
-    // Top 20 products from live transaction lines
-    var productQuery = "EVALUATE TOPN(20, SUMMARIZE(FCT_LIVE_SALE_TRANSACTION_LINE, FCT_LIVE_SALE_TRANSACTION_LINE[PRODUCT_DESC], \"Sales\", SUM(FCT_LIVE_SALE_TRANSACTION_LINE[ITEM_EXTENDED_AMT])), [Sales], DESC)";
-
-    Promise.all([
-      runDAX(liveStoreQuery),
-      runDAX(planQuery),
-      runDAX(dimQuery),
-      runDAX(productQuery).catch(function () { return []; }),
-    ])
-      .then(function (results) {
-        var liveRows = results[0], planRows = results[1], dimRows = results[2], prodRows = results[3];
-
-        // Build lookups
-        var nameMap = {};
-        dimRows.forEach(function (r) { nameMap[String(r.Code).replace(/^0+/, "")] = r; });
-        var planMap = {};
-        planRows.forEach(function (r) { planMap[String(r.Store)] = r.Plan || 0; });
-
-        // Find latest update timestamp
-        var latestUpdate = "";
-        liveRows.forEach(function (r) { if (r.Updated && r.Updated > latestUpdate) latestUpdate = r.Updated; });
-        if (latestUpdate) {
-          var ud = new Date(latestUpdate);
-          setAsOf(ud.toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" }) + " (live)");
-        }
-
-        // Company totals
-        var totalSales = 0, totalPlan = 0, totalCOGS = 0, totalTxn = 0, totalCust = 0;
-        liveRows.forEach(function (r) {
-          var storeKey = String(r.Store);
-          totalSales += (r.Sales || 0);
-          totalCOGS += (r.COGS || 0);
-          totalTxn += (r.Txns || 0);
-          totalCust += (r.Customers || 0);
+        // Company total
+        setCompanyTotal({
+          sales: d.companyTotal.sales,
+          plan: d.companyTotal.plan,
+          gp: d.companyTotal.gp,
+          gpPct: d.companyTotal.gpPct,
+          txn: d.companyTotal.txns,
+          customers: d.companyTotal.customers,
+          storeCount: d.companyTotal.storeCount,
+          pctToPlan: d.companyTotal.pctToPlan,
         });
-        planRows.forEach(function (r) { totalPlan += (r.Plan || 0); });
-        var totalGP = totalSales - totalCOGS;
-        setCompanyTotal({ sales: totalSales, plan: totalPlan, gp: totalGP, txn: totalTxn, customers: totalCust });
 
-        // Top 20 stores by sales
-        var sorted = liveRows.slice()
-          .sort(function (a, b) { return (b.Sales || 0) - (a.Sales || 0); })
-          .slice(0, 20)
-          .map(function (r) {
-            var storeKey = String(r.Store);
-            var info = nameMap[storeKey] || {};
-            var plan = planMap[storeKey] || 0;
-            return { code: r.Store, name: info.Name || "Store " + r.Store, city: info.City || "", state: info.State || "", sales: r.Sales || 0, plan: plan, gp: (r.Sales || 0) - (r.COGS || 0), txnCnt: r.Txns || 0 };
-          });
-        setTopStores(sorted);
+        // Top stores — map API shape to render shape
+        var stores = (d.topStores || []).map(function (s, i) {
+          return {
+            code: s.store,
+            name: s.name || "Store " + s.store,
+            city: s.city || "",
+            state: s.state || "",
+            sales: s.sales,
+            plan: s.plan,
+            gp: s.gp,
+            txnCnt: s.txns,
+          };
+        });
+        setTopStores(stores);
 
-        // Top 20 products
-        var products = (prodRows || [])
-          .filter(function (r) { return r.Sales && r.Sales > 0; })
-          .sort(function (a, b) { return (b.Sales || 0) - (a.Sales || 0); })
-          .slice(0, 20)
-          .map(function (r, i) {
-            var desc = r["FCT_LIVE_SALE_TRANSACTION_LINE[PRODUCT_DESC"] || r.PRODUCT_DESC || "Unknown";
-            return { rank: i + 1, desc: desc, sales: r.Sales || 0 };
-          });
-        setTopProducts(products);
+        // Top products
+        var prods = (d.topProducts || []).map(function (p, i) {
+          return { rank: i + 1, desc: p.product, sales: p.sales };
+        });
+        setTopProducts(prods);
+
+        // Timestamps
+        if (d.asOf) {
+          var ud = new Date(d.asOf);
+          if (!isNaN(ud)) {
+            setAsOf(ud.toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" }) + " (live)");
+          } else {
+            setAsOf(d.asOf);
+          }
+        }
+        var info = d.cached ? "Cached" : "Fresh";
+        if (d.stale) info = "Stale cache";
+        if (d.refreshedAt) info += " · refreshed " + new Date(d.refreshedAt).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+        setCacheInfo(info);
 
         setLoading(false);
       })
@@ -4956,8 +4922,8 @@ function LiveSalesView({ goBack }) {
           </button>
           <div className="flex flex-col items-center justify-center py-24">
             <div className="w-10 h-10 border-3 border-amber-200 border-t-amber-600 rounded-full animate-spin mb-4" />
-            <p className="text-slate-600 font-medium">Fetching live sales from YODA...</p>
-            <p className="text-slate-400 text-sm mt-1">Querying today's data across all stores</p>
+            <p className="text-slate-600 font-medium">Loading live sales...</p>
+            <p className="text-slate-400 text-sm mt-1">Fetching pre-computed report</p>
           </div>
         </div>
       </div>
@@ -4975,7 +4941,7 @@ function LiveSalesView({ goBack }) {
             <AlertTriangle className="w-8 h-8 text-red-500 mx-auto mb-3" />
             <h3 className="text-lg font-bold text-red-800 mb-2">Unable to load live sales</h3>
             <p className="text-red-600 text-sm">{error}</p>
-            <p className="text-red-400 text-xs mt-2">The YODA proxy may be unavailable, or today's data hasn't loaded yet.</p>
+            <p className="text-red-400 text-xs mt-2">The report cache may not be populated yet. The scheduled refresh runs every 10 minutes.</p>
           </div>
         </div>
       </div>
@@ -5000,12 +4966,13 @@ function LiveSalesView({ goBack }) {
             <div>
               <h1 className="text-2xl md:text-3xl font-bold text-slate-900">Live Sales</h1>
               <p className="text-slate-500 text-xs md:text-sm">As of {asOf}</p>
+              {cacheInfo && <p className="text-slate-400 text-xs">{cacheInfo}</p>}
             </div>
           </div>
         </div>
 
         <div className={"rounded-xl border-2 p-5 md:p-6 mb-6 " + vBg}>
-          <div className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2">Company Total â Today vs Plan</div>
+          <div className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-2">Company Total — Today vs Plan</div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div>
               <div className="text-xs text-slate-500">Sales</div>
@@ -5027,6 +4994,7 @@ function LiveSalesView({ goBack }) {
           <div className="flex flex-wrap gap-6 mt-3 pt-3 border-t border-slate-200 text-sm text-slate-600">
             <span><strong>{Math.round(companyTotal.txn || 0).toLocaleString()}</strong> transactions</span>
             <span><strong>{fmtD(companyTotal.gp)}</strong> gross profit</span>
+            <span><strong>{companyTotal.storeCount || 0}</strong> stores reporting</span>
           </div>
         </div>
 
@@ -5058,7 +5026,7 @@ function LiveSalesView({ goBack }) {
                       <td className="px-3 py-2 text-slate-400 font-medium">{i + 1}</td>
                       <td className="px-3 py-2">
                         <div className="font-semibold text-slate-900">{tc(s.name)}</div>
-                        <div className="text-xs text-slate-400">{tc(s.city)}{s.state ? ", " + s.state : ""} Â· #{s.code}</div>
+                        <div className="text-xs text-slate-400">{tc(s.city)}{s.state ? ", " + s.state : ""} · #{s.code}</div>
                       </td>
                       <td className="px-3 py-2 text-right font-semibold text-slate-900">{fmtD(s.sales)}</td>
                       <td className="px-3 py-2 text-right text-slate-500">{fmtD(s.plan)}</td>
@@ -5111,7 +5079,7 @@ function LiveSalesView({ goBack }) {
         )}
 
         <div className="text-center text-xs text-slate-400 py-4">
-          Data from YODA Â· Power BI / MDM Semantic Model
+          Data from YODA · Power BI / MDM Semantic Model · Auto-refreshed every 10 min
         </div>
       </div>
     </div>
@@ -5225,7 +5193,7 @@ export default function App() {
     return <AdminPanel goHome={() => setActiveSection(null)} allUsers={allUsers} saveAllUsers={saveAllUsers} />;
   }
 
-  // Section routing â only if user has access
+  // Section routing — only if user has access
   if (activeSection === "projects" && canAccessSection("projects")) {
     return <ITProjectDashboard goHome={() => setActiveSection(null)} isAdmin={isAdmin} allAccessUsers={allUsers} />;
   }
