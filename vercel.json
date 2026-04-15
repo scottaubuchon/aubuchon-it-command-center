@@ -19,11 +19,7 @@
   "crons": [
     {
       "path": "/api/log-live-sales",
-      "schedule": "*/10 11-23 * * *"
-    },
-    {
-      "path": "/api/log-live-sales",
-      "schedule": "*/10 0-1 * * *"
+      "schedule": "0 12 * * *"
     }
   ]
 }
