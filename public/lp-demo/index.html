@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LP Dashboard - Mockup Demo</title>
+<style>
+  :root {
+    --green: #01683F;
+    --orange: #F58220;
+    --red: #EC1C24;
+    --black: #000;
+    --near-black: #1E1E1E;
+    --off-white: #F2F2F2;
+    --gray: #999;
+    --mid-gray: #5A5A5A;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: Calibri, Arial, sans-serif;
+    margin: 0;
+    background: #FAFAFA;
+    color: var(--near-black);
+  }
+  .topbar {
+    height: 6px;
+    background: linear-gradient(to bottom, var(--orange) 50%, var(--green) 50%);
+  }
+  header {
+    background: #fff;
+    padding: 36px 48px 24px;
+    border-bottom: 1px solid #E5E5E5;
+  }
+  header h1 {
+    font-family: 'Trebuchet MS', Arial Black, sans-serif;
+    font-size: 32px;
+    margin: 0 0 8px;
+    color: var(--black);
+  }
+  header p {
+    color: var(--mid-gray);
+    font-size: 14px;
+    margin: 0;
+    max-width: 820px;
+    line-height: 1.5;
+  }
+  main {
+    padding: 32px 48px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .intro {
+    background: #fff;
+    border-left: 4px solid var(--green);
+    padding: 16px 20px;
+    margin-bottom: 28px;
+    font-size: 13px;
+    color: var(--mid-gray);
+    line-height: 1.6;
+    border-radius: 2px;
+  }
+  .intro b { color: var(--black); }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 18px;
+    margin-bottom: 32px;
+  }
+  .card {
+    background: #fff;
+    border: 1px solid #E5E5E5;
+    border-radius: 6px;
+    padding: 0;
+    overflow: hidden;
+    transition: transform 0.15s, box-shadow 0.15s;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+  }
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    border-color: var(--green);
+  }
+  .card .ribbon {
+    height: 6px;
+  }
+  .card.a .ribbon { background: var(--green); }
+  .card.b .ribbon { background: var(--orange); }
+  .card.c .ribbon { background: var(--red); }
+  .card.s .ribbon { background: var(--near-black); }
+  .card .body {
+    padding: 18px 20px 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .card .tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #fff;
+    padding: 3px 8px;
+    border-radius: 3px;
+    margin-bottom: 8px;
+    align-self: flex-start;
+  }
+  .card.a .tag { background: var(--green); }
+  .card.b .tag { background: var(--orange); }
+  .card.c .tag { background: var(--red); }
+  .card.s .tag { background: var(--near-black); }
+  .card h3 {
+    font-family: 'Trebuchet MS', sans-serif;
+    font-size: 18px;
+    margin: 0 0 8px;
+    color: var(--black);
+  }
+  .card p {
+    font-size: 13px;
+    color: var(--mid-gray);
+    line-height: 1.5;
+    margin: 0 0 12px;
+    flex: 1;
+  }
+  .card .audience {
+    font-size: 11px;
+    color: var(--green);
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+  .card .open {
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--green);
+    text-decoration: underline;
+  }
+  .deck {
+    background: var(--near-black);
+    color: #fff;
+    border-radius: 6px;
+    padding: 22px 26px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .deck h3 {
+    font-family: 'Trebuchet MS', sans-serif;
+    font-size: 18px;
+    margin: 0 0 4px;
+  }
+  .deck p {
+    font-size: 13px;
+    color: #CCC;
+    margin: 0;
+  }
+  .deck a {
+    background: var(--orange);
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .deck a:hover { background: var(--red); }
+  footer {
+    padding: 20px 48px;
+    color: var(--mid-gray);
+    font-size: 11px;
+    text-align: center;
+    border-top: 1px solid #E5E5E5;
+    background: #fff;
+  }
+  .bottombar {
+    height: 6px;
+    background: linear-gradient(to bottom, var(--orange) 50%, var(--green) 50%);
+  }
+</style>
+</head>
+<body>
+<div class="topbar"></div>
+<header>
+  <h1>Loss Prevention Dashboard - Mockup Demo</h1>
+  <p>Four visual treatments of a new LP scorecard for Aubuchon Company. Sample data is pulled live from YODA (all 136 active stores, week of Apr 5–11, 2026). LP percentages are synthesized plausible values until real measures are wired up.</p>
+</header>
+
+<main>
+  <div class="intro">
+    <b>What you're looking at:</b> Five KPI columns (Shrink, Overrides &amp; Discounts, Coupons, Employee Discount, Everything Else) comparing every store to its tier benchmark. Three operational features are surfaced as UI elements: reason-code drilldown for shrink and O&amp;D, plus a POS self-checkout watchlist. Store names, numbers, tiers, managers, and weekly sales dollars are real. LP percentages are synthesized for the mockup.
+  </div>
+
+  <div class="grid">
+    <a class="card a" href="variant-a.html">
+      <div class="ribbon"></div>
+      <div class="body">
+        <span class="tag">Variant A</span>
+        <h3>YODA KPI Tabs</h3>
+        <div class="audience">For store managers &amp; team managers</div>
+        <p>Five black KPI tiles across the top — click one to pivot the per-store table. Familiar Sales-vs-Plan pattern. Reason codes and self-checkout panels sit below.</p>
+        <span class="open">Open mockup &rsaquo;</span>
+      </div>
+    </a>
+    <a class="card b" href="variant-b.html">
+      <div class="ribbon"></div>
+      <div class="body">
+        <span class="tag">Variant B</span>
+        <h3>Store Leaderboard</h3>
+        <div class="audience">For senior team &amp; field leaders</div>
+        <p>Every store ranked worst-to-best on shrink with red/yellow/green rank badges. All five KPIs in one row per store. Reason codes rendered as horizontal bars.</p>
+        <span class="open">Open mockup &rsaquo;</span>
+      </div>
+    </a>
+    <a class="card c" href="variant-c.html">
+      <div class="ribbon"></div>
+      <div class="body">
+        <span class="tag">Variant C</span>
+        <h3>Executive Heatmap</h3>
+        <div class="audience">For Will, Bill &amp; corporate LP</div>
+        <p>All 136 stores × 5 metrics on one canvas with conditional-color cells. Company KPIs on a left rail, top-5 dollar-at-risk stores and reason-code chips below.</p>
+        <span class="open">Open mockup &rsaquo;</span>
+      </div>
+    </a>
+    <a class="card s" href="per-store.html">
+      <div class="ribbon"></div>
+      <div class="body">
+        <span class="tag">Per-Store</span>
+        <h3>Single-Store View</h3>
+        <div class="audience">Manager's Monday-morning view</div>
+        <p>Store picker at the top — jump between all 136 stores. Dark header, five KPI tiles with tier variance, reason codes attributed to that store, self-checkout flags, full tier-benchmark detail.</p>
+        <span class="open">Open mockup &rsaquo;</span>
+      </div>
+    </a>
+  </div>
+
+  <div class="deck">
+    <div>
+      <h3>Design Concepts Deck (PowerPoint)</h3>
+      <p>8-slide walkthrough: requirements recap, YODA design tokens, each variant, recommendation, and the 6 open data questions needed to go live.</p>
+    </div>
+    <a href="LP_Dashboard_Design_Concepts.pptx">Download .pptx</a>
+  </div>
+</main>
+
+<footer>
+  Prepared by Scott Aubuchon &middot; April 2026 &middot; Aubuchon Company IT
+</footer>
+<div class="bottombar"></div>
+</body>
+</html>
