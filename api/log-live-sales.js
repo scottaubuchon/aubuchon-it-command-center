@@ -30,7 +30,7 @@ const MIN_HISTORY_DAYS = 1;
 
 // --------- low-level HTTPS helpers (no external deps) ----------
 
-function httpsJson(options, postBody) {
+function httpsJson(options, postBody, timeoutMs) {
   return new Promise((resolve, reject) => {
     const req = https.request(options, (res) => {
       let data = '';
@@ -46,7 +46,7 @@ function httpsJson(options, postBody) {
       });
     });
     req.on('error', reject);
-    req.setTimeout(30000, () => { req.destroy(); reject(new Error('HTTPS timeout')); });
+    req.setTimeout(timeoutMs || 30000, () => { req.destroy(); reject(new Error('HTTPS timeout after ' + (timeoutMs || 30000) + 'ms')); });
     if (postBody) req.write(postBody);
     req.end();
   });
@@ -88,7 +88,7 @@ function fetchLiveSales() {
     path: u.pathname + u.search,
     method: 'GET',
     headers: { 'User-Agent': 'AubuchonLiveSalesLogger/1.0' },
-  });
+  }, null, 100000); // Upstream can take 60s+ on a cold YODA refresh.
 }
 
 // --------- ET-aware date helpers ----------
