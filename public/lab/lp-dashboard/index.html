@@ -62,7 +62,7 @@
   .intro b { color: var(--black); }
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 18px;
     margin-bottom: 32px;
   }
@@ -86,9 +86,7 @@
   .card .ribbon {
     height: 6px;
   }
-  .card.a .ribbon { background: var(--green); }
   .card.b .ribbon { background: var(--orange); }
-  .card.c .ribbon { background: var(--red); }
   .card.s .ribbon { background: var(--near-black); }
   .card .body {
     padding: 18px 20px 20px;
@@ -108,9 +106,7 @@
     margin-bottom: 8px;
     align-self: flex-start;
   }
-  .card.a .tag { background: var(--green); }
   .card.b .tag { background: var(--orange); }
-  .card.c .tag { background: var(--red); }
   .card.s .tag { background: var(--near-black); }
   .card h3 {
     font-family: 'Trebuchet MS', sans-serif;
@@ -190,7 +186,7 @@
 <div class="topbar"></div>
 <header>
   <h1>Loss Prevention Dashboard - Mockup Demo</h1>
-  <p>Four visual treatments of a new LP scorecard for Aubuchon Company. Sample data is pulled live from YODA (all 136 active stores, week of Apr 5–11, 2026). LP percentages are synthesized plausible values until real measures are wired up.</p>
+  <p>Two views of a new LP scorecard for Aubuchon Company — a company-wide leaderboard and a single-store view. Sample data is pulled live from YODA (all 136 active stores, week of Apr 5–11, 2026). LP percentages are synthesized plausible values until real measures are wired up.</p>
 </header>
 
 <main>
@@ -199,33 +195,13 @@
   </div>
 
   <div class="grid">
-    <a class="card a" href="variant-a.html">
-      <div class="ribbon"></div>
-      <div class="body">
-        <span class="tag">Variant A</span>
-        <h3>YODA KPI Tabs</h3>
-        <div class="audience">For store managers &amp; team managers</div>
-        <p>Five black KPI tiles across the top — click one to pivot the per-store table. Familiar Sales-vs-Plan pattern. Reason codes and self-checkout panels sit below.</p>
-        <span class="open">Open mockup &rsaquo;</span>
-      </div>
-    </a>
     <a class="card b" href="variant-b.html">
       <div class="ribbon"></div>
       <div class="body">
-        <span class="tag">Variant B</span>
+        <span class="tag">Company View</span>
         <h3>Store Leaderboard</h3>
         <div class="audience">For senior team &amp; field leaders</div>
-        <p>Every store ranked worst-to-best on shrink with red/yellow/green rank badges. All five KPIs in one row per store. Reason codes rendered as horizontal bars.</p>
-        <span class="open">Open mockup &rsaquo;</span>
-      </div>
-    </a>
-    <a class="card c" href="variant-c.html">
-      <div class="ribbon"></div>
-      <div class="body">
-        <span class="tag">Variant C</span>
-        <h3>Executive Heatmap</h3>
-        <div class="audience">For Will, Bill &amp; corporate LP</div>
-        <p>All 136 stores × 5 metrics on one canvas with conditional-color cells. Company KPIs on a left rail, top-5 dollar-at-risk stores and reason-code chips below.</p>
+        <p>Every store ranked worst-to-best on shrink with red/yellow/green rank badges. All five KPIs in one row per store. Reason codes rendered as horizontal bars on the right.</p>
         <span class="open">Open mockup &rsaquo;</span>
       </div>
     </a>
@@ -244,7 +220,7 @@
   <div class="deck">
     <div>
       <h3>Design Concepts Deck (PowerPoint)</h3>
-      <p>8-slide walkthrough: requirements recap, YODA design tokens, each variant, recommendation, and the 6 open data questions needed to go live.</p>
+      <p>Walkthrough of requirements, YODA design tokens, the two mockups, and the open data questions needed to go live.</p>
     </div>
     <a href="LP_Dashboard_Design_Concepts.pptx">Download .pptx</a>
   </div>
