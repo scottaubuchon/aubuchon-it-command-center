@@ -250,6 +250,19 @@ async function writePrediction(obj) {
   return put.status >= 200 && put.status < 300;
 }
 
+// Mirror the full live-sales payload to public/data/live-sales/current.json so
+// the dashboard can load instantly from raw.githubusercontent.com instead of
+// waiting on the YODA-backed API. [skip ci] keeps Vercel from redeploying.
+async function writeCurrentSnapshot(liveBody, prediction) {
+  const path = `${LOG_DIR}/current.json`;
+  const existing = await ghGet(path);
+  const sha = existing.status === 200 ? existing.body?.sha : null;
+  const snapshot = { ...liveBody, prediction, snapshotAt: new Date().toISOString() };
+  const b64 = Buffer.from(JSON.stringify(snapshot), 'utf8').toString('base64');
+  const put = await ghPut(path, b64, `chore: update live sales snapshot [skip ci]`, sha);
+  return put.status >= 200 && put.status < 300;
+}
+
 // --------- Vercel handler ----------
 
 export const config = { maxDuration: 120 };
@@ -308,11 +321,15 @@ export default async function handler(req, res) {
     };
     const predWrote = await writePrediction(predictionDoc);
 
+    // 6) Mirror the full live payload to a static file for fast dashboard loads.
+    const snapshotWrote = await writeCurrentSnapshot(d, predictionDoc);
+
     return res.status(200).json({
       status: 'ok',
       log: { file: `${LOG_DIR}/${et.dateET}.jsonl`, ...appendResult },
       prediction: predictionDoc,
       predictionWritten: predWrote,
+      snapshotWritten: snapshotWrote,
     });
   } catch (e) {
     return res.status(500).json({ status: 'error', error: e.message, stack: e.stack });
