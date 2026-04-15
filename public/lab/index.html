@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Concept Lab - Aubuchon Company</title>
+<style>
+  :root {
+    --green: #01683F;
+    --orange: #F58220;
+    --red: #EC1C24;
+    --purple: #6B46C1;
+    --black: #000;
+    --near-black: #1E1E1E;
+    --off-white: #F2F2F2;
+    --gray: #999;
+    --mid-gray: #5A5A5A;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: Calibri, Arial, sans-serif;
+    margin: 0;
+    background: #FAFAFA;
+    color: var(--near-black);
+  }
+  .topbar {
+    height: 6px;
+    background: linear-gradient(to bottom, var(--orange) 50%, var(--green) 50%);
+  }
+  header {
+    background: #fff;
+    padding: 36px 48px 24px;
+    border-bottom: 1px solid #E5E5E5;
+  }
+  header .eyebrow {
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--purple);
+    margin-bottom: 4px;
+  }
+  header h1 {
+    font-family: 'Trebuchet MS', Arial Black, sans-serif;
+    font-size: 34px;
+    margin: 0 0 8px;
+    color: var(--black);
+  }
+  header p {
+    color: var(--mid-gray);
+    font-size: 14px;
+    margin: 0;
+    max-width: 820px;
+    line-height: 1.5;
+  }
+  main {
+    padding: 32px 48px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .intro {
+    background: #fff;
+    border-left: 4px solid var(--purple);
+    padding: 16px 20px;
+    margin-bottom: 28px;
+    font-size: 13px;
+    color: var(--mid-gray);
+    line-height: 1.6;
+    border-radius: 2px;
+  }
+  .intro b { color: var(--black); }
+  .section-label {
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--mid-gray);
+    margin: 24px 0 14px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 18px;
+    margin-bottom: 24px;
+  }
+  .card {
+    background: #fff;
+    border: 1px solid #E5E5E5;
+    border-radius: 6px;
+    padding: 0;
+    overflow: hidden;
+    transition: transform 0.15s, box-shadow 0.15s;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+  }
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    border-color: var(--purple);
+  }
+  .card .ribbon {
+    height: 6px;
+    background: var(--purple);
+  }
+  .card .body {
+    padding: 18px 20px 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .card .tag {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #fff;
+    padding: 3px 8px;
+    border-radius: 3px;
+    margin-bottom: 8px;
+    align-self: flex-start;
+    background: var(--purple);
+  }
+  .card .tag.wip { background: var(--orange); }
+  .card .tag.live { background: var(--green); }
+  .card h3 {
+    font-family: 'Trebuchet MS', sans-serif;
+    font-size: 18px;
+    margin: 0 0 8px;
+    color: var(--black);
+  }
+  .card p {
+    font-size: 13px;
+    color: var(--mid-gray);
+    line-height: 1.5;
+    margin: 0 0 12px;
+    flex: 1;
+  }
+  .card .meta {
+    font-size: 11px;
+    color: var(--gray);
+    border-top: 1px solid #F0F0F0;
+    padding-top: 10px;
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .card .open {
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--purple);
+  }
+  .empty {
+    background: #fff;
+    border: 2px dashed #DDD;
+    border-radius: 6px;
+    padding: 40px 20px;
+    text-align: center;
+    color: var(--gray);
+    font-size: 13px;
+    font-style: italic;
+  }
+  footer {
+    padding: 20px 48px;
+    color: var(--mid-gray);
+    font-size: 11px;
+    text-align: center;
+    border-top: 1px solid #E5E5E5;
+    background: #fff;
+  }
+  .bottombar {
+    height: 6px;
+    background: linear-gradient(to bottom, var(--orange) 50%, var(--green) 50%);
+  }
+</style>
+</head>
+<body>
+<div class="topbar"></div>
+<header>
+  <div class="eyebrow">Aubuchon Company</div>
+  <h1>Concept Lab</h1>
+  <p>Works in progress, mockups, and previews — a space to share ideas before they land in production. Everything here is a draft; numbers and visuals will change before anything is adopted.</p>
+</header>
+
+<main>
+  <div class="intro">
+    <b>What lives here:</b> Design previews, dashboard mockups, and exploratory tools being shared with stakeholders for feedback. Links are public — share freely. If you're looking for production dashboards, use YODA or the Workbench home.
+  </div>
+
+  <div class="section-label">Current concepts</div>
+  <div class="grid">
+    <a class="card" href="lp-dashboard/">
+      <div class="ribbon"></div>
+      <div class="body">
+        <span class="tag wip">In Review</span>
+        <h3>Loss Prevention Dashboard</h3>
+        <p>Four visual treatments of a new LP scorecard — KPI Tabs, Leaderboard, Executive Heatmap, and a per-store view. Sample data from 136 active stores.</p>
+        <div class="meta">
+          <span>Apr 2026</span>
+          <span class="open">Open &rsaquo;</span>
+        </div>
+      </div>
+    </a>
+    <div class="empty">More concepts coming soon</div>
+  </div>
+</main>
+
+<footer>
+  Aubuchon Company &middot; IT Department &middot; Concept Lab
+</footer>
+<div class="bottombar"></div>
+</body>
+</html>
