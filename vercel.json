@@ -15,5 +15,15 @@
       "destination": "/lab/lp-dashboard/:path*",
       "permanent": false
     }
+  ],
+  "crons": [
+    {
+      "path": "/api/log-live-sales",
+      "schedule": "*/10 11-23 * * *"
+    },
+    {
+      "path": "/api/log-live-sales",
+      "schedule": "*/10 0-1 * * *"
+    }
   ]
 }
