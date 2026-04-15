@@ -1,14 +1,14 @@
 {
-  "updatedAt": "2026-04-15T23:49:19.110Z",
-  "updatedAtET": "Apr 15, 2026, 7:49 PM",
+  "updatedAt": "2026-04-15T23:59:53.854Z",
+  "updatedAtET": "Apr 15, 2026, 7:59 PM",
   "dateET": "2026-04-15",
   "dow": 3,
   "current": {
-    "ts": "2026-04-15T23:49:19.110Z",
-    "tsET": "Apr 15, 2026, 7:49 PM",
+    "ts": "2026-04-15T23:59:53.854Z",
+    "tsET": "Apr 15, 2026, 7:59 PM",
     "dateET": "2026-04-15",
     "hourET": 19,
-    "minuteET": 49,
+    "minuteET": 59,
     "dow": 3,
     "sales": 1053077.7599999998,
     "plan": 997060.8500000003,
@@ -27,10 +27,10 @@
     "confidence": "very low",
     "historyDays": 0,
     "assumedBusinessHours": "7 AM – 8 PM ET",
-    "pctOfDayElapsed": 0.985897435897436,
-    "projectedEOD": 1068141.291027308,
-    "projectedPctToPlan": 107.12899729513074,
-    "projectedVariance": 71080.44102730765,
+    "pctOfDayElapsed": 0.9987179487179487,
+    "projectedEOD": 1054429.5928112962,
+    "projectedPctToPlan": 105.75378551984022,
+    "projectedVariance": 57368.7428112959,
     "note": "Sales assumed to accumulate evenly across business hours. This is a naive starting point — every new run, once any history exists, it will be replaced by a pace-curve projection."
   }
 }
