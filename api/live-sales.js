@@ -139,6 +139,16 @@ async function refreshData() {
     asOf: latestUpdate || new Date().toISOString(),
     refreshedAt: new Date().toISOString(),
     storeCount: liveRows.length,
+    _debug: {
+      dateUsed: `${y}-${m}-${d}`,
+      planRowCount: planRows.length,
+      liveRowCount: liveRows.length,
+      dimRowCount: dimRows.length,
+      productRowCount: productRows.length,
+      planSample: planRows.slice(0, 3),
+      liveSample: liveRows.slice(0, 3),
+      planMapKeys: Object.keys(planMap).slice(0, 5),
+    },
   };
 }
 
