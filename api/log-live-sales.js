@@ -164,18 +164,19 @@ async function appendLogLine(dateET, entry) {
 }
 
 async function loadHistoryDays(dates) {
-  const results = [];
-  for (const d of dates) {
+  // Fetch all history days in parallel to keep the handler inside the scheduler's wall-clock budget.
+  const fetched = await Promise.all(dates.map(async (d) => {
     const r = await ghGet(`${LOG_DIR}/${d}.jsonl`);
     if (r.status === 200 && r.body && r.body.content) {
       const text = Buffer.from(r.body.content, 'base64').toString('utf8');
       const rows = text.split('\n').filter(Boolean).map((ln) => {
         try { return JSON.parse(ln); } catch { return null; }
       }).filter(Boolean);
-      if (rows.length >= 2) results.push({ date: d, rows });
+      if (rows.length >= 2) return { date: d, rows };
     }
-  }
-  return results;
+    return null;
+  }));
+  return fetched.filter(Boolean);
 }
 
 // Build a pace-based projection from a set of history days. Returns null if
