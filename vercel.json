@@ -1,0 +1,19 @@
+{
+  "redirects": [
+    {
+      "source": "/lp-demo",
+      "destination": "/lab/lp-dashboard/",
+      "permanent": false
+    },
+    {
+      "source": "/lp-demo/",
+      "destination": "/lab/lp-dashboard/",
+      "permanent": false
+    },
+    {
+      "source": "/lp-demo/:path*",
+      "destination": "/lab/lp-dashboard/:path*",
+      "permanent": false
+    }
+  ]
+}
