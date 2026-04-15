@@ -1,0 +1,1805 @@
+<!DOCTYPE html><html><head>
+<meta charset="utf-8"><title>LP Dashboard — Variant B — Store Leaderboard</title>
+
+<style>
+  * { box-sizing: border-box; margin:0; padding:0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background:#f5f5f5; color:#111; font-size:13px; }
+  .shell { max-width:1600px; margin:0 auto; padding:20px; background:#fff; min-height:100vh; }
+  .titlebar { display:flex; justify-content:space-between; align-items:baseline; border-bottom:2px solid #111; padding-bottom:10px; margin-bottom:16px; }
+  .titlebar h1 { font-size:22px; font-weight:700; letter-spacing:-0.3px; }
+  .titlebar h1 .pill { display:inline-block; background:#111; color:#fff; padding:3px 10px; border-radius:3px; font-size:14px; margin-left:8px; font-weight:500; }
+  .subtitle { color:#555; font-size:12px; }
+  .filters { display:flex; gap:8px; margin-bottom:14px; }
+  .filter { background:#fff; border:1px solid #bbb; padding:6px 12px; border-radius:3px; font-size:12px; }
+  .filter.active { background:#111; color:#fff; border-color:#111; }
+  .up { color:#c00; font-weight:600; }
+  .down { color:#2a7d2a; font-weight:600; }
+  .flat { color:#888; }
+  .muted { color:#888; font-weight:400; font-size:11px; }
+  table { width:100%; border-collapse:collapse; font-size:12px; }
+  th { background:#111; color:#fff; text-align:left; padding:8px 10px; font-weight:600; font-size:11px; letter-spacing:0.3px; text-transform:uppercase; }
+  td { padding:7px 10px; border-bottom:1px solid #eee; }
+  tr:nth-child(even) td { background:#fafafa; }
+  tr:hover td { background:#fff3c4 !important; }
+  .num { text-align:right; font-variant-numeric: tabular-nums; }
+  .cell-red { background:#f8c4c4 !important; color:#a00; font-weight:600; }
+  .cell-pink { background:#fddede !important; color:#b33; }
+  .cell-green { background:#b8e6b8 !important; color:#0a5c0a; font-weight:600; }
+  .cell-lime { background:#dff3d7 !important; color:#2a7d2a; }
+  .cell-neutral { }
+  .footer { margin-top:20px; padding-top:12px; border-top:1px solid #ddd; color:#666; font-size:11px; text-align:center; }
+</style>
+
+<style>
+  .sumbar { display:grid; grid-template-columns: repeat(6,1fr); gap:2px; margin-bottom:18px; border:1px solid #ddd; }
+  .sumbar .box { padding:14px 16px; background:#fafafa; border-right:1px solid #ddd; }
+  .sumbar .box:last-child { border-right:none; }
+  .sumbar .box.alert { background:#111; color:#fff; }
+  .sumbar .lbl { font-size:10px; text-transform:uppercase; letter-spacing:0.3px; color:#777; margin-bottom:4px; }
+  .sumbar .alert .lbl { color:#ccc; }
+  .sumbar .v { font-size:22px; font-weight:700; }
+  .sumbar .d { font-size:11px; color:#666; }
+  .sumbar .alert .d { color:#ccc; }
+  .rank { display:inline-block; width:22px; height:22px; line-height:22px; text-align:center; border-radius:50%; background:#ddd; font-size:10px; font-weight:700; }
+  .rank.rank-red { background:#c00; color:#fff; }
+  .rank.rank-yellow { background:#f0b000; color:#fff; }
+  .grid2 { display:grid; grid-template-columns: 1.2fr 1fr; gap:14px; margin-top:18px; }
+  .panel { border:1px solid #ddd; background:#fff; }
+  .panel h3 { background:#111; color:#fff; padding:9px 12px; font-size:13px; }
+  .panel .body { padding:10px 14px; }
+  .barrow { display:grid; grid-template-columns: 180px 1fr 120px; gap:10px; align-items:center; padding:6px 0; border-bottom:1px solid #eee; font-size:12px; }
+  .barrow:last-child { border-bottom:none; }
+  .barlbl strong { color:#111; }
+  .bar { background:#f0f0f0; height:14px; border-radius:2px; overflow:hidden; }
+  .bar .fill { background:#c00; height:100%; }
+  .baramt { text-align:right; font-variant-numeric:tabular-nums; font-size:11px; }
+  .scroll-wrap { max-height:520px; overflow-y:auto; border:1px solid #ddd; }
+  .scroll-wrap table { border:none; }
+  .scroll-wrap th { position:sticky; top:0; }
+</style>
+</head><body>
+<div class="shell">
+  <div class="titlebar">
+    <h1>Loss Prevention Dashboard <span class="pill">Variant B · Leaderboard</span></h1>
+    <div class="subtitle">Aubuchon Hardware · YODA · Apr 5 – Apr 11, 2026 (Last Trade Week)</div>
+  </div>
+  <div class="filters">
+    <span class="filter active">All Stores · 136</span>
+    <span class="filter">Team 1</span><span class="filter">Team 2</span><span class="filter">Team 3</span>
+    <span class="filter">Worst Shrink</span><span class="filter">Worst O&amp;D</span><span class="filter">Worst Employee</span>
+  </div>
+
+  
+    <div class="sumbar">
+      <div class="box"><div class="lbl">Shrink</div><div class="v">0.55%</div><div class="d">$36,535</div></div>
+      <div class="box"><div class="lbl">Override/Disc</div><div class="v">1.90%</div><div class="d">$125,823</div></div>
+      <div class="box"><div class="lbl">Coupons</div><div class="v">0.81%</div><div class="d">$53,403</div></div>
+      <div class="box"><div class="lbl">Emp Disc</div><div class="v">0.34%</div><div class="d">$22,825</div></div>
+      <div class="box"><div class="lbl">Other (Retail)</div><div class="v">0.65%</div><div class="d muted">(cost 0.40%)</div></div>
+      <div class="box alert"><div class="lbl">Total LP $ at Risk</div><div class="v">$238,586</div><div class="d">this week</div></div>
+    </div>
+
+  <div class="scroll-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th class="num">#</th><th>Store</th><th>Team</th><th class="num">Tier</th><th class="num">Sales</th>
+        <th class="num">Shrink %</th><th class="num">O&amp;D %</th><th class="num">Coupon %</th>
+        <th class="num">Emp %</th><th class="num">Other %Ret</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td class="num"><span class="rank rank-red">1</span></td>
+          <td><strong>#1</strong> FITCHBURG,  MA - IND</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T6</td>
+          <td class="num">$23,927</td>
+          <td class="num cell-neutral">0.62%</td>
+          <td class="num cell-neutral">2.04%</td>
+          <td class="num cell-neutral">0.88%</td>
+          <td class="num cell-neutral">0.44%</td>
+          <td class="num cell-neutral">0.70%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank rank-red">2</span></td>
+          <td><strong>#3</strong> MEREDITH, NH - (IND)</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T4</td>
+          <td class="num">$36,107</td>
+          <td class="num cell-lime">0.28%</td>
+          <td class="num cell-neutral">2.04%</td>
+          <td class="num cell-neutral">0.77%</td>
+          <td class="num cell-neutral">0.31%</td>
+          <td class="num cell-neutral">0.68%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank rank-red">3</span></td>
+          <td><strong>#4</strong> GARDNER, MA - ACE</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T3</td>
+          <td class="num">$68,788</td>
+          <td class="num cell-neutral">0.54%</td>
+          <td class="num cell-red">2.21%</td>
+          <td class="num cell-neutral">0.90%</td>
+          <td class="num cell-neutral">0.33%</td>
+          <td class="num cell-neutral">0.53%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank rank-red">4</span></td>
+          <td><strong>#7</strong> TEWKSBURY, MA - (IND)</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T5</td>
+          <td class="num">$44,907</td>
+          <td class="num cell-lime">0.40%</td>
+          <td class="num cell-neutral">2.09%</td>
+          <td class="num cell-pink">1.09%</td>
+          <td class="num cell-neutral">0.35%</td>
+          <td class="num cell-neutral">0.66%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank rank-red">5</span></td>
+          <td><strong>#8</strong> CLINTON, MA - ACE</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T5</td>
+          <td class="num">$38,722</td>
+          <td class="num cell-neutral">0.68%</td>
+          <td class="num cell-green">1.49%</td>
+          <td class="num cell-neutral">0.79%</td>
+          <td class="num cell-neutral">0.40%</td>
+          <td class="num cell-neutral">0.81%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank rank-red">6</span></td>
+          <td><strong>#10</strong> PERU, NY - ACE</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T5</td>
+          <td class="num">$22,461</td>
+          <td class="num cell-neutral">0.54%</td>
+          <td class="num cell-neutral">2.13%</td>
+          <td class="num cell-neutral">0.89%</td>
+          <td class="num cell-neutral">0.43%</td>
+          <td class="num cell-lime">0.51%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank rank-red">7</span></td>
+          <td><strong>#16</strong> NORWAY, ME - ACE</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T4</td>
+          <td class="num">$43,855</td>
+          <td class="num cell-neutral">0.65%</td>
+          <td class="num cell-green">1.39%</td>
+          <td class="num cell-green">0.35%</td>
+          <td class="num cell-neutral">0.27%</td>
+          <td class="num cell-neutral">0.52%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank rank-red">8</span></td>
+          <td><strong>#17</strong> TURNERS FALLS, MA - (IND)</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T6</td>
+          <td class="num">$25,406</td>
+          <td class="num cell-pink">0.81%</td>
+          <td class="num cell-pink">2.33%</td>
+          <td class="num cell-lime">0.68%</td>
+          <td class="num cell-neutral">0.45%</td>
+          <td class="num cell-lime">0.57%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank rank-red">9</span></td>
+          <td><strong>#18</strong> SHELBURNE FALLS, MA - ACE</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T6</td>
+          <td class="num">$29,985</td>
+          <td class="num cell-neutral">0.63%</td>
+          <td class="num cell-neutral">2.00%</td>
+          <td class="num cell-neutral">0.92%</td>
+          <td class="num cell-neutral">0.45%</td>
+          <td class="num cell-neutral">0.82%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank rank-red">10</span></td>
+          <td><strong>#22</strong> LINCOLN, NH - ACE</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T5</td>
+          <td class="num">$33,704</td>
+          <td class="num cell-neutral">0.64%</td>
+          <td class="num cell-pink">2.23%</td>
+          <td class="num cell-neutral">0.94%</td>
+          <td class="num cell-neutral">0.29%</td>
+          <td class="num cell-neutral">0.57%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank rank-yellow">11</span></td>
+          <td><strong>#25</strong> SAINT JOHNSBURY, VT - ACE</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T4</td>
+          <td class="num">$46,063</td>
+          <td class="num cell-neutral">0.47%</td>
+          <td class="num cell-pink">2.09%</td>
+          <td class="num cell-neutral">0.77%</td>
+          <td class="num cell-pink">0.56%</td>
+          <td class="num cell-neutral">0.54%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank rank-yellow">12</span></td>
+          <td><strong>#32</strong> FRANKLIN, MA - ACE</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T5</td>
+          <td class="num">$54,901</td>
+          <td class="num cell-lime">0.38%</td>
+          <td class="num cell-pink">2.27%</td>
+          <td class="num cell-pink">1.11%</td>
+          <td class="num cell-neutral">0.40%</td>
+          <td class="num cell-neutral">0.81%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank rank-yellow">13</span></td>
+          <td><strong>#33</strong> GREAT BARRINGTON, MA - (ACE)</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T6</td>
+          <td class="num">$23,334</td>
+          <td class="num cell-pink">0.91%</td>
+          <td class="num cell-neutral">2.07%</td>
+          <td class="num cell-lime">0.64%</td>
+          <td class="num cell-neutral">0.32%</td>
+          <td class="num cell-neutral">0.86%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank rank-yellow">14</span></td>
+          <td><strong>#34</strong> STAFFORD SPRINGS, CT - ACE</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T5</td>
+          <td class="num">$47,652</td>
+          <td class="num cell-lime">0.32%</td>
+          <td class="num cell-neutral">2.01%</td>
+          <td class="num cell-neutral">0.90%</td>
+          <td class="num cell-neutral">0.32%</td>
+          <td class="num cell-neutral">0.79%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank rank-yellow">15</span></td>
+          <td><strong>#37</strong> WEBSTER, MA - (ACE)</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T5</td>
+          <td class="num">$50,977</td>
+          <td class="num cell-neutral">0.68%</td>
+          <td class="num cell-red">2.81%</td>
+          <td class="num cell-neutral">0.96%</td>
+          <td class="num cell-neutral">0.29%</td>
+          <td class="num cell-neutral">0.60%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank rank-yellow">16</span></td>
+          <td><strong>#39</strong> WINDSOR, VT - (ACE)</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T5</td>
+          <td class="num">$19,060</td>
+          <td class="num cell-neutral">0.43%</td>
+          <td class="num cell-pink">2.33%</td>
+          <td class="num cell-neutral">0.75%</td>
+          <td class="num cell-neutral">0.34%</td>
+          <td class="num cell-neutral">0.79%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank rank-yellow">17</span></td>
+          <td><strong>#40</strong> BREWER, ME - (ACE)</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T5</td>
+          <td class="num">$24,390</td>
+          <td class="num cell-neutral">0.45%</td>
+          <td class="num cell-neutral">1.90%</td>
+          <td class="num cell-lime">0.52%</td>
+          <td class="num cell-neutral">0.24%</td>
+          <td class="num cell-neutral">0.59%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank rank-yellow">18</span></td>
+          <td><strong>#42</strong> LUDLOW, VT - ACE</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T5</td>
+          <td class="num">$34,444</td>
+          <td class="num cell-neutral">0.65%</td>
+          <td class="num cell-red">2.42%</td>
+          <td class="num cell-neutral">0.85%</td>
+          <td class="num cell-neutral">0.38%</td>
+          <td class="num cell-neutral">0.71%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank rank-yellow">19</span></td>
+          <td><strong>#44</strong> WALPOLE, NH - ACE</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T6</td>
+          <td class="num">$34,269</td>
+          <td class="num cell-pink">0.85%</td>
+          <td class="num cell-pink">2.41%</td>
+          <td class="num cell-neutral">0.95%</td>
+          <td class="num cell-neutral">0.27%</td>
+          <td class="num cell-neutral">0.86%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank rank-yellow">20</span></td>
+          <td><strong>#49</strong> BARRE, VT - IND</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T2</td>
+          <td class="num">$64,610</td>
+          <td class="num cell-neutral">0.52%</td>
+          <td class="num cell-red">2.03%</td>
+          <td class="num cell-neutral">0.71%</td>
+          <td class="num cell-pink">0.50%</td>
+          <td class="num cell-neutral">0.55%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank rank-yellow">21</span></td>
+          <td><strong>#51</strong> WATERBURY, VT - (ACE)</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T6</td>
+          <td class="num">$24,111</td>
+          <td class="num cell-pink">0.94%</td>
+          <td class="num cell-neutral">2.14%</td>
+          <td class="num cell-neutral">0.81%</td>
+          <td class="num cell-neutral">0.26%</td>
+          <td class="num cell-neutral">0.70%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank rank-yellow">22</span></td>
+          <td><strong>#55</strong> NEWPORT, NH - ACE</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T5</td>
+          <td class="num">$30,373</td>
+          <td class="num cell-pink">0.84%</td>
+          <td class="num cell-pink">2.29%</td>
+          <td class="num cell-neutral">0.97%</td>
+          <td class="num cell-lime">0.11%</td>
+          <td class="num cell-neutral">0.79%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank rank-yellow">23</span></td>
+          <td><strong>#56</strong> OLD TOWN, ME - ACE</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T5</td>
+          <td class="num">$36,912</td>
+          <td class="num cell-neutral">0.68%</td>
+          <td class="num cell-lime">1.81%</td>
+          <td class="num cell-neutral">0.74%</td>
+          <td class="num cell-neutral">0.35%</td>
+          <td class="num cell-pink">0.94%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank rank-yellow">24</span></td>
+          <td><strong>#57</strong> MORRISVILLE, VT - (IND)</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T3</td>
+          <td class="num">$52,588</td>
+          <td class="num cell-lime">0.31%</td>
+          <td class="num cell-lime">1.65%</td>
+          <td class="num cell-pink">1.03%</td>
+          <td class="num cell-neutral">0.28%</td>
+          <td class="num cell-neutral">0.59%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank rank-yellow">25</span></td>
+          <td><strong>#60</strong> GOUVERNEUR, NY - (IND)</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T5</td>
+          <td class="num">$12,871</td>
+          <td class="num cell-neutral">0.60%</td>
+          <td class="num cell-green">1.57%</td>
+          <td class="num cell-neutral">0.89%</td>
+          <td class="num cell-neutral">0.23%</td>
+          <td class="num cell-neutral">0.81%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">26</span></td>
+          <td><strong>#62</strong> HARDWICK, VT - (ACE)</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T6</td>
+          <td class="num">$20,137</td>
+          <td class="num cell-neutral">0.65%</td>
+          <td class="num cell-red">2.90%</td>
+          <td class="num cell-neutral">0.95%</td>
+          <td class="num cell-neutral">0.51%</td>
+          <td class="num cell-lime">0.52%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">27</span></td>
+          <td><strong>#63</strong> MIDDLEBURY, VT - ACE</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T3</td>
+          <td class="num">$72,811</td>
+          <td class="num cell-neutral">0.48%</td>
+          <td class="num cell-neutral">1.91%</td>
+          <td class="num cell-pink">1.09%</td>
+          <td class="num cell-lime">0.15%</td>
+          <td class="num cell-pink">0.79%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">28</span></td>
+          <td><strong>#64</strong> AUGUSTA, ME - (ACE)</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T5</td>
+          <td class="num">$16,680</td>
+          <td class="num cell-neutral">0.69%</td>
+          <td class="num cell-red">2.54%</td>
+          <td class="num cell-neutral">0.98%</td>
+          <td class="num cell-neutral">0.36%</td>
+          <td class="num cell-neutral">0.60%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">29</span></td>
+          <td><strong>#65</strong> LITTLETON, MA - (IND)</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T4</td>
+          <td class="num">$56,214</td>
+          <td class="num cell-lime">0.33%</td>
+          <td class="num cell-neutral">1.99%</td>
+          <td class="num cell-neutral">0.79%</td>
+          <td class="num cell-pink">0.53%</td>
+          <td class="num cell-neutral">0.57%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">30</span></td>
+          <td><strong>#69</strong> LUNENBURG, MA - (IND)</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T5</td>
+          <td class="num">$17,658</td>
+          <td class="num cell-neutral">0.64%</td>
+          <td class="num cell-green">1.45%</td>
+          <td class="num cell-neutral">0.78%</td>
+          <td class="num cell-neutral">0.38%</td>
+          <td class="num cell-neutral">0.80%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">31</span></td>
+          <td><strong>#70</strong> PUTNAM, CT - (ACE)</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T5</td>
+          <td class="num">$23,899</td>
+          <td class="num cell-pink">0.84%</td>
+          <td class="num cell-neutral">1.98%</td>
+          <td class="num cell-lime">0.65%</td>
+          <td class="num cell-neutral">0.40%</td>
+          <td class="num cell-neutral">0.76%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">32</span></td>
+          <td><strong>#74</strong> EASTHAMPTON, MA - ACE</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T4</td>
+          <td class="num">$59,485</td>
+          <td class="num cell-neutral">0.64%</td>
+          <td class="num cell-lime">1.67%</td>
+          <td class="num cell-pink">1.02%</td>
+          <td class="num cell-neutral">0.34%</td>
+          <td class="num cell-neutral">0.76%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">33</span></td>
+          <td><strong>#75</strong> ELIZABETHTOWN, NY - ACE</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T5</td>
+          <td class="num">$23,668</td>
+          <td class="num cell-pink">0.81%</td>
+          <td class="num cell-pink">2.21%</td>
+          <td class="num cell-neutral">0.90%</td>
+          <td class="num cell-pink">0.57%</td>
+          <td class="num cell-neutral">0.72%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">34</span></td>
+          <td><strong>#76</strong> SWANTON, VT - (IND)</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T5</td>
+          <td class="num">$16,454</td>
+          <td class="num cell-neutral">0.53%</td>
+          <td class="num cell-neutral">2.04%</td>
+          <td class="num cell-pink">1.12%</td>
+          <td class="num cell-neutral">0.36%</td>
+          <td class="num cell-neutral">0.76%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">35</span></td>
+          <td><strong>#79</strong> FAIR HAVEN, VT - (IND)</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T5</td>
+          <td class="num">$28,653</td>
+          <td class="num cell-pink">0.80%</td>
+          <td class="num cell-lime">1.82%</td>
+          <td class="num cell-lime">0.54%</td>
+          <td class="num cell-neutral">0.38%</td>
+          <td class="num cell-neutral">0.71%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">36</span></td>
+          <td><strong>#80</strong> ALLENSTOWN, NH - ACE</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T5</td>
+          <td class="num">$31,383</td>
+          <td class="num cell-neutral">0.47%</td>
+          <td class="num cell-pink">2.30%</td>
+          <td class="num cell-neutral">0.96%</td>
+          <td class="num cell-neutral">0.25%</td>
+          <td class="num cell-neutral">0.76%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">37</span></td>
+          <td><strong>#83</strong> VERGENNES, VT - ACE</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T3</td>
+          <td class="num">$65,851</td>
+          <td class="num cell-neutral">0.46%</td>
+          <td class="num cell-green">1.28%</td>
+          <td class="num cell-neutral">0.86%</td>
+          <td class="num cell-neutral">0.32%</td>
+          <td class="num cell-neutral">0.53%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">38</span></td>
+          <td><strong>#84</strong> TICONDEROGA, NY- ACE</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T6</td>
+          <td class="num">$22,571</td>
+          <td class="num cell-neutral">0.74%</td>
+          <td class="num cell-pink">2.27%</td>
+          <td class="num cell-neutral">0.80%</td>
+          <td class="num cell-neutral">0.41%</td>
+          <td class="num cell-pink">0.87%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">39</span></td>
+          <td><strong>#89</strong> WAREHAM, MA - ACE</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T6</td>
+          <td class="num">$28,750</td>
+          <td class="num cell-neutral">0.52%</td>
+          <td class="num cell-neutral">2.23%</td>
+          <td class="num cell-neutral">0.90%</td>
+          <td class="num cell-pink">0.60%</td>
+          <td class="num cell-lime">0.44%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">40</span></td>
+          <td><strong>#90</strong> WELLS, ME - (ACE)</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T4</td>
+          <td class="num">$41,105</td>
+          <td class="num cell-neutral">0.68%</td>
+          <td class="num cell-neutral">1.81%</td>
+          <td class="num cell-neutral">0.80%</td>
+          <td class="num cell-pink">0.52%</td>
+          <td class="num cell-neutral">0.66%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">41</span></td>
+          <td><strong>#91</strong> MANCHESTER, VT - (ACE)</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T4</td>
+          <td class="num">$35,368</td>
+          <td class="num cell-pink">0.95%</td>
+          <td class="num cell-neutral">1.77%</td>
+          <td class="num cell-neutral">0.88%</td>
+          <td class="num cell-neutral">0.28%</td>
+          <td class="num cell-neutral">0.56%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">42</span></td>
+          <td><strong>#92</strong> BERLIN, NH - (IND)</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T5</td>
+          <td class="num">$15,510</td>
+          <td class="num cell-neutral">0.59%</td>
+          <td class="num cell-neutral">1.90%</td>
+          <td class="num cell-neutral">0.89%</td>
+          <td class="num cell-lime">0.14%</td>
+          <td class="num cell-pink">0.98%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">43</span></td>
+          <td><strong>#94</strong> WILLIAMSTOWN, MA - ACE</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T5</td>
+          <td class="num">$41,651</td>
+          <td class="num cell-neutral">0.55%</td>
+          <td class="num cell-red">2.61%</td>
+          <td class="num cell-lime">0.67%</td>
+          <td class="num cell-neutral">0.38%</td>
+          <td class="num cell-red">1.15%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">44</span></td>
+          <td><strong>#97</strong> LISBON FALLS, ME - ACE</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T5</td>
+          <td class="num">$36,139</td>
+          <td class="num cell-lime">0.42%</td>
+          <td class="num cell-green">1.48%</td>
+          <td class="num cell-neutral">0.75%</td>
+          <td class="num cell-neutral">0.40%</td>
+          <td class="num cell-neutral">0.78%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">45</span></td>
+          <td><strong>#100</strong> MILTON, VT - (IND)</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T6</td>
+          <td class="num">$20,400</td>
+          <td class="num cell-pink">0.88%</td>
+          <td class="num cell-neutral">2.01%</td>
+          <td class="num cell-lime">0.61%</td>
+          <td class="num cell-neutral">0.33%</td>
+          <td class="num cell-pink">0.91%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">46</span></td>
+          <td><strong>#101</strong> WINCHESTER, NH - (ACE)</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T6</td>
+          <td class="num">$22,104</td>
+          <td class="num cell-neutral">0.73%</td>
+          <td class="num cell-green">1.42%</td>
+          <td class="num cell-neutral">0.89%</td>
+          <td class="num cell-neutral">0.51%</td>
+          <td class="num cell-pink">1.04%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">47</span></td>
+          <td><strong>#103</strong> RUMFORD, ME - (ACE)</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T6</td>
+          <td class="num">$18,740</td>
+          <td class="num cell-neutral">0.75%</td>
+          <td class="num cell-neutral">2.21%</td>
+          <td class="num cell-lime">0.68%</td>
+          <td class="num cell-neutral">0.29%</td>
+          <td class="num cell-neutral">0.73%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">48</span></td>
+          <td><strong>#104</strong> SOUTHBRIDGE, MA - (ACE)</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T6</td>
+          <td class="num">$28,842</td>
+          <td class="num cell-neutral">0.74%</td>
+          <td class="num cell-pink">2.30%</td>
+          <td class="num cell-neutral">0.81%</td>
+          <td class="num cell-neutral">0.25%</td>
+          <td class="num cell-neutral">0.60%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">49</span></td>
+          <td><strong>#106</strong> LINCOLN, ME - (ACE)</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T4</td>
+          <td class="num">$45,834</td>
+          <td class="num cell-lime">0.34%</td>
+          <td class="num cell-pink">2.15%</td>
+          <td class="num cell-green">0.40%</td>
+          <td class="num cell-neutral">0.30%</td>
+          <td class="num cell-neutral">0.73%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">50</span></td>
+          <td><strong>#107</strong> NORTH WINDHAM, ME - ACE</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T6</td>
+          <td class="num">$23,302</td>
+          <td class="num cell-pink">0.92%</td>
+          <td class="num cell-neutral">2.12%</td>
+          <td class="num cell-pink">1.08%</td>
+          <td class="num cell-neutral">0.33%</td>
+          <td class="num cell-neutral">0.61%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">51</span></td>
+          <td><strong>#108</strong> FARMINGTON, ME - ACE</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T5</td>
+          <td class="num">$43,894</td>
+          <td class="num cell-neutral">0.46%</td>
+          <td class="num cell-red">2.53%</td>
+          <td class="num cell-pink">1.03%</td>
+          <td class="num cell-neutral">0.40%</td>
+          <td class="num cell-red">1.18%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">52</span></td>
+          <td><strong>#113</strong> TUPPER LAKE, NY - ACE</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T3</td>
+          <td class="num">$46,945</td>
+          <td class="num cell-neutral">0.49%</td>
+          <td class="num cell-pink">2.02%</td>
+          <td class="num cell-neutral">0.84%</td>
+          <td class="num cell-neutral">0.30%</td>
+          <td class="num cell-pink">0.99%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">53</span></td>
+          <td><strong>#118</strong> GREENFIELD, MA - (IND)</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T5</td>
+          <td class="num">$45,371</td>
+          <td class="num cell-pink">0.85%</td>
+          <td class="num cell-green">1.51%</td>
+          <td class="num cell-neutral">0.78%</td>
+          <td class="num cell-neutral">0.39%</td>
+          <td class="num cell-neutral">0.80%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">54</span></td>
+          <td><strong>#120</strong> PLATTSBURGH, NY - (IND)</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T5</td>
+          <td class="num">$17,969</td>
+          <td class="num cell-lime">0.34%</td>
+          <td class="num cell-green">1.21%</td>
+          <td class="num cell-lime">0.51%</td>
+          <td class="num cell-neutral">0.34%</td>
+          <td class="num cell-neutral">0.66%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">55</span></td>
+          <td><strong>#124</strong> NEWPORT, ME - ACE</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T4</td>
+          <td class="num">$39,064</td>
+          <td class="num cell-neutral">0.61%</td>
+          <td class="num cell-lime">1.65%</td>
+          <td class="num cell-lime">0.60%</td>
+          <td class="num cell-lime">0.13%</td>
+          <td class="num cell-neutral">0.71%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">56</span></td>
+          <td><strong>#132</strong> EASTON, NY - ACE</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T4</td>
+          <td class="num">$49,529</td>
+          <td class="num cell-neutral">0.62%</td>
+          <td class="num cell-pink">2.27%</td>
+          <td class="num cell-neutral">0.96%</td>
+          <td class="num cell-neutral">0.31%</td>
+          <td class="num cell-pink">0.86%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">57</span></td>
+          <td><strong>#133</strong> WATERVILLE, ME - ACE</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T5</td>
+          <td class="num">$39,289</td>
+          <td class="num cell-neutral">0.56%</td>
+          <td class="num cell-lime">1.77%</td>
+          <td class="num cell-neutral">0.76%</td>
+          <td class="num cell-neutral">0.29%</td>
+          <td class="num cell-lime">0.36%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">58</span></td>
+          <td><strong>#135</strong> NAPLES, ME - ACE</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T3</td>
+          <td class="num">$49,987</td>
+          <td class="num cell-neutral">0.53%</td>
+          <td class="num cell-neutral">1.89%</td>
+          <td class="num cell-neutral">0.71%</td>
+          <td class="num cell-neutral">0.25%</td>
+          <td class="num cell-neutral">0.70%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">59</span></td>
+          <td><strong>#136</strong> LAKE PLACID, NY - ACE</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T4</td>
+          <td class="num">$46,480</td>
+          <td class="num cell-pink">0.86%</td>
+          <td class="num cell-neutral">1.93%</td>
+          <td class="num cell-neutral">0.73%</td>
+          <td class="num cell-neutral">0.27%</td>
+          <td class="num cell-neutral">0.65%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">60</span></td>
+          <td><strong>#140</strong> WEST CARTHAGE, NY - (IND)</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T5</td>
+          <td class="num">$32,153</td>
+          <td class="num cell-lime">0.35%</td>
+          <td class="num cell-neutral">1.96%</td>
+          <td class="num cell-neutral">0.86%</td>
+          <td class="num cell-pink">0.53%</td>
+          <td class="num cell-neutral">0.82%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">61</span></td>
+          <td><strong>#144</strong> HAVERHILL, MA - ACE</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T5</td>
+          <td class="num">$48,220</td>
+          <td class="num cell-pink">0.77%</td>
+          <td class="num cell-lime">1.75%</td>
+          <td class="num cell-neutral">0.97%</td>
+          <td class="num cell-neutral">0.24%</td>
+          <td class="num cell-neutral">0.73%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">62</span></td>
+          <td><strong>#148</strong> AYER, MA - (IND)</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T5</td>
+          <td class="num">$20,598</td>
+          <td class="num cell-neutral">0.66%</td>
+          <td class="num cell-lime">1.73%</td>
+          <td class="num cell-pink">1.21%</td>
+          <td class="num cell-neutral">0.41%</td>
+          <td class="num cell-lime">0.39%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">63</span></td>
+          <td><strong>#151</strong> MIDDLEBORO, MA - ACE</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T5</td>
+          <td class="num">$38,163</td>
+          <td class="num cell-neutral">0.68%</td>
+          <td class="num cell-neutral">1.86%</td>
+          <td class="num cell-neutral">0.85%</td>
+          <td class="num cell-neutral">0.40%</td>
+          <td class="num cell-neutral">0.74%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">64</span></td>
+          <td><strong>#152</strong> CARVER, MA - ACE</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T6</td>
+          <td class="num">$32,716</td>
+          <td class="num cell-lime">0.28%</td>
+          <td class="num cell-green">1.69%</td>
+          <td class="num cell-neutral">1.04%</td>
+          <td class="num cell-neutral">0.50%</td>
+          <td class="num cell-pink">1.01%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">65</span></td>
+          <td><strong>#155</strong> SANDWICH, MA - (IND)</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T5</td>
+          <td class="num">$22,347</td>
+          <td class="num cell-pink">0.90%</td>
+          <td class="num cell-green">1.28%</td>
+          <td class="num cell-neutral">0.99%</td>
+          <td class="num cell-lime">0.16%</td>
+          <td class="num cell-pink">0.92%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">66</span></td>
+          <td><strong>#156</strong> SO. SANDWICH, MA - (IND)</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T4</td>
+          <td class="num">$53,245</td>
+          <td class="num cell-neutral">0.60%</td>
+          <td class="num cell-lime">1.52%</td>
+          <td class="num cell-pink">1.18%</td>
+          <td class="num cell-neutral">0.39%</td>
+          <td class="num cell-lime">0.38%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">67</span></td>
+          <td><strong>#159</strong> COTUIT, MA - (ACE)</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T5</td>
+          <td class="num">$38,982</td>
+          <td class="num cell-neutral">0.63%</td>
+          <td class="num cell-lime">1.74%</td>
+          <td class="num cell-neutral">0.87%</td>
+          <td class="num cell-neutral">0.30%</td>
+          <td class="num cell-pink">0.89%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">68</span></td>
+          <td><strong>#161</strong> JEFFERSONVILLE, VT - (ACE)</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T5</td>
+          <td class="num">$30,072</td>
+          <td class="num cell-lime">0.32%</td>
+          <td class="num cell-neutral">2.11%</td>
+          <td class="num cell-pink">1.18%</td>
+          <td class="num cell-neutral">0.27%</td>
+          <td class="num cell-neutral">0.71%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">69</span></td>
+          <td><strong>#163</strong> WARNER, NH - (IND)</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T6</td>
+          <td class="num">$22,747</td>
+          <td class="num cell-neutral">0.69%</td>
+          <td class="num cell-lime">1.86%</td>
+          <td class="num cell-neutral">1.02%</td>
+          <td class="num cell-neutral">0.38%</td>
+          <td class="num cell-neutral">0.58%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">70</span></td>
+          <td><strong>#164</strong> BUXTON, ME - IND</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T5</td>
+          <td class="num">$33,478</td>
+          <td class="num cell-pink">0.90%</td>
+          <td class="num cell-pink">2.28%</td>
+          <td class="num cell-neutral">0.82%</td>
+          <td class="num cell-neutral">0.29%</td>
+          <td class="num cell-neutral">0.56%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">71</span></td>
+          <td><strong>#171</strong> BELFAST, ME - ACE</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T2</td>
+          <td class="num">$91,860</td>
+          <td class="num cell-pink">0.67%</td>
+          <td class="num cell-neutral">1.55%</td>
+          <td class="num cell-neutral">0.80%</td>
+          <td class="num cell-neutral">0.28%</td>
+          <td class="num cell-neutral">0.69%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">72</span></td>
+          <td><strong>#172</strong> FALMOUTH, MA - (IND)</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T2</td>
+          <td class="num">$108,619</td>
+          <td class="num cell-neutral">0.43%</td>
+          <td class="num cell-pink">1.87%</td>
+          <td class="num cell-neutral">0.69%</td>
+          <td class="num cell-neutral">0.38%</td>
+          <td class="num cell-neutral">0.70%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">73</span></td>
+          <td><strong>#173</strong> SHELBURNE, VT - (ACE)</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T5</td>
+          <td class="num">$32,725</td>
+          <td class="num cell-neutral">0.56%</td>
+          <td class="num cell-lime">1.70%</td>
+          <td class="num cell-lime">0.68%</td>
+          <td class="num cell-neutral">0.28%</td>
+          <td class="num cell-lime">0.53%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">74</span></td>
+          <td><strong>#175</strong> LEE, NH - ACE</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T3</td>
+          <td class="num">$71,417</td>
+          <td class="num cell-pink">0.66%</td>
+          <td class="num cell-neutral">1.78%</td>
+          <td class="num cell-pink">1.06%</td>
+          <td class="num cell-pink">0.55%</td>
+          <td class="num cell-neutral">0.64%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">75</span></td>
+          <td><strong>#176</strong> NEWMARKET, NH - (ACE)</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T6</td>
+          <td class="num">$25,133</td>
+          <td class="num cell-lime">0.37%</td>
+          <td class="num cell-neutral">1.97%</td>
+          <td class="num cell-neutral">0.89%</td>
+          <td class="num cell-lime">0.22%</td>
+          <td class="num cell-neutral">0.68%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">76</span></td>
+          <td><strong>#181</strong> PLYMOUTH, MA - (ACE)</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T5</td>
+          <td class="num">$22,639</td>
+          <td class="num cell-neutral">0.63%</td>
+          <td class="num cell-lime">1.84%</td>
+          <td class="num cell-neutral">0.71%</td>
+          <td class="num cell-neutral">0.27%</td>
+          <td class="num cell-pink">0.95%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">77</span></td>
+          <td><strong>#182</strong> COHASSET, MA - (IND)</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T2</td>
+          <td class="num">$81,651</td>
+          <td class="num cell-neutral">0.42%</td>
+          <td class="num cell-lime">1.31%</td>
+          <td class="num cell-neutral">0.65%</td>
+          <td class="num cell-neutral">0.40%</td>
+          <td class="num cell-neutral">0.50%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">78</span></td>
+          <td><strong>#187</strong> LANCASTER, NH - (IND)</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T4</td>
+          <td class="num">$47,895</td>
+          <td class="num cell-neutral">0.64%</td>
+          <td class="num cell-pink">2.17%</td>
+          <td class="num cell-neutral">0.95%</td>
+          <td class="num cell-neutral">0.47%</td>
+          <td class="num cell-neutral">0.58%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">79</span></td>
+          <td><strong>#188</strong> STOW, MA - IND</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T5</td>
+          <td class="num">$52,954</td>
+          <td class="num cell-pink">0.78%</td>
+          <td class="num cell-lime">1.72%</td>
+          <td class="num cell-neutral">0.78%</td>
+          <td class="num cell-neutral">0.47%</td>
+          <td class="num cell-neutral">0.80%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">80</span></td>
+          <td><strong>#189</strong> OSSIPEE, NH - (ACE)</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T4</td>
+          <td class="num">$39,955</td>
+          <td class="num cell-neutral">0.55%</td>
+          <td class="num cell-green">1.50%</td>
+          <td class="num cell-neutral">0.92%</td>
+          <td class="num cell-neutral">0.27%</td>
+          <td class="num cell-neutral">0.52%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">81</span></td>
+          <td><strong>#191</strong> BRISTOL, NH - ACE</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T5</td>
+          <td class="num">$40,822</td>
+          <td class="num cell-neutral">0.46%</td>
+          <td class="num cell-neutral">2.09%</td>
+          <td class="num cell-lime">0.47%</td>
+          <td class="num cell-neutral">0.39%</td>
+          <td class="num cell-neutral">0.71%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">82</span></td>
+          <td><strong>#192</strong> BEVERLY, MA - ACE</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T1</td>
+          <td class="num">$142,795</td>
+          <td class="num cell-neutral">0.27%</td>
+          <td class="num cell-pink">1.76%</td>
+          <td class="num cell-neutral">0.76%</td>
+          <td class="num cell-neutral">0.22%</td>
+          <td class="num cell-neutral">0.45%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">83</span></td>
+          <td><strong>#193</strong> SUDBURY, MA - (IND)</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T5</td>
+          <td class="num">$27,185</td>
+          <td class="num cell-neutral">0.71%</td>
+          <td class="num cell-green">1.47%</td>
+          <td class="num cell-neutral">0.79%</td>
+          <td class="num cell-neutral">0.29%</td>
+          <td class="num cell-neutral">0.69%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">84</span></td>
+          <td><strong>#194</strong> MONROE, CT - (ACE)</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T6</td>
+          <td class="num">$24,466</td>
+          <td class="num cell-neutral">0.69%</td>
+          <td class="num cell-neutral">2.11%</td>
+          <td class="num cell-pink">1.10%</td>
+          <td class="num cell-neutral">0.39%</td>
+          <td class="num cell-neutral">0.67%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">85</span></td>
+          <td><strong>#195</strong> ALEXANDRIA, VA - (ACE)</td>
+          <td>T4 (Brady)</td>
+          <td class="num">T5</td>
+          <td class="num">$47,382</td>
+          <td class="num cell-lime">0.36%</td>
+          <td class="num cell-pink">2.25%</td>
+          <td class="num cell-neutral">0.95%</td>
+          <td class="num cell-pink">0.50%</td>
+          <td class="num cell-neutral">0.57%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">86</span></td>
+          <td><strong>#198</strong> LYNDONVILLE, VT - ACE</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T2</td>
+          <td class="num">$72,341</td>
+          <td class="num cell-neutral">0.45%</td>
+          <td class="num cell-neutral">1.58%</td>
+          <td class="num cell-neutral">0.70%</td>
+          <td class="num cell-neutral">0.30%</td>
+          <td class="num cell-lime">0.34%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">87</span></td>
+          <td><strong>#201</strong> SOUTH ROYALTON, VT - ACE</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T4</td>
+          <td class="num">$48,793</td>
+          <td class="num cell-neutral">0.70%</td>
+          <td class="num cell-pink">2.15%</td>
+          <td class="num cell-pink">1.02%</td>
+          <td class="num cell-pink">0.55%</td>
+          <td class="num cell-neutral">0.61%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">88</span></td>
+          <td><strong>#202</strong> EASTCHESTER, NY - (ACE)</td>
+          <td>T4 (Brady)</td>
+          <td class="num">T2</td>
+          <td class="num">$94,854</td>
+          <td class="num cell-neutral">0.44%</td>
+          <td class="num cell-neutral">1.60%</td>
+          <td class="num cell-pink">1.07%</td>
+          <td class="num cell-lime">0.13%</td>
+          <td class="num cell-neutral">0.67%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">89</span></td>
+          <td><strong>#203</strong> BRISTOL, VT - (ACE)</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T4</td>
+          <td class="num">$47,469</td>
+          <td class="num cell-lime">0.29%</td>
+          <td class="num cell-green">1.02%</td>
+          <td class="num cell-lime">0.46%</td>
+          <td class="num cell-neutral">0.19%</td>
+          <td class="num cell-pink">0.82%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">90</span></td>
+          <td><strong>#204</strong> MADISON, ME - ACE</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T5</td>
+          <td class="num">$38,123</td>
+          <td class="num cell-lime">0.42%</td>
+          <td class="num cell-neutral">1.92%</td>
+          <td class="num cell-lime">0.64%</td>
+          <td class="num cell-neutral">0.41%</td>
+          <td class="num cell-lime">0.51%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">91</span></td>
+          <td><strong>#205</strong> SKOWHEGAN, ME - ACE</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T5</td>
+          <td class="num">$39,987</td>
+          <td class="num cell-pink">0.82%</td>
+          <td class="num cell-lime">1.65%</td>
+          <td class="num cell-neutral">0.71%</td>
+          <td class="num cell-neutral">0.36%</td>
+          <td class="num cell-neutral">0.68%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">92</span></td>
+          <td><strong>#206</strong> WINSLOW, ME - ACE</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T4</td>
+          <td class="num">$53,989</td>
+          <td class="num cell-pink">0.81%</td>
+          <td class="num cell-neutral">1.96%</td>
+          <td class="num cell-lime">0.60%</td>
+          <td class="num cell-neutral">0.27%</td>
+          <td class="num cell-neutral">0.57%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">93</span></td>
+          <td><strong>#207</strong> FARMINGDALE, ME - ACE</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T5</td>
+          <td class="num">$50,661</td>
+          <td class="num cell-neutral">0.71%</td>
+          <td class="num cell-neutral">2.13%</td>
+          <td class="num cell-neutral">0.83%</td>
+          <td class="num cell-neutral">0.44%</td>
+          <td class="num cell-neutral">0.60%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">94</span></td>
+          <td><strong>#45</strong> MONTPELIER, VT - ACE</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T4</td>
+          <td class="num">$44,600</td>
+          <td class="num cell-neutral">0.53%</td>
+          <td class="num cell-neutral">1.98%</td>
+          <td class="num cell-pink">1.10%</td>
+          <td class="num cell-neutral">0.32%</td>
+          <td class="num cell-neutral">0.61%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">95</span></td>
+          <td><strong>#208</strong> BURTONSVILLE, MD - ACE</td>
+          <td>T4 (Brady)</td>
+          <td class="num">T2</td>
+          <td class="num">$143,829</td>
+          <td class="num cell-lime">0.26%</td>
+          <td class="num cell-pink">1.84%</td>
+          <td class="num cell-neutral">0.61%</td>
+          <td class="num cell-neutral">0.33%</td>
+          <td class="num cell-lime">0.31%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">96</span></td>
+          <td><strong>#209</strong> MOUNT JOY, PA - ACE</td>
+          <td>T4 (Brady)</td>
+          <td class="num">T1</td>
+          <td class="num">$230,040</td>
+          <td class="num cell-pink">0.57%</td>
+          <td class="num cell-green">0.93%</td>
+          <td class="num cell-neutral">0.51%</td>
+          <td class="num cell-neutral">0.39%</td>
+          <td class="num cell-lime">0.35%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">97</span></td>
+          <td><strong>#210</strong> QUINCY, MA - ACE</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T1</td>
+          <td class="num">$119,480</td>
+          <td class="num cell-neutral">0.40%</td>
+          <td class="num cell-pink">1.57%</td>
+          <td class="num cell-lime">0.47%</td>
+          <td class="num cell-neutral">0.41%</td>
+          <td class="num cell-pink">0.77%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">98</span></td>
+          <td><strong>#211</strong> HANOVER, MA - ACE</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T3</td>
+          <td class="num">$68,279</td>
+          <td class="num cell-lime">0.20%</td>
+          <td class="num cell-lime">1.47%</td>
+          <td class="num cell-pink">0.93%</td>
+          <td class="num cell-neutral">0.19%</td>
+          <td class="num cell-neutral">0.58%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">99</span></td>
+          <td><strong>#212</strong> BRUNSWICK, MD - ACE</td>
+          <td>T4 (Brady)</td>
+          <td class="num">T4</td>
+          <td class="num">$76,245</td>
+          <td class="num cell-neutral">0.63%</td>
+          <td class="num cell-red">2.35%</td>
+          <td class="num cell-neutral">0.78%</td>
+          <td class="num cell-neutral">0.34%</td>
+          <td class="num cell-neutral">0.54%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">100</span></td>
+          <td><strong>#213</strong> BRATTLEBORO, VT - ACE</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T3</td>
+          <td class="num">$45,767</td>
+          <td class="num cell-pink">0.78%</td>
+          <td class="num cell-neutral">1.81%</td>
+          <td class="num cell-neutral">0.84%</td>
+          <td class="num cell-neutral">0.27%</td>
+          <td class="num cell-neutral">0.66%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">101</span></td>
+          <td><strong>#214</strong> BURLINGTON, VT - ACE</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T5</td>
+          <td class="num">$37,999</td>
+          <td class="num cell-neutral">0.61%</td>
+          <td class="num cell-neutral">2.14%</td>
+          <td class="num cell-lime">0.67%</td>
+          <td class="num cell-neutral">0.43%</td>
+          <td class="num cell-pink">0.89%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">102</span></td>
+          <td><strong>#215</strong> COLCHESTER, VT - ACE</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T4</td>
+          <td class="num">$42,203</td>
+          <td class="num cell-neutral">0.65%</td>
+          <td class="num cell-red">2.37%</td>
+          <td class="num cell-pink">0.97%</td>
+          <td class="num cell-neutral">0.42%</td>
+          <td class="num cell-neutral">0.71%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">103</span></td>
+          <td><strong>#216</strong> ESSEX JUNCTION, VT - ACE</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T5</td>
+          <td class="num">$30,849</td>
+          <td class="num cell-neutral">0.68%</td>
+          <td class="num cell-red">2.50%</td>
+          <td class="num cell-neutral">0.86%</td>
+          <td class="num cell-neutral">0.25%</td>
+          <td class="num cell-neutral">0.68%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">104</span></td>
+          <td><strong>#217</strong> NORTH SPRINGFIELD, VT - ACE</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T1</td>
+          <td class="num">$95,078</td>
+          <td class="num cell-lime">0.08%</td>
+          <td class="num cell-neutral">1.54%</td>
+          <td class="num cell-neutral">0.72%</td>
+          <td class="num cell-neutral">0.40%</td>
+          <td class="num cell-neutral">0.57%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">105</span></td>
+          <td><strong>#218</strong> SOUTH BURLINGTON, VT - ACE</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T4</td>
+          <td class="num">$47,784</td>
+          <td class="num cell-pink">0.77%</td>
+          <td class="num cell-pink">2.11%</td>
+          <td class="num cell-lime">0.64%</td>
+          <td class="num cell-neutral">0.19%</td>
+          <td class="num cell-lime">0.51%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">106</span></td>
+          <td><strong>#219</strong> WOODSTOCK, VT - ACE</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T4</td>
+          <td class="num">$40,468</td>
+          <td class="num cell-lime">0.36%</td>
+          <td class="num cell-red">2.33%</td>
+          <td class="num cell-neutral">0.78%</td>
+          <td class="num cell-neutral">0.39%</td>
+          <td class="num cell-neutral">0.67%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">107</span></td>
+          <td><strong>#220</strong> PENNSBURG, PA - ACE</td>
+          <td>T4 (Brady)</td>
+          <td class="num">T3</td>
+          <td class="num">$77,004</td>
+          <td class="num cell-pink">0.74%</td>
+          <td class="num cell-red">2.35%</td>
+          <td class="num cell-neutral">0.66%</td>
+          <td class="num cell-neutral">0.29%</td>
+          <td class="num cell-neutral">0.56%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">108</span></td>
+          <td><strong>#221</strong> PHOENIXVILLE, PA - ACE</td>
+          <td>T4 (Brady)</td>
+          <td class="num">T3</td>
+          <td class="num">$64,647</td>
+          <td class="num cell-lime">0.26%</td>
+          <td class="num cell-red">2.22%</td>
+          <td class="num cell-pink">0.99%</td>
+          <td class="num cell-neutral">0.32%</td>
+          <td class="num cell-neutral">0.57%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">109</span></td>
+          <td><strong>#222</strong> ROYERSFORD, PA - ACE</td>
+          <td>T4 (Brady)</td>
+          <td class="num">T4</td>
+          <td class="num">$72,000</td>
+          <td class="num cell-pink">0.80%</td>
+          <td class="num cell-green">1.29%</td>
+          <td class="num cell-neutral">0.85%</td>
+          <td class="num cell-neutral">0.34%</td>
+          <td class="num cell-neutral">0.57%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">110</span></td>
+          <td><strong>#223</strong> DUBLIN, PA - ACE</td>
+          <td>T4 (Brady)</td>
+          <td class="num">T6</td>
+          <td class="num">$37,998</td>
+          <td class="num cell-pink">0.97%</td>
+          <td class="num cell-red">2.65%</td>
+          <td class="num cell-neutral">0.85%</td>
+          <td class="num cell-neutral">0.36%</td>
+          <td class="num cell-neutral">0.66%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">111</span></td>
+          <td><strong>#224</strong> VILLAS, NJ - ACE</td>
+          <td>T4 (Brady)</td>
+          <td class="num">T4</td>
+          <td class="num">$64,490</td>
+          <td class="num cell-neutral">0.51%</td>
+          <td class="num cell-lime">1.65%</td>
+          <td class="num cell-pink">1.07%</td>
+          <td class="num cell-neutral">0.43%</td>
+          <td class="num cell-neutral">0.78%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">112</span></td>
+          <td><strong>#225</strong> CAMBRIDGE, NY - ACE</td>
+          <td>T0 (Mason)</td>
+          <td class="num">T5</td>
+          <td class="num">$43,030</td>
+          <td class="num cell-neutral">0.44%</td>
+          <td class="num cell-red">2.93%</td>
+          <td class="num cell-pink">1.21%</td>
+          <td class="num cell-neutral">0.37%</td>
+          <td class="num cell-neutral">0.54%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">113</span></td>
+          <td><strong>#226</strong> COBLESKILL, NY - ACE</td>
+          <td>T0 (Mason)</td>
+          <td class="num">T5</td>
+          <td class="num">$36,094</td>
+          <td class="num cell-neutral">0.48%</td>
+          <td class="num cell-pink">2.35%</td>
+          <td class="num cell-lime">0.69%</td>
+          <td class="num cell-neutral">0.35%</td>
+          <td class="num cell-pink">0.84%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">114</span></td>
+          <td><strong>#227</strong> RUTLAND, VT - ACE</td>
+          <td>T0 (Mason)</td>
+          <td class="num">T5</td>
+          <td class="num">$51,931</td>
+          <td class="num cell-lime">0.37%</td>
+          <td class="num cell-red">2.90%</td>
+          <td class="num cell-pink">1.13%</td>
+          <td class="num cell-neutral">0.23%</td>
+          <td class="num cell-lime">0.47%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">115</span></td>
+          <td><strong>#228</strong> NEW BRITAIN, PA - ACE</td>
+          <td>T4 (Brady)</td>
+          <td class="num">T5</td>
+          <td class="num">$29,011</td>
+          <td class="num cell-neutral">0.59%</td>
+          <td class="num cell-lime">1.84%</td>
+          <td class="num cell-neutral">0.80%</td>
+          <td class="num cell-lime">0.09%</td>
+          <td class="num cell-neutral">0.65%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">116</span></td>
+          <td><strong>#229</strong> PLYMOUTH, NH - ACE</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T5</td>
+          <td class="num">$41,559</td>
+          <td class="num cell-pink">0.96%</td>
+          <td class="num cell-lime">1.81%</td>
+          <td class="num cell-neutral">0.80%</td>
+          <td class="num cell-neutral">0.20%</td>
+          <td class="num cell-neutral">0.78%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">117</span></td>
+          <td><strong>#230</strong> WOODBURY,  CT - ACE</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T5</td>
+          <td class="num">$61,185</td>
+          <td class="num cell-neutral">0.60%</td>
+          <td class="num cell-red">2.88%</td>
+          <td class="num cell-neutral">0.89%</td>
+          <td class="num cell-neutral">0.31%</td>
+          <td class="num cell-neutral">0.76%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">118</span></td>
+          <td><strong>#231</strong> WATERTOWN, CT - ACE</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T5</td>
+          <td class="num">$58,778</td>
+          <td class="num cell-neutral">0.55%</td>
+          <td class="num cell-lime">1.73%</td>
+          <td class="num cell-neutral">0.90%</td>
+          <td class="num cell-neutral">0.33%</td>
+          <td class="num cell-neutral">0.70%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">119</span></td>
+          <td><strong>#232</strong> RICHMOND, RI - ACE</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T5</td>
+          <td class="num">$43,855</td>
+          <td class="num cell-neutral">0.71%</td>
+          <td class="num cell-neutral">2.02%</td>
+          <td class="num cell-neutral">0.93%</td>
+          <td class="num cell-pink">0.52%</td>
+          <td class="num cell-lime">0.51%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">120</span></td>
+          <td><strong>#236</strong> DOVER, PA - ACE</td>
+          <td>T0 (Mason)</td>
+          <td class="num">T5</td>
+          <td class="num">$110,723</td>
+          <td class="num cell-pink">0.95%</td>
+          <td class="num cell-neutral">2.12%</td>
+          <td class="num cell-neutral">0.71%</td>
+          <td class="num cell-pink">0.59%</td>
+          <td class="num cell-neutral">0.70%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">121</span></td>
+          <td><strong>#237</strong> CUMBERLAND, RI - ACE</td>
+          <td>T0 (Mason)</td>
+          <td class="num">T5</td>
+          <td class="num">$51,375</td>
+          <td class="num cell-pink">0.88%</td>
+          <td class="num cell-red">2.49%</td>
+          <td class="num cell-lime">0.55%</td>
+          <td class="num cell-neutral">0.36%</td>
+          <td class="num cell-neutral">0.60%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">122</span></td>
+          <td><strong>#233</strong> ITHACA, NY - DOWNTOWN - (ACE)</td>
+          <td>T0 (Mason)</td>
+          <td class="num">T5</td>
+          <td class="num">$239,037</td>
+          <td class="num cell-lime">0.40%</td>
+          <td class="num cell-green">1.58%</td>
+          <td class="num cell-neutral">0.87%</td>
+          <td class="num cell-neutral">0.41%</td>
+          <td class="num cell-neutral">0.74%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">123</span></td>
+          <td><strong>#234</strong> ITHACA, NY - TRIPHAMMER - (ACE)</td>
+          <td>T0 (Mason)</td>
+          <td class="num">T5</td>
+          <td class="num">$110,189</td>
+          <td class="num cell-neutral">0.58%</td>
+          <td class="num cell-neutral">1.92%</td>
+          <td class="num cell-lime">0.67%</td>
+          <td class="num cell-neutral">0.29%</td>
+          <td class="num cell-lime">0.53%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">124</span></td>
+          <td><strong>#168</strong> HILLSBORO, NH - (IND)</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T6</td>
+          <td class="num">$25,760</td>
+          <td class="num cell-neutral">0.61%</td>
+          <td class="num cell-neutral">2.09%</td>
+          <td class="num cell-lime">0.74%</td>
+          <td class="num cell-neutral">0.35%</td>
+          <td class="num cell-neutral">0.61%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">125</span></td>
+          <td><strong>#196</strong> BLUE BELL, PA - ACE</td>
+          <td>T4 (Brady)</td>
+          <td class="num">T5</td>
+          <td class="num">$32,257</td>
+          <td class="num cell-neutral">0.58%</td>
+          <td class="num cell-pink">2.18%</td>
+          <td class="num cell-neutral">0.88%</td>
+          <td class="num cell-neutral">0.40%</td>
+          <td class="num cell-lime">0.43%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">126</span></td>
+          <td><strong>#197</strong> DOYLESTOWN, PA - IND</td>
+          <td>T4 (Brady)</td>
+          <td class="num">T5</td>
+          <td class="num">$43,971</td>
+          <td class="num cell-neutral">0.51%</td>
+          <td class="num cell-neutral">2.10%</td>
+          <td class="num cell-neutral">0.97%</td>
+          <td class="num cell-lime">0.19%</td>
+          <td class="num cell-neutral">0.70%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">127</span></td>
+          <td><strong>#199</strong> RICHBORO, PA - IND</td>
+          <td>T4 (Brady)</td>
+          <td class="num">T6</td>
+          <td class="num">$31,164</td>
+          <td class="num cell-pink">0.87%</td>
+          <td class="num cell-neutral">2.04%</td>
+          <td class="num cell-neutral">0.88%</td>
+          <td class="num cell-neutral">0.42%</td>
+          <td class="num cell-neutral">0.76%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">128</span></td>
+          <td><strong>#200</strong> NEW HOPE, PA - ACE</td>
+          <td>T4 (Brady)</td>
+          <td class="num">T5</td>
+          <td class="num">$43,383</td>
+          <td class="num cell-neutral">0.70%</td>
+          <td class="num cell-neutral">2.03%</td>
+          <td class="num cell-neutral">0.88%</td>
+          <td class="num cell-neutral">0.27%</td>
+          <td class="num cell-neutral">0.65%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">129</span></td>
+          <td><strong>#6</strong> MOULTONBORO, NH - (IND)</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T2</td>
+          <td class="num">$72,446</td>
+          <td class="num cell-pink">0.68%</td>
+          <td class="num cell-neutral">1.53%</td>
+          <td class="num cell-neutral">0.69%</td>
+          <td class="num cell-neutral">0.25%</td>
+          <td class="num cell-neutral">0.72%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">130</span></td>
+          <td><strong>#153</strong> KINGSTON, MA - ACE</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T3</td>
+          <td class="num">$88,105</td>
+          <td class="num cell-lime">0.35%</td>
+          <td class="num cell-pink">2.12%</td>
+          <td class="num cell-lime">0.61%</td>
+          <td class="num cell-neutral">0.21%</td>
+          <td class="num cell-neutral">0.67%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">131</span></td>
+          <td><strong>#158</strong> POCASSET, MA - ACE</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T5</td>
+          <td class="num">$39,277</td>
+          <td class="num cell-neutral">0.60%</td>
+          <td class="num cell-neutral">2.10%</td>
+          <td class="num cell-pink">1.04%</td>
+          <td class="num cell-neutral">0.31%</td>
+          <td class="num cell-neutral">0.75%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">132</span></td>
+          <td><strong>#167</strong> ALTON, NH - ACE</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T4</td>
+          <td class="num">$52,119</td>
+          <td class="num cell-lime">0.39%</td>
+          <td class="num cell-red">2.36%</td>
+          <td class="num cell-neutral">0.93%</td>
+          <td class="num cell-neutral">0.38%</td>
+          <td class="num cell-neutral">0.69%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">133</span></td>
+          <td><strong>#177</strong> RICHFIELD SPRINGS, NY - ACE</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T6</td>
+          <td class="num">$25,816</td>
+          <td class="num cell-neutral">0.51%</td>
+          <td class="num cell-neutral">1.99%</td>
+          <td class="num cell-neutral">0.99%</td>
+          <td class="num cell-neutral">0.37%</td>
+          <td class="num cell-neutral">0.74%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">134</span></td>
+          <td><strong>#178</strong> DOVER, NH - IND</td>
+          <td>T2 (Gharakhanian)</td>
+          <td class="num">T5</td>
+          <td class="num">$33,765</td>
+          <td class="num cell-lime">0.34%</td>
+          <td class="num cell-neutral">2.06%</td>
+          <td class="num cell-neutral">0.73%</td>
+          <td class="num cell-neutral">0.24%</td>
+          <td class="num cell-neutral">0.66%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">135</span></td>
+          <td><strong>#183</strong> HINESBURG, VT - ACE</td>
+          <td>T3 (Murphy)</td>
+          <td class="num">T5</td>
+          <td class="num">$46,790</td>
+          <td class="num cell-lime">0.25%</td>
+          <td class="num cell-pink">2.24%</td>
+          <td class="num cell-pink">1.00%</td>
+          <td class="num cell-neutral">0.34%</td>
+          <td class="num cell-lime">0.53%</td>
+        </tr>
+        <tr>
+          <td class="num"><span class="rank ">136</span></td>
+          <td><strong>#190</strong> IPSWICH, MA - ACE</td>
+          <td>T1 (Schlenner)</td>
+          <td class="num">T3</td>
+          <td class="num">$80,525</td>
+          <td class="num cell-lime">0.33%</td>
+          <td class="num cell-neutral">1.75%</td>
+          <td class="num cell-green">0.34%</td>
+          <td class="num cell-neutral">0.34%</td>
+          <td class="num cell-neutral">0.74%</td>
+        </tr></tbody>
+  </table>
+  </div>
+
+  <div class="grid2">
+    <div class="panel">
+      <h3>Reason Code Breakdown — Overrides &amp; Discounts</h3>
+      <div class="body">
+        <div class="barrow">
+          <div class="barlbl"><strong>1</strong> Miss Mark</div>
+          <div class="bar"><div class="fill" style="width:69%"></div></div>
+          <div class="baramt">$82,450 <span style="color:#c00;font-weight:600">▲</span></div>
+        </div>
+        <div class="barrow">
+          <div class="barlbl"><strong>4</strong> Disc Sell Off</div>
+          <div class="bar"><div class="fill" style="width:100%"></div></div>
+          <div class="baramt">$118,930 <span style="color:#c00;font-weight:600">▲</span></div>
+        </div>
+        <div class="barrow">
+          <div class="barlbl"><strong>9</strong> Dated Product</div>
+          <div class="bar"><div class="fill" style="width:39%"></div></div>
+          <div class="baramt">$47,210 <span style="color:#999;font-weight:600">●</span></div>
+        </div>
+        <div class="barrow">
+          <div class="barlbl"><strong>13</strong> Price Match</div>
+          <div class="bar"><div class="fill" style="width:79%"></div></div>
+          <div class="baramt">$94,220 <span style="color:#c00;font-weight:600">▲</span></div>
+        </div>
+        <div class="barrow">
+          <div class="barlbl"><strong>14</strong> Expired Reward</div>
+          <div class="bar"><div class="fill" style="width:23%"></div></div>
+          <div class="baramt">$28,140 <span style="color:#999;font-weight:600">●</span></div>
+        </div>
+        <div class="barrow">
+          <div class="barlbl"><strong>15</strong> New HTP / HTH</div>
+          <div class="bar"><div class="fill" style="width:56%"></div></div>
+          <div class="baramt">$66,700 <span style="color:#2a7d2a;font-weight:600">▼</span></div>
+        </div>
+        <div class="barrow">
+          <div class="barlbl"><strong>33</strong> Package Pricing</div>
+          <div class="bar"><div class="fill" style="width:33%"></div></div>
+          <div class="baramt">$39,850 <span style="color:#999;font-weight:600">●</span></div>
+        </div>
+        <div class="barrow">
+          <div class="barlbl"><strong>34</strong> Discount Code 34</div>
+          <div class="bar"><div class="fill" style="width:47%"></div></div>
+          <div class="baramt">$56,120 <span style="color:#c00;font-weight:600">▲</span></div>
+        </div>
+        <div class="barrow">
+          <div class="barlbl"><strong>37</strong> Discount Code 37</div>
+          <div class="bar"><div class="fill" style="width:20%"></div></div>
+          <div class="baramt">$24,870 <span style="color:#c00;font-weight:600">▲</span></div>
+        </div></div>
+    </div>
+    <div class="panel">
+      <h3 style="background:#c00">⚠ POS Self-Checkout Watchlist</h3>
+      <div class="body" style="padding:0">
+        <table>
+          <thead><tr><th>Store</th><th>Operator</th><th class="num">Txns</th><th class="num">Disc $</th><th>Violation</th></tr></thead>
+          <tbody><tr>
+          <td>FITCHBURG, MA</td><td>Shawn C Kelley</td>
+          <td class="num">14</td><td class="num">$382.50</td>
+          <td style="font-size:11px;color:#c00">Mgr override used on own ring</td></tr><tr>
+          <td>HUDSON, NH</td><td>Kim P Delaney</td>
+          <td class="num">9</td><td class="num">$211.75</td>
+          <td style="font-size:11px;color:#c00">Employee disc on own ring</td></tr><tr>
+          <td>DERRY, NH</td><td>J. Milosky</td>
+          <td class="num">7</td><td class="num">$188.20</td>
+          <td style="font-size:11px;color:#c00">Shrink adjust by operator</td></tr><tr>
+          <td>MANCHESTER, NH</td><td>A. Burke</td>
+          <td class="num">12</td><td class="num">$295.00</td>
+          <td style="font-size:11px;color:#c00">Employee disc on own ring</td></tr><tr>
+          <td>HOLDEN, MA</td><td>R. Gagnon</td>
+          <td class="num">6</td><td class="num">$143.80</td>
+          <td style="font-size:11px;color:#c00">Price match on own ring</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">Worst-to-best sort by Shrink %. Cell colors compare store % to its tier average. Top 10 = red rank, 11–25 = yellow.</div>
+</div>
+</body></html>
