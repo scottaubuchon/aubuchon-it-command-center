@@ -93,13 +93,14 @@ async function refreshData() {
   let totalSales = 0, totalCOGS = 0, totalTxns = 0, totalCustomers = 0, totalPlan = 0;
   let latestUpdate = '';
 
+  // Sum ALL plan rows for company total (not just stores with live data)
+  planRows.forEach(r => { totalPlan += Number(r.Plan || 0); });
+
   liveRows.forEach(r => {
     totalSales += Number(r.Sales || 0);
     totalCOGS += Number(r.COGS || 0);
     totalTxns += Number(r.Txns || 0);
     totalCustomers += Number(r.Customers || 0);
-    const storeCode = String(r.Store || '');
-    totalPlan += Number(planMap[storeCode] || 0);
     if (r.Updated && r.Updated > latestUpdate) latestUpdate = r.Updated;
   });
 
@@ -152,6 +153,9 @@ async function refreshData() {
     topStores,
     topProducts,
     asOf: latestUpdate || new Date().toISOString(),
+    asOfET: latestUpdate
+      ? new Date(latestUpdate + (latestUpdate.endsWith('Z') ? '' : 'Z')).toLocaleString('en-US', { timeZone: 'America/New_York', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' })
+      : new Date().toLocaleString('en-US', { timeZone: 'America/New_York', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' }),
     refreshedAt: new Date().toISOString(),
     storeCount: liveRows.length,
     queryErrors: queryErrors.length > 0 ? queryErrors : undefined,
