@@ -154,13 +154,7 @@ async function refreshData() {
     asOf: latestUpdate || new Date().toISOString(),
     refreshedAt: new Date().toISOString(),
     storeCount: liveRows.length,
-    _diag: {
-      dateET: `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`,
-      rows: { live: liveRows.length, plan: planRows.length, dim: dimRows.length, prod: productRows.length },
-      planMapSize: Object.keys(planMap).length,
-      planMapSample: Object.keys(planMap).slice(0, 5),
-      errors: queryErrors.length > 0 ? queryErrors : undefined,
-    },
+    queryErrors: queryErrors.length > 0 ? queryErrors : undefined,
   };
 }
 
