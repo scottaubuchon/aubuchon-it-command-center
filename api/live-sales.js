@@ -31,7 +31,8 @@ function queryYoda(dax) {
 }
 
 async function refreshData() {
-  const now = new Date();
+  // Use Eastern Time (Aubuchon HQ) — Vercel runs in UTC
+  const now = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }));
   const y = now.getFullYear();
   const m = now.getMonth() + 1;
   const d = now.getDate();
