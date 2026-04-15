@@ -4885,14 +4885,11 @@ function LiveSalesView({ goBack }) {
         });
         setTopProducts(prods);
 
-        // Timestamps
-        if (d.asOf) {
-          var ud = new Date(d.asOf);
-          if (!isNaN(ud)) {
-            setAsOf(ud.toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" }) + " (live)");
-          } else {
-            setAsOf(d.asOf);
-          }
+        // Timestamps — use pre-formatted Eastern Time from API
+        if (d.asOfET) {
+          setAsOf(d.asOfET + " ET (live)");
+        } else if (d.asOf) {
+          setAsOf(d.asOf);
         }
         var info = d.cached ? "Cached" : "Fresh";
         if (d.stale) info = "Stale cache";
