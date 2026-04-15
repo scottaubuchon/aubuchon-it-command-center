@@ -2897,22 +2897,6 @@ const SECTIONS = [
     shadow: "shadow-emerald-200/50",
     active: true,
   },
-  {
-    id: "lab",
-    label: "Concept Lab",
-    description: "Works in progress, mockups, and previews -- a shared space for ideas before they land in production",
-    icon: FlaskConical,
-    gradient: "from-purple-500 to-purple-700",
-    hoverGradient: "from-purple-600 to-purple-800",
-    bg: "bg-purple-50",
-    border: "border-purple-200",
-    text: "text-purple-700",
-    shadow: "shadow-purple-200/50",
-    active: true,
-    externalUrl: "/lab/",
-    alwaysVisible: true,
-    badge: "Preview",
-  },
 ];
 
 /* =====================================================================
@@ -3491,7 +3475,7 @@ function VotingAdminPanelStandalone({ allUsers }) {
 function HomeScreen({ onNavigate, canAccessSection, isAdmin }) {
   const [apInvoiceCount, setApInvoiceCount] = useState(null);
   const displayName = auth.currentUser?.displayName || auth.currentUser?.email?.split("@")[0] || "User";
-  const visibleSections = SECTIONS.filter(s => s.alwaysVisible || canAccessSection(s.id));
+  const visibleSections = SECTIONS.filter(s => canAccessSection(s.id));
 
   useEffect(() => {
     if (!canAccessSection("ap-invoices")) return;
@@ -3541,11 +3525,7 @@ function HomeScreen({ onNavigate, canAccessSection, isAdmin }) {
             return (
               <button
                 key={section.id}
-                onClick={() => {
-                  if (!section.active) return;
-                  if (section.externalUrl) { window.location.href = section.externalUrl; return; }
-                  onNavigate(section.id);
-                }}
+                onClick={() => section.active && onNavigate(section.id)}
                 className={`group relative text-left rounded-2xl border-2 p-6 transition-all duration-200
                   ${section.active
                     ? `${section.border} bg-white hover:shadow-xl hover:${section.shadow} hover:scale-[1.02] hover:border-transparent cursor-pointer`
@@ -3562,9 +3542,6 @@ function HomeScreen({ onNavigate, canAccessSection, isAdmin }) {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <h2 className="text-lg font-bold text-gray-900">{section.label}{section.id === "ap-invoices" && apInvoiceCount > 0 && ` (${apInvoiceCount})`}</h2>
-                      {section.badge && (
-                        <span className="text-[10px] font-semibold uppercase tracking-wider bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full">{section.badge}</span>
-                      )}
                       {!section.active && (
                         <span className="text-[10px] font-semibold uppercase tracking-wider bg-gray-200 text-gray-500 px-2 py-0.5 rounded-full">Coming Soon</span>
                       )}
@@ -4925,6 +4902,23 @@ function LiveSalesView({ goBack }) {
     return fetch(url).then(function (r) { return r.json(); });
   };
 
+  // Full refresh: fire the log endpoint, which refreshes YODA, appends the log,
+  // rebuilds the prediction, and writes current.json + prediction.json. Then
+  // re-read the static snapshot so we get the fresh prediction/snapshot data.
+  var loadFullRefresh = function () {
+    return fetch("/api/log-live-sales").then(function (r) { return r.json(); }).then(function (logResp) {
+      // log-live-sales returns { status, entry, prediction, ... } — shape it into a full payload.
+      if (logResp && logResp.status === "ok") {
+        // Re-read the fresh static snapshot (which includes top stores, products, etc.).
+        return loadStatic().then(function (snap) { return snap; }).catch(function () {
+          // If the snapshot somehow isn't available yet, fall back to live-sales without a forced YODA pull.
+          return loadLive(false);
+        });
+      }
+      return loadLive(true);
+    });
+  };
+
   // Initial mount: try static snapshot; fall back to /api/live-sales if needed.
   useEffect(function () {
     var cancelled = false;
@@ -4954,12 +4948,14 @@ function LiveSalesView({ goBack }) {
     return function () { cancelled = true; };
   }, []);
 
-  // Refresh button: forces a live YODA pull via the API.
+  // Refresh button: fires the full log-live-sales cycle (YODA pull, log append,
+  // prediction rebuild, snapshot write) and then re-reads the static snapshot so
+  // we get the updated prediction alongside the fresh sales numbers.
   var handleRefresh = function () {
     if (refreshing) return;
     setRefreshing(true);
     setError(null);
-    loadLive(true)
+    loadFullRefresh()
       .then(function (d) {
         applyPayload(d, "Just refreshed");
         setSourceLabel("api-fresh");
