@@ -1,0 +1,50 @@
+name: Guard Protected Features
+
+on:
+  push:
+    paths:
+      - 'src/App.jsx'
+
+jobs:
+  check-protected-features:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for Concept Lab tile
+        run: |
+          echo "Checking that Concept Lab tile exists in App.jsx..."
+          
+          if ! grep -q 'id: "lab"' src/App.jsx; then
+            echo "::error::MISSING: Concept Lab section (id: \"lab\") was removed from SECTIONS array!"
+            FAILED=1
+          fi
+          
+          if ! grep -q 'alwaysVisible' src/App.jsx; then
+            echo "::error::MISSING: alwaysVisible property was removed!"
+            FAILED=1
+          fi
+          
+          if ! grep -q 'externalUrl: "/lab/"' src/App.jsx; then
+            echo "::error::MISSING: externalUrl for Concept Lab was removed!"
+            FAILED=1
+          fi
+          
+          if ! grep -q 's.alwaysVisible || canAccessSection' src/App.jsx; then
+            echo "::error::MISSING: visibleSections filter must include s.alwaysVisible check!"
+            FAILED=1
+          fi
+          
+          if [ "${FAILED:-0}" = "1" ]; then
+            echo ""
+            echo "========================================="
+            echo "PROTECTED FEATURE REMOVED!"
+            echo "========================================="
+            echo "The Concept Lab tile and its supporting code are protected."
+            echo "See CLAUDE.md for the protocol on editing App.jsx."
+            echo "You must preserve these features in any edit."
+            echo "========================================="
+            exit 1
+          fi
+          
+          echo "All protected features verified."
