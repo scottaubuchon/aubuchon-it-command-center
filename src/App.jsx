@@ -4983,7 +4983,17 @@ function LiveSalesView({ goBack }) {
 
   var pctPlan = companyTotal.plan > 0 ? (companyTotal.sales / companyTotal.plan) * 100 : 0;
   var vTotal = (companyTotal.sales || 0) - (companyTotal.plan || 0);
-  var onTrack = vTotal >= 0;
+  // Color the % to plan based on whether the EOD predictor thinks we will hit plan
+  var predictorSaysHit = (function () {
+    if (prediction && prediction.prediction && prediction.prediction.available) {
+      var proj = Number(prediction.prediction.projectedEOD || 0);
+      var plan = Number((prediction.current && prediction.current.plan) || companyTotal.plan || 0);
+      return proj >= plan;
+    }
+    // No prediction available — fall back to current actual vs plan
+    return vTotal >= 0;
+  })();
+  var onTrack = predictorSaysHit;
   var accentColor = onTrack ? "emerald" : "red";
   var progressPct = Math.min(pctPlan, 100);
 
@@ -5020,9 +5030,12 @@ function LiveSalesView({ goBack }) {
 
         {/* ── Today's Performance ── */}
         <div className={"rounded-xl border-2 p-4 sm:p-5 md:p-6 mb-5 " + (onTrack ? "bg-emerald-50 border-emerald-200" : "bg-red-50 border-red-200")}>
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
-            <h2 className="text-lg sm:text-xl font-bold text-slate-900">Today's Performance</h2>
-            <div className={"text-2xl sm:text-3xl font-extrabold " + (onTrack ? "text-emerald-700" : "text-red-600")}>
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 sm:gap-2 mb-4">
+            <div>
+              <h2 className="text-lg sm:text-xl font-bold text-slate-900">Today's Performance</h2>
+              <div className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 mt-1">{fmtD(companyTotal.sales)}</div>
+            </div>
+            <div className={"text-2xl sm:text-3xl font-extrabold text-right " + (onTrack ? "text-emerald-700" : "text-red-600")}>
               {pctPlan.toFixed(1)}% <span className="text-sm font-semibold text-slate-500">to plan</span>
             </div>
           </div>
