@@ -1,15 +1,15 @@
 {
-  "updatedAt": "2026-04-16T23:22:42.014Z",
-  "updatedAtET": "Apr 16, 2026, 7:22 PM",
+  "updatedAt": "2026-04-16T23:33:16.592Z",
+  "updatedAtET": "Apr 16, 2026, 7:33 PM",
   "dateET": "2026-04-16",
   "dow": 4,
   "season": "spring",
   "current": {
-    "ts": "2026-04-16T23:22:42.014Z",
-    "tsET": "Apr 16, 2026, 7:22 PM",
+    "ts": "2026-04-16T23:33:16.592Z",
+    "tsET": "Apr 16, 2026, 7:33 PM",
     "dateET": "2026-04-16",
     "hourET": 19,
-    "minuteET": 22,
+    "minuteET": 33,
     "dow": 4,
     "sales": 1033792.7699999997,
     "plan": 958897.21,
@@ -26,17 +26,17 @@
     "available": true,
     "method": "blended (w=0.98 shape + 0.02 level)",
     "confidence": "medium",
-    "projectedEOD": 1037384.3992256711,
-    "projectedPctToPlan": 108.18515148518068,
-    "projectedVariance": 78487.18922567111,
+    "projectedEOD": 1035546.983089083,
+    "projectedPctToPlan": 107.99353385219288,
+    "projectedVariance": 76649.77308908303,
     "band": {
-      "low": 923544.8870542706,
-      "high": 1151223.9113970716
+      "low": 921939.3003548973,
+      "high": 1149154.6658232685
     },
-    "pctOfDayElapsed": 0.9936666666666667,
+    "pctOfDayElapsed": 0.9955,
     "level_EOD": 902633.1409348557,
-    "shape_EOD": 1040381.8550821869,
-    "blendWeight": 0.9782396817634907,
+    "shape_EOD": 1038465.8663987942,
+    "blendWeight": 0.9785111923526395,
     "factors": {
       "plan": 958897.21,
       "recencyFactor": 0.9393,
@@ -48,9 +48,9 @@
       "weatherSummary": "concord-nh: 56F Showers And Thunderstorms Likely | worcester-ma: 60F Chance Rain Showers | burlington-vt: 50F Showers And Thunderstorms | portland-me: 45F Showers And Thunderstorms Likely | albany-ny: 59F Chance Showers And Thunderstorms then Showers And Thunderstorms Likely | scranton-pa: 60F Chance Showers And Thunderstorms"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.9936666666666667,
+      "basePaceFromCurve": 0.9955,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.9936666666666667,
+      "blendedPaceAtNow": 0.9955,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
@@ -113,7 +113,7 @@
         "temp": 60,
         "unit": "F",
         "short": "Chance Showers And Thunderstorms",
-        "detailed": "A chance of showers and thunderstorms between 10pm and 3am. Mostly cloudy, with a low around 60. West wind 2 to 7 mph. Chance of precipitation is 50%. New rainfall amounts less than a tenth of an inch possible."
+        "detailed": "A chance of showers and thunderstorms between 10pm and 3am. Mostly cloudy, with a low around 60. West wind 2 to 6 mph. Chance of precipitation is 50%. New rainfall amounts less than a tenth of an inch possible."
       }
     ]
   }
