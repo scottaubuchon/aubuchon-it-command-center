@@ -1,14 +1,14 @@
 {
-  "updatedAt": "2026-04-16T11:05:26.382Z",
-  "updatedAtET": "Apr 16, 2026, 7:05 AM",
+  "updatedAt": "2026-04-16T11:16:06.626Z",
+  "updatedAtET": "Apr 16, 2026, 7:16 AM",
   "dateET": "2026-04-16",
   "dow": 4,
   "current": {
-    "ts": "2026-04-16T11:05:26.382Z",
-    "tsET": "Apr 16, 2026, 7:05 AM",
+    "ts": "2026-04-16T11:16:06.626Z",
+    "tsET": "Apr 16, 2026, 7:16 AM",
     "dateET": "2026-04-16",
     "hourET": 7,
-    "minuteET": 5,
+    "minuteET": 16,
     "dow": 4,
     "sales": 0,
     "plan": 958897.2100000001,
@@ -18,8 +18,8 @@
     "txns": 0,
     "customers": 0,
     "storeCount": 0,
-    "asOf": "2026-04-16T11:05:26.372Z",
-    "asOfET": "Apr 16, 2026, 7:05 AM"
+    "asOf": "2026-04-16T11:16:06.614Z",
+    "asOfET": "Apr 16, 2026, 7:16 AM"
   },
   "prediction": {
     "available": true,
@@ -27,7 +27,7 @@
     "confidence": "very low",
     "historyDays": 0,
     "assumedBusinessHours": "7 AM – 8 PM ET",
-    "pctOfDayElapsed": 0.00641025641025641,
+    "pctOfDayElapsed": 0.020512820512820513,
     "projectedEOD": 0,
     "projectedPctToPlan": 0,
     "projectedVariance": -958897.2100000001,
