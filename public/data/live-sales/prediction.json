@@ -1,42 +1,42 @@
 {
-  "updatedAt": "2026-04-16T23:43:53.148Z",
-  "updatedAtET": "Apr 16, 2026, 7:43 PM",
+  "updatedAt": "2026-04-16T23:54:38.768Z",
+  "updatedAtET": "Apr 16, 2026, 7:54 PM",
   "dateET": "2026-04-16",
   "dow": 4,
   "season": "spring",
   "current": {
-    "ts": "2026-04-16T23:43:53.148Z",
-    "tsET": "Apr 16, 2026, 7:43 PM",
+    "ts": "2026-04-16T23:54:38.768Z",
+    "tsET": "Apr 16, 2026, 7:54 PM",
     "dateET": "2026-04-16",
     "hourET": 19,
-    "minuteET": 43,
+    "minuteET": 54,
     "dow": 4,
-    "sales": 1034271.05,
+    "sales": 1034872.05,
     "plan": 958897.21,
-    "pctToPlan": 107.86047130119401,
-    "gp": 432833.7573999999,
-    "gpPct": 41.84916104922398,
-    "txns": 30988,
-    "customers": 28479,
+    "pctToPlan": 107.92314746645263,
+    "gp": 433131.6679,
+    "gpPct": 41.85364440947071,
+    "txns": 31015,
+    "customers": 28500,
     "storeCount": 134,
-    "asOf": "2026-04-16T23:30:09.487000",
-    "asOfET": "Apr 16, 2026, 7:30 PM"
+    "asOf": "2026-04-16T23:45:06.580000",
+    "asOfET": "Apr 16, 2026, 7:45 PM"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.98 shape + 0.02 level)",
     "confidence": "medium",
-    "projectedEOD": 1034350.7490379974,
-    "projectedPctToPlan": 107.8687828321033,
-    "projectedVariance": 75453.53903799749,
+    "projectedEOD": 1033111.9002882739,
+    "projectedPctToPlan": 107.73958767575036,
+    "projectedVariance": 74214.69028827397,
     "band": {
-      "low": 920901.4029432184,
-      "high": 1147800.0951327765
+      "low": 919827.8606964322,
+      "high": 1146395.9398801154
     },
-    "pctOfDayElapsed": 0.9971666666666666,
+    "pctOfDayElapsed": 0.999,
     "level_EOD": 902633.1409348557,
-    "shape_EOD": 1037209.8111315394,
-    "blendWeight": 0.9787551431510128,
+    "shape_EOD": 1035907.957957958,
+    "blendWeight": 0.9790203600939902,
     "factors": {
       "plan": 958897.21,
       "recencyFactor": 0.9393,
@@ -48,9 +48,9 @@
       "weatherSummary": "concord-nh: 56F Showers And Thunderstorms Likely | worcester-ma: 60F Chance Rain Showers | burlington-vt: 50F Showers And Thunderstorms | portland-me: 45F Showers And Thunderstorms Likely | albany-ny: 59F Chance Showers And Thunderstorms then Showers And Thunderstorms Likely | scranton-pa: 60F Chance Showers And Thunderstorms"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.9971666666666666,
+      "basePaceFromCurve": 0.999,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.9971666666666666,
+      "blendedPaceAtNow": 0.999,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
@@ -113,7 +113,7 @@
         "temp": 60,
         "unit": "F",
         "short": "Chance Showers And Thunderstorms",
-        "detailed": "A chance of showers and thunderstorms between 10pm and 3am. Mostly cloudy, with a low around 60. West wind 2 to 6 mph. Chance of precipitation is 50%. New rainfall amounts less than a tenth of an inch possible."
+        "detailed": "A chance of showers and thunderstorms between 10pm and 3am. Mostly cloudy, with a low around 60. West wind 2 to 7 mph. Chance of precipitation is 50%. New rainfall amounts less than a tenth of an inch possible."
       }
     ]
   }
