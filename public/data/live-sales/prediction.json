@@ -1,42 +1,42 @@
 {
-  "updatedAt": "2026-04-16T23:00:48.941Z",
-  "updatedAtET": "Apr 16, 2026, 7:00 PM",
+  "updatedAt": "2026-04-16T23:11:29.367Z",
+  "updatedAtET": "Apr 16, 2026, 7:11 PM",
   "dateET": "2026-04-16",
   "dow": 4,
   "season": "spring",
   "current": {
-    "ts": "2026-04-16T23:00:48.941Z",
-    "tsET": "Apr 16, 2026, 7:00 PM",
+    "ts": "2026-04-16T23:11:29.367Z",
+    "tsET": "Apr 16, 2026, 7:11 PM",
     "dateET": "2026-04-16",
     "hourET": 19,
-    "minuteET": 0,
+    "minuteET": 11,
     "dow": 4,
-    "sales": 1020393.4699999999,
+    "sales": 1025334.74,
     "plan": 958897.21,
-    "pctToPlan": 106.41322754500453,
-    "gp": 427346.9623999997,
-    "gpPct": 41.880605370788956,
-    "txns": 30440,
-    "customers": 28122,
+    "pctToPlan": 106.92853512421839,
+    "gp": 429575.99639999995,
+    "gpPct": 41.89617103971332,
+    "txns": 30664,
+    "customers": 28299,
     "storeCount": 134,
-    "asOf": "2026-04-16T22:45:11.387000",
-    "asOfET": "Apr 16, 2026, 6:45 PM"
+    "asOf": "2026-04-16T23:00:24.903000",
+    "asOfET": "Apr 16, 2026, 7:00 PM"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.98 shape + 0.02 level)",
     "confidence": "medium",
-    "projectedEOD": 1027842.8521450984,
-    "projectedPctToPlan": 107.19009727279303,
-    "projectedVariance": 68945.64214509842,
+    "projectedEOD": 1030887.4698244672,
+    "projectedPctToPlan": 107.50760968680547,
+    "projectedVariance": 71990.25982446724,
     "band": {
-      "low": 914989.3421346525,
-      "high": 1140696.362155544
+      "low": 917730.4793836336,
+      "high": 1144044.460265301
     },
-    "pctOfDayElapsed": 0.99,
+    "pctOfDayElapsed": 0.9918333333333333,
     "level_EOD": 902633.1409348557,
-    "shape_EOD": 1030700.4747474747,
-    "blendWeight": 0.9776865613009676,
+    "shape_EOD": 1033777.2542429843,
+    "blendWeight": 0.9779648178967248,
     "factors": {
       "plan": 958897.21,
       "recencyFactor": 0.9393,
@@ -45,12 +45,12 @@
       "holidayMult": 1,
       "weatherKey": "rain_gt_0_5in",
       "weatherMult": 0.95,
-      "weatherSummary": "concord-nh: 55F Showers And Thunderstorms Likely | worcester-ma: 60F Patchy Fog | burlington-vt: 50F Showers And Thunderstorms | portland-me: 46F Chance Showers And Thunderstorms then Rain Showers | albany-ny: 59F Chance Showers And Thunderstorms then Showers And Thunderstorms Likely | scranton-pa: 60F Chance Showers And Thunderstorms"
+      "weatherSummary": "concord-nh: 56F Showers And Thunderstorms Likely | worcester-ma: 60F Chance Rain Showers | burlington-vt: 50F Showers And Thunderstorms | portland-me: 45F Showers And Thunderstorms Likely | albany-ny: 59F Chance Showers And Thunderstorms then Showers And Thunderstorms Likely | scranton-pa: 60F Chance Showers And Thunderstorms"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.99,
+      "basePaceFromCurve": 0.9918333333333333,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.99,
+      "blendedPaceAtNow": 0.9918333333333333,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
@@ -61,7 +61,7 @@
     "mult": 0.95,
     "key": "rain_gt_0_5in",
     "season": "spring",
-    "summary": "concord-nh: 55F Showers And Thunderstorms Likely | worcester-ma: 60F Patchy Fog | burlington-vt: 50F Showers And Thunderstorms | portland-me: 46F Chance Showers And Thunderstorms then Rain Showers | albany-ny: 59F Chance Showers And Thunderstorms then Showers And Thunderstorms Likely | scranton-pa: 60F Chance Showers And Thunderstorms",
+    "summary": "concord-nh: 56F Showers And Thunderstorms Likely | worcester-ma: 60F Chance Rain Showers | burlington-vt: 50F Showers And Thunderstorms | portland-me: 45F Showers And Thunderstorms Likely | albany-ny: 59F Chance Showers And Thunderstorms then Showers And Thunderstorms Likely | scranton-pa: 60F Chance Showers And Thunderstorms",
     "tagWeights": {
       "rain_gt_0_5in": 0.848,
       "coldRain_lt_50F": 0.152
@@ -70,18 +70,18 @@
       {
         "station": "concord-nh",
         "weight": 0.144,
-        "temp": 55,
+        "temp": 56,
         "unit": "F",
         "short": "Showers And Thunderstorms Likely",
-        "detailed": "A chance of showers and thunderstorms before 7pm, then a chance of showers and thunderstorms between 7pm and 10pm, then showers and thunderstorms likely between 10pm and 5am. Some of the storms could be severe. Mostly cloudy, with a low around 55. Northwest wind 0 to 5 mph. Chance of precipitation is 70%. New rainfall amounts between a tenth and quarter of an inch possible."
+        "detailed": "Showers and thunderstorms likely. Some of the storms could be severe. Mostly cloudy, with a low around 56. Southeast wind 0 to 5 mph. Chance of precipitation is 60%. New rainfall amounts between a tenth and quarter of an inch possible."
       },
       {
         "station": "worcester-ma",
         "weight": 0.272,
         "temp": 60,
         "unit": "F",
-        "short": "Patchy Fog",
-        "detailed": "A slight chance of rain between 7pm and 10pm, then patchy fog and showers and thunderstorms likely between 10pm and 11pm, then patchy fog and a slight chance of rain between 11pm and 1am, then patchy fog and a chance of showers and thunderstorms between 1am and 2am, then patchy fog and a slight chance of rain between 2am and 3am, then a chance of rain showers and patchy fog. Mostly cloudy, with a low around 60. Southwest wind around 5 mph. Chance of precipitation is 20%. New rainfall amounts less than a tenth of an inch possible."
+        "short": "Chance Rain Showers",
+        "detailed": "A chance of rain showers after 9pm. Mostly cloudy, with a low around 60. West wind 3 to 7 mph. Chance of precipitation is 30%. New rainfall amounts less than a tenth of an inch possible."
       },
       {
         "station": "burlington-vt",
@@ -94,10 +94,10 @@
       {
         "station": "portland-me",
         "weight": 0.152,
-        "temp": 46,
+        "temp": 45,
         "unit": "F",
-        "short": "Chance Showers And Thunderstorms then Rain Showers",
-        "detailed": "A chance of rain showers before 8pm, then a chance of showers and thunderstorms between 8pm and 9pm, then showers and thunderstorms likely between 9pm and 11pm, then rain showers and patchy fog between 11pm and 3am, then patchy fog and a slight chance of rain showers. Cloudy, with a low around 46. South wind 0 to 5 mph. Chance of precipitation is 80%. New rainfall amounts between a tenth and quarter of an inch possible."
+        "short": "Showers And Thunderstorms Likely",
+        "detailed": "A slight chance of rain showers before 8pm, then showers and thunderstorms likely between 8pm and 11pm, then patchy fog and showers and thunderstorms likely. Cloudy, with a low around 45. South wind 0 to 5 mph. Chance of precipitation is 70%. New rainfall amounts between a tenth and quarter of an inch possible."
       },
       {
         "station": "albany-ny",
