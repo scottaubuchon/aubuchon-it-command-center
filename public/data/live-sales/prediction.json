@@ -1,15 +1,15 @@
 {
-  "updatedAt": "2026-04-16T22:39:22.241Z",
-  "updatedAtET": "Apr 16, 2026, 6:39 PM",
+  "updatedAt": "2026-04-16T22:49:57.524Z",
+  "updatedAtET": "Apr 16, 2026, 6:49 PM",
   "dateET": "2026-04-16",
   "dow": 4,
   "season": "spring",
   "current": {
-    "ts": "2026-04-16T22:39:22.241Z",
-    "tsET": "Apr 16, 2026, 6:39 PM",
+    "ts": "2026-04-16T22:49:57.524Z",
+    "tsET": "Apr 16, 2026, 6:49 PM",
     "dateET": "2026-04-16",
     "hourET": 18,
-    "minuteET": 39,
+    "minuteET": 49,
     "dow": 4,
     "sales": 1008363.29,
     "plan": 958897.21,
@@ -26,17 +26,17 @@
     "available": true,
     "method": "blended (w=0.98 shape + 0.02 level)",
     "confidence": "medium",
-    "projectedEOD": 1022918.81285757,
-    "projectedPctToPlan": 106.67658662366637,
-    "projectedVariance": 64021.60285757005,
+    "projectedEOD": 1019596.3865389903,
+    "projectedPctToPlan": 106.33010252881958,
+    "projectedVariance": 60699.176538990345,
     "band": {
-      "low": 910485.7171335733,
-      "high": 1135351.9085815668
+      "low": 907586.23643722,
+      "high": 1131606.5366407607
     },
-    "pctOfDayElapsed": 0.983,
+    "pctOfDayElapsed": 0.9863333333333333,
     "level_EOD": 902633.1409348557,
-    "shape_EOD": 1025801.9226856562,
-    "blendWeight": 0.9765922030964022,
+    "shape_EOD": 1022335.2044609666,
+    "blendWeight": 0.9771197100426023,
     "factors": {
       "plan": 958897.21,
       "recencyFactor": 0.9393,
@@ -45,12 +45,12 @@
       "holidayMult": 1,
       "weatherKey": "rain_gt_0_5in",
       "weatherMult": 0.95,
-      "weatherSummary": "concord-nh: 55F Showers And Thunderstorms Likely | worcester-ma: 60F Patchy Fog | burlington-vt: 50F Showers And Thunderstorms | portland-me: 46F Chance Showers And Thunderstorms then Rain Showers | albany-ny: 84F Partly Sunny | scranton-pa: 60F Chance Showers And Thunderstorms"
+      "weatherSummary": "concord-nh: 55F Showers And Thunderstorms Likely | worcester-ma: 60F Patchy Fog | burlington-vt: 50F Showers And Thunderstorms | portland-me: 46F Chance Showers And Thunderstorms then Rain Showers | albany-ny: 59F Chance Showers And Thunderstorms then Showers And Thunderstorms Likely | scranton-pa: 60F Chance Showers And Thunderstorms"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.983,
+      "basePaceFromCurve": 0.9863333333333333,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.983,
+      "blendedPaceAtNow": 0.9863333333333333,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
@@ -61,7 +61,7 @@
     "mult": 0.95,
     "key": "rain_gt_0_5in",
     "season": "spring",
-    "summary": "concord-nh: 55F Showers And Thunderstorms Likely | worcester-ma: 60F Patchy Fog | burlington-vt: 50F Showers And Thunderstorms | portland-me: 46F Chance Showers And Thunderstorms then Rain Showers | albany-ny: 84F Partly Sunny | scranton-pa: 60F Chance Showers And Thunderstorms",
+    "summary": "concord-nh: 55F Showers And Thunderstorms Likely | worcester-ma: 60F Patchy Fog | burlington-vt: 50F Showers And Thunderstorms | portland-me: 46F Chance Showers And Thunderstorms then Rain Showers | albany-ny: 59F Chance Showers And Thunderstorms then Showers And Thunderstorms Likely | scranton-pa: 60F Chance Showers And Thunderstorms",
     "tagWeights": {
       "rain_gt_0_5in": 0.848,
       "coldRain_lt_50F": 0.152
@@ -89,7 +89,7 @@
         "temp": 50,
         "unit": "F",
         "short": "Showers And Thunderstorms",
-        "detailed": "Showers and thunderstorms. Cloudy, with a low around 50. West wind around 6 mph. Chance of precipitation is 80%. New rainfall amounts between a quarter and half of an inch possible."
+        "detailed": "Showers and thunderstorms before 4am. Cloudy, with a low around 50. Northwest wind 1 to 8 mph, with gusts as high as 22 mph. Chance of precipitation is 80%. New rainfall amounts between a quarter and half of an inch possible."
       },
       {
         "station": "portland-me",
@@ -102,10 +102,10 @@
       {
         "station": "albany-ny",
         "weight": 0.12,
-        "temp": 84,
+        "temp": 59,
         "unit": "F",
-        "short": "Partly Sunny",
-        "detailed": "Partly sunny, with a high near 84. South wind around 9 mph. New rainfall amounts less than a tenth of an inch possible."
+        "short": "Chance Showers And Thunderstorms then Showers And Thunderstorms Likely",
+        "detailed": "A chance of showers and thunderstorms between 7pm and 8pm, then showers and thunderstorms likely between 8pm and 5am. Mostly cloudy, with a low around 59. West wind 2 to 8 mph. Chance of precipitation is 70%. New rainfall amounts less than a tenth of an inch possible."
       },
       {
         "station": "scranton-pa",
