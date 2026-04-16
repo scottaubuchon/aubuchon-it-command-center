@@ -1,48 +1,121 @@
 {
-  "updatedAt": "2026-04-16T20:40:23.149Z",
-  "updatedAtET": "Apr 16, 2026, 4:40 PM",
+  "updatedAt": "2026-04-16T20:51:16.958Z",
+  "updatedAtET": "Apr 16, 2026, 4:51 PM",
   "dateET": "2026-04-16",
   "dow": 4,
+  "season": "spring",
   "current": {
-    "ts": "2026-04-16T20:40:23.149Z",
-    "tsET": "Apr 16, 2026, 4:40 PM",
+    "ts": "2026-04-16T20:51:16.958Z",
+    "tsET": "Apr 16, 2026, 4:51 PM",
     "dateET": "2026-04-16",
     "hourET": 16,
-    "minuteET": 40,
+    "minuteET": 51,
     "dow": 4,
-    "sales": 863585.1099999999,
+    "sales": 893254.0200000003,
     "plan": 958897.21,
-    "pctToPlan": 90.06023805200142,
-    "gp": 361166.8843999998,
-    "gpPct": 41.82180542691384,
-    "txns": 25435,
-    "customers": 23592,
+    "pctToPlan": 93.154303786117,
+    "gp": 373728.88690000016,
+    "gpPct": 41.839037780093065,
+    "txns": 26330,
+    "customers": 24448,
     "storeCount": 134,
-    "asOf": "2026-04-16T20:30:14.243000",
-    "asOfET": "Apr 16, 2026, 4:30 PM"
+    "asOf": "2026-04-16T20:45:13.827000",
+    "asOfET": "Apr 16, 2026, 4:45 PM"
   },
   "prediction": {
     "available": true,
-    "method": "any-day pace (DOW-agnostic fallback)",
-    "confidence": "low",
-    "historyDays": 1,
-    "avgPaceAtNow": 0.8440672157370335,
-    "avgHistoricalEOD": 1053994.8399999999,
-    "projectedEOD": 1023123.625582263,
-    "projectedPctToPlan": 106.69794581864129,
-    "projectedVariance": 64226.41558226303,
+    "method": "blended (w=0.96 shape + 0.04 level)",
+    "confidence": "medium",
+    "projectedEOD": 987779.6506227968,
+    "projectedPctToPlan": 103.01204762320634,
+    "projectedVariance": 28882.440622796887,
     "band": {
-      "low": 1023123.625582263,
-      "high": 1023123.625582263
+      "low": 877362.010948682,
+      "high": 1098197.2902969117
     },
-    "historyDetail": [
+    "pctOfDayElapsed": 0.901,
+    "level_EOD": 902633.1409348557,
+    "shape_EOD": 991402.9078801335,
+    "blendWeight": 0.9591836569812086,
+    "factors": {
+      "plan": 958897.21,
+      "recencyFactor": 0.9393,
+      "dowPlanRatio": 1.0549,
+      "holidayKey": null,
+      "holidayMult": 1,
+      "weatherKey": "rain_gt_0_5in",
+      "weatherMult": 0.95,
+      "weatherSummary": "concord-nh: 72F Slight Chance Showers And Thunderstorms | worcester-ma: 73F Mostly Sunny | burlington-vt: 70F Showers And Thunderstorms Likely | portland-me: 50F Slight Chance Rain Showers | albany-ny: 84F Partly Sunny | scranton-pa: 86F Mostly Sunny"
+    },
+    "shapeDetail": {
+      "basePaceFromCurve": 0.901,
+      "observedPaceCount": 0,
+      "blendedPaceAtNow": 0.901,
+      "historyDays": 0,
+      "avgHistoricalEOD": null
+    },
+    "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve."
+  },
+  "baselineVersion": 3,
+  "weatherRaw": {
+    "mult": 0.95,
+    "key": "rain_gt_0_5in",
+    "season": "spring",
+    "summary": "concord-nh: 72F Slight Chance Showers And Thunderstorms | worcester-ma: 73F Mostly Sunny | burlington-vt: 70F Showers And Thunderstorms Likely | portland-me: 50F Slight Chance Rain Showers | albany-ny: 84F Partly Sunny | scranton-pa: 86F Mostly Sunny",
+    "tagWeights": {
+      "rain_gt_0_5in": 0.64,
+      "perfect_65_80F_dry": 0.272,
+      "sunny_gt_65F": 0.088
+    },
+    "forecasts": [
       {
-        "date": "2026-04-15",
-        "eod": 1053994.8399999999,
-        "paceAtNow": 0.8440672157370335,
-        "planHit": true
+        "station": "concord-nh",
+        "weight": 0.144,
+        "temp": 72,
+        "unit": "F",
+        "short": "Slight Chance Showers And Thunderstorms",
+        "detailed": "A slight chance of showers and thunderstorms after 5pm. Some of the storms could be severe. Partly sunny, with a high near 72. Southeast wind around 5 mph. Chance of precipitation is 20%. New rainfall amounts less than a tenth of an inch possible."
+      },
+      {
+        "station": "worcester-ma",
+        "weight": 0.272,
+        "temp": 73,
+        "unit": "F",
+        "short": "Mostly Sunny",
+        "detailed": "Mostly sunny, with a high near 73. Southwest wind around 7 mph."
+      },
+      {
+        "station": "burlington-vt",
+        "weight": 0.224,
+        "temp": 70,
+        "unit": "F",
+        "short": "Showers And Thunderstorms Likely",
+        "detailed": "Showers and thunderstorms likely. Mostly cloudy, with a high near 70. South wind around 6 mph. Chance of precipitation is 70%. New rainfall amounts between a tenth and quarter of an inch possible."
+      },
+      {
+        "station": "portland-me",
+        "weight": 0.152,
+        "temp": 50,
+        "unit": "F",
+        "short": "Slight Chance Rain Showers",
+        "detailed": "A slight chance of rain showers after 5pm. Mostly cloudy, with a high near 50. Southeast wind around 5 mph. Chance of precipitation is 20%. New rainfall amounts less than a tenth of an inch possible."
+      },
+      {
+        "station": "albany-ny",
+        "weight": 0.12,
+        "temp": 84,
+        "unit": "F",
+        "short": "Partly Sunny",
+        "detailed": "Partly sunny, with a high near 84. South wind around 9 mph. New rainfall amounts less than a tenth of an inch possible."
+      },
+      {
+        "station": "scranton-pa",
+        "weight": 0.088,
+        "temp": 86,
+        "unit": "F",
+        "short": "Mostly Sunny",
+        "detailed": "Mostly sunny, with a high near 86. Southwest wind around 9 mph."
       }
-    ],
-    "note": "No same-day-of-week history yet. Using all prior days to estimate pace — will switch to DOW-specific as soon as a matching day is logged."
+    ]
   }
 }
