@@ -2897,22 +2897,6 @@ const SECTIONS = [
     shadow: "shadow-emerald-200/50",
     active: true,
   },
-  {
-    id: "lab",
-    label: "Concept Lab",
-    description: "Works in progress, mockups, and previews -- a shared space for ideas before they land in production",
-    icon: FlaskConical,
-    gradient: "from-purple-500 to-purple-700",
-    hoverGradient: "from-purple-600 to-purple-800",
-    bg: "bg-purple-50",
-    border: "border-purple-200",
-    text: "text-purple-700",
-    shadow: "shadow-purple-200/50",
-    active: true,
-    externalUrl: "/lab/",
-    alwaysVisible: true,
-    badge: "Preview",
-  },
 ];
 
 /* =====================================================================
@@ -3491,7 +3475,7 @@ function VotingAdminPanelStandalone({ allUsers }) {
 function HomeScreen({ onNavigate, canAccessSection, isAdmin }) {
   const [apInvoiceCount, setApInvoiceCount] = useState(null);
   const displayName = auth.currentUser?.displayName || auth.currentUser?.email?.split("@")[0] || "User";
-  const visibleSections = SECTIONS.filter(s => s.alwaysVisible || canAccessSection(s.id));
+  const visibleSections = SECTIONS.filter(s => canAccessSection(s.id));
 
   useEffect(() => {
     if (!canAccessSection("ap-invoices")) return;
@@ -3541,11 +3525,7 @@ function HomeScreen({ onNavigate, canAccessSection, isAdmin }) {
             return (
               <button
                 key={section.id}
-                onClick={() => {
-                  if (!section.active) return;
-                  if (section.externalUrl) { window.location.href = section.externalUrl; return; }
-                  onNavigate(section.id);
-                }}
+                onClick={() => section.active && onNavigate(section.id)}
                 className={`group relative text-left rounded-2xl border-2 p-6 transition-all duration-200
                   ${section.active
                     ? `${section.border} bg-white hover:shadow-xl hover:${section.shadow} hover:scale-[1.02] hover:border-transparent cursor-pointer`
@@ -3562,9 +3542,6 @@ function HomeScreen({ onNavigate, canAccessSection, isAdmin }) {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <h2 className="text-lg font-bold text-gray-900">{section.label}{section.id === "ap-invoices" && apInvoiceCount > 0 && ` (${apInvoiceCount})`}</h2>
-                      {section.badge && (
-                        <span className="text-[10px] font-semibold uppercase tracking-wider bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full">{section.badge}</span>
-                      )}
                       {!section.active && (
                         <span className="text-[10px] font-semibold uppercase tracking-wider bg-gray-200 text-gray-500 px-2 py-0.5 rounded-full">Coming Soon</span>
                       )}
@@ -4575,20 +4552,7 @@ const PaymentHistory = ({ goHome, goBack }) => {
           return true;
         });
 
-        // Deduplicate AP rows by invoiceNumber (keep newest by actionedAt)
-        // — guards against jiffy-invoice-submit double-writing a history row on re-runs
-        const apByInv = {};
-        for (const r of apRows) {
-          const key = r.invoiceNumber || `__noinv_${r.id}`;
-          const existing = apByInv[key];
-          if (!existing) { apByInv[key] = r; continue; }
-          const aTs = r.actionedAt && r.actionedAt.toMillis ? r.actionedAt.toMillis() : (r.actionedAt ? new Date(r.actionedAt).getTime() : 0);
-          const bTs = existing.actionedAt && existing.actionedAt.toMillis ? existing.actionedAt.toMillis() : (existing.actionedAt ? new Date(existing.actionedAt).getTime() : 0);
-          if (aTs >= bTs) apByInv[key] = r;
-        }
-        const apRowsDeduped = Object.values(apByInv);
-
-        setRows([...apRowsDeduped, ...ccRowsDeduped]);
+        setRows([...apRows, ...ccRowsDeduped]);
       } catch (e) {
         console.error("PaymentHistory load error:", e);
       } finally {
@@ -4922,11 +4886,12 @@ function LiveSalesView({ goBack }) {
     setCacheInfo(info);
   };
 
-  // Fast path: static snapshot from GitHub raw (baked every 10 min by the
-  // scheduled task). Falls through to /api/live-sales if the snapshot is
-  // missing or too old.
+  // Fast path: read the pre-baked snapshot via /api/snapshot, which proxies
+  // GitHub's Contents API (always fresh, no CDN caching issues).
+  // raw.githubusercontent has a 5-min+ CDN cache that ignores query strings,
+  // so we go through our own endpoint instead.
   var loadStatic = function () {
-    var url = "https://raw.githubusercontent.com/scottaubuchon/aubuchon-it-command-center/main/public/data/live-sales/current.json?cb=" + Math.floor(Date.now() / 60000);
+    var url = "/api/snapshot?t=" + Date.now();
     return fetch(url, { cache: "no-store" }).then(function (r) {
       if (!r.ok) throw new Error("snapshot unavailable (" + r.status + ")");
       return r.json();
@@ -5370,4 +5335,3 @@ export default function App() {
 
   return <HomeScreen onNavigate={setActiveSection} canAccessSection={canAccessSection} isAdmin={isAdmin} />;
 }
-
