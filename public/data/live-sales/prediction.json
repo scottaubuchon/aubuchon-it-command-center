@@ -1,45 +1,45 @@
 {
-  "updatedAt": "2026-04-16T19:45:17.326Z",
-  "updatedAtET": "Apr 16, 2026, 3:45 PM",
+  "updatedAt": "2026-04-16T19:55:59.219Z",
+  "updatedAtET": "Apr 16, 2026, 3:55 PM",
   "dateET": "2026-04-16",
   "dow": 4,
   "current": {
-    "ts": "2026-04-16T19:45:17.326Z",
-    "tsET": "Apr 16, 2026, 3:45 PM",
+    "ts": "2026-04-16T19:55:59.219Z",
+    "tsET": "Apr 16, 2026, 3:55 PM",
     "dateET": "2026-04-16",
     "hourET": 15,
-    "minuteET": 45,
+    "minuteET": 55,
     "dow": 4,
-    "sales": 764978.1000000003,
+    "sales": 798572.0900000001,
     "plan": 958897.21,
-    "pctToPlan": 79.77686158874113,
-    "gp": 319905.0704000003,
-    "gpPct": 41.81885342861452,
-    "txns": 22379,
-    "customers": 20710,
+    "pctToPlan": 83.28026003955107,
+    "gp": 333981.8790999999,
+    "gpPct": 41.82238313638032,
+    "txns": 23434,
+    "customers": 21694,
     "storeCount": 134,
-    "asOf": "2026-04-16T19:30:12.087000",
-    "asOfET": "Apr 16, 2026, 3:30 PM"
+    "asOf": "2026-04-16T19:45:12.007000",
+    "asOfET": "Apr 16, 2026, 3:45 PM"
   },
   "prediction": {
     "available": true,
     "method": "any-day pace (DOW-agnostic fallback)",
     "confidence": "low",
     "historyDays": 1,
-    "avgPaceAtNow": 0.7093717176072702,
+    "avgPaceAtNow": 0.8000804823674472,
     "avgHistoricalEOD": 1053994.8399999999,
-    "projectedEOD": 1078388.2145460942,
-    "projectedPctToPlan": 112.4612944223807,
-    "projectedVariance": 119491.00454609422,
+    "projectedEOD": 998114.69920753,
+    "projectedPctToPlan": 104.08985330216261,
+    "projectedVariance": 39217.489207530045,
     "band": {
-      "low": 1078388.2145460942,
-      "high": 1078388.2145460942
+      "low": 998114.69920753,
+      "high": 998114.69920753
     },
     "historyDetail": [
       {
         "date": "2026-04-15",
         "eod": 1053994.8399999999,
-        "paceAtNow": 0.7093717176072702,
+        "paceAtNow": 0.8000804823674472,
         "planHit": true
       }
     ],
