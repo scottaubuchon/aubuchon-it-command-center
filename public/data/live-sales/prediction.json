@@ -1,15 +1,15 @@
 {
-  "updatedAt": "2026-04-17T18:36:45.988Z",
-  "updatedAtET": "Apr 17, 2026, 2:36 PM",
+  "updatedAt": "2026-04-17T18:37:28.771Z",
+  "updatedAtET": "Apr 17, 2026, 2:37 PM",
   "dateET": "2026-04-17",
   "dow": 5,
   "season": "spring",
   "current": {
-    "ts": "2026-04-17T18:36:45.988Z",
-    "tsET": "Apr 17, 2026, 2:36 PM",
+    "ts": "2026-04-17T18:37:28.771Z",
+    "tsET": "Apr 17, 2026, 2:37 PM",
     "dateET": "2026-04-17",
     "hourET": 14,
-    "minuteET": 36,
+    "minuteET": 37,
     "dow": 5,
     "sales": 772174.8699999996,
     "plan": 1196977.4200000002,
@@ -26,17 +26,17 @@
     "available": true,
     "method": "blended (w=0.87 shape + 0.13 level)",
     "confidence": "medium",
-    "projectedEOD": 1089943.0771014988,
-    "projectedPctToPlan": 91.05794803560276,
-    "projectedVariance": -107034.34289850132,
+    "projectedEOD": 1088095.4640375013,
+    "projectedPctToPlan": 90.9035914844159,
+    "projectedVariance": -108881.9559624989,
     "band": {
-      "low": 893372.322238879,
-      "high": 1286513.8319641184
+      "low": 892043.5395110799,
+      "high": 1284147.3885639224
     },
-    "pctOfDayElapsed": 0.718,
+    "pctOfDayElapsed": 0.7193333333333333,
     "level_EOD": 1184528.2742979515,
-    "shape_EOD": 1075452.465181058,
-    "blendWeight": 0.8671510022454959,
+    "shape_EOD": 1073459.0407784982,
+    "blendWeight": 0.8682225239589915,
     "factors": {
       "plan": 1196977.4200000002,
       "recencyFactor": 0.9393,
@@ -48,9 +48,9 @@
       "weatherSummary": "concord-nh: 67F Rain Showers Likely | worcester-ma: 70F Chance Light Rain | burlington-vt: 61F Partly Sunny | portland-me: 59F Chance Rain Showers then Patchy Fog | albany-ny: 69F Scattered Rain Showers | scranton-pa: 73F Mostly Sunny"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.718,
+      "basePaceFromCurve": 0.7193333333333333,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.718,
+      "blendedPaceAtNow": 0.7193333333333333,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
@@ -63,7 +63,8 @@
     "season": "spring",
     "summary": "concord-nh: 67F Rain Showers Likely | worcester-ma: 70F Chance Light Rain | burlington-vt: 61F Partly Sunny | portland-me: 59F Chance Rain Showers then Patchy Fog | albany-ny: 69F Scattered Rain Showers | scranton-pa: 73F Mostly Sunny",
     "tagWeights": {
-      "rain_gt_0_5in": 0.912,
+      "rain_gt_0_5in": 0.6880000000000001,
+      "normal": 0.224,
       "perfect_65_80F_dry": 0.088
     },
     "forecasts": [
@@ -89,7 +90,7 @@
         "temp": 61,
         "unit": "F",
         "short": "Partly Sunny",
-        "detailed": "Partly sunny, with a high near 61. North wind around 10 mph. New rainfall amounts less than a tenth of an inch possible."
+        "detailed": "Partly sunny, with a high near 61. North wind 5 to 9 mph."
       },
       {
         "station": "portland-me",
