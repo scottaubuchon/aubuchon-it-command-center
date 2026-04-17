@@ -1,42 +1,42 @@
 {
-  "updatedAt": "2026-04-17T23:09:06.547Z",
-  "updatedAtET": "Apr 17, 2026, 7:09 PM",
+  "updatedAt": "2026-04-17T23:19:42.031Z",
+  "updatedAtET": "Apr 17, 2026, 7:19 PM",
   "dateET": "2026-04-17",
   "dow": 5,
   "season": "spring",
   "current": {
-    "ts": "2026-04-17T23:09:06.547Z",
-    "tsET": "Apr 17, 2026, 7:09 PM",
+    "ts": "2026-04-17T23:19:42.031Z",
+    "tsET": "Apr 17, 2026, 7:19 PM",
     "dateET": "2026-04-17",
     "hourET": 19,
-    "minuteET": 9,
+    "minuteET": 19,
     "dow": 5,
-    "sales": 1202408.8299999998,
+    "sales": 1209780.15,
     "plan": 1196977.4200000002,
-    "pctToPlan": 100.4537604393573,
-    "gp": 494531.9325999998,
-    "gpPct": 41.128434876846335,
-    "txns": 33996,
-    "customers": 31533,
+    "pctToPlan": 101.06958826341099,
+    "gp": 497507.96129999985,
+    "gpPct": 41.12383240045722,
+    "txns": 34324,
+    "customers": 31730,
     "storeCount": 134,
-    "asOf": "2026-04-17T23:00:14.210000",
-    "asOfET": "Apr 17, 2026, 7:00 PM"
+    "asOf": "2026-04-17T23:15:10.100000",
+    "asOfET": "Apr 17, 2026, 7:15 PM"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.98 shape + 0.02 level)",
     "confidence": "medium",
-    "projectedEOD": 1213471.2535716046,
-    "projectedPctToPlan": 101.37795695190344,
-    "projectedVariance": 16493.833571604453,
+    "projectedEOD": 1218732.0076345494,
+    "projectedPctToPlan": 101.81746015180046,
+    "projectedVariance": 21754.587634549243,
     "band": {
-      "low": 1016020.047000786,
-      "high": 1410922.4601424232
+      "low": 1020473.4089904566,
+      "high": 1416990.606278642
     },
-    "pctOfDayElapsed": 0.9915,
+    "pctOfDayElapsed": 0.9931666666666666,
     "level_EOD": 1246871.8676820542,
-    "shape_EOD": 1212716.9238527482,
-    "blendWeight": 0.9779144793027273,
+    "shape_EOD": 1218103.8597080046,
+    "blendWeight": 0.9781650530995609,
     "factors": {
       "plan": 1196977.4200000002,
       "recencyFactor": 0.9393,
@@ -45,12 +45,12 @@
       "holidayMult": 1,
       "weatherKey": "normal",
       "weatherMult": 1,
-      "weatherSummary": "concord-nh: 44F Slight Chance Rain Showers then Partly Cloudy | worcester-ma: 48F Partly Cloudy then Patchy Fog | burlington-vt: 43F Mostly Clear | portland-me: 43F Mostly Clear then Patchy Fog | albany-ny: 51F Mostly Clear | scranton-pa: 54F Partly Cloudy"
+      "weatherSummary": "concord-nh: 44F Slight Chance Rain Showers then Partly Cloudy | worcester-ma: 48F Partly Cloudy then Patchy Fog | burlington-vt: 43F Mostly Clear | portland-me: 44F Partly Cloudy then Patchy Fog | albany-ny: 51F Mostly Clear"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.9915,
+      "basePaceFromCurve": 0.9931666666666666,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.9915,
+      "blendedPaceAtNow": 0.9931666666666666,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
@@ -61,10 +61,10 @@
     "mult": 1,
     "key": "normal",
     "season": "spring",
-    "summary": "concord-nh: 44F Slight Chance Rain Showers then Partly Cloudy | worcester-ma: 48F Partly Cloudy then Patchy Fog | burlington-vt: 43F Mostly Clear | portland-me: 43F Mostly Clear then Patchy Fog | albany-ny: 51F Mostly Clear | scranton-pa: 54F Partly Cloudy",
+    "summary": "concord-nh: 44F Slight Chance Rain Showers then Partly Cloudy | worcester-ma: 48F Partly Cloudy then Patchy Fog | burlington-vt: 43F Mostly Clear | portland-me: 44F Partly Cloudy then Patchy Fog | albany-ny: 51F Mostly Clear",
     "tagWeights": {
       "coldRain_lt_50F": 0.41600000000000004,
-      "normal": 0.584
+      "normal": 0.496
     },
     "forecasts": [
       {
@@ -94,10 +94,10 @@
       {
         "station": "portland-me",
         "weight": 0.152,
-        "temp": 43,
+        "temp": 44,
         "unit": "F",
-        "short": "Mostly Clear then Patchy Fog",
-        "detailed": "Patchy fog after 5am. Mostly clear, with a low around 43. Northeast wind 0 to 5 mph."
+        "short": "Partly Cloudy then Patchy Fog",
+        "detailed": "Patchy fog after 5am. Partly cloudy, with a low around 44. Northeast wind around 5 mph."
       },
       {
         "station": "albany-ny",
@@ -106,14 +106,6 @@
         "unit": "F",
         "short": "Mostly Clear",
         "detailed": "Mostly clear, with a low around 51. North wind 1 to 6 mph."
-      },
-      {
-        "station": "scranton-pa",
-        "weight": 0.088,
-        "temp": 54,
-        "unit": "F",
-        "short": "Partly Cloudy",
-        "detailed": "Partly cloudy, with a low around 54. Northeast wind 1 to 6 mph."
       }
     ]
   }
