@@ -1,15 +1,15 @@
 {
-  "updatedAt": "2026-04-17T17:41:43.207Z",
-  "updatedAtET": "Apr 17, 2026, 1:41 PM",
+  "updatedAt": "2026-04-17T17:43:27.716Z",
+  "updatedAtET": "Apr 17, 2026, 1:43 PM",
   "dateET": "2026-04-17",
   "dow": 5,
   "season": "spring",
   "current": {
-    "ts": "2026-04-17T17:41:43.207Z",
-    "tsET": "Apr 17, 2026, 1:41 PM",
+    "ts": "2026-04-17T17:43:27.716Z",
+    "tsET": "Apr 17, 2026, 1:43 PM",
     "dateET": "2026-04-17",
     "hourET": 13,
-    "minuteET": 41,
+    "minuteET": 43,
     "dow": 5,
     "sales": 640420.0900000002,
     "plan": 1196977.4200000002,
@@ -26,17 +26,17 @@
     "available": true,
     "method": "blended (w=0.78 shape + 0.22 level)",
     "confidence": "medium",
-    "projectedEOD": 1056094.491616887,
-    "projectedPctToPlan": 88.2301097724038,
-    "projectedVariance": -140882.92838311312,
+    "projectedEOD": 1051229.7611352678,
+    "projectedPctToPlan": 87.82369187342461,
+    "projectedVariance": -145747.65886473237,
     "band": {
-      "low": 850473.0907461622,
-      "high": 1261715.8924876119
+      "low": 847227.7404036432,
+      "high": 1255231.7818668922
     },
-    "pctOfDayElapsed": 0.6283333333333333,
+    "pctOfDayElapsed": 0.6316666666666667,
     "level_EOD": 1184528.2742979515,
-    "shape_EOD": 1019236.2175066316,
-    "blendWeight": 0.7770112198628593,
+    "shape_EOD": 1013857.6622691295,
+    "blendWeight": 0.7810279202618257,
     "factors": {
       "plan": 1196977.4200000002,
       "recencyFactor": 0.9393,
@@ -48,9 +48,9 @@
       "weatherSummary": "concord-nh: 67F Rain Showers Likely | worcester-ma: 70F Chance Light Rain | burlington-vt: 61F Partly Sunny | portland-me: 59F Chance Rain Showers then Patchy Fog | albany-ny: 69F Scattered Rain Showers | scranton-pa: 73F Isolated Rain Showers"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.6283333333333333,
+      "basePaceFromCurve": 0.6316666666666667,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.6283333333333333,
+      "blendedPaceAtNow": 0.6316666666666667,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
