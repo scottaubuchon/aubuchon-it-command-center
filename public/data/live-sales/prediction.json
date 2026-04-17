@@ -1,15 +1,15 @@
 {
-  "updatedAt": "2026-04-17T20:36:35.904Z",
-  "updatedAtET": "Apr 17, 2026, 4:36 PM",
+  "updatedAt": "2026-04-17T20:47:27.269Z",
+  "updatedAtET": "Apr 17, 2026, 4:47 PM",
   "dateET": "2026-04-17",
   "dow": 5,
   "season": "spring",
   "current": {
-    "ts": "2026-04-17T20:36:35.904Z",
-    "tsET": "Apr 17, 2026, 4:36 PM",
+    "ts": "2026-04-17T20:47:27.269Z",
+    "tsET": "Apr 17, 2026, 4:47 PM",
     "dateET": "2026-04-17",
     "hourET": 16,
-    "minuteET": 36,
+    "minuteET": 47,
     "dow": 5,
     "sales": 1008746.2000000004,
     "plan": 1196977.4200000002,
@@ -24,19 +24,19 @@
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.95 shape + 0.05 level)",
+    "method": "blended (w=0.96 shape + 0.04 level)",
     "confidence": "medium",
-    "projectedEOD": 1140615.2476381636,
-    "projectedPctToPlan": 95.29129193081717,
-    "projectedVariance": -56362.172361836536,
+    "projectedEOD": 1127091.2365056684,
+    "projectedPctToPlan": 94.16144512614684,
+    "projectedVariance": -69886.18349433178,
     "band": {
-      "low": 950834.107365145,
-      "high": 1330396.3879111821
+      "low": 940135.2709141457,
+      "high": 1314047.202097191
     },
-    "pctOfDayElapsed": 0.886,
+    "pctOfDayElapsed": 0.897,
     "level_EOD": 1184528.2742979515,
-    "shape_EOD": 1138539.7291196394,
-    "blendWeight": 0.9548687937294651,
+    "shape_EOD": 1124577.7034559648,
+    "blendWeight": 0.9580732424328602,
     "factors": {
       "plan": 1196977.4200000002,
       "recencyFactor": 0.9393,
@@ -48,9 +48,9 @@
       "weatherSummary": "concord-nh: 70F Chance Rain Showers | worcester-ma: 70F Chance Light Rain | burlington-vt: 61F Partly Sunny | portland-me: 60F Partly Sunny | albany-ny: 69F Sunny | scranton-pa: 73F Mostly Sunny"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.886,
+      "basePaceFromCurve": 0.897,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.886,
+      "blendedPaceAtNow": 0.897,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
@@ -82,7 +82,7 @@
         "temp": 70,
         "unit": "F",
         "short": "Chance Light Rain",
-        "detailed": "A slight chance of rain before noon, then a chance of rain and isolated thunderstorms between noon and 4pm. Mostly cloudy. High near 70, with temperatures falling to around 62 in the afternoon. North wind 2 to 12 mph. Chance of precipitation is 50%. New rainfall amounts between a tenth and quarter of an inch possible."
+        "detailed": "A chance of rain before noon, then a chance of rain and isolated thunderstorms between noon and 4pm. Mostly cloudy. High near 70, with temperatures falling to around 62 in the afternoon. North wind 2 to 12 mph. Chance of precipitation is 50%. New rainfall amounts between a tenth and quarter of an inch possible."
       },
       {
         "station": "burlington-vt",
