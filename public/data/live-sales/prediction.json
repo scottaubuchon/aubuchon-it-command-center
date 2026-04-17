@@ -1,15 +1,15 @@
 {
-  "updatedAt": "2026-04-17T11:37:28.364Z",
-  "updatedAtET": "Apr 17, 2026, 7:37 AM",
+  "updatedAt": "2026-04-17T11:48:07.150Z",
+  "updatedAtET": "Apr 17, 2026, 7:48 AM",
   "dateET": "2026-04-17",
   "dow": 5,
   "season": "spring",
   "current": {
-    "ts": "2026-04-17T11:37:28.364Z",
-    "tsET": "Apr 17, 2026, 7:37 AM",
+    "ts": "2026-04-17T11:48:07.150Z",
+    "tsET": "Apr 17, 2026, 7:48 AM",
     "dateET": "2026-04-17",
     "hourET": 7,
-    "minuteET": 37,
+    "minuteET": 48,
     "dow": 5,
     "sales": 4934.850000000001,
     "plan": 1196977.42,
@@ -26,17 +26,17 @@
     "available": true,
     "method": "blended (w=0.05 shape + 0.95 level)",
     "confidence": "low",
-    "projectedEOD": 1130551.603231822,
-    "projectedPctToPlan": 94.45053718990137,
-    "projectedVariance": -66425.81676817802,
+    "projectedEOD": 1126511.6219877303,
+    "projectedPctToPlan": 94.11302194720852,
+    "projectedVariance": -70465.79801226966,
     "band": {
-      "low": 779905.737451809,
-      "high": 1481197.4690118348
+      "low": 777581.4308418403,
+      "high": 1475441.8131336202
     },
-    "pctOfDayElapsed": 0.034666666666666665,
+    "pctOfDayElapsed": 0.042,
     "level_EOD": 1184528.274297951,
-    "shape_EOD": 142351.44230769234,
-    "blendWeight": 0.05179223852352307,
+    "shape_EOD": 117496.4285714286,
+    "blendWeight": 0.054371996995758086,
     "factors": {
       "plan": 1196977.42,
       "recencyFactor": 0.9393,
@@ -48,9 +48,9 @@
       "weatherSummary": "concord-nh: 67F Rain Showers Likely | worcester-ma: 70F Chance Light Rain | burlington-vt: 61F Partly Sunny | portland-me: 59F Chance Rain Showers then Patchy Fog | albany-ny: 69F Scattered Rain Showers | scranton-pa: 73F Slight Chance Rain Showers"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.034666666666666665,
+      "basePaceFromCurve": 0.042,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.034666666666666665,
+      "blendedPaceAtNow": 0.042,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
