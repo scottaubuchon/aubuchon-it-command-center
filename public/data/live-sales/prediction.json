@@ -1,15 +1,15 @@
 {
-  "updatedAt": "2026-04-17T13:56:43.245Z",
-  "updatedAtET": "Apr 17, 2026, 9:56 AM",
+  "updatedAt": "2026-04-17T14:05:23.723Z",
+  "updatedAtET": "Apr 17, 2026, 10:05 AM",
   "dateET": "2026-04-17",
   "dow": 5,
   "season": "spring",
   "current": {
-    "ts": "2026-04-17T13:56:43.245Z",
-    "tsET": "Apr 17, 2026, 9:56 AM",
+    "ts": "2026-04-17T14:05:23.723Z",
+    "tsET": "Apr 17, 2026, 10:05 AM",
     "dateET": "2026-04-17",
-    "hourET": 9,
-    "minuteET": 56,
+    "hourET": 10,
+    "minuteET": 5,
     "dow": 5,
     "sales": 170048.84,
     "plan": 1196977.42,
@@ -24,19 +24,19 @@
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.17 shape + 0.83 level)",
+    "method": "blended (w=0.19 shape + 0.81 level)",
     "confidence": "low",
-    "projectedEOD": 1113986.528618128,
-    "projectedPctToPlan": 93.06662849313632,
-    "projectedVariance": -82990.89138187189,
+    "projectedEOD": 1097303.6828041298,
+    "projectedPctToPlan": 91.67288074691751,
+    "projectedVariance": -99673.73719587014,
     "band": {
-      "low": 789183.4737445586,
-      "high": 1438789.5834916974
+      "low": 780270.6908399264,
+      "high": 1414336.6747683333
     },
-    "pctOfDayElapsed": 0.222,
+    "pctOfDayElapsed": 0.23833333333333334,
     "level_EOD": 1184528.274297951,
-    "shape_EOD": 765985.7657657658,
-    "blendWeight": 0.1685414127401554,
+    "shape_EOD": 713491.6363636364,
+    "blendWeight": 0.1851758111138364,
     "factors": {
       "plan": 1196977.42,
       "recencyFactor": 0.9393,
@@ -48,9 +48,9 @@
       "weatherSummary": "concord-nh: 67F Rain Showers Likely | worcester-ma: 70F Chance Light Rain | burlington-vt: 61F Partly Sunny | portland-me: 59F Chance Rain Showers then Patchy Fog | albany-ny: 69F Scattered Rain Showers | scranton-pa: 73F Slight Chance Rain Showers"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.222,
+      "basePaceFromCurve": 0.23833333333333334,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.222,
+      "blendedPaceAtNow": 0.23833333333333334,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
@@ -63,8 +63,7 @@
     "season": "spring",
     "summary": "concord-nh: 67F Rain Showers Likely | worcester-ma: 70F Chance Light Rain | burlington-vt: 61F Partly Sunny | portland-me: 59F Chance Rain Showers then Patchy Fog | albany-ny: 69F Scattered Rain Showers | scranton-pa: 73F Slight Chance Rain Showers",
     "tagWeights": {
-      "rain_gt_0_5in": 0.776,
-      "normal": 0.224
+      "rain_gt_0_5in": 1
     },
     "forecasts": [
       {
@@ -81,7 +80,7 @@
         "temp": 70,
         "unit": "F",
         "short": "Chance Light Rain",
-        "detailed": "A slight chance of rain before noon, then a chance of rain and isolated thunderstorms between noon and 4pm. Mostly cloudy. High near 70, with temperatures falling to around 62 in the afternoon. North wind 2 to 12 mph. Chance of precipitation is 50%. New rainfall amounts between a tenth and quarter of an inch possible."
+        "detailed": "A chance of rain before noon, then a chance of rain and isolated thunderstorms between noon and 4pm. Mostly cloudy. High near 70, with temperatures falling to around 62 in the afternoon. North wind 2 to 12 mph. Chance of precipitation is 50%. New rainfall amounts between a tenth and quarter of an inch possible."
       },
       {
         "station": "burlington-vt",
@@ -89,7 +88,7 @@
         "temp": 61,
         "unit": "F",
         "short": "Partly Sunny",
-        "detailed": "Partly sunny, with a high near 61. North wind around 10 mph."
+        "detailed": "Partly sunny, with a high near 61. North wind around 10 mph. New rainfall amounts less than a tenth of an inch possible."
       },
       {
         "station": "portland-me",
@@ -113,7 +112,7 @@
         "temp": 73,
         "unit": "F",
         "short": "Slight Chance Rain Showers",
-        "detailed": "A slight chance of rain showers between 10am and 3pm. Partly sunny, with a high near 73. Northwest wind around 8 mph. Chance of precipitation is 20%. New rainfall amounts less than a tenth of an inch possible."
+        "detailed": "Patchy fog before 8am, then a slight chance of rain showers between 10am and 3pm. Partly sunny, with a high near 73. Northwest wind 5 to 8 mph. Chance of precipitation is 20%. New rainfall amounts less than a tenth of an inch possible."
       }
     ]
   }
