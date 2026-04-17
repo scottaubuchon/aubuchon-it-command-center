@@ -1,44 +1,44 @@
 {
-  "updatedAt": "2026-04-17T13:35:11.112Z",
-  "updatedAtET": "Apr 17, 2026, 9:35 AM",
+  "updatedAt": "2026-04-17T13:45:57.836Z",
+  "updatedAtET": "Apr 17, 2026, 9:45 AM",
   "dateET": "2026-04-17",
   "dow": 5,
   "season": "spring",
   "current": {
-    "ts": "2026-04-17T13:35:11.112Z",
-    "tsET": "Apr 17, 2026, 9:35 AM",
+    "ts": "2026-04-17T13:45:57.836Z",
+    "tsET": "Apr 17, 2026, 9:45 AM",
     "dateET": "2026-04-17",
     "hourET": 9,
-    "minuteET": 35,
+    "minuteET": 45,
     "dow": 5,
-    "sales": 0,
-    "plan": 0,
-    "pctToPlan": 0,
-    "gp": 0,
-    "gpPct": 0,
-    "txns": 0,
-    "customers": 0,
-    "storeCount": 0,
-    "asOf": "2026-04-17T13:35:11.100Z",
-    "asOfET": "Apr 17, 2026, 9:35 AM"
+    "sales": 138060.81000000003,
+    "plan": 1196977.42,
+    "pctToPlan": 11.534119833271378,
+    "gp": 54686.39720000002,
+    "gpPct": 39.61036966246976,
+    "txns": 3865,
+    "customers": 3236,
+    "storeCount": 133,
+    "asOf": "2026-04-17T13:30:11.157000",
+    "asOfET": "Apr 17, 2026, 9:30 AM"
   },
   "prediction": {
     "available": true,
-    "method": "shape only (pace curve — no plan available)",
+    "method": "blended (w=0.15 shape + 0.85 level)",
     "confidence": "low",
-    "projectedEOD": 0,
-    "projectedPctToPlan": null,
-    "projectedVariance": null,
+    "projectedEOD": 1111359.7626912543,
+    "projectedPctToPlan": 92.84717857846093,
+    "projectedVariance": -85617.65730874566,
     "band": {
-      "low": 0,
-      "high": 0
+      "low": 783696.5791107182,
+      "high": 1439022.9462717904
     },
-    "pctOfDayElapsed": 0.18000000000000002,
-    "level_EOD": 0,
-    "shape_EOD": 0,
-    "blendWeight": 0.13124446943852333,
+    "pctOfDayElapsed": 0.2,
+    "level_EOD": 1184528.274297951,
+    "shape_EOD": 690304.05,
+    "blendWeight": 0.14804719803168948,
     "factors": {
-      "plan": 0,
+      "plan": 1196977.42,
       "recencyFactor": 0.9393,
       "dowPlanRatio": 1.109,
       "holidayKey": null,
@@ -48,9 +48,9 @@
       "weatherSummary": "concord-nh: 67F Rain Showers Likely | worcester-ma: 70F Chance Light Rain | burlington-vt: 61F Partly Sunny | portland-me: 59F Chance Rain Showers then Patchy Fog | albany-ny: 69F Scattered Rain Showers | scranton-pa: 73F Slight Chance Rain Showers"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.18000000000000002,
+      "basePaceFromCurve": 0.2,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.18000000000000002,
+      "blendedPaceAtNow": 0.2,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
@@ -63,7 +63,8 @@
     "season": "spring",
     "summary": "concord-nh: 67F Rain Showers Likely | worcester-ma: 70F Chance Light Rain | burlington-vt: 61F Partly Sunny | portland-me: 59F Chance Rain Showers then Patchy Fog | albany-ny: 69F Scattered Rain Showers | scranton-pa: 73F Slight Chance Rain Showers",
     "tagWeights": {
-      "rain_gt_0_5in": 1
+      "rain_gt_0_5in": 0.776,
+      "normal": 0.224
     },
     "forecasts": [
       {
@@ -80,7 +81,7 @@
         "temp": 70,
         "unit": "F",
         "short": "Chance Light Rain",
-        "detailed": "A chance of rain before noon, then a chance of rain and isolated thunderstorms between noon and 4pm. Mostly cloudy. High near 70, with temperatures falling to around 62 in the afternoon. North wind 2 to 12 mph. Chance of precipitation is 50%. New rainfall amounts between a tenth and quarter of an inch possible."
+        "detailed": "A slight chance of rain before noon, then a chance of rain and isolated thunderstorms between noon and 4pm. Mostly cloudy. High near 70, with temperatures falling to around 62 in the afternoon. North wind 2 to 12 mph. Chance of precipitation is 50%. New rainfall amounts between a tenth and quarter of an inch possible."
       },
       {
         "station": "burlington-vt",
@@ -88,7 +89,7 @@
         "temp": 61,
         "unit": "F",
         "short": "Partly Sunny",
-        "detailed": "Partly sunny, with a high near 61. North wind around 10 mph. New rainfall amounts less than a tenth of an inch possible."
+        "detailed": "Partly sunny, with a high near 61. North wind around 10 mph."
       },
       {
         "station": "portland-me",
@@ -112,7 +113,7 @@
         "temp": 73,
         "unit": "F",
         "short": "Slight Chance Rain Showers",
-        "detailed": "Patchy fog before 8am, then a slight chance of rain showers between 10am and 3pm. Partly sunny, with a high near 73. Northwest wind 5 to 8 mph. Chance of precipitation is 20%. New rainfall amounts less than a tenth of an inch possible."
+        "detailed": "A slight chance of rain showers between 10am and 3pm. Partly sunny, with a high near 73. Northwest wind around 8 mph. Chance of precipitation is 20%. New rainfall amounts less than a tenth of an inch possible."
       }
     ]
   }
