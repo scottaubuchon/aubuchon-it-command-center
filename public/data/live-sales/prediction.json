@@ -1,15 +1,15 @@
 {
-  "updatedAt": "2026-04-17T11:05:31.556Z",
-  "updatedAtET": "Apr 17, 2026, 7:05 AM",
+  "updatedAt": "2026-04-17T11:16:10.818Z",
+  "updatedAtET": "Apr 17, 2026, 7:16 AM",
   "dateET": "2026-04-17",
   "dow": 5,
   "season": "spring",
   "current": {
-    "ts": "2026-04-17T11:05:31.556Z",
-    "tsET": "Apr 17, 2026, 7:05 AM",
+    "ts": "2026-04-17T11:16:10.818Z",
+    "tsET": "Apr 17, 2026, 7:16 AM",
     "dateET": "2026-04-17",
     "hourET": 7,
-    "minuteET": 5,
+    "minuteET": 16,
     "dow": 5,
     "sales": 0,
     "plan": 1196977.42,
@@ -19,24 +19,24 @@
     "txns": 0,
     "customers": 0,
     "storeCount": 0,
-    "asOf": "2026-04-17T11:05:31.546Z",
-    "asOfET": "Apr 17, 2026, 7:05 AM"
+    "asOf": "2026-04-17T11:16:10.806Z",
+    "asOfET": "Apr 17, 2026, 7:16 AM"
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.04 shape + 0.96 level)",
+    "method": "blended (w=0.05 shape + 0.95 level)",
     "confidence": "low",
-    "projectedEOD": 1131306.796446325,
-    "projectedPctToPlan": 94.51362887416248,
-    "projectedVariance": -65670.6235536749,
+    "projectedEOD": 1128635.7015172583,
+    "projectedPctToPlan": 94.29047554775582,
+    "projectedVariance": -68341.71848274162,
     "band": {
-      "low": 779190.8817119992,
-      "high": 1483422.7111806509
+      "low": 777756.3304528036,
+      "high": 1479515.072581713
     },
-    "pctOfDayElapsed": 0.013333333333333332,
+    "pctOfDayElapsed": 0.020666666666666667,
     "level_EOD": 1184528.274297951,
     "shape_EOD": 0,
-    "blendWeight": 0.044930525515036304,
+    "blendWeight": 0.047185511729400754,
     "factors": {
       "plan": 1196977.42,
       "recencyFactor": 0.9393,
@@ -48,9 +48,9 @@
       "weatherSummary": "concord-nh: 67F Rain Showers Likely | worcester-ma: 70F Chance Light Rain | burlington-vt: 61F Isolated Rain Showers then Partly Sunny | portland-me: 59F Chance Rain Showers then Patchy Fog | albany-ny: 69F Scattered Rain Showers | scranton-pa: 73F Slight Chance Rain Showers"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.013333333333333332,
+      "basePaceFromCurve": 0.020666666666666667,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.013333333333333332,
+      "blendedPaceAtNow": 0.020666666666666667,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
