@@ -5,7 +5,7 @@ const YODA_PORT = 5088;
 const YODA_KEY = 'aubuchon-yoda-2026';
 const CACHE_TTL = 10 * 60 * 1000; // 10 minutes
 
-// Module-level cache — persists across requests within the same Vercel instance
+// Module-level cache â persists across requests within the same Vercel instance
 let cache = { data: null, timestamp: 0 };
 
 function queryYoda(dax) {
@@ -43,7 +43,7 @@ function safeQuery(dax, label) {
 }
 
 async function refreshData() {
-  // Use Eastern Time (Aubuchon HQ) — Vercel runs in UTC
+  // Use Eastern Time (Aubuchon HQ) â Vercel runs in UTC
   const etNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }));
   const y = etNow.getFullYear();
   const m = etNow.getMonth() + 1;
@@ -55,9 +55,9 @@ async function refreshData() {
 
   const dimQuery = `EVALUATE SELECTCOLUMNS(DIM_STORE, "Code", DIM_STORE[STORE_CD], "Name", DIM_STORE[STORE_NM], "City", DIM_STORE[STORE_CITY_NM], "State", DIM_STORE[STORE_STATE_CD])`;
 
-  const productQuery = `EVALUATE TOPN(100, SUMMARIZE(FCT_LIVE_SALE_TRANSACTION_LINE, FCT_LIVE_SALE_TRANSACTION_LINE[PRODUCT_DESC], "Sales", SUM(FCT_LIVE_SALE_TRANSACTION_LINE[ITEM_EXTENDED_AMT])), [Sales], DESC)`;
+  const productQuery = `EVALUATE TOPN(100, SUMMARIZE(FCT_LIVE_SALE_TRANSACTION_LINE, DIM_PRODUCT[PRODUCT_CD], DIM_PRODUCT[PRODUCT_DESC], "Sales", SUM(FCT_LIVE_SALE_TRANSACTION_LINE[ITEM_EXTENDED_AMT])), [Sales], DESC)`;
 
-  // Run queries in parallel with safe wrappers — each one catches its own errors
+  // Run queries in parallel with safe wrappers â each one catches its own errors
   const [liveR, planR, dimR, prodR] = await Promise.all([
     safeQuery(liveStoreQuery, 'live'),
     safeQuery(planQuery, 'plan'),
@@ -142,9 +142,10 @@ async function refreshData() {
 
   // Top 100 products by dollar sales
   const topProducts = productRows.map(r => {
-    const desc = r['FCT_LIVE_SALE_TRANSACTION_LINE[PRODUCT_DESC'] || r['PRODUCT_DESC'] || r['FCT_LIVE_SALE_TRANSACTION_LINE[PRODUCT_DESC]'] || Object.values(r).find(v => typeof v === 'string') || 'Unknown';
+    const code = r['DIM_PRODUCT[PRODUCT_CD]'] || r['PRODUCT_CD'] || '';
+    const desc = r['DIM_PRODUCT[PRODUCT_DESC]'] || r['PRODUCT_DESC'] || r['FCT_LIVE_SALE_TRANSACTION_LINE[PRODUCT_DESC]'] || Object.values(r).find(v => typeof v === 'string') || 'Unknown';
     const sales = Number(r.Sales || r['[Sales]'] || 0);
-    return { product: desc, sales };
+    return { product: desc, productCode: code, sales };
   }).sort((a, b) => b.sales - a.sales).slice(0, 100);
 
   return {
