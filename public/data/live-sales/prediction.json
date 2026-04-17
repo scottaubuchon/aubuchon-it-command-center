@@ -1,15 +1,15 @@
 {
-  "updatedAt": "2026-04-17T21:19:43.192Z",
-  "updatedAtET": "Apr 17, 2026, 5:19 PM",
+  "updatedAt": "2026-04-17T21:20:41.189Z",
+  "updatedAtET": "Apr 17, 2026, 5:20 PM",
   "dateET": "2026-04-17",
   "dow": 5,
   "season": "spring",
   "current": {
-    "ts": "2026-04-17T21:19:43.192Z",
-    "tsET": "Apr 17, 2026, 5:19 PM",
+    "ts": "2026-04-17T21:20:41.189Z",
+    "tsET": "Apr 17, 2026, 5:20 PM",
     "dateET": "2026-04-17",
     "hourET": 17,
-    "minuteET": 19,
+    "minuteET": 20,
     "dow": 5,
     "sales": 1064215.7700000005,
     "plan": 1196977.4200000002,
@@ -26,17 +26,17 @@
     "available": true,
     "method": "blended (w=0.97 shape + 0.03 level)",
     "confidence": "medium",
-    "projectedEOD": 1146867.1639667512,
-    "projectedPctToPlan": 95.81360055787444,
-    "projectedVariance": -50110.25603324897,
+    "projectedEOD": 1145667.8588513045,
+    "projectedPctToPlan": 95.7134060934336,
+    "projectedVariance": -51309.56114869565,
     "band": {
-      "low": 958115.201449439,
-      "high": 1335619.1264840635
+      "low": 957154.8342406733,
+      "high": 1334180.8834619357
     },
-    "pctOfDayElapsed": 0.9289999999999999,
+    "pctOfDayElapsed": 0.9299999999999999,
     "level_EOD": 1184528.2742979515,
-    "shape_EOD": 1145549.806243273,
-    "blendWeight": 0.9662029374363788,
+    "shape_EOD": 1144318.0322580652,
+    "blendWeight": 0.9664307767185175,
     "factors": {
       "plan": 1196977.4200000002,
       "recencyFactor": 0.9393,
@@ -48,9 +48,9 @@
       "weatherSummary": "concord-nh: 70F Chance Rain Showers | worcester-ma: 70F Slight Chance Light Rain | burlington-vt: 61F Partly Sunny | portland-me: 60F Partly Sunny | albany-ny: 69F Sunny | scranton-pa: 73F Mostly Sunny"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.9289999999999999,
+      "basePaceFromCurve": 0.9299999999999999,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.9289999999999999,
+      "blendedPaceAtNow": 0.9299999999999999,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
