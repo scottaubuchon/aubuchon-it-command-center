@@ -1,44 +1,44 @@
 {
-  "updatedAt": "2026-04-17T12:58:12.321Z",
-  "updatedAtET": "Apr 17, 2026, 8:58 AM",
+  "updatedAt": "2026-04-17T13:04:44.742Z",
+  "updatedAtET": "Apr 17, 2026, 9:04 AM",
   "dateET": "2026-04-17",
   "dow": 5,
   "season": "spring",
   "current": {
-    "ts": "2026-04-17T12:58:12.321Z",
-    "tsET": "Apr 17, 2026, 8:58 AM",
+    "ts": "2026-04-17T13:04:44.742Z",
+    "tsET": "Apr 17, 2026, 9:04 AM",
     "dateET": "2026-04-17",
-    "hourET": 8,
-    "minuteET": 58,
+    "hourET": 9,
+    "minuteET": 4,
     "dow": 5,
-    "sales": 74969.37999999999,
-    "plan": 1196977.42,
-    "pctToPlan": 6.26322424695363,
-    "gp": 29055.1414,
-    "gpPct": 38.75601132088861,
-    "txns": 2276,
-    "customers": 1729,
-    "storeCount": 133,
-    "asOf": "2026-04-17T12:45:07.453000",
-    "asOfET": "Apr 17, 2026, 8:45 AM"
+    "sales": 0,
+    "plan": 0,
+    "pctToPlan": 0,
+    "gp": 0,
+    "gpPct": 0,
+    "txns": 0,
+    "customers": 0,
+    "storeCount": 0,
+    "asOf": "2026-04-17T13:04:44.732Z",
+    "asOfET": "Apr 17, 2026, 9:04 AM"
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.09 shape + 0.91 level)",
+    "method": "shape only (pace curve — no plan available)",
     "confidence": "low",
-    "projectedEOD": 1136093.1940652714,
-    "projectedPctToPlan": 94.91350255088952,
-    "projectedVariance": -60884.225934728514,
+    "projectedEOD": 0,
+    "projectedPctToPlan": null,
+    "projectedVariance": null,
     "band": {
-      "low": 790417.76832557,
-      "high": 1481768.6198049728
+      "low": 0,
+      "high": 0
     },
-    "pctOfDayElapsed": 0.11733333333333333,
-    "level_EOD": 1184528.274297951,
-    "shape_EOD": 638943.5795454545,
-    "blendWeight": 0.08877646440329859,
+    "pctOfDayElapsed": 0.12666666666666668,
+    "level_EOD": 0,
+    "shape_EOD": 0,
+    "blendWeight": 0.09420554774260578,
     "factors": {
-      "plan": 1196977.42,
+      "plan": 0,
       "recencyFactor": 0.9393,
       "dowPlanRatio": 1.109,
       "holidayKey": null,
@@ -48,9 +48,9 @@
       "weatherSummary": "concord-nh: 67F Rain Showers Likely | worcester-ma: 70F Chance Light Rain | burlington-vt: 61F Partly Sunny | portland-me: 59F Chance Rain Showers then Patchy Fog | albany-ny: 69F Scattered Rain Showers | scranton-pa: 73F Slight Chance Rain Showers"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.11733333333333333,
+      "basePaceFromCurve": 0.12666666666666668,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.11733333333333333,
+      "blendedPaceAtNow": 0.12666666666666668,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
@@ -104,7 +104,7 @@
         "temp": 69,
         "unit": "F",
         "short": "Scattered Rain Showers",
-        "detailed": "Scattered rain showers before 2pm. Mostly sunny, with a high near 69. North wind 3 to 10 mph. Chance of precipitation is 30%. New rainfall amounts less than a tenth of an inch possible."
+        "detailed": "Scattered rain showers before 2pm. Mostly sunny, with a high near 69. North wind 6 to 10 mph. Chance of precipitation is 30%. New rainfall amounts less than a tenth of an inch possible."
       },
       {
         "station": "scranton-pa",
