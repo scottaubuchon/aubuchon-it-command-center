@@ -1,15 +1,15 @@
 {
-  "updatedAt": "2026-04-17T16:47:24.160Z",
-  "updatedAtET": "Apr 17, 2026, 12:47 PM",
+  "updatedAt": "2026-04-17T16:48:20.672Z",
+  "updatedAtET": "Apr 17, 2026, 12:48 PM",
   "dateET": "2026-04-17",
   "dow": 5,
   "season": "spring",
   "current": {
-    "ts": "2026-04-17T16:47:24.160Z",
-    "tsET": "Apr 17, 2026, 12:47 PM",
+    "ts": "2026-04-17T16:48:20.672Z",
+    "tsET": "Apr 17, 2026, 12:48 PM",
     "dateET": "2026-04-17",
     "hourET": 12,
-    "minuteET": 47,
+    "minuteET": 48,
     "dow": 5,
     "sales": 553325.0500000002,
     "plan": 1196977.4200000002,
@@ -24,19 +24,19 @@
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.64 shape + 0.36 level)",
+    "method": "blended (w=0.65 shape + 0.35 level)",
     "confidence": "medium",
-    "projectedEOD": 1089160.1961025782,
-    "projectedPctToPlan": 90.99254320959355,
-    "projectedVariance": -107817.22389742197,
+    "projectedEOD": 1086186.2610520564,
+    "projectedPctToPlan": 90.74408947932002,
+    "projectedVariance": -110791.15894794371,
     "band": {
-      "low": 853847.8486125185,
-      "high": 1324472.543592638
+      "low": 852071.0946578898,
+      "high": 1320301.427446223
     },
-    "pctOfDayElapsed": 0.534,
+    "pctOfDayElapsed": 0.536,
     "level_EOD": 1184528.2742979515,
-    "shape_EOD": 1036189.2322097381,
-    "blendWeight": 0.642906121361229,
+    "shape_EOD": 1032322.8544776122,
+    "blendWeight": 0.6461137412976247,
     "factors": {
       "plan": 1196977.4200000002,
       "recencyFactor": 0.9393,
@@ -45,12 +45,12 @@
       "holidayMult": 1,
       "weatherKey": "rain_gt_0_5in",
       "weatherMult": 0.95,
-      "weatherSummary": "concord-nh: 67F Rain Showers Likely | worcester-ma: 70F Chance Light Rain | burlington-vt: 61F Partly Sunny | albany-ny: 69F Scattered Rain Showers | scranton-pa: 73F Slight Chance Rain Showers"
+      "weatherSummary": "concord-nh: 67F Rain Showers Likely | worcester-ma: 70F Chance Light Rain | burlington-vt: 61F Partly Sunny | portland-me: 59F Patchy Fog | albany-ny: 69F Scattered Rain Showers | scranton-pa: 73F Slight Chance Rain Showers"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.534,
+      "basePaceFromCurve": 0.536,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.534,
+      "blendedPaceAtNow": 0.536,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
@@ -61,9 +61,9 @@
     "mult": 0.95,
     "key": "rain_gt_0_5in",
     "season": "spring",
-    "summary": "concord-nh: 67F Rain Showers Likely | worcester-ma: 70F Chance Light Rain | burlington-vt: 61F Partly Sunny | albany-ny: 69F Scattered Rain Showers | scranton-pa: 73F Slight Chance Rain Showers",
+    "summary": "concord-nh: 67F Rain Showers Likely | worcester-ma: 70F Chance Light Rain | burlington-vt: 61F Partly Sunny | portland-me: 59F Patchy Fog | albany-ny: 69F Scattered Rain Showers | scranton-pa: 73F Slight Chance Rain Showers",
     "tagWeights": {
-      "rain_gt_0_5in": 0.624,
+      "rain_gt_0_5in": 0.776,
       "normal": 0.224
     },
     "forecasts": [
@@ -81,7 +81,7 @@
         "temp": 70,
         "unit": "F",
         "short": "Chance Light Rain",
-        "detailed": "A slight chance of rain before noon, then a chance of rain and isolated thunderstorms between noon and 4pm. Mostly cloudy. High near 70, with temperatures falling to around 62 in the afternoon. North wind 2 to 12 mph. Chance of precipitation is 50%. New rainfall amounts between a tenth and quarter of an inch possible."
+        "detailed": "A chance of rain before noon, then a chance of rain and isolated thunderstorms between noon and 4pm. Mostly cloudy. High near 70, with temperatures falling to around 62 in the afternoon. North wind 2 to 12 mph. Chance of precipitation is 50%. New rainfall amounts between a tenth and quarter of an inch possible."
       },
       {
         "station": "burlington-vt",
@@ -90,6 +90,14 @@
         "unit": "F",
         "short": "Partly Sunny",
         "detailed": "Partly sunny, with a high near 61. North wind around 10 mph."
+      },
+      {
+        "station": "portland-me",
+        "weight": 0.152,
+        "temp": 59,
+        "unit": "F",
+        "short": "Patchy Fog",
+        "detailed": "Patchy fog and a slight chance of rain showers before 3pm. Mostly cloudy, with a high near 59. Northeast wind around 5 mph. Chance of precipitation is 20%. New rainfall amounts less than a tenth of an inch possible."
       },
       {
         "station": "albany-ny",
