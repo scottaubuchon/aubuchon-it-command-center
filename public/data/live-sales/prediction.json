@@ -1,15 +1,15 @@
 {
-  "updatedAt": "2026-04-17T14:58:16.078Z",
-  "updatedAtET": "Apr 17, 2026, 10:58 AM",
+  "updatedAt": "2026-04-17T14:59:01.682Z",
+  "updatedAtET": "Apr 17, 2026, 10:59 AM",
   "dateET": "2026-04-17",
   "dow": 5,
   "season": "spring",
   "current": {
-    "ts": "2026-04-17T14:58:16.078Z",
-    "tsET": "Apr 17, 2026, 10:58 AM",
+    "ts": "2026-04-17T14:59:01.682Z",
+    "tsET": "Apr 17, 2026, 10:59 AM",
     "dateET": "2026-04-17",
     "hourET": 10,
-    "minuteET": 58,
+    "minuteET": 59,
     "dow": 5,
     "sales": 297600.62,
     "plan": 1196977.42,
@@ -26,17 +26,17 @@
     "available": true,
     "method": "blended (w=0.31 shape + 0.69 level)",
     "confidence": "medium",
-    "projectedEOD": 1091760.9983344795,
-    "projectedPctToPlan": 91.20982401944387,
-    "projectedVariance": -105216.4216655204,
+    "projectedEOD": 1089220.275561652,
+    "projectedPctToPlan": 90.99756247378934,
+    "projectedVariance": -107757.14443834801,
     "band": {
-      "low": 798103.7074693143,
-      "high": 1385418.2891996447
+      "low": 796767.4449454864,
+      "high": 1381673.1061778173
     },
-    "pctOfDayElapsed": 0.336,
+    "pctOfDayElapsed": 0.338,
     "level_EOD": 1184528.274297951,
-    "shape_EOD": 885716.1309523808,
-    "blendWeight": 0.3104535007340317,
+    "shape_EOD": 880475.2071005916,
+    "blendWeight": 0.31345843544618895,
     "factors": {
       "plan": 1196977.42,
       "recencyFactor": 0.9393,
@@ -48,9 +48,9 @@
       "weatherSummary": "concord-nh: 67F Rain Showers Likely | worcester-ma: 70F Chance Light Rain | burlington-vt: 61F Partly Sunny | portland-me: 59F Chance Rain Showers then Patchy Fog | albany-ny: 69F Scattered Rain Showers | scranton-pa: 73F Slight Chance Rain Showers"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.336,
+      "basePaceFromCurve": 0.338,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.336,
+      "blendedPaceAtNow": 0.338,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
