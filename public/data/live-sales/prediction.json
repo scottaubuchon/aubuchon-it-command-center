@@ -1,15 +1,15 @@
 {
-  "updatedAt": "2026-04-17T23:19:42.031Z",
-  "updatedAtET": "Apr 17, 2026, 7:19 PM",
+  "updatedAt": "2026-04-17T23:30:31.733Z",
+  "updatedAtET": "Apr 17, 2026, 7:30 PM",
   "dateET": "2026-04-17",
   "dow": 5,
   "season": "spring",
   "current": {
-    "ts": "2026-04-17T23:19:42.031Z",
-    "tsET": "Apr 17, 2026, 7:19 PM",
+    "ts": "2026-04-17T23:30:31.733Z",
+    "tsET": "Apr 17, 2026, 7:30 PM",
     "dateET": "2026-04-17",
     "hourET": 19,
-    "minuteET": 19,
+    "minuteET": 30,
     "dow": 5,
     "sales": 1209780.15,
     "plan": 1196977.4200000002,
@@ -26,17 +26,17 @@
     "available": true,
     "method": "blended (w=0.98 shape + 0.02 level)",
     "confidence": "medium",
-    "projectedEOD": 1218732.0076345494,
-    "projectedPctToPlan": 101.81746015180046,
-    "projectedVariance": 21754.587634549243,
+    "projectedEOD": 1216528.1533481346,
+    "projectedPctToPlan": 101.63334186773001,
+    "projectedVariance": 19550.73334813444,
     "band": {
-      "low": 1020473.4089904566,
-      "high": 1416990.606278642
+      "low": 1018680.8293451582,
+      "high": 1414375.4773511111
     },
-    "pctOfDayElapsed": 0.9931666666666666,
+    "pctOfDayElapsed": 0.995,
     "level_EOD": 1246871.8676820542,
-    "shape_EOD": 1218103.8597080046,
-    "blendWeight": 0.9781650530995609,
+    "shape_EOD": 1215859.4472361808,
+    "blendWeight": 0.9784374743299705,
     "factors": {
       "plan": 1196977.4200000002,
       "recencyFactor": 0.9393,
@@ -45,12 +45,12 @@
       "holidayMult": 1,
       "weatherKey": "normal",
       "weatherMult": 1,
-      "weatherSummary": "concord-nh: 44F Slight Chance Rain Showers then Partly Cloudy | worcester-ma: 48F Partly Cloudy then Patchy Fog | burlington-vt: 43F Mostly Clear | portland-me: 44F Partly Cloudy then Patchy Fog | albany-ny: 51F Mostly Clear"
+      "weatherSummary": "concord-nh: 46F Partly Cloudy | worcester-ma: 48F Partly Cloudy then Patchy Fog | burlington-vt: 43F Mostly Clear | portland-me: 44F Partly Cloudy then Patchy Fog | albany-ny: 51F Mostly Clear | scranton-pa: 54F Partly Cloudy"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.9931666666666666,
+      "basePaceFromCurve": 0.995,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.9931666666666666,
+      "blendedPaceAtNow": 0.995,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
@@ -61,19 +61,19 @@
     "mult": 1,
     "key": "normal",
     "season": "spring",
-    "summary": "concord-nh: 44F Slight Chance Rain Showers then Partly Cloudy | worcester-ma: 48F Partly Cloudy then Patchy Fog | burlington-vt: 43F Mostly Clear | portland-me: 44F Partly Cloudy then Patchy Fog | albany-ny: 51F Mostly Clear",
+    "summary": "concord-nh: 46F Partly Cloudy | worcester-ma: 48F Partly Cloudy then Patchy Fog | burlington-vt: 43F Mostly Clear | portland-me: 44F Partly Cloudy then Patchy Fog | albany-ny: 51F Mostly Clear | scranton-pa: 54F Partly Cloudy",
     "tagWeights": {
-      "coldRain_lt_50F": 0.41600000000000004,
-      "normal": 0.496
+      "normal": 0.728,
+      "coldRain_lt_50F": 0.272
     },
     "forecasts": [
       {
         "station": "concord-nh",
         "weight": 0.144,
-        "temp": 44,
+        "temp": 46,
         "unit": "F",
-        "short": "Slight Chance Rain Showers then Partly Cloudy",
-        "detailed": "A slight chance of rain showers before 8pm. Partly cloudy, with a low around 44. Southeast wind around 0 mph. Chance of precipitation is 20%."
+        "short": "Partly Cloudy",
+        "detailed": "Partly cloudy, with a low around 46. East wind 0 to 5 mph."
       },
       {
         "station": "worcester-ma",
@@ -106,6 +106,14 @@
         "unit": "F",
         "short": "Mostly Clear",
         "detailed": "Mostly clear, with a low around 51. North wind 1 to 6 mph."
+      },
+      {
+        "station": "scranton-pa",
+        "weight": 0.088,
+        "temp": 54,
+        "unit": "F",
+        "short": "Partly Cloudy",
+        "detailed": "Partly cloudy, with a low around 54. Northeast wind 1 to 6 mph."
       }
     ]
   }
