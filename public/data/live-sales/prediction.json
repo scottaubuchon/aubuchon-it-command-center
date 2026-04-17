@@ -1,56 +1,56 @@
 {
-  "updatedAt": "2026-04-17T22:15:11.379Z",
-  "updatedAtET": "Apr 17, 2026, 6:15 PM",
+  "updatedAt": "2026-04-17T22:26:02.107Z",
+  "updatedAtET": "Apr 17, 2026, 6:26 PM",
   "dateET": "2026-04-17",
   "dow": 5,
   "season": "spring",
   "current": {
-    "ts": "2026-04-17T22:15:11.379Z",
-    "tsET": "Apr 17, 2026, 6:15 PM",
+    "ts": "2026-04-17T22:26:02.107Z",
+    "tsET": "Apr 17, 2026, 6:26 PM",
     "dateET": "2026-04-17",
     "hourET": 18,
-    "minuteET": 15,
+    "minuteET": 26,
     "dow": 5,
-    "sales": 1153757.2800000003,
+    "sales": 1172220.1600000001,
     "plan": 1196977.4200000002,
-    "pctToPlan": 96.3892267909281,
-    "gp": 474021.68590000004,
-    "gpPct": 41.0850439790941,
-    "txns": 32348,
-    "customers": 30194,
+    "pctToPlan": 97.93168529444775,
+    "gp": 482236.66550000035,
+    "gpPct": 41.138745259252346,
+    "txns": 33041,
+    "customers": 30751,
     "storeCount": 134,
-    "asOf": "2026-04-17T22:00:23.713000",
-    "asOfET": "Apr 17, 2026, 6:00 PM"
+    "asOf": "2026-04-17T22:15:11.993000",
+    "asOfET": "Apr 17, 2026, 6:15 PM"
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.97 shape + 0.03 level)",
+    "method": "blended (w=0.98 shape + 0.02 level)",
     "confidence": "medium",
-    "projectedEOD": 1189314.8363713962,
-    "projectedPctToPlan": 99.35983891587496,
-    "projectedVariance": -7662.583628603956,
+    "projectedEOD": 1200561.6305596088,
+    "projectedPctToPlan": 100.29943844384373,
+    "projectedVariance": 3584.2105596086476,
     "band": {
-      "low": 995132.4755394348,
-      "high": 1383497.1972033575
+      "low": 1004781.673219499,
+      "high": 1396341.5878997187
     },
-    "pctOfDayElapsed": 0.97,
-    "level_EOD": 1184528.2742979515,
-    "shape_EOD": 1189440.4948453612,
-    "blendWeight": 0.9744192116879924,
+    "pctOfDayElapsed": 0.9773333333333333,
+    "level_EOD": 1246871.8676820542,
+    "shape_EOD": 1199406.7121418829,
+    "blendWeight": 0.9756680789395421,
     "factors": {
       "plan": 1196977.4200000002,
       "recencyFactor": 0.9393,
       "dowPlanRatio": 1.109,
       "holidayKey": null,
       "holidayMult": 1,
-      "weatherKey": "rain_gt_0_5in",
-      "weatherMult": 0.95,
-      "weatherSummary": "concord-nh: 70F Chance Rain Showers | worcester-ma: 70F Slight Chance Light Rain | burlington-vt: 61F Partly Sunny | portland-me: 43F Mostly Clear then Patchy Fog | albany-ny: 69F Sunny | scranton-pa: 73F Mostly Sunny"
+      "weatherKey": "normal",
+      "weatherMult": 1,
+      "weatherSummary": "concord-nh: 70F Chance Rain Showers | worcester-ma: 70F Slight Chance Light Rain | burlington-vt: 61F Partly Sunny | portland-me: 43F Mostly Clear then Patchy Fog | albany-ny: 69F Sunny | scranton-pa: 54F Partly Cloudy"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.97,
+      "basePaceFromCurve": 0.9773333333333333,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.97,
+      "blendedPaceAtNow": 0.9773333333333333,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
@@ -58,14 +58,14 @@
   },
   "baselineVersion": 4,
   "weatherRaw": {
-    "mult": 0.95,
-    "key": "rain_gt_0_5in",
+    "mult": 1,
+    "key": "normal",
     "season": "spring",
-    "summary": "concord-nh: 70F Chance Rain Showers | worcester-ma: 70F Slight Chance Light Rain | burlington-vt: 61F Partly Sunny | portland-me: 43F Mostly Clear then Patchy Fog | albany-ny: 69F Sunny | scranton-pa: 73F Mostly Sunny",
+    "summary": "concord-nh: 70F Chance Rain Showers | worcester-ma: 70F Slight Chance Light Rain | burlington-vt: 61F Partly Sunny | portland-me: 43F Mostly Clear then Patchy Fog | albany-ny: 69F Sunny | scranton-pa: 54F Partly Cloudy",
     "tagWeights": {
       "rain_gt_0_5in": 0.41600000000000004,
-      "normal": 0.376,
-      "perfect_65_80F_dry": 0.208
+      "normal": 0.46399999999999997,
+      "perfect_65_80F_dry": 0.12
     },
     "forecasts": [
       {
@@ -111,10 +111,10 @@
       {
         "station": "scranton-pa",
         "weight": 0.088,
-        "temp": 73,
+        "temp": 54,
         "unit": "F",
-        "short": "Mostly Sunny",
-        "detailed": "Mostly sunny, with a high near 73. North wind around 8 mph."
+        "short": "Partly Cloudy",
+        "detailed": "Partly cloudy, with a low around 54. Northeast wind 1 to 6 mph."
       }
     ]
   }
