@@ -367,9 +367,14 @@ def _render_state_map(state_data):
             continue
         txt_color = text_fill_for_pct(vsP) if d else "#1f2937"
         if s.get("external_label"):
-            # RI: external label with connector (sits on light background)
-            svg_paths.append('<line x1="347" y1="197" x2="375" y2="190" stroke="#334155" stroke-width="0.75"/>')
-            svg_paths.append(f'<text x="390" y="188" text-anchor="middle" font-size="8" font-weight="700" fill="#1f2937" font-family="Arial,sans-serif">{s["code"]} {_fmt_pct(vsP,1)}</text>')
+            # Leader line + external label — coordinates come from the state dict
+            # so we can place labels for tiny states (RI, northern VA sliver) cleanly.
+            conn = s.get("connector")
+            if conn:
+                (csx, csy), (cex, cey) = conn
+                svg_paths.append(f'<line x1="{csx}" y1="{csy}" x2="{cex}" y2="{cey}" stroke="#334155" stroke-width="0.75"/>')
+            lx, ly = s["label_xy"]
+            svg_paths.append(f'<text x="{lx}" y="{ly}" text-anchor="middle" font-size="8" font-weight="700" fill="#1f2937" font-family="Arial,sans-serif">{s["code"]} {_fmt_pct(vsP,1)}</text>')
             continue
         if s.get("combined_label"):
             x, y = s["label_xy"]
