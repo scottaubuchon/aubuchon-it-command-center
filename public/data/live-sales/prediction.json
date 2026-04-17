@@ -1,42 +1,42 @@
 {
-  "updatedAt": "2026-04-17T22:26:02.107Z",
-  "updatedAtET": "Apr 17, 2026, 6:26 PM",
+  "updatedAt": "2026-04-17T22:36:38.247Z",
+  "updatedAtET": "Apr 17, 2026, 6:36 PM",
   "dateET": "2026-04-17",
   "dow": 5,
   "season": "spring",
   "current": {
-    "ts": "2026-04-17T22:26:02.107Z",
-    "tsET": "Apr 17, 2026, 6:26 PM",
+    "ts": "2026-04-17T22:36:38.247Z",
+    "tsET": "Apr 17, 2026, 6:36 PM",
     "dateET": "2026-04-17",
     "hourET": 18,
-    "minuteET": 26,
+    "minuteET": 36,
     "dow": 5,
-    "sales": 1172220.1600000001,
+    "sales": 1180571.2899999998,
     "plan": 1196977.4200000002,
-    "pctToPlan": 97.93168529444775,
-    "gp": 482236.66550000035,
-    "gpPct": 41.138745259252346,
-    "txns": 33041,
-    "customers": 30751,
+    "pctToPlan": 98.6293701346513,
+    "gp": 485721.83429999975,
+    "gpPct": 41.14294819925697,
+    "txns": 33320,
+    "customers": 30990,
     "storeCount": 134,
-    "asOf": "2026-04-17T22:15:11.993000",
-    "asOfET": "Apr 17, 2026, 6:15 PM"
+    "asOf": "2026-04-17T22:30:13.967000",
+    "asOfET": "Apr 17, 2026, 6:30 PM"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.98 shape + 0.02 level)",
     "confidence": "medium",
-    "projectedEOD": 1200561.6305596088,
-    "projectedPctToPlan": 100.29943844384373,
-    "projectedVariance": 3584.2105596086476,
+    "projectedEOD": 1203263.6705057567,
+    "projectedPctToPlan": 100.52517703347792,
+    "projectedVariance": 6286.250505756587,
     "band": {
-      "low": 1004781.673219499,
-      "high": 1396341.5878997187
+      "low": 1007189.3508317223,
+      "high": 1399337.990179791
     },
-    "pctOfDayElapsed": 0.9773333333333333,
+    "pctOfDayElapsed": 0.982,
     "level_EOD": 1246871.8676820542,
-    "shape_EOD": 1199406.7121418829,
-    "blendWeight": 0.9756680789395421,
+    "shape_EOD": 1202211.0896130344,
+    "blendWeight": 0.9764316490166052,
     "factors": {
       "plan": 1196977.4200000002,
       "recencyFactor": 0.9393,
@@ -45,12 +45,12 @@
       "holidayMult": 1,
       "weatherKey": "normal",
       "weatherMult": 1,
-      "weatherSummary": "concord-nh: 70F Chance Rain Showers | worcester-ma: 70F Slight Chance Light Rain | burlington-vt: 61F Partly Sunny | portland-me: 43F Mostly Clear then Patchy Fog | albany-ny: 69F Sunny | scranton-pa: 54F Partly Cloudy"
+      "weatherSummary": "concord-nh: 44F Slight Chance Rain Showers then Partly Cloudy | worcester-ma: 70F Slight Chance Light Rain | burlington-vt: 61F Partly Sunny | portland-me: 43F Mostly Clear then Patchy Fog | albany-ny: 69F Sunny | scranton-pa: 54F Partly Cloudy"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.9773333333333333,
+      "basePaceFromCurve": 0.982,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.9773333333333333,
+      "blendedPaceAtNow": 0.982,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
@@ -61,9 +61,10 @@
     "mult": 1,
     "key": "normal",
     "season": "spring",
-    "summary": "concord-nh: 70F Chance Rain Showers | worcester-ma: 70F Slight Chance Light Rain | burlington-vt: 61F Partly Sunny | portland-me: 43F Mostly Clear then Patchy Fog | albany-ny: 69F Sunny | scranton-pa: 54F Partly Cloudy",
+    "summary": "concord-nh: 44F Slight Chance Rain Showers then Partly Cloudy | worcester-ma: 70F Slight Chance Light Rain | burlington-vt: 61F Partly Sunny | portland-me: 43F Mostly Clear then Patchy Fog | albany-ny: 69F Sunny | scranton-pa: 54F Partly Cloudy",
     "tagWeights": {
-      "rain_gt_0_5in": 0.41600000000000004,
+      "coldRain_lt_50F": 0.144,
+      "rain_gt_0_5in": 0.272,
       "normal": 0.46399999999999997,
       "perfect_65_80F_dry": 0.12
     },
@@ -71,10 +72,10 @@
       {
         "station": "concord-nh",
         "weight": 0.144,
-        "temp": 70,
+        "temp": 44,
         "unit": "F",
-        "short": "Chance Rain Showers",
-        "detailed": "A chance of rain showers. Partly sunny, with a high near 70. East wind 0 to 5 mph. Chance of precipitation is 30%."
+        "short": "Slight Chance Rain Showers then Partly Cloudy",
+        "detailed": "A slight chance of rain showers before 8pm. Partly cloudy, with a low around 44. Southeast wind around 0 mph. Chance of precipitation is 20%."
       },
       {
         "station": "worcester-ma",
