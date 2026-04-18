@@ -1,41 +1,41 @@
 {
-  "updatedAt": "2026-04-18T00:13:25.644Z",
-  "updatedAtET": "Apr 17, 2026, 8:13 PM",
+  "updatedAt": "2026-04-18T00:24:02.197Z",
+  "updatedAtET": "Apr 17, 2026, 8:24 PM",
   "dateET": "2026-04-17",
   "dow": 5,
   "season": "spring",
   "current": {
-    "ts": "2026-04-18T00:13:25.644Z",
-    "tsET": "Apr 17, 2026, 8:13 PM",
+    "ts": "2026-04-18T00:24:02.197Z",
+    "tsET": "Apr 17, 2026, 8:24 PM",
     "dateET": "2026-04-17",
     "hourET": 20,
-    "minuteET": 13,
+    "minuteET": 24,
     "dow": 5,
-    "sales": 1211156.0099999998,
+    "sales": 1211479.1699999995,
     "plan": 1196977.4200000002,
-    "pctToPlan": 101.18453278759425,
-    "gp": 498181.52159999975,
-    "gpPct": 41.13272918490491,
-    "txns": 34399,
-    "customers": 31781,
+    "pctToPlan": 101.21153079061418,
+    "gp": 498334.22449999955,
+    "gpPct": 41.13436176537809,
+    "txns": 34415,
+    "customers": 31793,
     "storeCount": 134,
-    "asOf": "2026-04-18T00:00:23.213000",
-    "asOfET": "Apr 17, 2026, 8:00 PM"
+    "asOf": "2026-04-18T00:15:22.737000",
+    "asOfET": "Apr 17, 2026, 8:15 PM"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.98 shape + 0.02 level)",
     "confidence": "medium",
-    "projectedEOD": 1211900.1979154432,
-    "projectedPctToPlan": 101.24670504773958,
-    "projectedVariance": 14922.777915443061,
+    "projectedEOD": 1212216.6244423483,
+    "projectedPctToPlan": 101.27314051106728,
+    "projectedVariance": 15239.204442348098,
     "band": {
-      "low": 1014945.6364559778,
-      "high": 1408854.7593749089
+      "low": 1015210.6382467966,
+      "high": 1409222.6106379002
     },
     "pctOfDayElapsed": 1,
     "level_EOD": 1246871.8676820542,
-    "shape_EOD": 1211156.0099999998,
+    "shape_EOD": 1211479.1699999995,
     "blendWeight": 0.9791636554813196,
     "factors": {
       "plan": 1196977.4200000002,
@@ -113,7 +113,7 @@
         "temp": 54,
         "unit": "F",
         "short": "Partly Cloudy",
-        "detailed": "Partly cloudy, with a low around 54. Northeast wind 1 to 6 mph."
+        "detailed": "Partly cloudy, with a low around 54. Northeast wind around 3 mph."
       }
     ]
   }
