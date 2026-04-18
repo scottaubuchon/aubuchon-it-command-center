@@ -1,15 +1,15 @@
 {
-  "updatedAt": "2026-04-18T12:56:24.778Z",
-  "updatedAtET": "Apr 18, 2026, 8:56 AM",
+  "updatedAt": "2026-04-18T12:57:02.101Z",
+  "updatedAtET": "Apr 18, 2026, 8:57 AM",
   "dateET": "2026-04-18",
   "dow": 6,
   "season": "spring",
   "current": {
-    "ts": "2026-04-18T12:56:24.778Z",
-    "tsET": "Apr 18, 2026, 8:56 AM",
+    "ts": "2026-04-18T12:57:02.101Z",
+    "tsET": "Apr 18, 2026, 8:57 AM",
     "dateET": "2026-04-18",
     "hourET": 8,
-    "minuteET": 56,
+    "minuteET": 57,
     "dow": 6,
     "sales": 82330.44,
     "plan": 1666261.5500000012,
@@ -24,19 +24,19 @@
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.10 shape + 0.90 level)",
+    "method": "blended (w=0.11 shape + 0.89 level)",
     "confidence": "low",
-    "projectedEOD": 1488913.6035993847,
-    "projectedPctToPlan": 89.35653610919508,
-    "projectedVariance": -177347.94640061655,
+    "projectedEOD": 1487093.835876044,
+    "projectedPctToPlan": 89.24732349948559,
+    "projectedVariance": -179167.71412395732,
     "band": {
-      "low": 1063070.3872320538,
-      "high": 1914756.8199667158
+      "low": 1062017.5147378966,
+      "high": 1912170.1570141912
     },
-    "pctOfDayElapsed": 0.14333333333333334,
+    "pctOfDayElapsed": 0.145,
     "level_EOD": 1595795.8156037352,
-    "shape_EOD": 574398.4186046511,
-    "blendWeight": 0.10464312158849792,
+    "shape_EOD": 567796.1379310346,
+    "blendWeight": 0.10574125857099786,
     "factors": {
       "plan": 1666261.5500000012,
       "recencyFactor": 0.9393,
@@ -48,9 +48,9 @@
       "weatherSummary": "concord-nh: 58F Partly Sunny | worcester-ma: 55F Areas Of Fog then Mostly Cloudy | burlington-vt: 69F Sunny | portland-me: 49F Areas Of Fog then Mostly Cloudy | albany-ny: 71F Mostly Sunny | scranton-pa: 74F Mostly Sunny"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.14333333333333334,
+      "basePaceFromCurve": 0.145,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.14333333333333334,
+      "blendedPaceAtNow": 0.145,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
