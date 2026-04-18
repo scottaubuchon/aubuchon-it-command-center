@@ -399,7 +399,23 @@ def _render_state_map(state_data):
         svg_paths.append(f'<text x="{x_pos:.1f}" y="{leg_y + leg_h + 10}" text-anchor="middle" font-size="7" fill="#6b7280" font-family="Arial,sans-serif">{lbl}</text>')
     svg_paths.append(f'<text x="{leg_x + leg_w/2:.1f}" y="{leg_y - 4}" text-anchor="middle" font-size="8" font-weight="600" fill="#374151" font-family="Arial,sans-serif">% vs Plan</text>')
 
-    svg = '<svg viewBox="0 0 520 310" xmlns="http://www.w3.org/2000/svg" style="width:540px;max-width:100%;height:auto;display:block;border-radius:6px;overflow:hidden">' + "\n".join(svg_paths) + "</svg>"
+    svg_inner = "\n".join(svg_paths)
+    svg = (
+        '<svg viewBox="0 0 520 310" xmlns="http://www.w3.org/2000/svg" '
+        'onclick="document.getElementById(\'stateMapModal\').style.display=\'flex\'" '
+        'style="width:540px;max-width:100%;height:auto;display:block;border-radius:6px;overflow:hidden;cursor:zoom-in">'
+        + svg_inner + '</svg>'
+    )
+    svg_modal = (
+        '<div id="stateMapModal" '
+        'onclick="this.style.display=\'none\'" '
+        'style="display:none;position:fixed;inset:0;background:rgba(15,23,42,0.85);'
+        'z-index:9999;align-items:center;justify-content:center;cursor:zoom-out;padding:24px">'
+        '<svg viewBox="0 0 520 310" xmlns="http://www.w3.org/2000/svg" '
+        'style="width:min(1400px,95vw);max-height:95vh;height:auto;display:block;'
+        'background:#f8fafc;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,0.5)">'
+        + svg_inner + '</svg></div>'
+    )
 
     # Summary table rows (sorted best → worst)
     name_map = {s["code"]: s["name"] for s in STATES}
@@ -416,7 +432,7 @@ def _render_state_map(state_data):
             <div class="panel-hint">Color = % vs Plan · hover for details</div>
         </div>
         <div style="display:flex;gap:24px;align-items:flex-start;padding:16px 20px 12px;flex-wrap:wrap">
-            <div style="position:relative;flex:0 0 auto">{svg}</div>
+            <div style="position:relative;flex:0 0 auto">{svg}{svg_modal}</div>
             <div style="flex:1;min-width:190px;padding-top:4px">
                 <div style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">State Summary</div>
                 <table style="width:100%;border-collapse:collapse;font-size:12px;">
