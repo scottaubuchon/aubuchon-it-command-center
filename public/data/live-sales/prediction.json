@@ -1,15 +1,15 @@
 {
-  "updatedAt": "2026-04-18T12:24:43.673Z",
-  "updatedAtET": "Apr 18, 2026, 8:24 AM",
+  "updatedAt": "2026-04-18T12:35:16.841Z",
+  "updatedAtET": "Apr 18, 2026, 8:35 AM",
   "dateET": "2026-04-18",
   "dow": 6,
   "season": "spring",
   "current": {
-    "ts": "2026-04-18T12:24:43.673Z",
-    "tsET": "Apr 18, 2026, 8:24 AM",
+    "ts": "2026-04-18T12:35:16.841Z",
+    "tsET": "Apr 18, 2026, 8:35 AM",
     "dateET": "2026-04-18",
     "hourET": 8,
-    "minuteET": 24,
+    "minuteET": 35,
     "dow": 6,
     "sales": 35941.549999999974,
     "plan": 1666261.5500000012,
@@ -26,17 +26,17 @@
     "available": true,
     "method": "blended (w=0.08 shape + 0.92 level)",
     "confidence": "low",
-    "projectedEOD": 1504882.7052977087,
-    "projectedPctToPlan": 90.31491516429145,
-    "projectedVariance": -161378.84470229247,
+    "projectedEOD": 1489857.1944943995,
+    "projectedPctToPlan": 89.41316532776013,
+    "projectedVariance": -176404.35550560174,
     "band": {
-      "low": 1067840.2211856267,
-      "high": 1941925.1894097908
+      "low": 1059060.4936643073,
+      "high": 1920653.8953244917
     },
-    "pctOfDayElapsed": 0.092,
+    "pctOfDayElapsed": 0.10833333333333334,
     "level_EOD": 1595795.8156037352,
-    "shape_EOD": 390669.02173913014,
-    "blendWeight": 0.07543862668133519,
+    "shape_EOD": 331768.1538461536,
+    "blendWeight": 0.08381036611337442,
     "factors": {
       "plan": 1666261.5500000012,
       "recencyFactor": 0.9393,
@@ -48,9 +48,9 @@
       "weatherSummary": "concord-nh: 58F Partly Sunny | worcester-ma: 55F Areas Of Fog then Mostly Cloudy | burlington-vt: 69F Sunny | portland-me: 49F Areas Of Fog then Mostly Cloudy | albany-ny: 71F Sunny | scranton-pa: 74F Mostly Sunny"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.092,
+      "basePaceFromCurve": 0.10833333333333334,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.092,
+      "blendedPaceAtNow": 0.10833333333333334,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
