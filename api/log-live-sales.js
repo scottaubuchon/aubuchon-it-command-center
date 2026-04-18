@@ -21,6 +21,7 @@ const GH_TOKEN = process.env.GITHUB_TOKEN || '';
 const LIVE_SALES_URL = 'https://aubuchon-it-command-center.vercel.app/api/live-sales?refresh=true';
 const LOG_DIR = 'public/data/live-sales';
 const BASELINE_PATH = `${LOG_DIR}/baseline.json`;
+const OFFLINE_STORES_PATH = `${LOG_DIR}/offline-stores.json`;
 
 const BUSINESS_OPEN_HOUR = 7;    // 7 AM ET
 const BUSINESS_CLOSE_HOUR = 20;  // 8 PM ET  (Sunday closes at 17/5pm — handled by pace curve)
@@ -117,6 +118,47 @@ async function loadBaseline() {
     } catch { /* fall through */ }
   }
   return null;
+}
+
+async function loadOfflineStores() {
+  const r = await ghGet(OFFLINE_STORES_PATH);
+  if (r.status === 200 && r.body?.content) {
+    try {
+      return JSON.parse(Buffer.from(r.body.content, 'base64').toString('utf8'));
+    } catch { /* fall through */ }
+  }
+  return null;
+}
+
+// Estimate current and EOD sales for stores that don't report to the live feed.
+// offlineStores is the parsed offline-stores.json. paceAtNow is the company pace curve value
+// at the current time (0-1). Returns { estimatedCurrent, estimatedEOD, perStore: [...] }.
+function estimateOfflineSales(offlineStores, dow, paceAtNow) {
+  if (!offlineStores?.stores?.length) return null;
+  const pace = Math.max(0, Math.min(1, paceAtNow || 0));
+  const perStore = [];
+  let totalEOD = 0;
+  for (const s of offlineStores.stores) {
+    const dowEOD = Number(s.dowSales?.[String(dow)] || 0);
+    if (dowEOD <= 0) continue;
+    const current = dowEOD * pace;
+    totalEOD += dowEOD;
+    perStore.push({
+      storeCd: s.storeCd,
+      name: s.name,
+      dowEOD,
+      estimatedCurrent: current,
+      estimatedEOD: dowEOD,
+      stdev: Number(s.dowStdev?.[String(dow)] || 0),
+    });
+  }
+  return {
+    estimatedCurrent: totalEOD * pace,
+    estimatedEOD: totalEOD,
+    paceUsed: pace,
+    perStore,
+    source: offlineStores.source || 'offline-stores.json',
+  };
 }
 
 // --------- Holiday detection ----------
@@ -638,11 +680,12 @@ export default async function handler(req, res) {
     // 2) Append to log
     const appendResult = await appendLogLine(et.dateET, entry);
 
-    // 3) Load baseline + weather + observed history (parallel)
+    // 3) Load baseline + weather + observed history + offline stores (parallel)
     const season = seasonForMonth(et.month);
-    const [baseline, observedHistory] = await Promise.all([
+    const [baseline, observedHistory, offlineStores] = await Promise.all([
       loadBaseline(),
       loadObservedPaces(et.dateET, et.dow, 8),
+      loadOfflineStores(),
     ]);
     let weather = null;
     if (baseline) {
@@ -653,8 +696,24 @@ export default async function handler(req, res) {
       }
     }
 
-    // 4) Build prediction
+    // 4) Build prediction (live-reporting stores only)
     const prediction = buildPrediction({ entry, et, baseline, weather, observedHistory });
+
+    // 5) Estimate offline stores (not in live feed — e.g. Ithaca 233 & 234) and
+    //    layer them on top. Uses the company pace curve at current time for the
+    //    sales-so-far estimate; EOD estimate is the DOW-specific daily average.
+    let offlineEstimate = null;
+    if (offlineStores && prediction?.shapeDetail) {
+      const paceNow = prediction.shapeDetail.blendedPaceAtNow ?? prediction.pctOfDayElapsed ?? 0;
+      offlineEstimate = estimateOfflineSales(offlineStores, et.dow, paceNow);
+      if (offlineEstimate) {
+        // Augment the prediction with combined totals
+        prediction.offlineEstimate = offlineEstimate;
+        prediction.combinedProjectedEOD = prediction.projectedEOD + offlineEstimate.estimatedEOD;
+        prediction.combinedCurrentSales = Number(entry.sales || 0) + offlineEstimate.estimatedCurrent;
+        prediction.footnote = `Company total excludes ${offlineEstimate.perStore.length} store${offlineEstimate.perStore.length===1?'':'s'} not on live feed (${offlineEstimate.perStore.map(s=>s.storeCd).join(', ')}). Estimated contribution: $${Math.round(offlineEstimate.estimatedCurrent).toLocaleString()} so far, +$${Math.round(offlineEstimate.estimatedEOD).toLocaleString()} to EOD.`;
+      }
+    }
 
     const predictionDoc = {
       updatedAt: now.toISOString(),
@@ -664,6 +723,7 @@ export default async function handler(req, res) {
       season,
       current: entry,
       prediction,
+      offlineStoresVersion: offlineStores?.version ?? null,
       baselineVersion: baseline?.version ?? null,
       weatherRaw: weather,
     };
