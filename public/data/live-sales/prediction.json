@@ -1,15 +1,15 @@
 {
-  "updatedAt": "2026-04-18T23:22:58.705Z",
-  "updatedAtET": "Apr 18, 2026, 7:22 PM",
+  "updatedAt": "2026-04-18T23:33:28.874Z",
+  "updatedAtET": "Apr 18, 2026, 7:33 PM",
   "dateET": "2026-04-18",
   "dow": 6,
   "season": "spring",
   "current": {
-    "ts": "2026-04-18T23:22:58.705Z",
-    "tsET": "Apr 18, 2026, 7:22 PM",
+    "ts": "2026-04-18T23:33:28.874Z",
+    "tsET": "Apr 18, 2026, 7:33 PM",
     "dateET": "2026-04-18",
     "hourET": 19,
-    "minuteET": 22,
+    "minuteET": 33,
     "dow": 6,
     "sales": 1780351.5999999994,
     "plan": 1666261.5500000007,
@@ -100,7 +100,7 @@
         "temp": 41,
         "unit": "F",
         "short": "Areas Of Fog",
-        "detailed": "Areas of fog between 11pm and 4am, then areas of fog and a slight chance of rain. Cloudy, with a low around 41. Southeast wind 0 to 10 mph. Chance of precipitation is 20%. New rainfall amounts less than a tenth of an inch possible."
+        "detailed": "Areas of fog between 11pm and 4am, then areas of fog and a slight chance of rain. Cloudy, with a low around 41. Southeast wind 0 to 5 mph. Chance of precipitation is 20%. New rainfall amounts less than a tenth of an inch possible."
       },
       {
         "station": "worcester-ma",
