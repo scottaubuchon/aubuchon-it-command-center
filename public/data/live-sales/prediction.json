@@ -1,56 +1,56 @@
 {
-  "updatedAt": "2026-04-18T06:46:23.014Z",
-  "updatedAtET": "Apr 18, 2026, 2:46 AM",
+  "updatedAt": "2026-04-18T11:04:24.311Z",
+  "updatedAtET": "Apr 18, 2026, 7:04 AM",
   "dateET": "2026-04-18",
   "dow": 6,
   "season": "spring",
   "current": {
-    "ts": "2026-04-18T06:46:23.014Z",
-    "tsET": "Apr 18, 2026, 2:46 AM",
+    "ts": "2026-04-18T11:04:24.311Z",
+    "tsET": "Apr 18, 2026, 7:04 AM",
     "dateET": "2026-04-18",
-    "hourET": 2,
-    "minuteET": 46,
+    "hourET": 7,
+    "minuteET": 4,
     "dow": 6,
-    "sales": 1211604.3699999996,
-    "plan": 1666261.5500000007,
-    "pctToPlan": 72.71393677661224,
-    "gp": 498401.4844999998,
-    "gpPct": 41.135662501778526,
-    "txns": 34440,
-    "customers": 31798,
-    "storeCount": 134,
-    "asOf": "2026-04-18T01:30:09.507000",
-    "asOfET": "Apr 17, 2026, 9:30 PM"
+    "sales": 0,
+    "plan": 1666261.5500000012,
+    "pctToPlan": 0,
+    "gp": 0,
+    "gpPct": 0,
+    "txns": 0,
+    "customers": 0,
+    "storeCount": 0,
+    "asOf": "2026-04-18T11:04:24.301Z",
+    "asOfET": "Apr 18, 2026, 7:04 AM"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.04 shape + 0.96 level)",
     "confidence": "low",
-    "projectedEOD": 14463472.395753164,
-    "projectedPctToPlan": 868.0193332045114,
-    "projectedVariance": 12797210.845753163,
+    "projectedEOD": 1524414.7592051728,
+    "projectedPctToPlan": 91.48712332737749,
+    "projectedVariance": -141846.79079482844,
     "band": {
-      "low": 10190489.423555866,
-      "high": 18736455.36795046
+      "low": 1074635.9740130797,
+      "high": 1974193.5443972659
     },
-    "pctOfDayElapsed": 0.003952380952380952,
-    "level_EOD": 1595795.8156037347,
-    "shape_EOD": 306550503.253012,
-    "blendWeight": 0.04219536956251285,
+    "pctOfDayElapsed": 0.012666666666666666,
+    "level_EOD": 1595795.8156037352,
+    "shape_EOD": 0,
+    "blendWeight": 0.04473069530612648,
     "factors": {
-      "plan": 1666261.5500000007,
+      "plan": 1666261.5500000012,
       "recencyFactor": 0.9393,
       "dowPlanRatio": 1.0196,
       "holidayKey": null,
       "holidayMult": 1,
       "weatherKey": "normal",
       "weatherMult": 1,
-      "weatherSummary": "concord-nh: 46F Partly Cloudy | worcester-ma: 48F Areas Of Fog | burlington-vt: 43F Mostly Clear | portland-me: 44F Partly Cloudy then Patchy Fog | albany-ny: 51F Mostly Clear | scranton-pa: 54F Partly Cloudy"
+      "weatherSummary": "concord-nh: 58F Partly Sunny | worcester-ma: 55F Areas Of Fog then Mostly Cloudy | burlington-vt: 69F Sunny | portland-me: 49F Areas Of Fog then Mostly Cloudy | albany-ny: 71F Sunny | scranton-pa: 74F Mostly Sunny"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.003952380952380952,
+      "basePaceFromCurve": 0.012666666666666666,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.003952380952380952,
+      "blendedPaceAtNow": 0.012666666666666666,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
@@ -61,58 +61,59 @@
     "mult": 1,
     "key": "normal",
     "season": "spring",
-    "summary": "concord-nh: 46F Partly Cloudy | worcester-ma: 48F Areas Of Fog | burlington-vt: 43F Mostly Clear | portland-me: 44F Partly Cloudy then Patchy Fog | albany-ny: 51F Mostly Clear | scranton-pa: 54F Partly Cloudy",
+    "summary": "concord-nh: 58F Partly Sunny | worcester-ma: 55F Areas Of Fog then Mostly Cloudy | burlington-vt: 69F Sunny | portland-me: 49F Areas Of Fog then Mostly Cloudy | albany-ny: 71F Sunny | scranton-pa: 74F Mostly Sunny",
     "tagWeights": {
-      "normal": 1
+      "normal": 0.5680000000000001,
+      "perfect_65_80F_dry": 0.43199999999999994
     },
     "forecasts": [
       {
         "station": "concord-nh",
         "weight": 0.144,
-        "temp": 46,
+        "temp": 58,
         "unit": "F",
-        "short": "Partly Cloudy",
-        "detailed": "Partly cloudy, with a low around 46. East wind 0 to 5 mph."
+        "short": "Partly Sunny",
+        "detailed": "Partly sunny, with a high near 58. East wind 0 to 10 mph."
       },
       {
         "station": "worcester-ma",
         "weight": 0.272,
-        "temp": 48,
+        "temp": 55,
         "unit": "F",
-        "short": "Areas Of Fog",
-        "detailed": "Areas of fog after 5am. Mostly clear, with a low around 48. North wind around 3 mph."
+        "short": "Areas Of Fog then Mostly Cloudy",
+        "detailed": "Areas of fog before noon. Mostly cloudy, with a high near 55. Northeast wind 5 to 8 mph."
       },
       {
         "station": "burlington-vt",
         "weight": 0.224,
-        "temp": 43,
+        "temp": 69,
         "unit": "F",
-        "short": "Mostly Clear",
-        "detailed": "Mostly clear, with a low around 43. Northeast wind 2 to 6 mph."
+        "short": "Sunny",
+        "detailed": "Sunny, with a high near 69. South wind 7 to 18 mph, with gusts as high as 36 mph."
       },
       {
         "station": "portland-me",
         "weight": 0.152,
-        "temp": 44,
+        "temp": 49,
         "unit": "F",
-        "short": "Partly Cloudy then Patchy Fog",
-        "detailed": "Patchy fog after 5am. Partly cloudy, with a low around 44. Northeast wind around 5 mph."
+        "short": "Areas Of Fog then Mostly Cloudy",
+        "detailed": "Areas of fog before noon. Mostly cloudy, with a high near 49. East wind 5 to 10 mph."
       },
       {
         "station": "albany-ny",
         "weight": 0.12,
-        "temp": 51,
+        "temp": 71,
         "unit": "F",
-        "short": "Mostly Clear",
-        "detailed": "Mostly clear, with a low around 51. North wind around 3 mph."
+        "short": "Sunny",
+        "detailed": "Sunny, with a high near 71. Southeast wind 2 to 14 mph."
       },
       {
         "station": "scranton-pa",
         "weight": 0.088,
-        "temp": 54,
+        "temp": 74,
         "unit": "F",
-        "short": "Partly Cloudy",
-        "detailed": "Partly cloudy, with a low around 54. East wind around 2 mph."
+        "short": "Mostly Sunny",
+        "detailed": "Mostly sunny, with a high near 74. Southeast wind 2 to 14 mph."
       }
     ]
   }
