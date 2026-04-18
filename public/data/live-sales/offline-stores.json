@@ -1,0 +1,79 @@
+{
+  "version": 1,
+  "generatedAt": "2026-04-16",
+  "source": "RPT_SCORECARD_BY_DAY, last 120 days with 30-day recency weighting",
+  "description": "Offline stores not in the live-sales feed. For each store, dowSales[dow] = expected EOD sales. Multiply by the company pace-curve at current time to estimate sales so far today.",
+  "stores": [
+    {
+      "storeCd": "233",
+      "name": "ITHACA, NY - DOWNTOWN",
+      "dowSales": {
+        "0": 18813.02,
+        "1": 32001.3,
+        "2": 37195.24,
+        "3": 30286.51,
+        "4": 34401.18,
+        "5": 28492.26,
+        "6": 30526.82
+      },
+      "dowStdev": {
+        "0": 5327.29,
+        "1": 7465.19,
+        "2": 11039.63,
+        "3": 9794.84,
+        "4": 8271.95,
+        "5": 7968.93,
+        "6": 7815.02
+      },
+      "sampleSize": {
+        "0": 16,
+        "1": 17,
+        "2": 16,
+        "3": 17,
+        "4": 15,
+        "5": 17,
+        "6": 17
+      }
+    },
+    {
+      "storeCd": "234",
+      "name": "ITHACA, NY - TRIPHAMMER",
+      "dowSales": {
+        "0": 15305.68,
+        "1": 15875.1,
+        "2": 13561.88,
+        "3": 16132.26,
+        "4": 15018.9,
+        "5": 16421.85,
+        "6": 19771.84
+      },
+      "dowStdev": {
+        "0": 2752.39,
+        "1": 2750.07,
+        "2": 2036.35,
+        "3": 2570.46,
+        "4": 1826.78,
+        "5": 3839.48,
+        "6": 4357.75
+      },
+      "sampleSize": {
+        "0": 16,
+        "1": 17,
+        "2": 17,
+        "3": 17,
+        "4": 15,
+        "5": 17,
+        "6": 17
+      }
+    }
+  ],
+  "totalByDow": {
+    "0": 34118.7,
+    "1": 47876.4,
+    "2": 50757.12,
+    "3": 46418.77,
+    "4": 49420.08,
+    "5": 44914.11,
+    "6": 50298.66
+  }
+}
