@@ -1,15 +1,15 @@
 {
-  "updatedAt": "2026-04-18T16:20:26.535Z",
-  "updatedAtET": "Apr 18, 2026, 12:20 PM",
+  "updatedAt": "2026-04-18T16:31:07.197Z",
+  "updatedAtET": "Apr 18, 2026, 12:31 PM",
   "dateET": "2026-04-18",
   "dow": 6,
   "season": "spring",
   "current": {
-    "ts": "2026-04-18T16:20:26.535Z",
-    "tsET": "Apr 18, 2026, 12:20 PM",
+    "ts": "2026-04-18T16:31:07.197Z",
+    "tsET": "Apr 18, 2026, 12:31 PM",
     "dateET": "2026-04-18",
     "hourET": 12,
-    "minuteET": 20,
+    "minuteET": 31,
     "dow": 6,
     "sales": 782991.25,
     "plan": 1666261.5500000007,
@@ -24,19 +24,19 @@
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.71 shape + 0.29 level)",
+    "method": "blended (w=0.74 shape + 0.26 level)",
     "confidence": "medium",
-    "projectedEOD": 1420532.6026064698,
-    "projectedPctToPlan": 85.2526785249572,
-    "projectedVariance": -245728.94739353098,
+    "projectedEOD": 1376368.355227665,
+    "projectedPctToPlan": 82.6021794254128,
+    "projectedVariance": -289893.1947723357,
     "band": {
-      "low": 1144653.4156470054,
-      "high": 1696411.789565934
+      "low": 1115391.3526290643,
+      "high": 1637345.3578262657
     },
-    "pctOfDayElapsed": 0.58,
+    "pctOfDayElapsed": 0.602,
     "level_EOD": 1595795.8156037347,
-    "shape_EOD": 1349984.9137931035,
-    "blendWeight": 0.7130001627522815,
+    "shape_EOD": 1300649.9169435217,
+    "blendWeight": 0.7434542081463438,
     "factors": {
       "plan": 1666261.5500000007,
       "recencyFactor": 0.9393,
@@ -48,9 +48,9 @@
       "weatherSummary": "concord-nh: 59F Mostly Cloudy | worcester-ma: 55F Areas Of Fog then Mostly Cloudy | burlington-vt: 69F Sunny | portland-me: 50F Areas Of Fog then Mostly Cloudy | albany-ny: 71F Mostly Sunny | scranton-pa: 74F Mostly Sunny"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.58,
+      "basePaceFromCurve": 0.602,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.58,
+      "blendedPaceAtNow": 0.602,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
