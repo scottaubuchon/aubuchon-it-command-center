@@ -1,15 +1,15 @@
 {
-  "updatedAt": "2026-04-18T14:43:54.616Z",
-  "updatedAtET": "Apr 18, 2026, 10:43 AM",
+  "updatedAt": "2026-04-18T14:44:37.281Z",
+  "updatedAtET": "Apr 18, 2026, 10:44 AM",
   "dateET": "2026-04-18",
   "dow": 6,
   "season": "spring",
   "current": {
-    "ts": "2026-04-18T14:43:54.616Z",
-    "tsET": "Apr 18, 2026, 10:43 AM",
+    "ts": "2026-04-18T14:44:37.281Z",
+    "tsET": "Apr 18, 2026, 10:44 AM",
     "dateET": "2026-04-18",
     "hourET": 10,
-    "minuteET": 43,
+    "minuteET": 44,
     "dow": 6,
     "sales": 348475.16000000003,
     "plan": 1666261.5500000012,
@@ -24,19 +24,19 @@
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.36 shape + 0.64 level)",
+    "method": "blended (w=0.37 shape + 0.63 level)",
     "confidence": "medium",
-    "projectedEOD": 1357384.4679707913,
-    "projectedPctToPlan": 81.46286925787794,
-    "projectedVariance": -308877.08202920994,
+    "projectedEOD": 1352735.3407626247,
+    "projectedPctToPlan": 81.18385380510183,
+    "projectedVariance": -313526.20923737646,
     "band": {
-      "low": 1022301.6332471097,
-      "high": 1692467.302694473
+      "low": 1019573.8197979043,
+      "high": 1685896.8617273453
     },
-    "pctOfDayElapsed": 0.37033333333333335,
+    "pctOfDayElapsed": 0.37266666666666665,
     "level_EOD": 1595795.8156037352,
-    "shape_EOD": 940977.0297029703,
-    "blendWeight": 0.3640875197326334,
+    "shape_EOD": 935085.4025044724,
+    "blendWeight": 0.36787746949675165,
     "factors": {
       "plan": 1666261.5500000012,
       "recencyFactor": 0.9393,
@@ -48,9 +48,9 @@
       "weatherSummary": "concord-nh: 59F Mostly Cloudy | worcester-ma: 55F Areas Of Fog then Mostly Cloudy | burlington-vt: 69F Sunny | portland-me: 50F Areas Of Fog then Mostly Cloudy | albany-ny: 71F Mostly Sunny | scranton-pa: 74F Mostly Sunny"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.37033333333333335,
+      "basePaceFromCurve": 0.37266666666666665,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.37033333333333335,
+      "blendedPaceAtNow": 0.37266666666666665,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
