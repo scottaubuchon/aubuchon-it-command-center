@@ -1,41 +1,41 @@
 {
-  "updatedAt": "2026-04-18T01:27:47.129Z",
-  "updatedAtET": "Apr 17, 2026, 9:27 PM",
+  "updatedAt": "2026-04-18T01:38:18.938Z",
+  "updatedAtET": "Apr 17, 2026, 9:38 PM",
   "dateET": "2026-04-17",
   "dow": 5,
   "season": "spring",
   "current": {
-    "ts": "2026-04-18T01:27:47.129Z",
-    "tsET": "Apr 17, 2026, 9:27 PM",
+    "ts": "2026-04-18T01:38:18.938Z",
+    "tsET": "Apr 17, 2026, 9:38 PM",
     "dateET": "2026-04-17",
     "hourET": 21,
-    "minuteET": 27,
+    "minuteET": 38,
     "dow": 5,
-    "sales": 1211604.3699999996,
+    "sales": 1211604.37,
     "plan": 1196977.4200000002,
-    "pctToPlan": 101.22199046996221,
-    "gp": 498401.4844999998,
-    "gpPct": 41.135662501778526,
-    "txns": 34439,
+    "pctToPlan": 101.22199046996225,
+    "gp": 498401.48450000014,
+    "gpPct": 41.13566250177853,
+    "txns": 34440,
     "customers": 31798,
     "storeCount": 134,
-    "asOf": "2026-04-18T01:15:11.260000",
-    "asOfET": "Apr 17, 2026, 9:15 PM"
+    "asOf": "2026-04-18T01:30:09.507000",
+    "asOfET": "Apr 17, 2026, 9:30 PM"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.98 shape + 0.02 level)",
     "confidence": "medium",
-    "projectedEOD": 1212339.2157320147,
-    "projectedPctToPlan": 101.28338224893287,
-    "projectedVariance": 15361.79573201458,
+    "projectedEOD": 1212339.2157320152,
+    "projectedPctToPlan": 101.2833822489329,
+    "projectedVariance": 15361.795732015045,
     "band": {
-      "low": 1015313.3063499362,
-      "high": 1409365.1251140935
+      "low": 1015313.3063499365,
+      "high": 1409365.125114094
     },
     "pctOfDayElapsed": 1,
     "level_EOD": 1246871.8676820542,
-    "shape_EOD": 1211604.3699999996,
+    "shape_EOD": 1211604.37,
     "blendWeight": 0.9791636554813196,
     "factors": {
       "plan": 1196977.4200000002,
@@ -56,7 +56,7 @@
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve."
   },
-  "baselineVersion": 4,
+  "baselineVersion": 5,
   "weatherRaw": {
     "mult": 1,
     "key": "normal",
