@@ -1,42 +1,42 @@
 {
-  "updatedAt": "2026-04-18T14:22:38.739Z",
-  "updatedAtET": "Apr 18, 2026, 10:22 AM",
+  "updatedAt": "2026-04-18T14:33:16.680Z",
+  "updatedAtET": "Apr 18, 2026, 10:33 AM",
   "dateET": "2026-04-18",
   "dow": 6,
   "season": "spring",
   "current": {
-    "ts": "2026-04-18T14:22:38.739Z",
-    "tsET": "Apr 18, 2026, 10:22 AM",
+    "ts": "2026-04-18T14:33:16.680Z",
+    "tsET": "Apr 18, 2026, 10:33 AM",
     "dateET": "2026-04-18",
     "hourET": 10,
-    "minuteET": 22,
+    "minuteET": 33,
     "dow": 6,
-    "sales": 306831.85000000003,
+    "sales": 348475.16,
     "plan": 1666261.5500000012,
-    "pctToPlan": 18.41438698504444,
-    "gp": 124646.41139999995,
-    "gpPct": 40.62368733884698,
-    "txns": 7923,
-    "customers": 7165,
+    "pctToPlan": 20.913593067066795,
+    "gp": 140684.6165,
+    "gpPct": 40.37149061069375,
+    "txns": 8814,
+    "customers": 8008,
     "storeCount": 134,
-    "asOf": "2026-04-18T14:15:07.370000",
-    "asOfET": "Apr 18, 2026, 10:15 AM"
+    "asOf": "2026-04-18T14:30:06.420000",
+    "asOfET": "Apr 18, 2026, 10:30 AM"
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.29 shape + 0.71 level)",
+    "method": "blended (w=0.33 shape + 0.67 level)",
     "confidence": "medium",
-    "projectedEOD": 1410623.9451824399,
-    "projectedPctToPlan": 84.65801453453923,
-    "projectedVariance": -255637.60481756134,
+    "projectedEOD": 1402258.4929955837,
+    "projectedPctToPlan": 84.15596537023751,
+    "projectedVariance": -264003.0570044175,
     "band": {
-      "low": 1046396.6806747204,
-      "high": 1774851.2096901594
+      "low": 1048286.9111759237,
+      "high": 1756230.0748152437
     },
-    "pctOfDayElapsed": 0.32133333333333336,
+    "pctOfDayElapsed": 0.34700000000000003,
     "level_EOD": 1595795.8156037352,
-    "shape_EOD": 954870.9024896265,
-    "blendWeight": 0.28891351643921476,
+    "shape_EOD": 1004251.1815561958,
+    "blendWeight": 0.3271728141356073,
     "factors": {
       "plan": 1666261.5500000012,
       "recencyFactor": 0.9393,
@@ -45,12 +45,12 @@
       "holidayMult": 1,
       "weatherKey": "normal",
       "weatherMult": 1,
-      "weatherSummary": "concord-nh: 59F Mostly Cloudy | worcester-ma: 55F Areas Of Fog then Mostly Cloudy | burlington-vt: 69F Sunny | portland-me: 50F Areas Of Fog then Mostly Cloudy | albany-ny: 71F Mostly Sunny | scranton-pa: 74F Mostly Sunny"
+      "weatherSummary": "concord-nh: 59F Mostly Cloudy | worcester-ma: 55F Areas Of Fog then Mostly Cloudy | burlington-vt: 69F Sunny | portland-me: 50F Patchy Fog then Mostly Cloudy | albany-ny: 71F Mostly Sunny | scranton-pa: 74F Mostly Sunny"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.32133333333333336,
+      "basePaceFromCurve": 0.34700000000000003,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.32133333333333336,
+      "blendedPaceAtNow": 0.34700000000000003,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
@@ -61,7 +61,7 @@
     "mult": 1,
     "key": "normal",
     "season": "spring",
-    "summary": "concord-nh: 59F Mostly Cloudy | worcester-ma: 55F Areas Of Fog then Mostly Cloudy | burlington-vt: 69F Sunny | portland-me: 50F Areas Of Fog then Mostly Cloudy | albany-ny: 71F Mostly Sunny | scranton-pa: 74F Mostly Sunny",
+    "summary": "concord-nh: 59F Mostly Cloudy | worcester-ma: 55F Areas Of Fog then Mostly Cloudy | burlington-vt: 69F Sunny | portland-me: 50F Patchy Fog then Mostly Cloudy | albany-ny: 71F Mostly Sunny | scranton-pa: 74F Mostly Sunny",
     "tagWeights": {
       "normal": 0.5680000000000001,
       "perfect_65_80F_dry": 0.43199999999999994
@@ -73,7 +73,7 @@
         "temp": 59,
         "unit": "F",
         "short": "Mostly Cloudy",
-        "detailed": "Mostly cloudy, with a high near 59. East wind 5 to 10 mph, with gusts as high as 25 mph."
+        "detailed": "Mostly cloudy, with a high near 59. Southeast wind around 10 mph, with gusts as high as 25 mph."
       },
       {
         "station": "worcester-ma",
@@ -96,8 +96,8 @@
         "weight": 0.152,
         "temp": 50,
         "unit": "F",
-        "short": "Areas Of Fog then Mostly Cloudy",
-        "detailed": "Areas of fog before noon. Mostly cloudy, with a high near 50. East wind 5 to 15 mph, with gusts as high as 25 mph."
+        "short": "Patchy Fog then Mostly Cloudy",
+        "detailed": "Patchy fog before noon. Mostly cloudy, with a high near 50. East wind 10 to 15 mph, with gusts as high as 25 mph."
       },
       {
         "station": "albany-ny",
@@ -105,7 +105,7 @@
         "temp": 71,
         "unit": "F",
         "short": "Mostly Sunny",
-        "detailed": "Mostly sunny, with a high near 71. Southeast wind 5 to 14 mph."
+        "detailed": "Mostly sunny, with a high near 71. Southeast wind 9 to 14 mph."
       },
       {
         "station": "scranton-pa",
@@ -113,7 +113,7 @@
         "temp": 74,
         "unit": "F",
         "short": "Mostly Sunny",
-        "detailed": "Mostly sunny, with a high near 74. Southeast wind 2 to 14 mph."
+        "detailed": "Mostly sunny, with a high near 74. Southeast wind 3 to 14 mph."
       }
     ]
   }
