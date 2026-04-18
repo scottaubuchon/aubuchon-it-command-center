@@ -1,42 +1,42 @@
 {
-  "updatedAt": "2026-04-18T12:45:52.931Z",
-  "updatedAtET": "Apr 18, 2026, 8:45 AM",
+  "updatedAt": "2026-04-18T12:56:24.778Z",
+  "updatedAtET": "Apr 18, 2026, 8:56 AM",
   "dateET": "2026-04-18",
   "dow": 6,
   "season": "spring",
   "current": {
-    "ts": "2026-04-18T12:45:52.931Z",
-    "tsET": "Apr 18, 2026, 8:45 AM",
+    "ts": "2026-04-18T12:56:24.778Z",
+    "tsET": "Apr 18, 2026, 8:56 AM",
     "dateET": "2026-04-18",
     "hourET": 8,
-    "minuteET": 45,
+    "minuteET": 56,
     "dow": 6,
-    "sales": 52426.350000000006,
+    "sales": 82330.44,
     "plan": 1666261.5500000012,
-    "pctToPlan": 3.146345782269294,
-    "gp": 20542.857399999997,
-    "gpPct": 39.184222056275125,
-    "txns": 1652,
-    "customers": 1144,
+    "pctToPlan": 4.941027415533891,
+    "gp": 33475.79180000003,
+    "gpPct": 40.660285308811694,
+    "txns": 2412,
+    "customers": 1866,
     "storeCount": 134,
-    "asOf": "2026-04-18T12:30:06.613000",
-    "asOfET": "Apr 18, 2026, 8:30 AM"
+    "asOf": "2026-04-18T12:45:08.907000",
+    "asOfET": "Apr 18, 2026, 8:45 AM"
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.09 shape + 0.91 level)",
+    "method": "blended (w=0.10 shape + 0.90 level)",
     "confidence": "low",
-    "projectedEOD": 1486139.4121366262,
-    "projectedPctToPlan": 89.19004415222959,
-    "projectedVariance": -180122.137863375,
+    "projectedEOD": 1488913.6035993847,
+    "projectedPctToPlan": 89.35653610919508,
+    "projectedVariance": -177347.94640061655,
     "band": {
-      "low": 1058526.7256846742,
-      "high": 1913752.0985885782
+      "low": 1063070.3872320538,
+      "high": 1914756.8199667158
     },
-    "pctOfDayElapsed": 0.125,
+    "pctOfDayElapsed": 0.14333333333333334,
     "level_EOD": 1595795.8156037352,
-    "shape_EOD": 419410.80000000005,
-    "blendWeight": 0.0932147230818236,
+    "shape_EOD": 574398.4186046511,
+    "blendWeight": 0.10464312158849792,
     "factors": {
       "plan": 1666261.5500000012,
       "recencyFactor": 0.9393,
@@ -45,12 +45,12 @@
       "holidayMult": 1,
       "weatherKey": "normal",
       "weatherMult": 1,
-      "weatherSummary": "concord-nh: 58F Partly Sunny | worcester-ma: 55F Areas Of Fog then Mostly Cloudy | burlington-vt: 69F Sunny | portland-me: 49F Areas Of Fog then Mostly Cloudy | albany-ny: 71F Sunny | scranton-pa: 74F Mostly Sunny"
+      "weatherSummary": "concord-nh: 58F Partly Sunny | worcester-ma: 55F Areas Of Fog then Mostly Cloudy | burlington-vt: 69F Sunny | portland-me: 49F Areas Of Fog then Mostly Cloudy | albany-ny: 71F Mostly Sunny | scranton-pa: 74F Mostly Sunny"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.125,
+      "basePaceFromCurve": 0.14333333333333334,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.125,
+      "blendedPaceAtNow": 0.14333333333333334,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
@@ -61,7 +61,7 @@
     "mult": 1,
     "key": "normal",
     "season": "spring",
-    "summary": "concord-nh: 58F Partly Sunny | worcester-ma: 55F Areas Of Fog then Mostly Cloudy | burlington-vt: 69F Sunny | portland-me: 49F Areas Of Fog then Mostly Cloudy | albany-ny: 71F Sunny | scranton-pa: 74F Mostly Sunny",
+    "summary": "concord-nh: 58F Partly Sunny | worcester-ma: 55F Areas Of Fog then Mostly Cloudy | burlington-vt: 69F Sunny | portland-me: 49F Areas Of Fog then Mostly Cloudy | albany-ny: 71F Mostly Sunny | scranton-pa: 74F Mostly Sunny",
     "tagWeights": {
       "normal": 0.5680000000000001,
       "perfect_65_80F_dry": 0.43199999999999994
@@ -104,8 +104,8 @@
         "weight": 0.12,
         "temp": 71,
         "unit": "F",
-        "short": "Sunny",
-        "detailed": "Sunny, with a high near 71. Southeast wind 2 to 14 mph."
+        "short": "Mostly Sunny",
+        "detailed": "Mostly sunny, with a high near 71. Southeast wind 5 to 14 mph."
       },
       {
         "station": "scranton-pa",
