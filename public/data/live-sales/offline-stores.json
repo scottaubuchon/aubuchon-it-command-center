@@ -1,79 +1,63 @@
 {
-  "version": 1,
-  "generatedAt": "2026-04-16",
-  "source": "RPT_SCORECARD_BY_DAY, last 120 days with 30-day recency weighting",
-  "description": "Offline stores not in the live-sales feed. For each store, dowSales[dow] = expected EOD sales. Multiply by the company pace-curve at current time to estimate sales so far today.",
+  "version": 2,
+  "generatedAt": "2026-04-18",
+  "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days",
+  "description": "Offline stores not in the live-sales feed. For each store, dowSales[dow] = expected EOD sales (0=Sun..6=Sat, JS getDay convention). Multiply by the company pace-curve at current time to estimate sales so far today. Diff confirmed: YODA reports 136 stores/day, live feed reports 134 — these are the only 2 offline stores.",
   "stores": [
     {
       "storeCd": "233",
       "name": "ITHACA, NY - DOWNTOWN",
       "dowSales": {
-        "0": 18813.02,
-        "1": 32001.3,
-        "2": 37195.24,
-        "3": 30286.51,
-        "4": 34401.18,
-        "5": 28492.26,
-        "6": 30526.82
+        "0": 15777,
+        "1": 28199,
+        "2": 28783,
+        "3": 26994,
+        "4": 30687,
+        "5": 24862,
+        "6": 24716
       },
       "dowStdev": {
-        "0": 5327.29,
-        "1": 7465.19,
-        "2": 11039.63,
-        "3": 9794.84,
-        "4": 8271.95,
-        "5": 7968.93,
-        "6": 7815.02
+        "0": 0.422,
+        "1": 0.2923,
+        "2": 0.4847,
+        "3": 0.4325,
+        "4": 0.3949,
+        "5": 0.3127,
+        "6": 0.3879
       },
-      "sampleSize": {
-        "0": 16,
-        "1": 17,
-        "2": 16,
-        "3": 17,
-        "4": 15,
-        "5": 17,
-        "6": 17
-      }
+      "sampleSize": 80
     },
     {
       "storeCd": "234",
       "name": "ITHACA, NY - TRIPHAMMER",
       "dowSales": {
-        "0": 15305.68,
-        "1": 15875.1,
-        "2": 13561.88,
-        "3": 16132.26,
-        "4": 15018.9,
-        "5": 16421.85,
-        "6": 19771.84
+        "0": 12703,
+        "1": 14608,
+        "2": 13608,
+        "3": 14834,
+        "4": 15272,
+        "5": 15614,
+        "6": 18065
       },
       "dowStdev": {
-        "0": 2752.39,
-        "1": 2750.07,
-        "2": 2036.35,
-        "3": 2570.46,
-        "4": 1826.78,
-        "5": 3839.48,
-        "6": 4357.75
+        "0": 0.2658,
+        "1": 0.1658,
+        "2": 0.1026,
+        "3": 0.1986,
+        "4": 0.1435,
+        "5": 0.1906,
+        "6": 0.1722
       },
-      "sampleSize": {
-        "0": 16,
-        "1": 17,
-        "2": 17,
-        "3": 17,
-        "4": 15,
-        "5": 17,
-        "6": 17
-      }
+      "sampleSize": 81
     }
   ],
   "totalByDow": {
-    "0": 34118.7,
-    "1": 47876.4,
-    "2": 50757.12,
-    "3": 46418.77,
-    "4": 49420.08,
-    "5": 44914.11,
-    "6": 50298.66
+    "0": 28480,
+    "1": 42807,
+    "2": 42391,
+    "3": 41828,
+    "4": 45959,
+    "5": 40476,
+    "6": 42781
   }
 }
