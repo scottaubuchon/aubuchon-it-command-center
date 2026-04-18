@@ -1,21 +1,21 @@
 {
-  "updatedAt": "2026-04-18T01:48:56.412Z",
-  "updatedAtET": "Apr 17, 2026, 9:48 PM",
-  "dateET": "2026-04-17",
-  "dow": 5,
+  "updatedAt": "2026-04-18T05:53:42.518Z",
+  "updatedAtET": "Apr 18, 2026, 1:53 AM",
+  "dateET": "2026-04-18",
+  "dow": 6,
   "season": "spring",
   "current": {
-    "ts": "2026-04-18T01:48:56.412Z",
-    "tsET": "Apr 17, 2026, 9:48 PM",
-    "dateET": "2026-04-17",
-    "hourET": 21,
-    "minuteET": 48,
-    "dow": 5,
-    "sales": 1211604.37,
-    "plan": 1196977.4200000002,
-    "pctToPlan": 101.22199046996225,
-    "gp": 498401.48450000014,
-    "gpPct": 41.13566250177853,
+    "ts": "2026-04-18T05:53:42.518Z",
+    "tsET": "Apr 18, 2026, 1:53 AM",
+    "dateET": "2026-04-18",
+    "hourET": 1,
+    "minuteET": 53,
+    "dow": 6,
+    "sales": 1211604.3699999996,
+    "plan": 1666261.5500000007,
+    "pctToPlan": 72.71393677661224,
+    "gp": 498401.4844999998,
+    "gpPct": 41.135662501778526,
     "txns": 34440,
     "customers": 31798,
     "storeCount": 134,
@@ -24,33 +24,33 @@
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.98 shape + 0.02 level)",
-    "confidence": "medium",
-    "projectedEOD": 1212339.2157320152,
-    "projectedPctToPlan": 101.2833822489329,
-    "projectedVariance": 15361.795732015045,
+    "method": "blended (w=0.04 shape + 0.96 level)",
+    "confidence": "low",
+    "projectedEOD": 20370784.86269735,
+    "projectedPctToPlan": 1222.5442555940479,
+    "projectedVariance": 18704523.31269735,
     "band": {
-      "low": 1015313.3063499365,
-      "high": 1409365.125114094
+      "low": 14351495.539055673,
+      "high": 26390074.18633903
     },
-    "pctOfDayElapsed": 1,
-    "level_EOD": 1246871.8676820542,
-    "shape_EOD": 1211604.37,
-    "blendWeight": 0.9791636554813196,
+    "pctOfDayElapsed": 0.0026904761904761906,
+    "level_EOD": 1595795.8156037347,
+    "shape_EOD": 450330827.7876105,
+    "blendWeight": 0.04183981126810008,
     "factors": {
-      "plan": 1196977.4200000002,
+      "plan": 1666261.5500000007,
       "recencyFactor": 0.9393,
-      "dowPlanRatio": 1.109,
+      "dowPlanRatio": 1.0196,
       "holidayKey": null,
       "holidayMult": 1,
       "weatherKey": "normal",
       "weatherMult": 1,
-      "weatherSummary": "concord-nh: 46F Partly Cloudy | worcester-ma: 48F Partly Cloudy then Areas Of Fog | burlington-vt: 43F Mostly Clear | portland-me: 44F Partly Cloudy then Patchy Fog | albany-ny: 51F Partly Cloudy | scranton-pa: 54F Partly Cloudy"
+      "weatherSummary": "concord-nh: 46F Partly Cloudy | worcester-ma: 48F Partly Cloudy then Areas Of Fog | burlington-vt: 43F Mostly Clear | portland-me: 44F Partly Cloudy then Patchy Fog | albany-ny: 51F Mostly Clear | scranton-pa: 54F Partly Cloudy"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 1,
+      "basePaceFromCurve": 0.0026904761904761906,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 1,
+      "blendedPaceAtNow": 0.0026904761904761906,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
@@ -61,7 +61,7 @@
     "mult": 1,
     "key": "normal",
     "season": "spring",
-    "summary": "concord-nh: 46F Partly Cloudy | worcester-ma: 48F Partly Cloudy then Areas Of Fog | burlington-vt: 43F Mostly Clear | portland-me: 44F Partly Cloudy then Patchy Fog | albany-ny: 51F Partly Cloudy | scranton-pa: 54F Partly Cloudy",
+    "summary": "concord-nh: 46F Partly Cloudy | worcester-ma: 48F Partly Cloudy then Areas Of Fog | burlington-vt: 43F Mostly Clear | portland-me: 44F Partly Cloudy then Patchy Fog | albany-ny: 51F Mostly Clear | scranton-pa: 54F Partly Cloudy",
     "tagWeights": {
       "normal": 1
     },
@@ -72,7 +72,7 @@
         "temp": 46,
         "unit": "F",
         "short": "Partly Cloudy",
-        "detailed": "Partly cloudy, with a low around 46. East wind around 0 mph."
+        "detailed": "Partly cloudy, with a low around 46. East wind 0 to 5 mph."
       },
       {
         "station": "worcester-ma",
@@ -103,8 +103,8 @@
         "weight": 0.12,
         "temp": 51,
         "unit": "F",
-        "short": "Partly Cloudy",
-        "detailed": "Partly cloudy, with a low around 51. North wind around 2 mph."
+        "short": "Mostly Clear",
+        "detailed": "Mostly clear, with a low around 51. North wind around 3 mph."
       },
       {
         "station": "scranton-pa",
@@ -112,7 +112,7 @@
         "temp": 54,
         "unit": "F",
         "short": "Partly Cloudy",
-        "detailed": "Partly cloudy, with a low around 54. Northeast wind around 3 mph."
+        "detailed": "Partly cloudy, with a low around 54. East wind around 2 mph."
       }
     ]
   }
