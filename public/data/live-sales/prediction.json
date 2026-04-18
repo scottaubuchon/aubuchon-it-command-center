@@ -1,42 +1,42 @@
 {
-  "updatedAt": "2026-04-18T17:25:37.582Z",
-  "updatedAtET": "Apr 18, 2026, 1:25 PM",
+  "updatedAt": "2026-04-18T17:36:12.422Z",
+  "updatedAtET": "Apr 18, 2026, 1:36 PM",
   "dateET": "2026-04-18",
   "dow": 6,
   "season": "spring",
   "current": {
-    "ts": "2026-04-18T17:25:37.582Z",
-    "tsET": "Apr 18, 2026, 1:25 PM",
+    "ts": "2026-04-18T17:36:12.422Z",
+    "tsET": "Apr 18, 2026, 1:36 PM",
     "dateET": "2026-04-18",
     "hourET": 13,
-    "minuteET": 25,
+    "minuteET": 36,
     "dow": 6,
-    "sales": 1000502.2400000003,
+    "sales": 1033047.7599999997,
     "plan": 1666261.5500000007,
-    "pctToPlan": 60.044729472392845,
-    "gp": 412412.9502000003,
-    "gpPct": 41.220592389678224,
-    "txns": 24627,
-    "customers": 23203,
+    "pctToPlan": 61.997935438166905,
+    "gp": 426666.4486999997,
+    "gpPct": 41.301715682535324,
+    "txns": 25488,
+    "customers": 24031,
     "storeCount": 134,
-    "asOf": "2026-04-18T17:15:10.927000",
-    "asOfET": "Apr 18, 2026, 1:15 PM"
+    "asOf": "2026-04-18T17:30:09.700000",
+    "asOfET": "Apr 18, 2026, 1:30 PM"
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.86 shape + 0.14 level)",
+    "method": "blended (w=0.88 shape + 0.12 level)",
     "confidence": "medium",
-    "projectedEOD": 1435181.7061946297,
-    "projectedPctToPlan": 86.13183843764678,
-    "projectedVariance": -231079.84380537109,
+    "projectedEOD": 1437439.7089365614,
+    "projectedPctToPlan": 86.26735154133279,
+    "projectedVariance": -228821.84106343938,
     "band": {
-      "low": 1188415.7435257677,
-      "high": 1681947.6688634916
+      "low": 1193748.8625274985,
+      "high": 1681130.5553456242
     },
-    "pctOfDayElapsed": 0.71,
+    "pctOfDayElapsed": 0.73,
     "level_EOD": 1595795.8156037347,
-    "shape_EOD": 1409158.0845070428,
-    "blendWeight": 0.86056612703835,
+    "shape_EOD": 1415133.9178082189,
+    "blendWeight": 0.8765329524347759,
     "factors": {
       "plan": 1666261.5500000007,
       "recencyFactor": 0.9393,
@@ -48,23 +48,23 @@
       "weatherSummary": "concord-nh: 59F Mostly Cloudy | worcester-ma: 55F Areas Of Fog then Mostly Cloudy | burlington-vt: 69F Sunny | portland-me: 50F Areas Of Fog then Mostly Cloudy | albany-ny: 71F Mostly Sunny | scranton-pa: 74F Mostly Sunny"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.71,
+      "basePaceFromCurve": 0.73,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.71,
+      "blendedPaceAtNow": 0.73,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 30374.51,
+      "estimatedCurrent": 31230.13,
       "estimatedEOD": 42781,
-      "paceUsed": 0.71,
+      "paceUsed": 0.73,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 24716,
-          "estimatedCurrent": 17548.36,
+          "estimatedCurrent": 18042.68,
           "estimatedEOD": 24716,
           "stdev": 0.3879
         },
@@ -72,16 +72,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 18065,
-          "estimatedCurrent": 12826.15,
+          "estimatedCurrent": 13187.449999999999,
           "estimatedEOD": 18065,
           "stdev": 0.1722
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1477962.7061946297,
-    "combinedCurrentSales": 1030876.7500000003,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $30,375 so far, +$42,781 to EOD."
+    "combinedProjectedEOD": 1480220.7089365614,
+    "combinedCurrentSales": 1064277.8899999997,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $31,230 so far, +$42,781 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 5,
@@ -141,7 +141,7 @@
         "temp": 74,
         "unit": "F",
         "short": "Mostly Sunny",
-        "detailed": "Mostly sunny, with a high near 74. Southeast wind 2 to 14 mph."
+        "detailed": "Mostly sunny, with a high near 74. South wind around 14 mph."
       }
     ]
   }
