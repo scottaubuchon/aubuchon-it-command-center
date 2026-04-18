@@ -1,15 +1,15 @@
 {
-  "updatedAt": "2026-04-18T01:38:18.938Z",
-  "updatedAtET": "Apr 17, 2026, 9:38 PM",
+  "updatedAt": "2026-04-18T01:48:56.412Z",
+  "updatedAtET": "Apr 17, 2026, 9:48 PM",
   "dateET": "2026-04-17",
   "dow": 5,
   "season": "spring",
   "current": {
-    "ts": "2026-04-18T01:38:18.938Z",
-    "tsET": "Apr 17, 2026, 9:38 PM",
+    "ts": "2026-04-18T01:48:56.412Z",
+    "tsET": "Apr 17, 2026, 9:48 PM",
     "dateET": "2026-04-17",
     "hourET": 21,
-    "minuteET": 38,
+    "minuteET": 48,
     "dow": 5,
     "sales": 1211604.37,
     "plan": 1196977.4200000002,
@@ -45,7 +45,7 @@
       "holidayMult": 1,
       "weatherKey": "normal",
       "weatherMult": 1,
-      "weatherSummary": "concord-nh: 46F Partly Cloudy | worcester-ma: 48F Partly Cloudy then Areas Of Fog | burlington-vt: 43F Mostly Clear | portland-me: 44F Partly Cloudy then Patchy Fog | albany-ny: 51F Mostly Clear | scranton-pa: 54F Partly Cloudy"
+      "weatherSummary": "concord-nh: 46F Partly Cloudy | worcester-ma: 48F Partly Cloudy then Areas Of Fog | burlington-vt: 43F Mostly Clear | portland-me: 44F Partly Cloudy then Patchy Fog | albany-ny: 51F Partly Cloudy | scranton-pa: 54F Partly Cloudy"
     },
     "shapeDetail": {
       "basePaceFromCurve": 1,
@@ -61,7 +61,7 @@
     "mult": 1,
     "key": "normal",
     "season": "spring",
-    "summary": "concord-nh: 46F Partly Cloudy | worcester-ma: 48F Partly Cloudy then Areas Of Fog | burlington-vt: 43F Mostly Clear | portland-me: 44F Partly Cloudy then Patchy Fog | albany-ny: 51F Mostly Clear | scranton-pa: 54F Partly Cloudy",
+    "summary": "concord-nh: 46F Partly Cloudy | worcester-ma: 48F Partly Cloudy then Areas Of Fog | burlington-vt: 43F Mostly Clear | portland-me: 44F Partly Cloudy then Patchy Fog | albany-ny: 51F Partly Cloudy | scranton-pa: 54F Partly Cloudy",
     "tagWeights": {
       "normal": 1
     },
@@ -72,7 +72,7 @@
         "temp": 46,
         "unit": "F",
         "short": "Partly Cloudy",
-        "detailed": "Partly cloudy, with a low around 46. East wind 0 to 5 mph."
+        "detailed": "Partly cloudy, with a low around 46. East wind around 0 mph."
       },
       {
         "station": "worcester-ma",
@@ -103,8 +103,8 @@
         "weight": 0.12,
         "temp": 51,
         "unit": "F",
-        "short": "Mostly Clear",
-        "detailed": "Mostly clear, with a low around 51. North wind around 3 mph."
+        "short": "Partly Cloudy",
+        "detailed": "Partly cloudy, with a low around 51. North wind around 2 mph."
       },
       {
         "station": "scranton-pa",
@@ -112,7 +112,7 @@
         "temp": 54,
         "unit": "F",
         "short": "Partly Cloudy",
-        "detailed": "Partly cloudy, with a low around 54. Northeast wind 1 to 6 mph."
+        "detailed": "Partly cloudy, with a low around 54. Northeast wind around 3 mph."
       }
     ]
   }
