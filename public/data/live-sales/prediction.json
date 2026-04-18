@@ -1,15 +1,15 @@
 {
-  "updatedAt": "2026-04-18T06:25:21.328Z",
-  "updatedAtET": "Apr 18, 2026, 2:25 AM",
+  "updatedAt": "2026-04-18T06:35:52.966Z",
+  "updatedAtET": "Apr 18, 2026, 2:35 AM",
   "dateET": "2026-04-18",
   "dow": 6,
   "season": "spring",
   "current": {
-    "ts": "2026-04-18T06:25:21.328Z",
-    "tsET": "Apr 18, 2026, 2:25 AM",
+    "ts": "2026-04-18T06:35:52.966Z",
+    "tsET": "Apr 18, 2026, 2:35 AM",
     "dateET": "2026-04-18",
     "hourET": 2,
-    "minuteET": 25,
+    "minuteET": 35,
     "dow": 6,
     "sales": 1211604.3699999996,
     "plan": 1666261.5500000007,
@@ -26,17 +26,17 @@
     "available": true,
     "method": "blended (w=0.04 shape + 0.96 level)",
     "confidence": "low",
-    "projectedEOD": 16287481.462492231,
-    "projectedPctToPlan": 977.4864853895372,
-    "projectedVariance": 14621219.91249223,
+    "projectedEOD": 15357254.029964471,
+    "projectedPctToPlan": 921.6592695165092,
+    "projectedVariance": 13690992.47996447,
     "band": {
-      "low": 11475279.430661075,
-      "high": 21099683.49432339
+      "low": 10820047.157462925,
+      "high": 19894460.902466018
     },
-    "pctOfDayElapsed": 0.0034523809523809524,
+    "pctOfDayElapsed": 0.0036904761904761906,
     "level_EOD": 1595795.8156037347,
-    "shape_EOD": 350947472.68965507,
-    "blendWeight": 0.042054143773825825,
+    "shape_EOD": 328305700.2580644,
+    "blendWeight": 0.04212133769817918,
     "factors": {
       "plan": 1666261.5500000007,
       "recencyFactor": 0.9393,
@@ -45,12 +45,12 @@
       "holidayMult": 1,
       "weatherKey": "normal",
       "weatherMult": 1,
-      "weatherSummary": "concord-nh: 46F Partly Cloudy | worcester-ma: 48F Partly Cloudy then Areas Of Fog | burlington-vt: 43F Mostly Clear | portland-me: 44F Partly Cloudy then Patchy Fog | albany-ny: 51F Mostly Clear | scranton-pa: 54F Partly Cloudy"
+      "weatherSummary": "concord-nh: 46F Partly Cloudy | worcester-ma: 48F Areas Of Fog | burlington-vt: 43F Mostly Clear | portland-me: 44F Partly Cloudy then Patchy Fog | albany-ny: 51F Mostly Clear | scranton-pa: 54F Partly Cloudy"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.0034523809523809524,
+      "basePaceFromCurve": 0.0036904761904761906,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.0034523809523809524,
+      "blendedPaceAtNow": 0.0036904761904761906,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
@@ -61,7 +61,7 @@
     "mult": 1,
     "key": "normal",
     "season": "spring",
-    "summary": "concord-nh: 46F Partly Cloudy | worcester-ma: 48F Partly Cloudy then Areas Of Fog | burlington-vt: 43F Mostly Clear | portland-me: 44F Partly Cloudy then Patchy Fog | albany-ny: 51F Mostly Clear | scranton-pa: 54F Partly Cloudy",
+    "summary": "concord-nh: 46F Partly Cloudy | worcester-ma: 48F Areas Of Fog | burlington-vt: 43F Mostly Clear | portland-me: 44F Partly Cloudy then Patchy Fog | albany-ny: 51F Mostly Clear | scranton-pa: 54F Partly Cloudy",
     "tagWeights": {
       "normal": 1
     },
@@ -79,8 +79,8 @@
         "weight": 0.272,
         "temp": 48,
         "unit": "F",
-        "short": "Partly Cloudy then Areas Of Fog",
-        "detailed": "Areas of fog after 5am. Partly cloudy, with a low around 48. Northeast wind around 5 mph."
+        "short": "Areas Of Fog",
+        "detailed": "Areas of fog after 5am. Partly cloudy, with a low around 48. North wind around 5 mph."
       },
       {
         "station": "burlington-vt",
