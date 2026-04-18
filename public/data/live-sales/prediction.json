@@ -1,15 +1,15 @@
 {
-  "updatedAt": "2026-04-18T15:48:42.334Z",
-  "updatedAtET": "Apr 18, 2026, 11:48 AM",
+  "updatedAt": "2026-04-18T15:59:12.329Z",
+  "updatedAtET": "Apr 18, 2026, 11:59 AM",
   "dateET": "2026-04-18",
   "dow": 6,
   "season": "spring",
   "current": {
-    "ts": "2026-04-18T15:48:42.334Z",
-    "tsET": "Apr 18, 2026, 11:48 AM",
+    "ts": "2026-04-18T15:59:12.329Z",
+    "tsET": "Apr 18, 2026, 11:59 AM",
     "dateET": "2026-04-18",
     "hourET": 11,
-    "minuteET": 48,
+    "minuteET": 59,
     "dow": 6,
     "sales": 663127.0899999999,
     "plan": 1666261.5500000007,
@@ -24,19 +24,19 @@
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.61 shape + 0.39 level)",
+    "method": "blended (w=0.65 shape + 0.35 level)",
     "confidence": "medium",
-    "projectedEOD": 1405205.9147101305,
-    "projectedPctToPlan": 84.3328536693492,
-    "projectedVariance": -261055.6352898702,
+    "projectedEOD": 1359955.6379069812,
+    "projectedPctToPlan": 81.61717696162289,
+    "projectedVariance": -306305.9120930196,
     "band": {
-      "low": 1111202.295038342,
-      "high": 1699209.534381919
+      "low": 1082770.3191934018,
+      "high": 1637140.9566205605
     },
-    "pctOfDayElapsed": 0.516,
+    "pctOfDayElapsed": 0.538,
     "level_EOD": 1595795.8156037347,
-    "shape_EOD": 1285130.0193798447,
-    "blendWeight": 0.6134885243570565,
+    "shape_EOD": 1232578.234200743,
+    "blendWeight": 0.6493082652711343,
     "factors": {
       "plan": 1666261.5500000007,
       "recencyFactor": 0.9393,
@@ -48,9 +48,9 @@
       "weatherSummary": "concord-nh: 59F Mostly Cloudy | worcester-ma: 55F Areas Of Fog then Mostly Cloudy | burlington-vt: 69F Sunny | portland-me: 50F Areas Of Fog then Mostly Cloudy | albany-ny: 71F Mostly Sunny | scranton-pa: 74F Mostly Sunny"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.516,
+      "basePaceFromCurve": 0.538,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.516,
+      "blendedPaceAtNow": 0.538,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
