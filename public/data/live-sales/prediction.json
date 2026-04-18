@@ -1,41 +1,41 @@
 {
-  "updatedAt": "2026-04-18T00:45:04.339Z",
-  "updatedAtET": "Apr 17, 2026, 8:45 PM",
+  "updatedAt": "2026-04-18T00:55:37.978Z",
+  "updatedAtET": "Apr 17, 2026, 8:55 PM",
   "dateET": "2026-04-17",
   "dow": 5,
   "season": "spring",
   "current": {
-    "ts": "2026-04-18T00:45:04.339Z",
-    "tsET": "Apr 17, 2026, 8:45 PM",
+    "ts": "2026-04-18T00:55:37.978Z",
+    "tsET": "Apr 17, 2026, 8:55 PM",
     "dateET": "2026-04-17",
     "hourET": 20,
-    "minuteET": 45,
+    "minuteET": 55,
     "dow": 5,
-    "sales": 1211479.1699999995,
+    "sales": 1211554.47,
     "plan": 1196977.4200000002,
-    "pctToPlan": 101.21153079061418,
-    "gp": 498334.22449999955,
-    "gpPct": 41.13436176537809,
-    "txns": 34415,
-    "customers": 31793,
+    "pctToPlan": 101.2178216361007,
+    "gp": 498373.7487999997,
+    "gpPct": 41.13506748070515,
+    "txns": 34424,
+    "customers": 31796,
     "storeCount": 134,
-    "asOf": "2026-04-18T00:15:22.737000",
-    "asOfET": "Apr 17, 2026, 8:15 PM"
+    "asOf": "2026-04-18T00:45:08.990000",
+    "asOfET": "Apr 17, 2026, 8:45 PM"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.98 shape + 0.02 level)",
     "confidence": "medium",
-    "projectedEOD": 1212216.6244423483,
-    "projectedPctToPlan": 101.27314051106728,
-    "projectedVariance": 15239.204442348098,
+    "projectedEOD": 1212290.3554656066,
+    "projectedPctToPlan": 101.27930027832991,
+    "projectedVariance": 15312.935465606395,
     "band": {
-      "low": 1015210.6382467966,
-      "high": 1409222.6106379002
+      "low": 1015272.3867145798,
+      "high": 1409308.3242166336
     },
     "pctOfDayElapsed": 1,
     "level_EOD": 1246871.8676820542,
-    "shape_EOD": 1211479.1699999995,
+    "shape_EOD": 1211554.47,
     "blendWeight": 0.9791636554813196,
     "factors": {
       "plan": 1196977.4200000002,
@@ -45,7 +45,7 @@
       "holidayMult": 1,
       "weatherKey": "normal",
       "weatherMult": 1,
-      "weatherSummary": "concord-nh: 46F Partly Cloudy | worcester-ma: 48F Partly Cloudy then Patchy Fog | burlington-vt: 43F Mostly Clear | portland-me: 44F Partly Cloudy then Patchy Fog | albany-ny: 51F Mostly Clear | scranton-pa: 54F Partly Cloudy"
+      "weatherSummary": "concord-nh: 46F Partly Cloudy | worcester-ma: 48F Partly Cloudy then Areas Of Fog | burlington-vt: 43F Mostly Clear | portland-me: 44F Partly Cloudy then Patchy Fog | albany-ny: 51F Mostly Clear | scranton-pa: 54F Partly Cloudy"
     },
     "shapeDetail": {
       "basePaceFromCurve": 1,
@@ -61,10 +61,9 @@
     "mult": 1,
     "key": "normal",
     "season": "spring",
-    "summary": "concord-nh: 46F Partly Cloudy | worcester-ma: 48F Partly Cloudy then Patchy Fog | burlington-vt: 43F Mostly Clear | portland-me: 44F Partly Cloudy then Patchy Fog | albany-ny: 51F Mostly Clear | scranton-pa: 54F Partly Cloudy",
+    "summary": "concord-nh: 46F Partly Cloudy | worcester-ma: 48F Partly Cloudy then Areas Of Fog | burlington-vt: 43F Mostly Clear | portland-me: 44F Partly Cloudy then Patchy Fog | albany-ny: 51F Mostly Clear | scranton-pa: 54F Partly Cloudy",
     "tagWeights": {
-      "normal": 0.728,
-      "coldRain_lt_50F": 0.272
+      "normal": 1
     },
     "forecasts": [
       {
@@ -80,8 +79,8 @@
         "weight": 0.272,
         "temp": 48,
         "unit": "F",
-        "short": "Partly Cloudy then Patchy Fog",
-        "detailed": "Patchy fog and a slight chance of rain showers after 4am. Partly cloudy, with a low around 48. Northeast wind 2 to 6 mph."
+        "short": "Partly Cloudy then Areas Of Fog",
+        "detailed": "Areas of fog after 5am. Partly cloudy, with a low around 48. Northeast wind around 5 mph."
       },
       {
         "station": "burlington-vt",
@@ -105,7 +104,7 @@
         "temp": 51,
         "unit": "F",
         "short": "Mostly Clear",
-        "detailed": "Mostly clear, with a low around 51. North wind 1 to 6 mph."
+        "detailed": "Mostly clear, with a low around 51. North wind around 3 mph."
       },
       {
         "station": "scranton-pa",
@@ -113,7 +112,7 @@
         "temp": 54,
         "unit": "F",
         "short": "Partly Cloudy",
-        "detailed": "Partly cloudy, with a low around 54. Northeast wind 1 to 6 mph."
+        "detailed": "Partly cloudy, with a low around 54. Northeast wind around 3 mph."
       }
     ]
   }
