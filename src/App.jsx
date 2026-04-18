@@ -11,7 +11,7 @@ import {
   Settings, UserPlus, ToggleLeft, ToggleRight, Check
 } from "lucide-react";
 import { auth, signOut, db, storage } from "./firebase";
-import { doc, getDoc, setDoc, addDoc, collection, getDocs, query, orderBy, updateDoc, deleteDoc, serverTimestamp } from "firebase/firestore";
+import { doc, getDoc, setDoc, addDoc, collection, getDocs, query, orderBy, where, onSnapshot, updateDoc, deleteDoc, serverTimestamp } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
 /* =====================================================================
@@ -2320,6 +2320,82 @@ function InboxView({ inboxItems, setInboxItems, onPromote, ownerOptions, onAddOw
 }
 
 /* =====================================================================
+   PENDING JIFFY VIEW
+   Lists invoices currently sitting in Firestore with jiffyAction === "pending".
+   Driven by the same real-time snapshot as the header pill.
+   ===================================================================== */
+
+function PendingJiffyView({ invoices, onBack }) {
+  const fmtMoney = (n) => `$${Number(n || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  const fmtTime = (ts) => {
+    if (!ts) return "";
+    if (ts.seconds) return new Date(ts.seconds * 1000).toLocaleString();
+    if (ts.toDate) try { return ts.toDate().toLocaleString(); } catch (e) { return ""; }
+    return String(ts);
+  };
+  const sorted = [...(invoices || [])].sort((a, b) => {
+    const ta = a.actionedAt?.seconds || 0;
+    const tb = b.actionedAt?.seconds || 0;
+    return tb - ta;
+  });
+  return (
+    <div className="bg-white rounded-xl border border-gray-200 p-5">
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <h2 className="text-lg font-bold text-gray-900">Pending Jiffy submissions</h2>
+          <p className="text-xs text-gray-500 mt-0.5">
+            Invoices approved/rejected in Workbench but not yet submitted to Jiffy. The scheduled task processes these at 6:30 PM ET daily.
+          </p>
+        </div>
+        {onBack && (
+          <button onClick={onBack} className="text-xs text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1">
+            <ArrowLeft size={12} /> Back
+          </button>
+        )}
+      </div>
+      {sorted.length === 0 ? (
+        <div className="text-center py-12 text-sm text-gray-400">
+          Jiffy queue is empty. Nothing pending submission.
+        </div>
+      ) : (
+        <div className="overflow-x-auto">
+          <table className="w-full text-xs" style={{ minWidth: 800 }}>
+            <thead>
+              <tr className="border-b border-gray-200 text-left text-gray-500">
+                <th className="py-2 pr-3 font-medium">Invoice #</th>
+                <th className="py-2 pr-3 font-medium">Vendor</th>
+                <th className="py-2 pr-3 font-medium text-right">Amount</th>
+                <th className="py-2 pr-3 font-medium">Action</th>
+                <th className="py-2 pr-3 font-medium">Group</th>
+                <th className="py-2 pr-3 font-medium">Approved at</th>
+                <th className="py-2 pr-3 font-medium">Approved by</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sorted.map(inv => (
+                <tr key={inv.id} className="border-b border-gray-100 hover:bg-gray-50">
+                  <td className="py-2 pr-3 font-mono text-gray-900">{inv.invoiceNumber || inv.id}</td>
+                  <td className="py-2 pr-3 text-gray-700">{inv.vendor || "—"}</td>
+                  <td className="py-2 pr-3 text-right text-gray-900">{fmtMoney(inv.amount)}</td>
+                  <td className="py-2 pr-3">
+                    <span className={`px-1.5 py-0.5 rounded text-[10px] font-medium ${inv.status === "approved" ? "bg-emerald-100 text-emerald-700" : "bg-red-100 text-red-700"}`}>
+                      {inv.status || "—"}
+                    </span>
+                  </td>
+                  <td className="py-2 pr-3 text-gray-700">{inv.jiffyGroup || inv.category || "—"}</td>
+                  <td className="py-2 pr-3 text-gray-600">{fmtTime(inv.actionedAt)}</td>
+                  <td className="py-2 pr-3 text-gray-600">{inv.actionedBy || "—"}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* =====================================================================
    MAIN DASHBOARD
    ===================================================================== */
 
@@ -2343,6 +2419,19 @@ function ITProjectDashboard({ goHome, isAdmin, allAccessUsers }) {
   const [customOwners, setCustomOwners] = useState([]);
   const [customDepartments, setCustomDepartments] = useState([]);
   const [markDonePending, setMarkDonePending] = useState(null); // {id, name} | null
+  const [pendingJiffyInvoices, setPendingJiffyInvoices] = useState([]);
+
+  // Real-time subscription to invoices waiting for Jiffy submission.
+  // Powers the header pill AND the PendingJiffyView table from a single snapshot.
+  useEffect(() => {
+    const q = query(collection(db, "ap_invoices"), where("jiffyAction", "==", "pending"));
+    const unsub = onSnapshot(
+      q,
+      (snap) => setPendingJiffyInvoices(snap.docs.map(d => ({ id: d.id, ...d.data() }))),
+      (err) => console.warn("Pending Jiffy snapshot failed:", err)
+    );
+    return () => unsub();
+  }, []);
 
   const allOwners = useMemo(() => [...OWNER_OPTIONS, ...customOwners.filter(o => !OWNER_OPTIONS.includes(o))], [customOwners]);
   const allDepartments = useMemo(() => [...DEPARTMENTS, ...customDepartments.filter(d => !DEPARTMENTS.includes(d))], [customDepartments]);
@@ -2654,6 +2743,17 @@ function ITProjectDashboard({ goHome, isAdmin, allAccessUsers }) {
               <button onClick={()=>setShowReviewModal(true)} className="flex items-center gap-1.5 bg-indigo-600 text-white px-3.5 py-2 rounded-lg text-xs font-medium hover:bg-indigo-700 transition-colors shadow-sm"><Eye size={13}/>Review</button>
               <button onClick={()=>setShowExportDialog(true)} className="flex items-center gap-1.5 bg-gray-900 text-white px-3.5 py-2 rounded-lg text-xs font-medium hover:bg-gray-800 transition-colors shadow-sm"><Download size={13}/>Export</button>
               <span className="text-[10px] text-gray-300 px-1">Auto-saved</span>
+              <button
+                onClick={() => setActiveView("pendingJiffy")}
+                title={pendingJiffyInvoices.length === 0 ? "No invoices waiting for Jiffy submission" : `${pendingJiffyInvoices.length} invoice(s) queued for Jiffy submission`}
+                className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium transition-colors ${
+                  pendingJiffyInvoices.length === 0
+                    ? "bg-gray-100 text-gray-500 hover:bg-gray-200"
+                    : "bg-amber-100 text-amber-800 hover:bg-amber-200 animate-pulse"
+                }`}
+              >
+                Jiffy queue: {pendingJiffyInvoices.length === 0 ? "0" : `${pendingJiffyInvoices.length} pending`}
+              </button>
               <button onClick={() => signOut(auth)} className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100 transition-colors" title="Sign out">
                 <LogOut size={15} />
               </button>
@@ -2789,6 +2889,8 @@ function ITProjectDashboard({ goHome, isAdmin, allAccessUsers }) {
         {activeView === "voting" && (<VotingView projects={projects} votingHook={votingHook} />)}
 
         {activeView === "voteResults" && isAdmin && (<VotingResultsView projects={projects} votingHook={votingHook} allUsers={allAccessUsers} />)}
+
+        {activeView === "pendingJiffy" && (<PendingJiffyView invoices={pendingJiffyInvoices} onBack={() => setActiveView("projects")} />)}
 
         {showExportDialog && (<ExportPDFDialog onClose={()=>setShowExportDialog(false)} projects={projects} stats={stats} alerts={alerts} completedProjects={completedProjects} changeLog={changeLog} ownerOptions={allOwners} />)}
 
