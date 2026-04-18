@@ -1,15 +1,15 @@
 {
-  "updatedAt": "2026-04-18T01:06:44.436Z",
-  "updatedAtET": "Apr 17, 2026, 9:06 PM",
+  "updatedAt": "2026-04-18T01:17:15.262Z",
+  "updatedAtET": "Apr 17, 2026, 9:17 PM",
   "dateET": "2026-04-17",
   "dow": 5,
   "season": "spring",
   "current": {
-    "ts": "2026-04-18T01:06:44.436Z",
-    "tsET": "Apr 17, 2026, 9:06 PM",
+    "ts": "2026-04-18T01:17:15.262Z",
+    "tsET": "Apr 17, 2026, 9:17 PM",
     "dateET": "2026-04-17",
     "hourET": 21,
-    "minuteET": 6,
+    "minuteET": 17,
     "dow": 5,
     "sales": 1211554.47,
     "plan": 1196977.4200000002,
@@ -112,7 +112,7 @@
         "temp": 54,
         "unit": "F",
         "short": "Partly Cloudy",
-        "detailed": "Partly cloudy, with a low around 54. Northeast wind around 3 mph."
+        "detailed": "Partly cloudy, with a low around 54. Northeast wind 1 to 6 mph."
       }
     ]
   }
