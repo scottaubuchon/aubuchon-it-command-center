@@ -1,15 +1,15 @@
 {
-  "updatedAt": "2026-04-18T11:57:16.034Z",
-  "updatedAtET": "Apr 18, 2026, 7:57 AM",
+  "updatedAt": "2026-04-18T12:03:33.024Z",
+  "updatedAtET": "Apr 18, 2026, 8:03 AM",
   "dateET": "2026-04-18",
   "dow": 6,
   "season": "spring",
   "current": {
-    "ts": "2026-04-18T11:57:16.034Z",
-    "tsET": "Apr 18, 2026, 7:57 AM",
+    "ts": "2026-04-18T12:03:33.024Z",
+    "tsET": "Apr 18, 2026, 8:03 AM",
     "dateET": "2026-04-18",
-    "hourET": 7,
-    "minuteET": 57,
+    "hourET": 8,
+    "minuteET": 3,
     "dow": 6,
     "sales": 11161.089999999998,
     "plan": 1666261.5500000012,
@@ -26,17 +26,17 @@
     "available": true,
     "method": "blended (w=0.06 shape + 0.94 level)",
     "confidence": "low",
-    "projectedEOD": 1511754.3045680397,
-    "projectedPctToPlan": 90.727311361655,
-    "projectedVariance": -154507.2454319615,
+    "projectedEOD": 1506452.850014434,
+    "projectedPctToPlan": 90.40914675216702,
+    "projectedVariance": -159808.69998556725,
     "band": {
-      "low": 1069201.1679783508,
-      "high": 1954307.4411577287
+      "low": 1066093.9141187652,
+      "high": 1946811.7859101028
     },
-    "pctOfDayElapsed": 0.056999999999999995,
+    "pctOfDayElapsed": 0.064,
     "level_EOD": 1595795.8156037352,
-    "shape_EOD": 195808.59649122806,
-    "blendWeight": 0.060030198767794224,
+    "shape_EOD": 174392.03124999997,
+    "blendWeight": 0.06285544373298725,
     "factors": {
       "plan": 1666261.5500000012,
       "recencyFactor": 0.9393,
@@ -48,9 +48,9 @@
       "weatherSummary": "concord-nh: 58F Partly Sunny | worcester-ma: 55F Areas Of Fog then Mostly Cloudy | burlington-vt: 69F Sunny | portland-me: 49F Areas Of Fog then Mostly Cloudy | albany-ny: 71F Sunny | scranton-pa: 74F Mostly Sunny"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.056999999999999995,
+      "basePaceFromCurve": 0.064,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.056999999999999995,
+      "blendedPaceAtNow": 0.064,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
