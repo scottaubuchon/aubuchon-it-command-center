@@ -1,41 +1,41 @@
 {
-  "updatedAt": "2026-04-19T00:16:14.896Z",
-  "updatedAtET": "Apr 18, 2026, 8:16 PM",
+  "updatedAt": "2026-04-19T00:26:48.010Z",
+  "updatedAtET": "Apr 18, 2026, 8:26 PM",
   "dateET": "2026-04-18",
   "dow": 6,
   "season": "spring",
   "current": {
-    "ts": "2026-04-19T00:16:14.896Z",
-    "tsET": "Apr 18, 2026, 8:16 PM",
+    "ts": "2026-04-19T00:26:48.010Z",
+    "tsET": "Apr 18, 2026, 8:26 PM",
     "dateET": "2026-04-18",
     "hourET": 20,
-    "minuteET": 16,
+    "minuteET": 26,
     "dow": 6,
-    "sales": 1782256.3799999997,
+    "sales": 1782312.02,
     "plan": 1666261.5500000007,
-    "pctToPlan": 106.96138190309912,
-    "gp": 734325.7263999997,
-    "gpPct": 41.20202540108174,
-    "txns": 45853,
-    "customers": 43262,
+    "pctToPlan": 106.96472111476132,
+    "gp": 734366.0718000003,
+    "gpPct": 41.20300281653267,
+    "txns": 45865,
+    "customers": 43266,
     "storeCount": 134,
-    "asOf": "2026-04-19T00:00:08.917000",
-    "asOfET": "Apr 18, 2026, 8:00 PM"
+    "asOf": "2026-04-19T00:15:05.033000",
+    "asOfET": "Apr 18, 2026, 8:15 PM"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.98 shape + 0.02 level)",
     "confidence": "medium",
-    "projectedEOD": 1775711.1793294605,
-    "projectedPctToPlan": 106.56857438314289,
-    "projectedVariance": 109449.62932945974,
+    "projectedEOD": 1775765.6599952518,
+    "projectedPctToPlan": 106.57184401784048,
+    "projectedVariance": 109504.10999525106,
     "band": {
-      "low": 1502173.1634870092,
-      "high": 2049249.1951719117
+      "low": 1502219.2517219842,
+      "high": 2049312.0682685194
     },
     "pctOfDayElapsed": 1,
     "level_EOD": 1468132.150355436,
-    "shape_EOD": 1782256.3799999997,
+    "shape_EOD": 1782312.02,
     "blendWeight": 0.9791636554813196,
     "factors": {
       "plan": 1666261.5500000007,
@@ -79,8 +79,8 @@
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1818492.1793294605,
-    "combinedCurrentSales": 1825037.3799999997,
+    "combinedProjectedEOD": 1818546.6599952518,
+    "combinedCurrentSales": 1825093.02,
     "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $42,781 so far, +$42,781 to EOD."
   },
   "offlineStoresVersion": 2,
@@ -108,7 +108,7 @@
         "temp": 44,
         "unit": "F",
         "short": "Patchy Fog then Patchy Drizzle",
-        "detailed": "Patchy fog between 9pm and 1am, then patchy drizzle and patchy fog between 1am and 5am, then patchy drizzle and patchy fog and a slight chance of rain showers. Mostly cloudy, with a low around 44. Southeast wind 2 to 7 mph. Chance of precipitation is 20%."
+        "detailed": "Patchy fog between 9pm and 1am, then patchy drizzle and patchy fog between 1am and 5am, then patchy drizzle and patchy fog and a slight chance of rain showers. Mostly cloudy, with a low around 44. Southeast wind 2 to 6 mph. Chance of precipitation is 20%."
       },
       {
         "station": "burlington-vt",
