@@ -1,42 +1,42 @@
 {
-  "updatedAt": "2026-04-19T11:46:57.120Z",
-  "updatedAtET": "Apr 19, 2026, 7:46 AM",
+  "updatedAt": "2026-04-19T11:57:31.001Z",
+  "updatedAtET": "Apr 19, 2026, 7:57 AM",
   "dateET": "2026-04-19",
   "dow": 0,
   "season": "spring",
   "current": {
-    "ts": "2026-04-19T11:46:57.120Z",
-    "tsET": "Apr 19, 2026, 7:46 AM",
+    "ts": "2026-04-19T11:57:31.001Z",
+    "tsET": "Apr 19, 2026, 7:57 AM",
     "dateET": "2026-04-19",
     "hourET": 7,
-    "minuteET": 46,
+    "minuteET": 57,
     "dow": 0,
-    "sales": 4.94,
+    "sales": 81.27,
     "plan": 1197815.3599999996,
-    "pctToPlan": 0.000412417486447995,
-    "gp": 1.2320000000000002,
-    "gpPct": 24.93927125506073,
-    "txns": 4,
-    "customers": 1,
-    "storeCount": 1,
-    "asOf": "2026-04-19T11:30:08.393000",
-    "asOfET": "Apr 19, 2026, 7:30 AM"
+    "pctToPlan": 0.006784852049317519,
+    "gp": 25.851999999999997,
+    "gpPct": 31.810015996062507,
+    "txns": 9,
+    "customers": 4,
+    "storeCount": 2,
+    "asOf": "2026-04-19T11:45:06.513000",
+    "asOfET": "Apr 19, 2026, 7:45 AM"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.05 shape + 0.95 level)",
     "confidence": "low",
-    "projectedEOD": 1016710.5604086682,
-    "projectedPctToPlan": 84.8804076455213,
-    "projectedVariance": -181104.7995913314,
+    "projectedEOD": 1016776.2082346515,
+    "projectedPctToPlan": 84.88588827535588,
+    "projectedVariance": -181039.15176534816,
     "band": {
-      "low": 766904.9550786474,
-      "high": 1266516.1657386892
+      "low": 766970.5370115138,
+      "high": 1266581.879457789
     },
-    "pctOfDayElapsed": 0.01725925925925926,
+    "pctOfDayElapsed": 0.017666666666666667,
     "level_EOD": 1065859.782071656,
-    "shape_EOD": 286.2231759656653,
-    "blendWeight": 0.04612466333523115,
+    "shape_EOD": 4600.188679245282,
+    "blendWeight": 0.046250299307170055,
     "factors": {
       "plan": 1197815.3599999996,
       "recencyFactor": 0.9393,
@@ -45,26 +45,26 @@
       "holidayMult": 1,
       "weatherKey": "rain_weekend",
       "weatherMult": 0.9,
-      "weatherSummary": "concord-nh: 50F Light Rain | worcester-ma: 55F Light Rain | burlington-vt: 46F Rain And Snow Showers | portland-me: 46F Areas Of Fog then Light Rain | albany-ny: 48F Rain Showers | scranton-pa: 50F Rain Showers"
+      "weatherSummary": "concord-nh: 50F Areas Of Fog then Light Rain | worcester-ma: 55F Light Rain | burlington-vt: 46F Rain And Snow Showers | portland-me: 46F Areas Of Fog then Light Rain | albany-ny: 48F Rain Showers | scranton-pa: 50F Rain Showers"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.01725925925925926,
+      "basePaceFromCurve": 0.017666666666666667,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.01725925925925926,
+      "blendedPaceAtNow": 0.017666666666666667,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 491.54370370370367,
+      "estimatedCurrent": 503.1466666666667,
       "estimatedEOD": 28480,
-      "paceUsed": 0.01725925925925926,
+      "paceUsed": 0.017666666666666667,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 15777,
-          "estimatedCurrent": 272.2993333333333,
+          "estimatedCurrent": 278.72700000000003,
           "estimatedEOD": 15777,
           "stdev": 0.422
         },
@@ -72,16 +72,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 12703,
-          "estimatedCurrent": 219.24437037037038,
+          "estimatedCurrent": 224.41966666666667,
           "estimatedEOD": 12703,
           "stdev": 0.2658
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1045190.5604086682,
-    "combinedCurrentSales": 496.48370370370367,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $492 so far, +$28,480 to EOD."
+    "combinedProjectedEOD": 1045256.2082346515,
+    "combinedCurrentSales": 584.4166666666667,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $503 so far, +$28,480 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 6,
@@ -89,7 +89,7 @@
     "mult": 0.9,
     "key": "rain_weekend",
     "season": "spring",
-    "summary": "concord-nh: 50F Light Rain | worcester-ma: 55F Light Rain | burlington-vt: 46F Rain And Snow Showers | portland-me: 46F Areas Of Fog then Light Rain | albany-ny: 48F Rain Showers | scranton-pa: 50F Rain Showers",
+    "summary": "concord-nh: 50F Areas Of Fog then Light Rain | worcester-ma: 55F Light Rain | burlington-vt: 46F Rain And Snow Showers | portland-me: 46F Areas Of Fog then Light Rain | albany-ny: 48F Rain Showers | scranton-pa: 50F Rain Showers",
     "tagWeights": {
       "rain_weekend": 0.504,
       "coldRain_lt_50F": 0.496
@@ -100,8 +100,8 @@
         "weight": 0.144,
         "temp": 50,
         "unit": "F",
-        "short": "Light Rain",
-        "detailed": "Rain and patchy fog. Cloudy. High near 50, with temperatures falling to around 41 in the afternoon. South wind 0 to 10 mph, with gusts as high as 25 mph. Chance of precipitation is 100%. New rainfall amounts between a half and three quarters of an inch possible."
+        "short": "Areas Of Fog then Light Rain",
+        "detailed": "Areas of fog and a chance of rain before 7am, then rain and patchy fog. Cloudy. High near 50, with temperatures falling to around 41 in the afternoon. South wind 0 to 10 mph, with gusts as high as 25 mph. Chance of precipitation is 100%. New rainfall amounts between a half and three quarters of an inch possible."
       },
       {
         "station": "worcester-ma",
@@ -141,7 +141,7 @@
         "temp": 50,
         "unit": "F",
         "short": "Rain Showers",
-        "detailed": "Rain showers before 4pm. Mostly cloudy, with a high near 50. Northwest wind 5 to 12 mph, with gusts as high as 24 mph. Chance of precipitation is 100%. New rainfall amounts between a quarter and half of an inch possible."
+        "detailed": "Rain showers before 4pm. Mostly cloudy, with a high near 50. Northwest wind 8 to 12 mph, with gusts as high as 24 mph. Chance of precipitation is 100%. New rainfall amounts between a quarter and half of an inch possible."
       }
     ]
   }
