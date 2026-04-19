@@ -1,42 +1,42 @@
 {
-  "updatedAt": "2026-04-19T19:01:25.515Z",
-  "updatedAtET": "Apr 19, 2026, 3:01 PM",
+  "updatedAt": "2026-04-19T19:12:07.942Z",
+  "updatedAtET": "Apr 19, 2026, 3:12 PM",
   "dateET": "2026-04-19",
   "dow": 0,
   "season": "spring",
   "current": {
-    "ts": "2026-04-19T19:01:25.515Z",
-    "tsET": "Apr 19, 2026, 3:01 PM",
+    "ts": "2026-04-19T19:12:07.942Z",
+    "tsET": "Apr 19, 2026, 3:12 PM",
     "dateET": "2026-04-19",
     "hourET": 15,
-    "minuteET": 1,
+    "minuteET": 12,
     "dow": 0,
-    "sales": 626615.5199999999,
+    "sales": 641966.6299999999,
     "plan": 1197815.36,
-    "pctToPlan": 52.31319792058768,
-    "gp": 269212.2668000001,
-    "gpPct": 42.96291078139912,
-    "txns": 18030,
-    "customers": 16930,
+    "pctToPlan": 53.59479026884409,
+    "gp": 276065.3329999999,
+    "gpPct": 43.00306590702386,
+    "txns": 18513,
+    "customers": 17387,
     "storeCount": 133,
-    "asOf": "2026-04-19T18:45:09.327000",
-    "asOfET": "Apr 19, 2026, 2:45 PM"
+    "asOf": "2026-04-19T19:00:08.890000",
+    "asOfET": "Apr 19, 2026, 3:00 PM"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.95 shape + 0.05 level)",
     "confidence": "medium",
-    "projectedEOD": 746441.3682074298,
-    "projectedPctToPlan": 62.31689733945554,
-    "projectedVariance": -451373.99179257033,
+    "projectedEOD": 746420.7326111645,
+    "projectedPctToPlan": 62.31517457007434,
+    "projectedVariance": -451394.62738883565,
     "band": {
-      "low": 647595.2018653927,
-      "high": 845287.5345494668
+      "low": 648149.031374452,
+      "high": 844692.4338478768
     },
-    "pctOfDayElapsed": 0.8616666666666667,
+    "pctOfDayElapsed": 0.88,
     "level_EOD": 1089545.5550065823,
-    "shape_EOD": 727213.3694390714,
-    "blendWeight": 0.946932677983762,
+    "shape_EOD": 729507.534090909,
+    "blendWeight": 0.9530238543217163,
     "factors": {
       "plan": 1197815.36,
       "recencyFactor": 0.9393,
@@ -48,23 +48,23 @@
       "weatherSummary": "concord-nh: 47F Light Rain | worcester-ma: 52F Rain Showers | burlington-vt: 46F Rain And Snow Showers Likely | portland-me: 46F Light Rain | albany-ny: 47F Rain Showers | scranton-pa: 50F Slight Chance Rain Showers"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.8616666666666667,
+      "basePaceFromCurve": 0.88,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.8616666666666667,
+      "blendedPaceAtNow": 0.88,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 24540.266666666666,
+      "estimatedCurrent": 25062.4,
       "estimatedEOD": 28480,
-      "paceUsed": 0.8616666666666667,
+      "paceUsed": 0.88,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 15777,
-          "estimatedCurrent": 13594.515000000001,
+          "estimatedCurrent": 13883.76,
           "estimatedEOD": 15777,
           "stdev": 0.422
         },
@@ -72,16 +72,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 12703,
-          "estimatedCurrent": 10945.751666666667,
+          "estimatedCurrent": 11178.64,
           "estimatedEOD": 12703,
           "stdev": 0.2658
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 774921.3682074298,
-    "combinedCurrentSales": 651155.7866666666,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $24,540 so far, +$28,480 to EOD."
+    "combinedProjectedEOD": 774900.7326111645,
+    "combinedCurrentSales": 667029.0299999999,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $25,062 so far, +$28,480 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 6,
@@ -125,7 +125,7 @@
         "temp": 46,
         "unit": "F",
         "short": "Light Rain",
-        "detailed": "Rain and patchy fog. Cloudy, with a high near 46. Northwest wind 5 to 15 mph, with gusts as high as 25 mph. Chance of precipitation is 100%. New rainfall amounts between a half and three quarters of an inch possible."
+        "detailed": "Rain. Cloudy, with a high near 46. Northwest wind 10 to 15 mph, with gusts as high as 25 mph. Chance of precipitation is 80%. New rainfall amounts between a tenth and quarter of an inch possible."
       },
       {
         "station": "albany-ny",
