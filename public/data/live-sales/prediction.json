@@ -1,15 +1,15 @@
 {
-  "updatedAt": "2026-04-19T13:07:42.813Z",
-  "updatedAtET": "Apr 19, 2026, 9:07 AM",
+  "updatedAt": "2026-04-19T13:18:16.932Z",
+  "updatedAtET": "Apr 19, 2026, 9:18 AM",
   "dateET": "2026-04-19",
   "dow": 0,
   "season": "spring",
   "current": {
-    "ts": "2026-04-19T13:07:42.813Z",
-    "tsET": "Apr 19, 2026, 9:07 AM",
+    "ts": "2026-04-19T13:18:16.932Z",
+    "tsET": "Apr 19, 2026, 9:18 AM",
     "dateET": "2026-04-19",
     "hourET": 9,
-    "minuteET": 7,
+    "minuteET": 18,
     "dow": 0,
     "sales": 30282.530000000002,
     "plan": 1197815.3599999996,
@@ -24,19 +24,19 @@
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.05 shape + 0.95 level)",
+    "method": "blended (w=0.06 shape + 0.94 level)",
     "confidence": "low",
-    "projectedEOD": 1064185.104111028,
-    "projectedPctToPlan": 88.84383517264533,
-    "projectedVariance": -133630.25588897173,
+    "projectedEOD": 1045054.282776458,
+    "projectedPctToPlan": 87.2466924097933,
+    "projectedVariance": -152761.07722354168,
     "band": {
-      "low": 803232.1671194627,
-      "high": 1325138.0411025933
+      "low": 789463.6457693358,
+      "high": 1300644.9197835801
     },
-    "pctOfDayElapsed": 0.029333333333333333,
+    "pctOfDayElapsed": 0.044,
     "level_EOD": 1065859.782071656,
-    "shape_EOD": 1032358.9772727274,
-    "blendWeight": 0.049989185951786586,
+    "shape_EOD": 688239.3181818182,
+    "blendWeight": 0.055096323649630415,
     "factors": {
       "plan": 1197815.3599999996,
       "recencyFactor": 0.9393,
@@ -48,23 +48,23 @@
       "weatherSummary": "concord-nh: 50F Areas Of Fog then Light Rain | worcester-ma: 55F Light Rain | burlington-vt: 46F Rain And Snow Showers | portland-me: 46F Areas Of Fog then Light Rain | albany-ny: 48F Rain Showers | scranton-pa: 50F Rain Showers"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.029333333333333333,
+      "basePaceFromCurve": 0.044,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.029333333333333333,
+      "blendedPaceAtNow": 0.044,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 835.4133333333333,
+      "estimatedCurrent": 1253.12,
       "estimatedEOD": 28480,
-      "paceUsed": 0.029333333333333333,
+      "paceUsed": 0.044,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 15777,
-          "estimatedCurrent": 462.792,
+          "estimatedCurrent": 694.188,
           "estimatedEOD": 15777,
           "stdev": 0.422
         },
@@ -72,16 +72,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 12703,
-          "estimatedCurrent": 372.6213333333333,
+          "estimatedCurrent": 558.932,
           "estimatedEOD": 12703,
           "stdev": 0.2658
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1092665.104111028,
-    "combinedCurrentSales": 31117.943333333336,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $835 so far, +$28,480 to EOD."
+    "combinedProjectedEOD": 1073534.282776458,
+    "combinedCurrentSales": 31535.65,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $1,253 so far, +$28,480 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 6,
@@ -141,7 +141,7 @@
         "temp": 50,
         "unit": "F",
         "short": "Rain Showers",
-        "detailed": "Rain showers before 4pm. Mostly cloudy, with a high near 50. Northwest wind 8 to 12 mph, with gusts as high as 24 mph. Chance of precipitation is 100%. New rainfall amounts between a quarter and half of an inch possible."
+        "detailed": "Rain showers before 4pm. Mostly cloudy, with a high near 50. Northwest wind 8 to 12 mph, with gusts as high as 24 mph. Chance of precipitation is 100%. New rainfall amounts between a tenth and quarter of an inch possible."
       }
     ]
   }
