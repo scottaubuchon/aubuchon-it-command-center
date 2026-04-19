@@ -1,11 +1,11 @@
 {
-  "updatedAt": "2026-04-19T00:37:19.552Z",
+  "updatedAt": "2026-04-19T00:37:51.930Z",
   "updatedAtET": "Apr 18, 2026, 8:37 PM",
   "dateET": "2026-04-18",
   "dow": 6,
   "season": "spring",
   "current": {
-    "ts": "2026-04-19T00:37:19.552Z",
+    "ts": "2026-04-19T00:37:51.930Z",
     "tsET": "Apr 18, 2026, 8:37 PM",
     "dateET": "2026-04-18",
     "hourET": 20,
@@ -108,7 +108,7 @@
         "temp": 44,
         "unit": "F",
         "short": "Patchy Fog then Patchy Drizzle",
-        "detailed": "Patchy fog between 9pm and 1am, then patchy drizzle and patchy fog between 1am and 5am, then patchy drizzle and patchy fog and a slight chance of rain showers. Mostly cloudy, with a low around 44. Southeast wind 2 to 6 mph. Chance of precipitation is 20%."
+        "detailed": "Patchy fog between 9pm and 1am, then patchy drizzle and patchy fog between 1am and 5am, then patchy drizzle and patchy fog and a slight chance of rain showers. Mostly cloudy, with a low around 44. Southeast wind 2 to 7 mph. Chance of precipitation is 20%."
       },
       {
         "station": "burlington-vt",
