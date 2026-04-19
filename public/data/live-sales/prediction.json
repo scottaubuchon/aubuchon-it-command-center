@@ -1,41 +1,41 @@
 {
-  "updatedAt": "2026-04-19T22:41:15.746Z",
-  "updatedAtET": "Apr 19, 2026, 6:41 PM",
+  "updatedAt": "2026-04-19T22:51:51.093Z",
+  "updatedAtET": "Apr 19, 2026, 6:51 PM",
   "dateET": "2026-04-19",
   "dow": 0,
   "season": "spring",
   "current": {
-    "ts": "2026-04-19T22:41:15.746Z",
-    "tsET": "Apr 19, 2026, 6:41 PM",
+    "ts": "2026-04-19T22:51:51.093Z",
+    "tsET": "Apr 19, 2026, 6:51 PM",
     "dateET": "2026-04-19",
     "hourET": 18,
-    "minuteET": 41,
+    "minuteET": 51,
     "dow": 0,
-    "sales": 811544.8599999996,
+    "sales": 811544.8599999998,
     "plan": 1197815.36,
-    "pctToPlan": 67.75208325930964,
+    "pctToPlan": 67.75208325930966,
     "gp": 349470.01929999987,
     "gpPct": 43.06231688781813,
     "txns": 24228,
     "customers": 22439,
     "storeCount": 133,
-    "asOf": "2026-04-19T22:30:08.837000",
-    "asOfET": "Apr 19, 2026, 6:30 PM"
+    "asOf": "2026-04-19T22:45:07.637000",
+    "asOfET": "Apr 19, 2026, 6:45 PM"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.98 shape + 0.02 level)",
     "confidence": "medium",
-    "projectedEOD": 817337.3782575894,
-    "projectedPctToPlan": 68.23567350627306,
-    "projectedVariance": -380477.9817424107,
+    "projectedEOD": 817337.3782575895,
+    "projectedPctToPlan": 68.23567350627307,
+    "projectedVariance": -380477.9817424106,
     "band": {
-      "low": 712415.6397991253,
-      "high": 922259.1167160536
+      "low": 712415.6397991254,
+      "high": 922259.1167160537
     },
     "pctOfDayElapsed": 1,
     "level_EOD": 1089545.5550065823,
-    "shape_EOD": 811544.8599999996,
+    "shape_EOD": 811544.8599999998,
     "blendWeight": 0.9791636554813196,
     "factors": {
       "plan": 1197815.36,
@@ -45,7 +45,7 @@
       "holidayMult": 1,
       "weatherKey": "coldRain_lt_50F",
       "weatherMult": 0.92,
-      "weatherSummary": "concord-nh: 30F Light Rain Likely then Patchy Fog | worcester-ma: 32F Chance Rain Showers then Mostly Clear | burlington-vt: 30F Chance Rain And Snow Showers | portland-me: 34F Light Rain Likely then Partly Cloudy | albany-ny: 47F Rain Showers | scranton-pa: 34F Chance Rain Showers"
+      "weatherSummary": "concord-nh: 30F Light Rain Likely then Patchy Fog | worcester-ma: 32F Chance Rain Showers then Mostly Clear | burlington-vt: 30F Chance Rain And Snow Showers | portland-me: 34F Light Rain Likely then Partly Cloudy | albany-ny: 32F Mostly Clear | scranton-pa: 34F Chance Rain Showers"
     },
     "shapeDetail": {
       "basePaceFromCurve": 1,
@@ -79,8 +79,8 @@
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 845817.3782575894,
-    "combinedCurrentSales": 840024.8599999996,
+    "combinedProjectedEOD": 845817.3782575895,
+    "combinedCurrentSales": 840024.8599999998,
     "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $28,480 so far, +$28,480 to EOD."
   },
   "offlineStoresVersion": 2,
@@ -89,7 +89,7 @@
     "mult": 0.92,
     "key": "coldRain_lt_50F",
     "season": "spring",
-    "summary": "concord-nh: 30F Light Rain Likely then Patchy Fog | worcester-ma: 32F Chance Rain Showers then Mostly Clear | burlington-vt: 30F Chance Rain And Snow Showers | portland-me: 34F Light Rain Likely then Partly Cloudy | albany-ny: 47F Rain Showers | scranton-pa: 34F Chance Rain Showers",
+    "summary": "concord-nh: 30F Light Rain Likely then Patchy Fog | worcester-ma: 32F Chance Rain Showers then Mostly Clear | burlington-vt: 30F Chance Rain And Snow Showers | portland-me: 34F Light Rain Likely then Partly Cloudy | albany-ny: 32F Mostly Clear | scranton-pa: 34F Chance Rain Showers",
     "tagWeights": {
       "coldRain_lt_50F": 1
     },
@@ -129,10 +129,10 @@
       {
         "station": "albany-ny",
         "weight": 0.12,
-        "temp": 47,
+        "temp": 32,
         "unit": "F",
-        "short": "Rain Showers",
-        "detailed": "Rain showers before 5pm. Mostly cloudy, with a high near 47. Northwest wind around 13 mph, with gusts as high as 23 mph. Chance of precipitation is 90%. New rainfall amounts between a tenth and quarter of an inch possible."
+        "short": "Mostly Clear",
+        "detailed": "Mostly clear, with a low around 32. Southwest wind 2 to 12 mph, with gusts as high as 23 mph. New rainfall amounts between a tenth and quarter of an inch possible."
       },
       {
         "station": "scranton-pa",
