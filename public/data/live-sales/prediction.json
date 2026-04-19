@@ -1,15 +1,15 @@
 {
-  "updatedAt": "2026-04-19T01:19:56.907Z",
-  "updatedAtET": "Apr 18, 2026, 9:19 PM",
+  "updatedAt": "2026-04-19T01:30:29.178Z",
+  "updatedAtET": "Apr 18, 2026, 9:30 PM",
   "dateET": "2026-04-18",
   "dow": 6,
   "season": "spring",
   "current": {
-    "ts": "2026-04-19T01:19:56.907Z",
-    "tsET": "Apr 18, 2026, 9:19 PM",
+    "ts": "2026-04-19T01:30:29.178Z",
+    "tsET": "Apr 18, 2026, 9:30 PM",
     "dateET": "2026-04-18",
     "hourET": 21,
-    "minuteET": 19,
+    "minuteET": 30,
     "dow": 6,
     "sales": 1782361.5800000003,
     "plan": 1666261.5500000007,
@@ -45,7 +45,7 @@
       "holidayMult": 1,
       "weatherKey": "coldRain_lt_50F",
       "weatherMult": 0.92,
-      "weatherSummary": "concord-nh: 41F Areas Of Fog | worcester-ma: 44F Patchy Fog then Patchy Drizzle | burlington-vt: 37F Mostly Cloudy then Rain Showers | portland-me: 43F Patchy Drizzle then Areas Of Fog | albany-ny: 41F Mostly Cloudy then Rain Showers Likely | scranton-pa: 40F Rain Showers"
+      "weatherSummary": "concord-nh: 41F Areas Of Fog | worcester-ma: 44F Patchy Fog then Patchy Drizzle | burlington-vt: 37F Mostly Cloudy then Rain Showers | portland-me: 43F Patchy Drizzle then Areas Of Fog | albany-ny: 46F Cloudy then Rain Showers Likely | scranton-pa: 40F Rain Showers"
     },
     "shapeDetail": {
       "basePaceFromCurve": 1,
@@ -89,7 +89,7 @@
     "mult": 0.92,
     "key": "coldRain_lt_50F",
     "season": "spring",
-    "summary": "concord-nh: 41F Areas Of Fog | worcester-ma: 44F Patchy Fog then Patchy Drizzle | burlington-vt: 37F Mostly Cloudy then Rain Showers | portland-me: 43F Patchy Drizzle then Areas Of Fog | albany-ny: 41F Mostly Cloudy then Rain Showers Likely | scranton-pa: 40F Rain Showers",
+    "summary": "concord-nh: 41F Areas Of Fog | worcester-ma: 44F Patchy Fog then Patchy Drizzle | burlington-vt: 37F Mostly Cloudy then Rain Showers | portland-me: 43F Patchy Drizzle then Areas Of Fog | albany-ny: 46F Cloudy then Rain Showers Likely | scranton-pa: 40F Rain Showers",
     "tagWeights": {
       "coldRain_lt_50F": 1
     },
@@ -129,10 +129,10 @@
       {
         "station": "albany-ny",
         "weight": 0.12,
-        "temp": 41,
+        "temp": 46,
         "unit": "F",
-        "short": "Mostly Cloudy then Rain Showers Likely",
-        "detailed": "Rain showers likely after midnight. Mostly cloudy. Low around 41, with temperatures rising to around 49 overnight. South wind 9 to 15 mph, with gusts as high as 30 mph. Chance of precipitation is 70%. New rainfall amounts between a tenth and quarter of an inch possible."
+        "short": "Cloudy then Rain Showers Likely",
+        "detailed": "Rain showers likely after midnight. Cloudy, with a low around 46. South wind 9 to 14 mph, with gusts as high as 26 mph. Chance of precipitation is 70%. New rainfall amounts between a tenth and quarter of an inch possible."
       },
       {
         "station": "scranton-pa",
