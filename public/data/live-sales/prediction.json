@@ -1,42 +1,42 @@
 {
-  "updatedAt": "2026-04-19T17:46:48.134Z",
-  "updatedAtET": "Apr 19, 2026, 1:46 PM",
+  "updatedAt": "2026-04-19T17:57:24.847Z",
+  "updatedAtET": "Apr 19, 2026, 1:57 PM",
   "dateET": "2026-04-19",
   "dow": 0,
   "season": "spring",
   "current": {
-    "ts": "2026-04-19T17:46:48.134Z",
-    "tsET": "Apr 19, 2026, 1:46 PM",
+    "ts": "2026-04-19T17:57:24.847Z",
+    "tsET": "Apr 19, 2026, 1:57 PM",
     "dateET": "2026-04-19",
     "hourET": 13,
-    "minuteET": 46,
+    "minuteET": 57,
     "dow": 0,
-    "sales": 486530.43999999994,
+    "sales": 519374.97999999986,
     "plan": 1197815.36,
-    "pctToPlan": 40.618150029400184,
-    "gp": 209834.4469999998,
-    "gpPct": 43.12873969406721,
-    "txns": 13980,
-    "customers": 13043,
+    "pctToPlan": 43.360186999104755,
+    "gp": 223951.02819999983,
+    "gpPct": 43.11933320315119,
+    "txns": 15000,
+    "customers": 14016,
     "storeCount": 133,
-    "asOf": "2026-04-19T17:30:11.027000",
-    "asOfET": "Apr 19, 2026, 1:30 PM"
+    "asOf": "2026-04-19T17:45:07.237000",
+    "asOfET": "Apr 19, 2026, 1:45 PM"
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.86 shape + 0.14 level)",
+    "method": "blended (w=0.88 shape + 0.12 level)",
     "confidence": "medium",
-    "projectedEOD": 744755.1056193211,
-    "projectedPctToPlan": 62.17611916575532,
-    "projectedVariance": -453060.254380679,
+    "projectedEOD": 754740.7263297342,
+    "projectedPctToPlan": 63.00977191757953,
+    "projectedVariance": -443074.6336702659,
     "band": {
-      "low": 637832.5729153286,
-      "high": 851677.6383233137
+      "low": 648327.9868002895,
+      "high": 861153.4658591788
     },
-    "pctOfDayElapsed": 0.7073333333333334,
+    "pctOfDayElapsed": 0.733,
     "level_EOD": 1089545.5550065823,
-    "shape_EOD": 687837.5683317623,
-    "blendWeight": 0.8583111633933403,
+    "shape_EOD": 708560.6821282399,
+    "blendWeight": 0.8787877223245009,
     "factors": {
       "plan": 1197815.36,
       "recencyFactor": 0.9393,
@@ -48,23 +48,23 @@
       "weatherSummary": "concord-nh: 47F Light Rain | worcester-ma: 55F Light Rain | burlington-vt: 46F Rain And Snow Showers | portland-me: 46F Light Rain | albany-ny: 48F Rain Showers | scranton-pa: 50F Chance Rain Showers"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.7073333333333334,
+      "basePaceFromCurve": 0.733,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.7073333333333334,
+      "blendedPaceAtNow": 0.733,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 20144.853333333333,
+      "estimatedCurrent": 20875.84,
       "estimatedEOD": 28480,
-      "paceUsed": 0.7073333333333334,
+      "paceUsed": 0.733,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 15777,
-          "estimatedCurrent": 11159.598,
+          "estimatedCurrent": 11564.541,
           "estimatedEOD": 15777,
           "stdev": 0.422
         },
@@ -72,16 +72,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 12703,
-          "estimatedCurrent": 8985.255333333334,
+          "estimatedCurrent": 9311.298999999999,
           "estimatedEOD": 12703,
           "stdev": 0.2658
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 773235.1056193211,
-    "combinedCurrentSales": 506675.2933333333,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $20,145 so far, +$28,480 to EOD."
+    "combinedProjectedEOD": 783220.7263297342,
+    "combinedCurrentSales": 540250.8199999998,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $20,876 so far, +$28,480 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 6,
