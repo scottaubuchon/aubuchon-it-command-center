@@ -1,41 +1,41 @@
 {
-  "updatedAt": "2026-04-19T21:25:50.382Z",
-  "updatedAtET": "Apr 19, 2026, 5:25 PM",
+  "updatedAt": "2026-04-19T21:36:29.899Z",
+  "updatedAtET": "Apr 19, 2026, 5:36 PM",
   "dateET": "2026-04-19",
   "dow": 0,
   "season": "spring",
   "current": {
-    "ts": "2026-04-19T21:25:50.382Z",
-    "tsET": "Apr 19, 2026, 5:25 PM",
+    "ts": "2026-04-19T21:36:29.899Z",
+    "tsET": "Apr 19, 2026, 5:36 PM",
     "dateET": "2026-04-19",
     "hourET": 17,
-    "minuteET": 25,
+    "minuteET": 36,
     "dow": 0,
-    "sales": 806095.9700000003,
+    "sales": 807140.9999999999,
     "plan": 1197815.36,
-    "pctToPlan": 67.29718092778508,
-    "gp": 347566.35470000055,
-    "gpPct": 43.117242566043394,
-    "txns": 24073,
-    "customers": 22341,
+    "pctToPlan": 67.38442559293945,
+    "gp": 347998.6766000001,
+    "gpPct": 43.11497948933336,
+    "txns": 24119,
+    "customers": 22362,
     "storeCount": 133,
-    "asOf": "2026-04-19T21:15:19.890000",
-    "asOfET": "Apr 19, 2026, 5:15 PM"
+    "asOf": "2026-04-19T21:30:31.850000",
+    "asOfET": "Apr 19, 2026, 5:30 PM"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.98 shape + 0.02 level)",
     "confidence": "medium",
-    "projectedEOD": 812002.0232068745,
-    "projectedPctToPlan": 67.7902496764505,
-    "projectedVariance": -385813.3367931256,
+    "projectedEOD": 813025.2786017617,
+    "projectedPctToPlan": 67.87567648170429,
+    "projectedVariance": -384790.0813982384,
     "band": {
-      "low": 707765.1851850054,
-      "high": 916238.8612287436
+      "low": 708657.0851105668,
+      "high": 917393.4720929565
     },
     "pctOfDayElapsed": 1,
     "level_EOD": 1089545.5550065823,
-    "shape_EOD": 806095.9700000003,
+    "shape_EOD": 807140.9999999999,
     "blendWeight": 0.9791636554813196,
     "factors": {
       "plan": 1197815.36,
@@ -79,8 +79,8 @@
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 840482.0232068745,
-    "combinedCurrentSales": 834575.9700000003,
+    "combinedProjectedEOD": 841505.2786017617,
+    "combinedCurrentSales": 835620.9999999999,
     "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $28,480 so far, +$28,480 to EOD."
   },
   "offlineStoresVersion": 2,
@@ -125,7 +125,7 @@
         "temp": 46,
         "unit": "F",
         "short": "Light Rain",
-        "detailed": "Rain. Cloudy, with a high near 46. Northwest wind 10 to 15 mph, with gusts as high as 25 mph. Chance of precipitation is 80%. New rainfall amounts between a tenth and quarter of an inch possible."
+        "detailed": "Rain. Cloudy, with a high near 46. Northwest wind around 15 mph, with gusts as high as 25 mph. Chance of precipitation is 80%. New rainfall amounts between a tenth and quarter of an inch possible."
       },
       {
         "station": "albany-ny",
