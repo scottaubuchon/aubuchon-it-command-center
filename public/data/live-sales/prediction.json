@@ -1,70 +1,70 @@
 {
-  "updatedAt": "2026-04-19T17:14:22.901Z",
-  "updatedAtET": "Apr 19, 2026, 1:14 PM",
+  "updatedAt": "2026-04-19T17:24:58.676Z",
+  "updatedAtET": "Apr 19, 2026, 1:24 PM",
   "dateET": "2026-04-19",
   "dow": 0,
   "season": "spring",
   "current": {
-    "ts": "2026-04-19T17:14:22.901Z",
-    "tsET": "Apr 19, 2026, 1:14 PM",
+    "ts": "2026-04-19T17:24:58.676Z",
+    "tsET": "Apr 19, 2026, 1:24 PM",
     "dateET": "2026-04-19",
     "hourET": 13,
-    "minuteET": 14,
+    "minuteET": 24,
     "dow": 0,
-    "sales": 427422.9400000002,
+    "sales": 467426.39000000013,
     "plan": 1197815.36,
-    "pctToPlan": 35.68354140992149,
-    "gp": 184079.97160000014,
-    "gpPct": 43.067405694228775,
-    "txns": 12256,
-    "customers": 11373,
+    "pctToPlan": 39.02324228001218,
+    "gp": 201789.07900000009,
+    "gpPct": 43.17023670828684,
+    "txns": 13402,
+    "customers": 12477,
     "storeCount": 133,
-    "asOf": "2026-04-19T17:00:17.157000",
-    "asOfET": "Apr 19, 2026, 1:00 PM"
+    "asOf": "2026-04-19T17:15:07.850000",
+    "asOfET": "Apr 19, 2026, 1:15 PM"
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.78 shape + 0.22 level)",
+    "method": "blended (w=0.81 shape + 0.19 level)",
     "confidence": "medium",
-    "projectedEOD": 760581.4763072835,
-    "projectedPctToPlan": 63.49738880517306,
-    "projectedVariance": -437233.8836927166,
+    "projectedEOD": 784637.1544614185,
+    "projectedPctToPlan": 65.50568482119135,
+    "projectedVariance": -413178.2055385816,
     "band": {
-      "low": 644109.4577732204,
-      "high": 877053.4948413466
+      "low": 667100.1522315774,
+      "high": 902174.1566912596
     },
-    "pctOfDayElapsed": 0.6326666666666667,
-    "level_EOD": 1065859.7820716565,
-    "shape_EOD": 675589.4731296103,
-    "blendWeight": 0.7822227281186942,
+    "pctOfDayElapsed": 0.656,
+    "level_EOD": 1089545.5550065823,
+    "shape_EOD": 712540.2286585368,
+    "blendWeight": 0.8087641718453525,
     "factors": {
       "plan": 1197815.36,
       "recencyFactor": 0.9393,
       "dowPlanRatio": 1.0526,
       "holidayKey": null,
       "holidayMult": 1,
-      "weatherKey": "rain_weekend",
-      "weatherMult": 0.9,
-      "weatherSummary": "concord-nh: 50F Areas Of Fog then Light Rain | worcester-ma: 55F Light Rain | burlington-vt: 46F Rain And Snow Showers | portland-me: 46F Light Rain | albany-ny: 48F Rain Showers | scranton-pa: 50F Rain Showers"
+      "weatherKey": "coldRain_lt_50F",
+      "weatherMult": 0.92,
+      "weatherSummary": "concord-nh: 47F Light Rain | worcester-ma: 55F Light Rain | burlington-vt: 46F Rain And Snow Showers | portland-me: 46F Light Rain | albany-ny: 48F Rain Showers | scranton-pa: 50F Rain Showers"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.6326666666666667,
+      "basePaceFromCurve": 0.656,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.6326666666666667,
+      "blendedPaceAtNow": 0.656,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 18018.346666666668,
+      "estimatedCurrent": 18682.88,
       "estimatedEOD": 28480,
-      "paceUsed": 0.6326666666666667,
+      "paceUsed": 0.656,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 15777,
-          "estimatedCurrent": 9981.582,
+          "estimatedCurrent": 10349.712,
           "estimatedEOD": 15777,
           "stdev": 0.422
         },
@@ -72,36 +72,36 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 12703,
-          "estimatedCurrent": 8036.764666666667,
+          "estimatedCurrent": 8333.168,
           "estimatedEOD": 12703,
           "stdev": 0.2658
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 789061.4763072835,
-    "combinedCurrentSales": 445441.28666666686,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $18,018 so far, +$28,480 to EOD."
+    "combinedProjectedEOD": 813117.1544614185,
+    "combinedCurrentSales": 486109.27000000014,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $18,683 so far, +$28,480 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 6,
   "weatherRaw": {
-    "mult": 0.9,
-    "key": "rain_weekend",
+    "mult": 0.92,
+    "key": "coldRain_lt_50F",
     "season": "spring",
-    "summary": "concord-nh: 50F Areas Of Fog then Light Rain | worcester-ma: 55F Light Rain | burlington-vt: 46F Rain And Snow Showers | portland-me: 46F Light Rain | albany-ny: 48F Rain Showers | scranton-pa: 50F Rain Showers",
+    "summary": "concord-nh: 47F Light Rain | worcester-ma: 55F Light Rain | burlington-vt: 46F Rain And Snow Showers | portland-me: 46F Light Rain | albany-ny: 48F Rain Showers | scranton-pa: 50F Rain Showers",
     "tagWeights": {
-      "rain_weekend": 0.504,
-      "coldRain_lt_50F": 0.496
+      "coldRain_lt_50F": 0.64,
+      "rain_weekend": 0.36
     },
     "forecasts": [
       {
         "station": "concord-nh",
         "weight": 0.144,
-        "temp": 50,
+        "temp": 47,
         "unit": "F",
-        "short": "Areas Of Fog then Light Rain",
-        "detailed": "Areas of fog and a chance of rain before 7am, then rain and patchy fog. Cloudy. High near 50, with temperatures falling to around 41 in the afternoon. South wind 0 to 10 mph, with gusts as high as 25 mph. Chance of precipitation is 100%. New rainfall amounts between a half and three quarters of an inch possible."
+        "short": "Light Rain",
+        "detailed": "Rain. Cloudy. High near 47, with temperatures falling to around 40 in the afternoon. Northwest wind around 10 mph, with gusts as high as 25 mph. Chance of precipitation is 100%. New rainfall amounts between a half and three quarters of an inch possible."
       },
       {
         "station": "worcester-ma",
