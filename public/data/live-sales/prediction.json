@@ -1,42 +1,42 @@
 {
-  "updatedAt": "2026-04-19T14:11:51.262Z",
-  "updatedAtET": "Apr 19, 2026, 10:11 AM",
+  "updatedAt": "2026-04-19T14:22:25.743Z",
+  "updatedAtET": "Apr 19, 2026, 10:22 AM",
   "dateET": "2026-04-19",
   "dow": 0,
   "season": "spring",
   "current": {
-    "ts": "2026-04-19T14:11:51.262Z",
-    "tsET": "Apr 19, 2026, 10:11 AM",
+    "ts": "2026-04-19T14:22:25.743Z",
+    "tsET": "Apr 19, 2026, 10:22 AM",
     "dateET": "2026-04-19",
     "hourET": 10,
-    "minuteET": 11,
+    "minuteET": 22,
     "dow": 0,
-    "sales": 94014.00000000003,
+    "sales": 121051.96999999993,
     "plan": 1197815.3599999996,
-    "pctToPlan": 7.848788981967977,
-    "gp": 39697.91800000002,
-    "gpPct": 42.225538749547944,
-    "txns": 2957,
-    "customers": 2411,
-    "storeCount": 130,
-    "asOf": "2026-04-19T14:00:10.077000",
-    "asOfET": "Apr 19, 2026, 10:00 AM"
+    "pctToPlan": 10.106062590481388,
+    "gp": 51548.765199999936,
+    "gpPct": 42.58399528731335,
+    "txns": 3731,
+    "customers": 3153,
+    "storeCount": 133,
+    "asOf": "2026-04-19T14:15:07.577000",
+    "asOfET": "Apr 19, 2026, 10:15 AM"
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.11 shape + 0.89 level)",
+    "method": "blended (w=0.13 shape + 0.87 level)",
     "confidence": "low",
-    "projectedEOD": 1018458.183447957,
-    "projectedPctToPlan": 85.0263085161938,
-    "projectedVariance": -179357.1765520426,
+    "projectedEOD": 1015305.4372171847,
+    "projectedPctToPlan": 84.76310048463438,
+    "projectedVariance": -182509.92278281495,
     "band": {
-      "low": 776230.1180022089,
-      "high": 1260686.2488937052
+      "low": 776577.3106956941,
+      "high": 1254033.5637386756
     },
-    "pctOfDayElapsed": 0.14933333333333332,
+    "pctOfDayElapsed": 0.17866666666666667,
     "level_EOD": 1065859.782071656,
-    "shape_EOD": 629558.035714286,
-    "blendWeight": 0.10864407263883138,
+    "shape_EOD": 677529.6828358205,
+    "blendWeight": 0.13018394647737425,
     "factors": {
       "plan": 1197815.3599999996,
       "recencyFactor": 0.9393,
@@ -48,23 +48,23 @@
       "weatherSummary": "concord-nh: 50F Areas Of Fog then Light Rain | worcester-ma: 55F Light Rain | burlington-vt: 46F Rain And Snow Showers | portland-me: 46F Areas Of Fog then Light Rain | albany-ny: 48F Rain Showers | scranton-pa: 50F Rain Showers"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.14933333333333332,
+      "basePaceFromCurve": 0.17866666666666667,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.14933333333333332,
+      "blendedPaceAtNow": 0.17866666666666667,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 4253.013333333333,
+      "estimatedCurrent": 5088.426666666666,
       "estimatedEOD": 28480,
-      "paceUsed": 0.14933333333333332,
+      "paceUsed": 0.17866666666666667,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 15777,
-          "estimatedCurrent": 2356.0319999999997,
+          "estimatedCurrent": 2818.824,
           "estimatedEOD": 15777,
           "stdev": 0.422
         },
@@ -72,16 +72,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 12703,
-          "estimatedCurrent": 1896.9813333333332,
+          "estimatedCurrent": 2269.6026666666667,
           "estimatedEOD": 12703,
           "stdev": 0.2658
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1046938.183447957,
-    "combinedCurrentSales": 98267.01333333337,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $4,253 so far, +$28,480 to EOD."
+    "combinedProjectedEOD": 1043785.4372171847,
+    "combinedCurrentSales": 126140.3966666666,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $5,088 so far, +$28,480 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 6,
@@ -117,7 +117,7 @@
         "temp": 46,
         "unit": "F",
         "short": "Rain And Snow Showers",
-        "detailed": "Rain showers before 11am, then rain and snow showers between 11am and 1pm, then rain and snow showers between 1pm and 2pm, then rain and snow showers between 2pm and 5pm, then a chance of rain and snow showers. Mostly cloudy. High near 46, with temperatures falling to around 38 in the afternoon. Northwest wind 7 to 12 mph. Chance of precipitation is 100%. New rainfall amounts between a quarter and half of an inch possible."
+        "detailed": "Rain showers before 11am, then rain and snow showers between 11am and 1pm, then rain and snow showers between 1pm and 2pm, then rain and snow showers between 2pm and 5pm, then a chance of rain and snow showers. Mostly cloudy. High near 46, with temperatures falling to around 38 in the afternoon. Northwest wind 7 to 10 mph. Chance of precipitation is 100%. New rainfall amounts between a quarter and half of an inch possible."
       },
       {
         "station": "portland-me",
@@ -141,7 +141,7 @@
         "temp": 50,
         "unit": "F",
         "short": "Rain Showers",
-        "detailed": "Rain showers before 4pm. Mostly cloudy, with a high near 50. Northwest wind 8 to 12 mph, with gusts as high as 24 mph. Chance of precipitation is 100%. New rainfall amounts between a tenth and quarter of an inch possible."
+        "detailed": "Rain showers before 4pm. Mostly cloudy, with a high near 50. Northwest wind 8 to 12 mph, with gusts as high as 24 mph. Chance of precipitation is 90%. New rainfall amounts between a tenth and quarter of an inch possible."
       }
     ]
   }
