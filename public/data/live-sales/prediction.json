@@ -1,15 +1,15 @@
 {
-  "updatedAt": "2026-04-19T21:47:05.905Z",
-  "updatedAtET": "Apr 19, 2026, 5:47 PM",
+  "updatedAt": "2026-04-19T21:57:48.003Z",
+  "updatedAtET": "Apr 19, 2026, 5:57 PM",
   "dateET": "2026-04-19",
   "dow": 0,
   "season": "spring",
   "current": {
-    "ts": "2026-04-19T21:47:05.905Z",
-    "tsET": "Apr 19, 2026, 5:47 PM",
+    "ts": "2026-04-19T21:57:48.003Z",
+    "tsET": "Apr 19, 2026, 5:57 PM",
     "dateET": "2026-04-19",
     "hourET": 17,
-    "minuteET": 47,
+    "minuteET": 57,
     "dow": 0,
     "sales": 808397.44,
     "plan": 1197815.36,
@@ -125,7 +125,7 @@
         "temp": 46,
         "unit": "F",
         "short": "Light Rain",
-        "detailed": "Rain. Cloudy, with a high near 46. Northwest wind around 15 mph, with gusts as high as 25 mph. Chance of precipitation is 80%. New rainfall amounts between a tenth and quarter of an inch possible."
+        "detailed": "Rain. Cloudy, with a high near 46. Northwest wind 10 to 15 mph, with gusts as high as 25 mph. Chance of precipitation is 80%. New rainfall amounts between a tenth and quarter of an inch possible."
       },
       {
         "station": "albany-ny",
