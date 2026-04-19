@@ -1,46 +1,46 @@
 {
-  "updatedAt": "2026-04-19T01:30:29.178Z",
-  "updatedAtET": "Apr 18, 2026, 9:30 PM",
-  "dateET": "2026-04-18",
-  "dow": 6,
+  "updatedAt": "2026-04-19T06:19:38.975Z",
+  "updatedAtET": "Apr 19, 2026, 2:19 AM",
+  "dateET": "2026-04-19",
+  "dow": 0,
   "season": "spring",
   "current": {
-    "ts": "2026-04-19T01:30:29.178Z",
-    "tsET": "Apr 18, 2026, 9:30 PM",
-    "dateET": "2026-04-18",
-    "hourET": 21,
-    "minuteET": 30,
-    "dow": 6,
-    "sales": 1782361.5800000003,
-    "plan": 1666261.5500000007,
-    "pctToPlan": 106.96769543773001,
-    "gp": 734395.5519000004,
-    "gpPct": 41.20351112483026,
-    "txns": 45876,
-    "customers": 43267,
+    "ts": "2026-04-19T06:19:38.975Z",
+    "tsET": "Apr 19, 2026, 2:19 AM",
+    "dateET": "2026-04-19",
+    "hourET": 2,
+    "minuteET": 19,
+    "dow": 0,
+    "sales": 1782386.3800000004,
+    "plan": 1197815.3599999994,
+    "pctToPlan": 148.80309933577755,
+    "gp": 734413.0129000008,
+    "gpPct": 41.203917463732004,
+    "txns": 45878,
+    "customers": 43268,
     "storeCount": 134,
-    "asOf": "2026-04-19T01:15:10.853000",
-    "asOfET": "Apr 18, 2026, 9:15 PM"
+    "asOf": "2026-04-19T01:30:08.287000",
+    "asOfET": "Apr 18, 2026, 9:30 PM"
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.98 shape + 0.02 level)",
-    "confidence": "medium",
-    "projectedEOD": 1775814.1873460177,
-    "projectedPctToPlan": 106.57475636679108,
-    "projectedVariance": 109552.63734601694,
+    "method": "blended (w=0.04 shape + 0.96 level)",
+    "confidence": "low",
+    "projectedEOD": 15769609.29078204,
+    "projectedPctToPlan": 1316.5308959456029,
+    "projectedVariance": 14571793.93078204,
     "band": {
-      "low": 1502260.3037156104,
-      "high": 2049368.070976425
+      "low": 11887900.57998649,
+      "high": 19651318.00157759
     },
-    "pctOfDayElapsed": 1,
-    "level_EOD": 1468132.150355436,
-    "shape_EOD": 1782361.5800000003,
-    "blendWeight": 0.9791636554813196,
+    "pctOfDayElapsed": 0.005148148148148148,
+    "level_EOD": 1089545.5550065816,
+    "shape_EOD": 346218937.12230223,
+    "blendWeight": 0.04253495672770901,
     "factors": {
-      "plan": 1666261.5500000007,
+      "plan": 1197815.3599999994,
       "recencyFactor": 0.9393,
-      "dowPlanRatio": 1.0196,
+      "dowPlanRatio": 1.0526,
       "holidayKey": null,
       "holidayMult": 1,
       "weatherKey": "coldRain_lt_50F",
@@ -48,43 +48,43 @@
       "weatherSummary": "concord-nh: 41F Areas Of Fog | worcester-ma: 44F Patchy Fog then Patchy Drizzle | burlington-vt: 37F Mostly Cloudy then Rain Showers | portland-me: 43F Patchy Drizzle then Areas Of Fog | albany-ny: 46F Cloudy then Rain Showers Likely | scranton-pa: 40F Rain Showers"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 1,
+      "basePaceFromCurve": 0.005148148148148148,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 1,
+      "blendedPaceAtNow": 0.005148148148148148,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 42781,
-      "estimatedEOD": 42781,
-      "paceUsed": 1,
+      "estimatedCurrent": 146.61925925925925,
+      "estimatedEOD": 28480,
+      "paceUsed": 0.005148148148148148,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
-          "dowEOD": 24716,
-          "estimatedCurrent": 24716,
-          "estimatedEOD": 24716,
-          "stdev": 0.3879
+          "dowEOD": 15777,
+          "estimatedCurrent": 81.22233333333334,
+          "estimatedEOD": 15777,
+          "stdev": 0.422
         },
         {
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
-          "dowEOD": 18065,
-          "estimatedCurrent": 18065,
-          "estimatedEOD": 18065,
-          "stdev": 0.1722
+          "dowEOD": 12703,
+          "estimatedCurrent": 65.39692592592593,
+          "estimatedEOD": 12703,
+          "stdev": 0.2658
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1818595.1873460177,
-    "combinedCurrentSales": 1825142.5800000003,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $42,781 so far, +$42,781 to EOD."
+    "combinedProjectedEOD": 15798089.29078204,
+    "combinedCurrentSales": 1782532.9992592596,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $147 so far, +$28,480 to EOD."
   },
   "offlineStoresVersion": 2,
-  "baselineVersion": 5,
+  "baselineVersion": 6,
   "weatherRaw": {
     "mult": 0.92,
     "key": "coldRain_lt_50F",
@@ -140,7 +140,7 @@
         "temp": 40,
         "unit": "F",
         "short": "Rain Showers",
-        "detailed": "Rain showers after 10pm. Mostly cloudy. Low around 40, with temperatures rising to around 53 overnight. South wind 6 to 14 mph. Chance of precipitation is 80%. New rainfall amounts between a quarter and half of an inch possible."
+        "detailed": "Rain likely before 3am, then rain showers. Cloudy. Low around 40, with temperatures rising to around 53 overnight. Southwest wind around 6 mph. Chance of precipitation is 90%. New rainfall amounts between a quarter and half of an inch possible."
       }
     ]
   }
