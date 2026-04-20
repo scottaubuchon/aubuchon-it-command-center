@@ -1,42 +1,42 @@
 {
-  "updatedAt": "2026-04-20T18:42:46.175Z",
-  "updatedAtET": "Apr 20, 2026, 2:42 PM",
+  "updatedAt": "2026-04-20T18:53:20.518Z",
+  "updatedAtET": "Apr 20, 2026, 2:53 PM",
   "dateET": "2026-04-20",
   "dow": 1,
   "season": "spring",
   "current": {
-    "ts": "2026-04-20T18:42:46.175Z",
-    "tsET": "Apr 20, 2026, 2:42 PM",
+    "ts": "2026-04-20T18:53:20.518Z",
+    "tsET": "Apr 20, 2026, 2:53 PM",
     "dateET": "2026-04-20",
     "hourET": 14,
-    "minuteET": 42,
+    "minuteET": 53,
     "dow": 1,
-    "sales": 647573.1899999998,
+    "sales": 683447.7000000001,
     "plan": 1137721.49,
-    "pctToPlan": 56.918428252594566,
-    "gp": 275407.8722999998,
-    "gpPct": 42.529227051539905,
-    "txns": 18465,
-    "customers": 17058,
+    "pctToPlan": 60.07161735162444,
+    "gp": 289419.62260000006,
+    "gpPct": 42.34700366977605,
+    "txns": 19491,
+    "customers": 18022,
     "storeCount": 134,
-    "asOf": "2026-04-20T18:30:13.260000",
-    "asOfET": "Apr 20, 2026, 2:30 PM"
+    "asOf": "2026-04-20T18:45:09.200000",
+    "asOfET": "Apr 20, 2026, 2:45 PM"
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.87 shape + 0.13 level)",
+    "method": "blended (w=0.88 shape + 0.12 level)",
     "confidence": "medium",
-    "projectedEOD": 897516.8395627239,
-    "projectedPctToPlan": 78.88721866040554,
-    "projectedVariance": -240204.6504372761,
+    "projectedEOD": 924253.4780963074,
+    "projectedPctToPlan": 81.23723479076654,
+    "projectedVariance": -213468.01190369262,
     "band": {
-      "low": 812889.5201609096,
-      "high": 982144.158964538
+      "low": 837949.7991914079,
+      "high": 1010557.1570012069
     },
-    "pctOfDayElapsed": 0.726,
+    "pctOfDayElapsed": 0.7406666666666667,
     "level_EOD": 935780.1132502605,
-    "shape_EOD": 891974.0909090907,
-    "blendWeight": 0.8734706244163147,
+    "shape_EOD": 922746.6696669668,
+    "blendWeight": 0.8843890780121959,
     "factors": {
       "plan": 1137721.49,
       "recencyFactor": 0.9393,
@@ -48,23 +48,23 @@
       "weatherSummary": "concord-nh: 46F Isolated Rain And Snow Showers | worcester-ma: 50F Partly Sunny | burlington-vt: 40F Partly Sunny | portland-me: 45F Scattered Rain And Snow Showers | albany-ny: 46F Mostly Sunny then Isolated Rain And Snow Showers | scranton-pa: 45F Isolated Rain And Snow Showers"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.726,
+      "basePaceFromCurve": 0.7406666666666667,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.726,
+      "blendedPaceAtNow": 0.7406666666666667,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 31077.881999999998,
+      "estimatedCurrent": 31705.718,
       "estimatedEOD": 42807,
-      "paceUsed": 0.726,
+      "paceUsed": 0.7406666666666667,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 28199,
-          "estimatedCurrent": 20472.474,
+          "estimatedCurrent": 20886.059333333335,
           "estimatedEOD": 28199,
           "stdev": 0.2923
         },
@@ -72,16 +72,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 14608,
-          "estimatedCurrent": 10605.408,
+          "estimatedCurrent": 10819.658666666666,
           "estimatedEOD": 14608,
           "stdev": 0.1658
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 940323.8395627239,
-    "combinedCurrentSales": 678651.0719999998,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $31,078 so far, +$42,807 to EOD."
+    "combinedProjectedEOD": 967060.4780963074,
+    "combinedCurrentSales": 715153.4180000001,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $31,706 so far, +$42,807 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 7,
