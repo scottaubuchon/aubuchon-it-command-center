@@ -1,41 +1,41 @@
 {
-  "updatedAt": "2026-04-20T01:22:07.440Z",
-  "updatedAtET": "Apr 19, 2026, 9:22 PM",
+  "updatedAt": "2026-04-20T01:32:42.469Z",
+  "updatedAtET": "Apr 19, 2026, 9:32 PM",
   "dateET": "2026-04-19",
   "dow": 0,
   "season": "spring",
   "current": {
-    "ts": "2026-04-20T01:22:07.440Z",
-    "tsET": "Apr 19, 2026, 9:22 PM",
+    "ts": "2026-04-20T01:32:42.469Z",
+    "tsET": "Apr 19, 2026, 9:32 PM",
     "dateET": "2026-04-19",
     "hourET": 21,
-    "minuteET": 22,
+    "minuteET": 32,
     "dow": 0,
-    "sales": 811882.4099999999,
+    "sales": 811882.4100000001,
     "plan": 1197815.36,
-    "pctToPlan": 67.7802637294616,
-    "gp": 349646.38669999986,
-    "gpPct": 43.06613647412313,
+    "pctToPlan": 67.78026372946162,
+    "gp": 349646.3867,
+    "gpPct": 43.066136474123134,
     "txns": 24259,
     "customers": 22449,
     "storeCount": 133,
-    "asOf": "2026-04-20T01:15:16.833000",
-    "asOfET": "Apr 19, 2026, 9:15 PM"
+    "asOf": "2026-04-20T01:30:07.293000",
+    "asOfET": "Apr 19, 2026, 9:30 PM"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.98 shape + 0.02 level)",
     "confidence": "medium",
-    "projectedEOD": 817667.8949494974,
+    "projectedEOD": 817667.8949494977,
     "projectedPctToPlan": 68.26326679844024,
-    "projectedVariance": -380147.4650505027,
+    "projectedVariance": -380147.46505050245,
     "band": {
-      "low": 712703.7280069983,
-      "high": 922632.0618919965
+      "low": 712703.7280069985,
+      "high": 922632.0618919968
     },
     "pctOfDayElapsed": 1,
     "level_EOD": 1089545.5550065823,
-    "shape_EOD": 811882.4099999999,
+    "shape_EOD": 811882.4100000001,
     "blendWeight": 0.9791636554813196,
     "factors": {
       "plan": 1197815.36,
@@ -45,7 +45,7 @@
       "holidayMult": 1,
       "weatherKey": "coldRain_lt_50F",
       "weatherMult": 0.92,
-      "weatherSummary": "concord-nh: 29F Chance Rain And Snow Showers then Mostly Clear | worcester-ma: 32F Chance Rain Showers then Mostly Clear | burlington-vt: 30F Chance Rain And Snow Showers | portland-me: 32F Slight Chance Rain And Snow Showers then Partly Cloudy | albany-ny: 32F Mostly Clear | scranton-pa: 34F Partly Cloudy then Scattered Snow Showers"
+      "weatherSummary": "concord-nh: 29F Chance Rain And Snow Showers then Mostly Clear | burlington-vt: 30F Chance Rain And Snow Showers | portland-me: 32F Slight Chance Rain And Snow Showers then Partly Cloudy | albany-ny: 32F Mostly Clear | scranton-pa: 34F Partly Cloudy then Scattered Snow Showers"
     },
     "shapeDetail": {
       "basePaceFromCurve": 1,
@@ -79,8 +79,8 @@
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 846147.8949494974,
-    "combinedCurrentSales": 840362.4099999999,
+    "combinedProjectedEOD": 846147.8949494977,
+    "combinedCurrentSales": 840362.4100000001,
     "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $28,480 so far, +$28,480 to EOD."
   },
   "offlineStoresVersion": 2,
@@ -89,9 +89,9 @@
     "mult": 0.92,
     "key": "coldRain_lt_50F",
     "season": "spring",
-    "summary": "concord-nh: 29F Chance Rain And Snow Showers then Mostly Clear | worcester-ma: 32F Chance Rain Showers then Mostly Clear | burlington-vt: 30F Chance Rain And Snow Showers | portland-me: 32F Slight Chance Rain And Snow Showers then Partly Cloudy | albany-ny: 32F Mostly Clear | scranton-pa: 34F Partly Cloudy then Scattered Snow Showers",
+    "summary": "concord-nh: 29F Chance Rain And Snow Showers then Mostly Clear | burlington-vt: 30F Chance Rain And Snow Showers | portland-me: 32F Slight Chance Rain And Snow Showers then Partly Cloudy | albany-ny: 32F Mostly Clear | scranton-pa: 34F Partly Cloudy then Scattered Snow Showers",
     "tagWeights": {
-      "coldRain_lt_50F": 0.88,
+      "coldRain_lt_50F": 0.608,
       "normal": 0.12
     },
     "forecasts": [
@@ -102,14 +102,6 @@
         "unit": "F",
         "short": "Chance Rain And Snow Showers then Mostly Clear",
         "detailed": "A chance of rain and snow showers before 8pm. Mostly clear, with a low around 29. West wind 0 to 10 mph, with gusts as high as 25 mph. Chance of precipitation is 30%. New rainfall amounts between a tenth and quarter of an inch possible."
-      },
-      {
-        "station": "worcester-ma",
-        "weight": 0.272,
-        "temp": 32,
-        "unit": "F",
-        "short": "Chance Rain Showers then Mostly Clear",
-        "detailed": "A chance of rain showers and patchy fog before 7pm. Mostly clear, with a low around 32. West wind 6 to 12 mph, with gusts as high as 23 mph. Chance of precipitation is 50%. New rainfall amounts less than a tenth of an inch possible."
       },
       {
         "station": "burlington-vt",
