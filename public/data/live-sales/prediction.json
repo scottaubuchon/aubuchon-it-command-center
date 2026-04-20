@@ -1,42 +1,42 @@
 {
-  "updatedAt": "2026-04-20T11:15:15.486Z",
-  "updatedAtET": "Apr 20, 2026, 7:15 AM",
+  "updatedAt": "2026-04-20T11:26:02.234Z",
+  "updatedAtET": "Apr 20, 2026, 7:26 AM",
   "dateET": "2026-04-20",
   "dow": 1,
   "season": "spring",
   "current": {
-    "ts": "2026-04-20T11:15:15.486Z",
-    "tsET": "Apr 20, 2026, 7:15 AM",
+    "ts": "2026-04-20T11:26:02.234Z",
+    "tsET": "Apr 20, 2026, 7:26 AM",
     "dateET": "2026-04-20",
     "hourET": 7,
-    "minuteET": 15,
+    "minuteET": 26,
     "dow": 1,
-    "sales": 0,
+    "sales": 2001.9699999999996,
     "plan": 1137721.4899999993,
-    "pctToPlan": 0,
-    "gp": 0,
-    "gpPct": 0,
-    "txns": 0,
-    "customers": 0,
-    "storeCount": 0,
-    "asOf": "2026-04-20T11:15:15.473Z",
+    "pctToPlan": 0.17596309972135632,
+    "gp": 666.6503999999995,
+    "gpPct": 33.2997197760206,
+    "txns": 119,
+    "customers": 34,
+    "storeCount": 22,
+    "asOf": "2026-04-20T11:15:07.013000",
     "asOfET": "Apr 20, 2026, 7:15 AM"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.05 shape + 0.95 level)",
     "confidence": "low",
-    "projectedEOD": 891820.7703273749,
-    "projectedPctToPlan": 78.38656280698147,
-    "projectedVariance": -245900.71967262437,
+    "projectedEOD": 893232.4455571702,
+    "projectedPctToPlan": 78.5106419636295,
+    "projectedVariance": -244489.0444428291,
     "band": {
-      "low": 746036.5264876133,
-      "high": 1037605.0141671365
+      "low": 747393.3078878729,
+      "high": 1039071.5832264675
     },
-    "pctOfDayElapsed": 0.019999999999999997,
+    "pctOfDayElapsed": 0.027333333333333334,
     "level_EOD": 935780.1132502598,
-    "shape_EOD": 0,
-    "blendWeight": 0.046976145678283544,
+    "shape_EOD": 73242.80487804876,
+    "blendWeight": 0.04932849545185015,
     "factors": {
       "plan": 1137721.4899999993,
       "recencyFactor": 0.9393,
@@ -45,26 +45,26 @@
       "holidayMult": 1,
       "weatherKey": "coldRain_lt_50F",
       "weatherMult": 0.92,
-      "weatherSummary": "concord-nh: 48F Partly Sunny then Slight Chance Rain Showers | worcester-ma: 50F Mostly Sunny | burlington-vt: 40F Chance Snow Showers then Partly Sunny | portland-me: 47F Mostly Sunny then Slight Chance Rain Showers | scranton-pa: 45F Isolated Snow Showers"
+      "weatherSummary": "concord-nh: 48F Mostly Sunny then Slight Chance Rain Showers | worcester-ma: 50F Mostly Sunny | burlington-vt: 40F Chance Snow Showers then Partly Sunny | portland-me: 47F Mostly Sunny then Slight Chance Rain Showers | albany-ny: 46F Mostly Sunny then Isolated Rain And Snow Showers | scranton-pa: 45F Isolated Snow Showers"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.019999999999999997,
+      "basePaceFromCurve": 0.027333333333333334,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.019999999999999997,
+      "blendedPaceAtNow": 0.027333333333333334,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 856.1399999999999,
+      "estimatedCurrent": 1170.058,
       "estimatedEOD": 42807,
-      "paceUsed": 0.019999999999999997,
+      "paceUsed": 0.027333333333333334,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 28199,
-          "estimatedCurrent": 563.9799999999999,
+          "estimatedCurrent": 770.7726666666667,
           "estimatedEOD": 28199,
           "stdev": 0.2923
         },
@@ -72,16 +72,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 14608,
-          "estimatedCurrent": 292.15999999999997,
+          "estimatedCurrent": 399.28533333333337,
           "estimatedEOD": 14608,
           "stdev": 0.1658
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 934627.7703273749,
-    "combinedCurrentSales": 856.1399999999999,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $856 so far, +$42,807 to EOD."
+    "combinedProjectedEOD": 936039.4455571702,
+    "combinedCurrentSales": 3172.0279999999993,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $1,170 so far, +$42,807 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 7,
@@ -89,9 +89,9 @@
     "mult": 0.92,
     "key": "coldRain_lt_50F",
     "season": "spring",
-    "summary": "concord-nh: 48F Partly Sunny then Slight Chance Rain Showers | worcester-ma: 50F Mostly Sunny | burlington-vt: 40F Chance Snow Showers then Partly Sunny | portland-me: 47F Mostly Sunny then Slight Chance Rain Showers | scranton-pa: 45F Isolated Snow Showers",
+    "summary": "concord-nh: 48F Mostly Sunny then Slight Chance Rain Showers | worcester-ma: 50F Mostly Sunny | burlington-vt: 40F Chance Snow Showers then Partly Sunny | portland-me: 47F Mostly Sunny then Slight Chance Rain Showers | albany-ny: 46F Mostly Sunny then Isolated Rain And Snow Showers | scranton-pa: 45F Isolated Snow Showers",
     "tagWeights": {
-      "coldRain_lt_50F": 0.608,
+      "coldRain_lt_50F": 0.728,
       "normal": 0.272
     },
     "forecasts": [
@@ -100,8 +100,8 @@
         "weight": 0.144,
         "temp": 48,
         "unit": "F",
-        "short": "Partly Sunny then Slight Chance Rain Showers",
-        "detailed": "A slight chance of rain showers after 2pm. Partly sunny, with a high near 48. West wind 5 to 10 mph. Chance of precipitation is 20%."
+        "short": "Mostly Sunny then Slight Chance Rain Showers",
+        "detailed": "A slight chance of rain showers after 2pm. Mostly sunny, with a high near 48. West wind 5 to 10 mph. Chance of precipitation is 20%."
       },
       {
         "station": "worcester-ma",
@@ -126,6 +126,14 @@
         "unit": "F",
         "short": "Mostly Sunny then Slight Chance Rain Showers",
         "detailed": "A slight chance of rain showers between 2pm and 5pm. Mostly sunny, with a high near 47. West wind 5 to 10 mph. Chance of precipitation is 20%. New rainfall amounts less than a tenth of an inch possible."
+      },
+      {
+        "station": "albany-ny",
+        "weight": 0.12,
+        "temp": 46,
+        "unit": "F",
+        "short": "Mostly Sunny then Isolated Rain And Snow Showers",
+        "detailed": "Isolated rain and snow showers after 3pm. Mostly sunny, with a high near 46. West wind 5 to 12 mph. Chance of precipitation is 20%."
       },
       {
         "station": "scranton-pa",
