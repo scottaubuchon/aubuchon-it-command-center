@@ -1,42 +1,42 @@
 {
-  "updatedAt": "2026-04-20T20:31:09.143Z",
-  "updatedAtET": "Apr 20, 2026, 4:31 PM",
+  "updatedAt": "2026-04-20T20:41:50.400Z",
+  "updatedAtET": "Apr 20, 2026, 4:41 PM",
   "dateET": "2026-04-20",
   "dow": 1,
   "season": "spring",
   "current": {
-    "ts": "2026-04-20T20:31:09.143Z",
-    "tsET": "Apr 20, 2026, 4:31 PM",
+    "ts": "2026-04-20T20:41:50.400Z",
+    "tsET": "Apr 20, 2026, 4:41 PM",
     "dateET": "2026-04-20",
     "hourET": 16,
-    "minuteET": 31,
+    "minuteET": 41,
     "dow": 1,
-    "sales": 839948.7599999998,
+    "sales": 852322.66,
     "plan": 1137721.49,
-    "pctToPlan": 73.82727384361878,
-    "gp": 354815.6485999996,
-    "gpPct": 42.24253496129927,
-    "txns": 24341,
-    "customers": 22614,
+    "pctToPlan": 74.91487745388373,
+    "gp": 360649.5818000003,
+    "gpPct": 42.31373853183726,
+    "txns": 24794,
+    "customers": 23046,
     "storeCount": 134,
-    "asOf": "2026-04-20T20:15:14.400000",
-    "asOfET": "Apr 20, 2026, 4:15 PM"
+    "asOf": "2026-04-20T20:30:13.873000",
+    "asOfET": "Apr 20, 2026, 4:30 PM"
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.95 shape + 0.05 level)",
+    "method": "blended (w=0.96 shape + 0.04 level)",
     "confidence": "medium",
-    "projectedEOD": 956378.5572499018,
-    "projectedPctToPlan": 84.0608677656165,
-    "projectedVariance": -181342.93275009817,
+    "projectedEOD": 959234.3848676493,
+    "projectedPctToPlan": 84.31188065786199,
+    "projectedVariance": -178487.1051323507,
     "band": {
-      "low": 872594.2906877031,
-      "high": 1040162.8238121006
+      "low": 875442.165096659,
+      "high": 1043026.6046386396
     },
-    "pctOfDayElapsed": 0.881,
+    "pctOfDayElapsed": 0.891,
     "level_EOD": 1017152.2970111526,
-    "shape_EOD": 953403.8138478999,
-    "blendWeight": 0.9533362481051671,
+    "shape_EOD": 956591.088664422,
+    "blendWeight": 0.9563533113789011,
     "factors": {
       "plan": 1137721.49,
       "recencyFactor": 0.9393,
@@ -48,23 +48,23 @@
       "weatherSummary": "concord-nh: 46F Isolated Rain And Snow Showers | worcester-ma: 50F Partly Sunny | burlington-vt: 40F Partly Sunny | portland-me: 45F Isolated Rain And Snow Showers | albany-ny: 47F Scattered Rain Showers | scranton-pa: 44F Partly Sunny"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.881,
+      "basePaceFromCurve": 0.891,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.881,
+      "blendedPaceAtNow": 0.891,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 37712.967,
+      "estimatedCurrent": 38141.037000000004,
       "estimatedEOD": 42807,
-      "paceUsed": 0.881,
+      "paceUsed": 0.891,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 28199,
-          "estimatedCurrent": 24843.319,
+          "estimatedCurrent": 25125.309,
           "estimatedEOD": 28199,
           "stdev": 0.2923
         },
@@ -72,16 +72,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 14608,
-          "estimatedCurrent": 12869.648,
+          "estimatedCurrent": 13015.728000000001,
           "estimatedEOD": 14608,
           "stdev": 0.1658
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 999185.5572499018,
-    "combinedCurrentSales": 877661.7269999997,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $37,713 so far, +$42,807 to EOD."
+    "combinedProjectedEOD": 1002041.3848676493,
+    "combinedCurrentSales": 890463.697,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $38,141 so far, +$42,807 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 7,
