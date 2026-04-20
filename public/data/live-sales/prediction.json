@@ -1,70 +1,70 @@
 {
-  "updatedAt": "2026-04-20T17:26:53.403Z",
-  "updatedAtET": "Apr 20, 2026, 1:26 PM",
+  "updatedAt": "2026-04-20T17:37:44.603Z",
+  "updatedAtET": "Apr 20, 2026, 1:37 PM",
   "dateET": "2026-04-20",
   "dow": 1,
   "season": "spring",
   "current": {
-    "ts": "2026-04-20T17:26:53.403Z",
-    "tsET": "Apr 20, 2026, 1:26 PM",
+    "ts": "2026-04-20T17:37:44.603Z",
+    "tsET": "Apr 20, 2026, 1:37 PM",
     "dateET": "2026-04-20",
     "hourET": 13,
-    "minuteET": 26,
+    "minuteET": 37,
     "dow": 1,
-    "sales": 520937.2599999999,
+    "sales": 539808.7000000003,
     "plan": 1137721.49,
-    "pctToPlan": 45.787766564908594,
-    "gp": 222580.94399999984,
-    "gpPct": 42.72701553350204,
-    "txns": 14816,
-    "customers": 13573,
+    "pctToPlan": 47.446471280067,
+    "gp": 230779.56040000025,
+    "gpPct": 42.75210095724654,
+    "txns": 15364,
+    "customers": 14096,
     "storeCount": 134,
-    "asOf": "2026-04-20T17:15:10.657000",
-    "asOfET": "Apr 20, 2026, 1:15 PM"
+    "asOf": "2026-04-20T17:30:13.267000",
+    "asOfET": "Apr 20, 2026, 1:30 PM"
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.75 shape + 0.25 level)",
+    "method": "blended (w=0.77 shape + 0.23 level)",
     "confidence": "medium",
-    "projectedEOD": 902595.215288758,
-    "projectedPctToPlan": 79.33358235931344,
-    "projectedVariance": -235126.27471124195,
+    "projectedEOD": 883919.1857730871,
+    "projectedPctToPlan": 77.69205324346005,
+    "projectedVariance": -253802.3042269129,
     "band": {
-      "low": 807800.8538187755,
-      "high": 997389.5767587405
+      "low": 792831.6049714314,
+      "high": 975006.7665747427
     },
-    "pctOfDayElapsed": 0.6033333333333333,
-    "level_EOD": 1017152.2970111526,
-    "shape_EOD": 863431.9226519336,
-    "blendWeight": 0.7452303066520879,
+    "pctOfDayElapsed": 0.6216666666666667,
+    "level_EOD": 935780.1132502605,
+    "shape_EOD": 868324.9865951746,
+    "blendWeight": 0.7688211415323665,
     "factors": {
       "plan": 1137721.49,
       "recencyFactor": 0.9393,
       "dowPlanRatio": 0.9518,
       "holidayKey": null,
       "holidayMult": 1,
-      "weatherKey": "normal",
-      "weatherMult": 1,
-      "weatherSummary": "concord-nh: 46F Isolated Rain And Snow Showers | worcester-ma: 50F Partly Sunny | burlington-vt: 40F Partly Sunny | albany-ny: 46F Mostly Sunny then Isolated Rain And Snow Showers | scranton-pa: 45F Mostly Sunny then Isolated Rain And Snow Showers"
+      "weatherKey": "coldRain_lt_50F",
+      "weatherMult": 0.92,
+      "weatherSummary": "concord-nh: 46F Isolated Rain And Snow Showers | worcester-ma: 50F Partly Sunny | burlington-vt: 40F Partly Sunny | portland-me: 45F Scattered Rain And Snow Showers | albany-ny: 46F Mostly Sunny then Isolated Rain And Snow Showers | scranton-pa: 45F Mostly Sunny then Isolated Rain And Snow Showers"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.6033333333333333,
+      "basePaceFromCurve": 0.6216666666666667,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.6033333333333333,
+      "blendedPaceAtNow": 0.6216666666666667,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 25826.889999999996,
+      "estimatedCurrent": 26611.685,
       "estimatedEOD": 42807,
-      "paceUsed": 0.6033333333333333,
+      "paceUsed": 0.6216666666666667,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 28199,
-          "estimatedCurrent": 17013.396666666664,
+          "estimatedCurrent": 17530.378333333334,
           "estimatedEOD": 28199,
           "stdev": 0.2923
         },
@@ -72,26 +72,26 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 14608,
-          "estimatedCurrent": 8813.493333333332,
+          "estimatedCurrent": 9081.306666666667,
           "estimatedEOD": 14608,
           "stdev": 0.1658
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 945402.215288758,
-    "combinedCurrentSales": 546764.1499999999,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $25,827 so far, +$42,807 to EOD."
+    "combinedProjectedEOD": 926726.1857730871,
+    "combinedCurrentSales": 566420.3850000004,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $26,612 so far, +$42,807 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 7,
   "weatherRaw": {
-    "mult": 1,
-    "key": "normal",
+    "mult": 0.92,
+    "key": "coldRain_lt_50F",
     "season": "spring",
-    "summary": "concord-nh: 46F Isolated Rain And Snow Showers | worcester-ma: 50F Partly Sunny | burlington-vt: 40F Partly Sunny | albany-ny: 46F Mostly Sunny then Isolated Rain And Snow Showers | scranton-pa: 45F Mostly Sunny then Isolated Rain And Snow Showers",
+    "summary": "concord-nh: 46F Isolated Rain And Snow Showers | worcester-ma: 50F Partly Sunny | burlington-vt: 40F Partly Sunny | portland-me: 45F Scattered Rain And Snow Showers | albany-ny: 46F Mostly Sunny then Isolated Rain And Snow Showers | scranton-pa: 45F Mostly Sunny then Isolated Rain And Snow Showers",
     "tagWeights": {
-      "coldRain_lt_50F": 0.352,
+      "coldRain_lt_50F": 0.504,
       "normal": 0.496
     },
     "forecasts": [
@@ -118,6 +118,14 @@
         "unit": "F",
         "short": "Partly Sunny",
         "detailed": "Partly sunny, with a high near 40. Northwest wind around 10 mph."
+      },
+      {
+        "station": "portland-me",
+        "weight": 0.152,
+        "temp": 45,
+        "unit": "F",
+        "short": "Scattered Rain And Snow Showers",
+        "detailed": "Scattered rain and snow showers. Partly sunny, with a high near 45. Northwest wind 5 to 10 mph. Chance of precipitation is 30%."
       },
       {
         "station": "albany-ny",
