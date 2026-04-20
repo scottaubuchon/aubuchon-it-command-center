@@ -1,15 +1,15 @@
 {
-  "updatedAt": "2026-04-20T00:17:49.224Z",
-  "updatedAtET": "Apr 19, 2026, 8:17 PM",
+  "updatedAt": "2026-04-20T00:28:23.530Z",
+  "updatedAtET": "Apr 19, 2026, 8:28 PM",
   "dateET": "2026-04-19",
   "dow": 0,
   "season": "spring",
   "current": {
-    "ts": "2026-04-20T00:17:49.224Z",
-    "tsET": "Apr 19, 2026, 8:17 PM",
+    "ts": "2026-04-20T00:28:23.530Z",
+    "tsET": "Apr 19, 2026, 8:28 PM",
     "dateET": "2026-04-19",
     "hourET": 20,
-    "minuteET": 17,
+    "minuteET": 28,
     "dow": 0,
     "sales": 811544.8599999998,
     "plan": 1197815.36,
@@ -45,7 +45,7 @@
       "holidayMult": 1,
       "weatherKey": "coldRain_lt_50F",
       "weatherMult": 0.92,
-      "weatherSummary": "concord-nh: 29F Chance Rain And Snow Showers then Mostly Clear | worcester-ma: 32F Chance Rain Showers then Mostly Clear | burlington-vt: 30F Chance Rain And Snow Showers | portland-me: 32F Slight Chance Rain And Snow Showers then Partly Cloudy | albany-ny: 32F Mostly Clear | scranton-pa: 34F Chance Rain Showers"
+      "weatherSummary": "concord-nh: 29F Chance Rain And Snow Showers then Mostly Clear | worcester-ma: 32F Chance Rain Showers then Mostly Clear | burlington-vt: 30F Chance Rain And Snow Showers | portland-me: 32F Slight Chance Rain And Snow Showers then Partly Cloudy | albany-ny: 32F Mostly Clear | scranton-pa: 34F Partly Cloudy then Scattered Snow Showers"
     },
     "shapeDetail": {
       "basePaceFromCurve": 1,
@@ -89,7 +89,7 @@
     "mult": 0.92,
     "key": "coldRain_lt_50F",
     "season": "spring",
-    "summary": "concord-nh: 29F Chance Rain And Snow Showers then Mostly Clear | worcester-ma: 32F Chance Rain Showers then Mostly Clear | burlington-vt: 30F Chance Rain And Snow Showers | portland-me: 32F Slight Chance Rain And Snow Showers then Partly Cloudy | albany-ny: 32F Mostly Clear | scranton-pa: 34F Chance Rain Showers",
+    "summary": "concord-nh: 29F Chance Rain And Snow Showers then Mostly Clear | worcester-ma: 32F Chance Rain Showers then Mostly Clear | burlington-vt: 30F Chance Rain And Snow Showers | portland-me: 32F Slight Chance Rain And Snow Showers then Partly Cloudy | albany-ny: 32F Mostly Clear | scranton-pa: 34F Partly Cloudy then Scattered Snow Showers",
     "tagWeights": {
       "coldRain_lt_50F": 1
     },
@@ -139,8 +139,8 @@
         "weight": 0.088,
         "temp": 34,
         "unit": "F",
-        "short": "Chance Rain Showers",
-        "detailed": "A chance of rain showers. Partly cloudy, with a low around 34. West wind 2 to 9 mph. Chance of precipitation is 30%. New rainfall amounts less than a tenth of an inch possible."
+        "short": "Partly Cloudy then Scattered Snow Showers",
+        "detailed": "Scattered snow showers after 4am. Partly cloudy, with a low around 34. West wind 3 to 7 mph. Chance of precipitation is 30%. New snow accumulation of less than half an inch possible."
       }
     ]
   }
