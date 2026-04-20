@@ -1,15 +1,15 @@
 {
-  "updatedAt": "2026-04-20T22:19:10.539Z",
-  "updatedAtET": "Apr 20, 2026, 6:19 PM",
+  "updatedAt": "2026-04-20T22:29:44.718Z",
+  "updatedAtET": "Apr 20, 2026, 6:29 PM",
   "dateET": "2026-04-20",
   "dow": 1,
   "season": "spring",
   "current": {
-    "ts": "2026-04-20T22:19:10.539Z",
-    "tsET": "Apr 20, 2026, 6:19 PM",
+    "ts": "2026-04-20T22:29:44.718Z",
+    "tsET": "Apr 20, 2026, 6:29 PM",
     "dateET": "2026-04-20",
     "hourET": 18,
-    "minuteET": 19,
+    "minuteET": 29,
     "dow": 1,
     "sales": 988805.0399999998,
     "plan": 1137721.49,
@@ -24,47 +24,47 @@
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.97 shape + 0.03 level)",
+    "method": "blended (w=0.98 shape + 0.02 level)",
     "confidence": "medium",
-    "projectedEOD": 1014561.9260441749,
-    "projectedPctToPlan": 89.1748934129894,
-    "projectedVariance": -123159.56395582506,
+    "projectedEOD": 1009851.1363912195,
+    "projectedPctToPlan": 88.7608386821646,
+    "projectedVariance": -127870.35360878054,
     "band": {
-      "low": 927509.9663100002,
-      "high": 1101613.8857783498
+      "low": 923297.8579774505,
+      "high": 1096404.4148049885
     },
-    "pctOfDayElapsed": 0.9726666666666667,
-    "level_EOD": 935780.1132502605,
-    "shape_EOD": 1016591.8848526386,
-    "blendWeight": 0.9748804070469869,
+    "pctOfDayElapsed": 0.9793333333333333,
+    "level_EOD": 1017152.2970111526,
+    "shape_EOD": 1009671.5861130019,
+    "blendWeight": 0.9759982332345019,
     "factors": {
       "plan": 1137721.49,
       "recencyFactor": 0.9393,
       "dowPlanRatio": 0.9518,
       "holidayKey": null,
       "holidayMult": 1,
-      "weatherKey": "coldRain_lt_50F",
-      "weatherMult": 0.92,
-      "weatherSummary": "concord-nh: 46F Isolated Rain And Snow Showers | worcester-ma: 49F Mostly Sunny | burlington-vt: 25F Mostly Clear | portland-me: 27F Isolated Rain And Snow Showers then Partly Cloudy | albany-ny: 47F Scattered Rain Showers | scranton-pa: 25F Slight Chance Rain Showers then Mostly Clear"
+      "weatherKey": "normal",
+      "weatherMult": 1,
+      "weatherSummary": "concord-nh: 20F Partly Cloudy | worcester-ma: 49F Mostly Sunny | burlington-vt: 25F Mostly Clear | portland-me: 27F Isolated Rain And Snow Showers then Partly Cloudy | albany-ny: 47F Scattered Rain Showers | scranton-pa: 25F Slight Chance Rain Showers then Mostly Clear"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.9726666666666667,
+      "basePaceFromCurve": 0.9793333333333333,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.9726666666666667,
+      "blendedPaceAtNow": 0.9793333333333333,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 41636.942,
+      "estimatedCurrent": 41922.322,
       "estimatedEOD": 42807,
-      "paceUsed": 0.9726666666666667,
+      "paceUsed": 0.9793333333333333,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 28199,
-          "estimatedCurrent": 27428.227333333332,
+          "estimatedCurrent": 27616.220666666664,
           "estimatedEOD": 28199,
           "stdev": 0.2923
         },
@@ -72,36 +72,36 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 14608,
-          "estimatedCurrent": 14208.714666666667,
+          "estimatedCurrent": 14306.101333333332,
           "estimatedEOD": 14608,
           "stdev": 0.1658
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1057368.926044175,
-    "combinedCurrentSales": 1030441.9819999998,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $41,637 so far, +$42,807 to EOD."
+    "combinedProjectedEOD": 1052658.1363912195,
+    "combinedCurrentSales": 1030727.3619999998,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $41,922 so far, +$42,807 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 7,
   "weatherRaw": {
-    "mult": 0.92,
-    "key": "coldRain_lt_50F",
+    "mult": 1,
+    "key": "normal",
     "season": "spring",
-    "summary": "concord-nh: 46F Isolated Rain And Snow Showers | worcester-ma: 49F Mostly Sunny | burlington-vt: 25F Mostly Clear | portland-me: 27F Isolated Rain And Snow Showers then Partly Cloudy | albany-ny: 47F Scattered Rain Showers | scranton-pa: 25F Slight Chance Rain Showers then Mostly Clear",
+    "summary": "concord-nh: 20F Partly Cloudy | worcester-ma: 49F Mostly Sunny | burlington-vt: 25F Mostly Clear | portland-me: 27F Isolated Rain And Snow Showers then Partly Cloudy | albany-ny: 47F Scattered Rain Showers | scranton-pa: 25F Slight Chance Rain Showers then Mostly Clear",
     "tagWeights": {
-      "coldRain_lt_50F": 0.504,
-      "normal": 0.496
+      "normal": 0.64,
+      "coldRain_lt_50F": 0.36
     },
     "forecasts": [
       {
         "station": "concord-nh",
         "weight": 0.144,
-        "temp": 46,
+        "temp": 20,
         "unit": "F",
-        "short": "Isolated Rain And Snow Showers",
-        "detailed": "Isolated rain and snow showers. Partly sunny, with a high near 46. Northwest wind 5 to 10 mph. Chance of precipitation is 20%."
+        "short": "Partly Cloudy",
+        "detailed": "Partly cloudy, with a low around 20. Northwest wind 0 to 5 mph."
       },
       {
         "station": "worcester-ma",
