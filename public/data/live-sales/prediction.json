@@ -1,15 +1,15 @@
 {
-  "updatedAt": "2026-04-20T00:50:20.482Z",
-  "updatedAtET": "Apr 19, 2026, 8:50 PM",
+  "updatedAt": "2026-04-20T01:00:57.005Z",
+  "updatedAtET": "Apr 19, 2026, 9:00 PM",
   "dateET": "2026-04-19",
   "dow": 0,
   "season": "spring",
   "current": {
-    "ts": "2026-04-20T00:50:20.482Z",
-    "tsET": "Apr 19, 2026, 8:50 PM",
+    "ts": "2026-04-20T01:00:57.005Z",
+    "tsET": "Apr 19, 2026, 9:00 PM",
     "dateET": "2026-04-19",
-    "hourET": 20,
-    "minuteET": 50,
+    "hourET": 21,
+    "minuteET": 0,
     "dow": 0,
     "sales": 811544.8599999998,
     "plan": 1197815.36,
@@ -91,7 +91,8 @@
     "season": "spring",
     "summary": "concord-nh: 29F Chance Rain And Snow Showers then Mostly Clear | worcester-ma: 32F Chance Rain Showers then Mostly Clear | burlington-vt: 30F Chance Rain And Snow Showers | portland-me: 32F Slight Chance Rain And Snow Showers then Partly Cloudy | albany-ny: 32F Mostly Clear | scranton-pa: 34F Partly Cloudy then Scattered Snow Showers",
     "tagWeights": {
-      "coldRain_lt_50F": 1
+      "coldRain_lt_50F": 0.88,
+      "normal": 0.12
     },
     "forecasts": [
       {
@@ -132,7 +133,7 @@
         "temp": 32,
         "unit": "F",
         "short": "Mostly Clear",
-        "detailed": "Mostly clear, with a low around 32. Southwest wind 2 to 12 mph, with gusts as high as 23 mph. New rainfall amounts between a tenth and quarter of an inch possible."
+        "detailed": "Mostly clear, with a low around 32. Southwest wind 2 to 12 mph, with gusts as high as 22 mph."
       },
       {
         "station": "scranton-pa",
