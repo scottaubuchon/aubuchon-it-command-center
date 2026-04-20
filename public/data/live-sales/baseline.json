@@ -1,7 +1,7 @@
 {
-  "version": 6,
-  "generatedAt": "2026-04-18",
-  "sourceDates": "2026-04-15..2026-04-18",
+  "version": 7,
+  "generatedAt": "2026-04-19",
+  "sourceDates": "2026-04-15..2026-04-19",
   "description": "Plan-anchored Aubuchon EOD forecast baseline. forecast = plan * recencyFactor * holidayMult * weatherMult. See log-live-sales.js for the blending logic with the pace-curve shape projection.",
   "recencyFactor": 0.9393,
   "recencyStdev": 0.093,
@@ -336,21 +336,24 @@
     ]
   ],
   "learningLog": {
-    "updatedAt": "2026-04-18T21:33:24",
-    "daysOfData": 4,
+    "updatedAt": "2026-04-20T01:36:20",
+    "daysOfData": 5,
     "dowsUpdated": [],
     "holidayUpdated": null,
     "paceDeltas": {},
     "recencyOld": 0.9393,
     "recencyNew": 0.9393,
     "warnings": [
-      "recencyFactor unchanged — only 4 days (<20)"
+      "recencyFactor unchanged \u2014 only 5 days (<20)",
+      "no DOW has >=2 days of data yet; pace curves unchanged (max per-DOW days = 1)",
+      "2026-04-19 (dow=0) ratio=0.6778 outside normal band [0.85,1.15] \u2014 included in perDayRatios but no action taken"
     ],
     "perDayRatios": {
       "2026-04-15": 1.0571,
       "2026-04-16": 1.0801,
       "2026-04-17": 1.0122,
-      "2026-04-18": 1.0697
+      "2026-04-18": 1.0697,
+      "2026-04-19": 0.6778
     }
   }
 }
