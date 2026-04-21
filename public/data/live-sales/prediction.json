@@ -1,41 +1,41 @@
 {
-  "updatedAt": "2026-04-21T00:27:59.316Z",
-  "updatedAtET": "Apr 20, 2026, 8:27 PM",
+  "updatedAt": "2026-04-21T00:38:38.796Z",
+  "updatedAtET": "Apr 20, 2026, 8:38 PM",
   "dateET": "2026-04-20",
   "dow": 1,
   "season": "spring",
   "current": {
-    "ts": "2026-04-21T00:27:59.316Z",
-    "tsET": "Apr 20, 2026, 8:27 PM",
+    "ts": "2026-04-21T00:38:38.796Z",
+    "tsET": "Apr 20, 2026, 8:38 PM",
     "dateET": "2026-04-20",
     "hourET": 20,
-    "minuteET": 27,
+    "minuteET": 38,
     "dow": 1,
-    "sales": 1014939.6200000007,
+    "sales": 1014939.6200000003,
     "plan": 1137721.49,
-    "pctToPlan": 89.2080908131568,
-    "gp": 430371.1077000005,
-    "gpPct": 42.403616847670236,
-    "txns": 30458,
+    "pctToPlan": 89.20809081315677,
+    "gp": 430371.10770000017,
+    "gpPct": 42.403616847670214,
+    "txns": 30459,
     "customers": 28034,
     "storeCount": 134,
-    "asOf": "2026-04-21T00:15:11.107000",
-    "asOfET": "Apr 20, 2026, 8:15 PM"
+    "asOf": "2026-04-21T00:30:15.297000",
+    "asOfET": "Apr 20, 2026, 8:30 PM"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.98 shape + 0.02 level)",
     "confidence": "medium",
-    "projectedEOD": 1014985.7241005136,
-    "projectedPctToPlan": 89.21214313184096,
-    "projectedVariance": -122735.76589948637,
+    "projectedEOD": 1014985.7241005133,
+    "projectedPctToPlan": 89.21214313184093,
+    "projectedVariance": -122735.76589948672,
     "band": {
-      "low": 928261.2818237417,
-      "high": 1101710.1663772855
+      "low": 928261.2818237414,
+      "high": 1101710.1663772853
     },
     "pctOfDayElapsed": 1,
     "level_EOD": 1017152.2970111526,
-    "shape_EOD": 1014939.6200000007,
+    "shape_EOD": 1014939.6200000003,
     "blendWeight": 0.9791636554813196,
     "factors": {
       "plan": 1137721.49,
@@ -45,7 +45,7 @@
       "holidayMult": 1,
       "weatherKey": "normal",
       "weatherMult": 1,
-      "weatherSummary": "concord-nh: 20F Partly Cloudy | worcester-ma: 27F Mostly Cloudy | burlington-vt: 25F Mostly Clear | portland-me: 27F Isolated Rain And Snow Showers then Partly Cloudy | albany-ny: 25F Isolated Rain Showers then Partly Cloudy | scranton-pa: 25F Isolated Snow Showers then Mostly Clear"
+      "weatherSummary": "concord-nh: 20F Partly Cloudy | worcester-ma: 27F Mostly Cloudy | burlington-vt: 25F Mostly Clear | albany-ny: 25F Isolated Rain Showers then Partly Cloudy | scranton-pa: 25F Isolated Snow Showers then Mostly Clear"
     },
     "shapeDetail": {
       "basePaceFromCurve": 1,
@@ -79,8 +79,8 @@
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1057792.7241005136,
-    "combinedCurrentSales": 1057746.6200000006,
+    "combinedProjectedEOD": 1057792.7241005134,
+    "combinedCurrentSales": 1057746.6200000003,
     "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $42,807 so far, +$42,807 to EOD."
   },
   "offlineStoresVersion": 2,
@@ -89,10 +89,10 @@
     "mult": 1,
     "key": "normal",
     "season": "spring",
-    "summary": "concord-nh: 20F Partly Cloudy | worcester-ma: 27F Mostly Cloudy | burlington-vt: 25F Mostly Clear | portland-me: 27F Isolated Rain And Snow Showers then Partly Cloudy | albany-ny: 25F Isolated Rain Showers then Partly Cloudy | scranton-pa: 25F Isolated Snow Showers then Mostly Clear",
+    "summary": "concord-nh: 20F Partly Cloudy | worcester-ma: 27F Mostly Cloudy | burlington-vt: 25F Mostly Clear | albany-ny: 25F Isolated Rain Showers then Partly Cloudy | scranton-pa: 25F Isolated Snow Showers then Mostly Clear",
     "tagWeights": {
       "normal": 0.64,
-      "coldRain_lt_50F": 0.36
+      "coldRain_lt_50F": 0.208
     },
     "forecasts": [
       {
@@ -118,14 +118,6 @@
         "unit": "F",
         "short": "Mostly Clear",
         "detailed": "Mostly clear, with a low around 25. North wind 2 to 8 mph."
-      },
-      {
-        "station": "portland-me",
-        "weight": 0.152,
-        "temp": 27,
-        "unit": "F",
-        "short": "Isolated Rain And Snow Showers then Partly Cloudy",
-        "detailed": "Isolated rain and snow showers before 8pm. Partly cloudy, with a low around 27. North wind around 5 mph. Chance of precipitation is 20%."
       },
       {
         "station": "albany-ny",
