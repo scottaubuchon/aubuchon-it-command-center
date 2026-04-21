@@ -1,15 +1,15 @@
 {
-  "updatedAt": "2026-04-21T06:38:07.290Z",
-  "updatedAtET": "Apr 21, 2026, 2:38 AM",
+  "updatedAt": "2026-04-21T06:48:45.584Z",
+  "updatedAtET": "Apr 21, 2026, 2:48 AM",
   "dateET": "2026-04-21",
   "dow": 2,
   "season": "spring",
   "current": {
-    "ts": "2026-04-21T06:38:07.290Z",
-    "tsET": "Apr 21, 2026, 2:38 AM",
+    "ts": "2026-04-21T06:48:45.584Z",
+    "tsET": "Apr 21, 2026, 2:48 AM",
     "dateET": "2026-04-21",
     "hourET": 2,
-    "minuteET": 38,
+    "minuteET": 48,
     "dow": 2,
     "sales": 1015170.4800000007,
     "plan": 1091990.0000000005,
@@ -26,17 +26,17 @@
     "available": true,
     "method": "blended (w=0.04 shape + 0.96 level)",
     "confidence": "low",
-    "projectedEOD": 12396157.83697069,
-    "projectedPctToPlan": 1135.189684609812,
-    "projectedVariance": 11304167.83697069,
+    "projectedEOD": 11736261.29400021,
+    "projectedPctToPlan": 1074.759044863067,
+    "projectedVariance": 10644271.29400021,
     "band": {
-      "low": 9942468.642742869,
-      "high": 14849847.031198513
+      "low": 9413271.573108165,
+      "high": 14059251.014892256
     },
-    "pctOfDayElapsed": 0.003761904761904762,
+    "pctOfDayElapsed": 0.004,
     "level_EOD": 1069093.5795561005,
-    "shape_EOD": 269855444.0506331,
-    "blendWeight": 0.0421415158826432,
+    "shape_EOD": 253792620.00000018,
+    "blendWeight": 0.04220884325861159,
     "factors": {
       "plan": 1091990.0000000005,
       "recencyFactor": 0.9393,
@@ -45,26 +45,26 @@
       "holidayMult": 1,
       "weatherKey": "normal",
       "weatherMult": 1,
-      "weatherSummary": "concord-nh: 20F Mostly Clear | worcester-ma: 29F Partly Cloudy | burlington-vt: 25F Mostly Clear | portland-me: 27F Mostly Clear | albany-ny: 25F Mostly Clear | scranton-pa: 25F Clear"
+      "weatherSummary": "concord-nh: 20F Mostly Clear | worcester-ma: 29F Partly Cloudy | burlington-vt: 26F Clear | portland-me: 27F Mostly Clear | albany-ny: 25F Mostly Clear | scranton-pa: 25F Clear"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.003761904761904762,
+      "basePaceFromCurve": 0.004,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.003761904761904762,
+      "blendedPaceAtNow": 0.004,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 159.47090476190476,
+      "estimatedCurrent": 169.564,
       "estimatedEOD": 42391,
-      "paceUsed": 0.003761904761904762,
+      "paceUsed": 0.004,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 28783,
-          "estimatedCurrent": 108.27890476190476,
+          "estimatedCurrent": 115.132,
           "estimatedEOD": 28783,
           "stdev": 0.4847
         },
@@ -72,16 +72,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 13608,
-          "estimatedCurrent": 51.192,
+          "estimatedCurrent": 54.432,
           "estimatedEOD": 13608,
           "stdev": 0.1026
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 12438548.83697069,
-    "combinedCurrentSales": 1015329.9509047626,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $159 so far, +$42,391 to EOD."
+    "combinedProjectedEOD": 11778652.29400021,
+    "combinedCurrentSales": 1015340.0440000007,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $170 so far, +$42,391 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 8,
@@ -89,7 +89,7 @@
     "mult": 1,
     "key": "normal",
     "season": "spring",
-    "summary": "concord-nh: 20F Mostly Clear | worcester-ma: 29F Partly Cloudy | burlington-vt: 25F Mostly Clear | portland-me: 27F Mostly Clear | albany-ny: 25F Mostly Clear | scranton-pa: 25F Clear",
+    "summary": "concord-nh: 20F Mostly Clear | worcester-ma: 29F Partly Cloudy | burlington-vt: 26F Clear | portland-me: 27F Mostly Clear | albany-ny: 25F Mostly Clear | scranton-pa: 25F Clear",
     "tagWeights": {
       "normal": 1
     },
@@ -113,10 +113,10 @@
       {
         "station": "burlington-vt",
         "weight": 0.224,
-        "temp": 25,
+        "temp": 26,
         "unit": "F",
-        "short": "Mostly Clear",
-        "detailed": "Mostly clear, with a low around 25. East wind around 3 mph."
+        "short": "Clear",
+        "detailed": "Clear, with a low around 26. Southwest wind around 2 mph."
       },
       {
         "station": "portland-me",
