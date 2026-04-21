@@ -148,10 +148,33 @@ async function refreshData() {
     return { product: desc, productCode: code, sales };
   }).sort((a, b) => b.sales - a.sales).slice(0, 100);
 
+  // Stores not reporting = stores with a plan > 0 today that did NOT send a
+  // FCT_LIVE_SALE row. Uses RPT_SCORECARD_BY_DAY as the "expected to sell today"
+  // universe so we don't falsely flag closed/inactive stores.
+  const reportingSet = new Set(liveRows.map(r => String(r.Store || '')));
+  const notReporting = [];
+  Object.keys(planMap).forEach(code => {
+    const plan = planMap[code] || 0;
+    if (plan <= 0) return;
+    if (reportingSet.has(code)) return;
+    // Match dim name map by stripping leading zeros (nameMap was built stripped).
+    const dimKey = code.replace(/^0+/, '');
+    const info = nameMap[dimKey] || nameMap[code] || {};
+    notReporting.push({
+      store: code,
+      name:  info.name  || '',
+      city:  info.city  || '',
+      state: info.state || '',
+      plan:  plan,
+    });
+  });
+  notReporting.sort((a, b) => b.plan - a.plan);
+
   return {
     companyTotal,
     topStores,
     topProducts,
+    notReporting,
     asOf: latestUpdate || new Date().toISOString(),
     asOfET: latestUpdate
       ? new Date(latestUpdate + (latestUpdate.endsWith('Z') ? '' : 'Z')).toLocaleString('en-US', { timeZone: 'America/New_York', month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit' })
@@ -169,27 +192,4 @@ export const config = {
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  if (req.method === 'OPTIONS') return res.status(200).end();
-
-  const now = Date.now();
-  const forceRefresh = req.query && req.query.refresh === 'true';
-
-  // Return cached data if fresh
-  if (cache.data && !forceRefresh && (now - cache.timestamp) < CACHE_TTL) {
-    return res.status(200).json({ status: 'ok', cached: true, ...cache.data });
-  }
-
-  try {
-    const data = await refreshData();
-    cache = { data, timestamp: now };
-    return res.status(200).json({ status: 'ok', cached: false, ...data });
-  } catch (e) {
-    // If refresh fails but we have stale cache, return it
-    if (cache.data) {
-      return res.status(200).json({ status: 'ok', cached: true, stale: true, ...cache.data });
-    }
-    return res.status(502).json({ status: 'error', error: e.message });
-  }
-}
+  res.setHeader('Access-Con
