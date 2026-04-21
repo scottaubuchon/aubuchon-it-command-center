@@ -1,4 +1,3 @@
-// deploy-bump: 2026-04-21T17:30:27Z
 // ============================================================
 // /api/live-sales-snowflake  (ESM — matches project's "type": "module")
 // Returns today's live sales snapshot sourced from Snowflake.
@@ -13,6 +12,12 @@
 //   SNOWFLAKE_DATABASE      e.g. PRD_EDW_DB
 //   SNOWFLAKE_SCHEMA        e.g. ANALYTICS_BASE
 //   SNOWFLAKE_ROLE          (optional)
+//
+// Data sources:
+//   PRD_EDW_DB.ANALYTICS_BASE.FCT_LIVE_SALE                    (per-store/day rollup)
+//   PRD_EDW_DB.ANALYTICS_BASE.FCT_LIVE_SALE_TRANSACTION_LINE   (per line, for top products)
+//   PRD_EDW_DB.ANALYTICS_BASE.DIM_STORE                        (store name/city/state)
+//   PRD_EDW_DB.ANALYTICS_BASE.RPT_PAYROLL_BUDGET_AND_ACTUALS   (weekly target -> daily plan via /7)
 // ============================================================
 
 // Route every writable path the SDK might touch into /tmp (Vercel's only
@@ -92,7 +97,39 @@ ORDER BY sales DESC NULLS LAST
 LIMIT 20
 `;
 
+// Stores expected to sell today (have a plan > 0 this week) but have NOT
+// yet reported a live-sales row for CURRENT_DATE().
+const NOT_REPORTING_SQL = `
+WITH plan_stores AS (
+  SELECT STORE_CD, SUM(TARGET_SALES_AMT) / 7.0 AS daily_plan
+  FROM PRD_EDW_DB.ANALYTICS_BASE.RPT_PAYROLL_BUDGET_AND_ACTUALS
+  WHERE WEEK_ENDING_DT >= DATE_TRUNC('week', CURRENT_DATE())
+    AND WEEK_ENDING_DT <  DATEADD('week', 1, DATE_TRUNC('week', CURRENT_DATE()))
+  GROUP BY STORE_CD
+),
+reporting_stores AS (
+  SELECT DISTINCT STORE_CD
+  FROM PRD_EDW_DB.ANALYTICS_BASE.FCT_LIVE_SALE
+  WHERE CURRENT_DT = CURRENT_DATE()
+)
+SELECT
+  ps.STORE_CD               AS store,
+  ds.STORE_NM               AS name,
+  ds.STORE_CITY_NM          AS city,
+  ds.STORE_STATE_CD         AS state,
+  ps.daily_plan             AS plan
+FROM plan_stores ps
+LEFT JOIN PRD_EDW_DB.ANALYTICS_BASE.DIM_STORE ds
+  ON ds.STORE_CD = ps.STORE_CD AND ds.ACTIVE_FLG = TRUE
+WHERE ps.STORE_CD NOT IN (SELECT STORE_CD FROM reporting_stores)
+  AND ps.daily_plan > 0
+ORDER BY ps.daily_plan DESC NULLS LAST
+`;
+
 // ---------- Snowflake helpers ----------
+// Lazy-load snowflake-sdk so a module-load crash bubbles up as a catchable
+// error (returned as JSON) instead of Vercel's opaque
+// FUNCTION_INVOCATION_FAILED.
 let _snowflake = null;
 async function getSdk() {
   if (_snowflake) return _snowflake;
@@ -177,81 +214,4 @@ function fmtAsOfET(ts) {
 
 // ---------- Handler ----------
 export default async function handler(req, res) {
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Cache-Control", "no-store, max-age=0");
-  if (req.method === "OPTIONS") { res.status(200).end(); return; }
-
-  const missing = [];
-  if (!process.env.SNOWFLAKE_ACCOUNT)   missing.push("SNOWFLAKE_ACCOUNT");
-  if (!process.env.SNOWFLAKE_USER)      missing.push("SNOWFLAKE_USER");
-  if (!process.env.SNOWFLAKE_WAREHOUSE) missing.push("SNOWFLAKE_WAREHOUSE");
-  if (!process.env.SNOWFLAKE_PASSWORD && !process.env.SNOWFLAKE_PRIVATE_KEY) {
-    missing.push("SNOWFLAKE_PASSWORD or SNOWFLAKE_PRIVATE_KEY");
-  }
-  if (missing.length) {
-    res.status(500).json({
-      status: "error",
-      error: "Missing required env vars: " + missing.join(", "),
-      source: "snowflake",
-    });
-    return;
-  }
-
-  let conn = null;
-  try {
-    conn = await connect();
-    const [companyRows, storeRows, productRows] = await Promise.all([
-      exec(conn, COMPANY_SQL),
-      exec(conn, STORES_SQL),
-      exec(conn, PRODUCTS_SQL),
-    ]);
-
-    const c = companyRows[0] || {};
-    const sales = toNumber(c.SALES);
-    const plan  = toNumber(c.PLAN);
-    const gp    = toNumber(c.GP);
-    const gpPct = sales > 0 ? (gp / sales) * 100 : 0;
-    const pctToPlan = plan > 0 ? (sales / plan) * 100 : 0;
-
-    const payload = {
-      status: "ok",
-      companyTotal: {
-        sales, plan, gp, gpPct,
-        txns:       toNumber(c.TXNS),
-        customers:  toNumber(c.CUSTOMERS),
-        storeCount: toNumber(c.STORE_COUNT),
-        pctToPlan,
-      },
-      topStores: storeRows.map((r) => ({
-        store: r.STORE,
-        name:  r.NAME,
-        city:  r.CITY,
-        state: r.STATE,
-        sales: toNumber(r.SALES),
-        plan:  toNumber(r.PLAN),
-        gp:    toNumber(r.GP),
-        txns:  toNumber(r.TXNS),
-      })),
-      topProducts: productRows.map((r) => ({
-        product: r.PRODUCT,
-        sales:   toNumber(r.SALES),
-      })),
-      asOfET: fmtAsOfET(c.AS_OF_TS) + " ET",
-      cached: false,
-      refreshedAt: new Date().toISOString(),
-      source: "snowflake",
-    };
-
-    res.status(200).json(payload);
-  } catch (err) {
-    console.error("[live-sales-snowflake] error:", err);
-    res.status(500).json({
-      status: "error",
-      error: (err && err.message) || String(err),
-      code:  (err && err.code)    || null,
-      source: "snowflake",
-    });
-  } finally {
-    if (conn) await destroy(conn);
-  }
-}
+  res.setHeader("Access-Control-Al
