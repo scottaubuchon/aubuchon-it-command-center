@@ -4972,6 +4972,7 @@ function LiveSalesView({ goBack }) {
   const [companyTotal, setCompanyTotal] = useState(null);
   const [topStores, setTopStores] = useState([]);
   const [topProducts, setTopProducts] = useState([]);
+  const [notReporting, setNotReporting] = useState([]);
   const [asOf, setAsOf] = useState("");
   const [cacheInfo, setCacheInfo] = useState("");
   const [sourceLabel, setSourceLabel] = useState("");
@@ -4979,6 +4980,7 @@ function LiveSalesView({ goBack }) {
   const [showEOD, setShowEOD] = useState(false);
   const [showAllStores, setShowAllStores] = useState(false);
   const [showAllProducts, setShowAllProducts] = useState(false);
+  const [showNotReporting, setShowNotReporting] = useState(false);
 
   // Shared renderer — takes an API-shaped payload and fans it out into state.
   var applyPayload = function (d, sourceTag) {
@@ -5006,6 +5008,15 @@ function LiveSalesView({ goBack }) {
     setTopStores(stores);
     setTopProducts((d.topProducts || []).map(function (p, i) {
       return { rank: i + 1, desc: p.product, sales: p.sales };
+    }));
+    setNotReporting((d.notReporting || []).map(function (s) {
+      return {
+        code: s.store,
+        name: s.name || "Store " + s.store,
+        city: s.city || "",
+        state: s.state || "",
+        plan: s.plan || 0,
+      };
     }));
     if (d.asOfET) setAsOf(d.asOfET + " ET");
     else if (d.asOf) setAsOf(d.asOf);
@@ -5198,10 +5209,83 @@ function LiveSalesView({ goBack }) {
             </div>
             <div className="bg-white/60 rounded-lg p-3 border border-slate-200/50">
               <div className="text-xs text-slate-500 mb-0.5">Stores Reporting</div>
-              <div className="text-lg sm:text-xl font-bold text-slate-900">{companyTotal.storeCount || 0}</div>
+              <div className="text-lg sm:text-xl font-bold text-slate-900">
+                {companyTotal.storeCount || 0}
+                {notReporting.length > 0 && (
+                  <span className="text-xs font-semibold text-red-600 ml-1.5">({notReporting.length} missing)</span>
+                )}
+              </div>
             </div>
           </div>
         </div>
+
+        {/* ── Stores Not Reporting ── */}
+        {(function () {
+          var count = notReporting.length;
+          var hasMissing = count > 0;
+          var tc = function (str) { return String(str || "").replace(/\b\w+/g, function (w) { return w.charAt(0) + w.slice(1).toLowerCase(); }); };
+          var fmt$ = function (n) { return "$" + Math.round(n || 0).toLocaleString(); };
+          if (!hasMissing) {
+            return (
+              <div className="rounded-xl border-2 border-emerald-200 bg-emerald-50 p-3 sm:p-4 mb-5 flex items-center gap-3">
+                <CheckCircle className="w-5 h-5 text-emerald-600 shrink-0" />
+                <div className="text-sm font-medium text-emerald-800">
+                  All expected stores are reporting ({companyTotal.storeCount || 0} of {companyTotal.storeCount || 0})
+                </div>
+              </div>
+            );
+          }
+          return (
+            <div className="rounded-xl border-2 border-amber-300 bg-amber-50 mb-5 overflow-hidden">
+              <button
+                onClick={function () { setShowNotReporting(!showNotReporting); }}
+                className="w-full flex items-center justify-between gap-3 p-4 sm:p-5 text-left hover:bg-amber-100/50 transition-colors"
+              >
+                <div className="flex items-center gap-2 flex-wrap">
+                  <AlertTriangle className="w-5 h-5 text-amber-700 shrink-0" />
+                  <h2 className="font-bold text-slate-900">Stores Not Reporting</h2>
+                  <span className="text-[10px] uppercase tracking-wide font-bold px-2 py-0.5 rounded-full bg-amber-200 text-amber-900 border border-amber-300">
+                    {count}
+                  </span>
+                  {!showNotReporting && (
+                    <span className="text-xs text-amber-800 ml-1 truncate">
+                      {notReporting.slice(0, 3).map(function (s) { return "#" + s.code; }).join(", ")}
+                      {count > 3 ? " + " + (count - 3) + " more" : ""}
+                    </span>
+                  )}
+                </div>
+                <ChevronDown className={"w-5 h-5 text-amber-700 shrink-0 transition-transform duration-200 " + (showNotReporting ? "rotate-180" : "")} />
+              </button>
+              {showNotReporting && (
+                <div className="border-t border-amber-200 bg-white overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-amber-50/60 text-left">
+                        <th className="px-3 py-2 font-semibold text-slate-600 text-xs">#</th>
+                        <th className="px-3 py-2 font-semibold text-slate-600 text-xs">Store</th>
+                        <th className="px-3 py-2 font-semibold text-slate-600 text-xs text-right">Daily Plan</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {notReporting.map(function (s, i) {
+                        return (
+                          <tr key={s.code} className={i % 2 === 0 ? "bg-white" : "bg-amber-50/30"}>
+                            <td className="px-3 py-2 text-slate-400 font-medium">#{s.code}</td>
+                            <td className="px-3 py-2">
+                              <div className="font-semibold text-slate-900">{tc(s.name)}</div>
+                              <div className="text-xs text-slate-400">{tc(s.city)}{s.state ? ", " + s.state : ""}</div>
+                            </td>
+                            <td className="px-3 py-2 text-right font-medium text-slate-700">{fmt$(s.plan)}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          );
+        })()}
 
         {/* ── EOD Forecast (collapsed by default) ── */}
         {(function () {
@@ -5406,10 +5490,12 @@ function LiveSalesSnowflakeView({ goBack }) {
   const [companyTotal, setCompanyTotal] = useState(null);
   const [topStores, setTopStores] = useState([]);
   const [topProducts, setTopProducts] = useState([]);
+  const [notReporting, setNotReporting] = useState([]);
   const [asOf, setAsOf] = useState("");
   const [cacheInfo, setCacheInfo] = useState("");
   const [showAllStores, setShowAllStores] = useState(false);
   const [showAllProducts, setShowAllProducts] = useState(false);
+  const [showNotReporting, setShowNotReporting] = useState(false);
 
   var applyPayload = function (d) {
     if (!d || d.status !== "ok") throw new Error((d && d.error) || "Failed to load live sales");
@@ -5434,6 +5520,15 @@ function LiveSalesSnowflakeView({ goBack }) {
     }));
     setTopProducts((d.topProducts || []).map(function (p, i) {
       return { rank: i + 1, desc: p.product, sales: p.sales };
+    }));
+    setNotReporting((d.notReporting || []).map(function (s) {
+      return {
+        code: s.store,
+        name: s.name || "Store " + s.store,
+        city: s.city || "",
+        state: s.state || "",
+        plan: s.plan || 0,
+      };
     }));
     if (d.asOfET) setAsOf(d.asOfET);
     var info = "Snowflake";
@@ -5584,10 +5679,83 @@ function LiveSalesSnowflakeView({ goBack }) {
             </div>
             <div className="bg-white/60 rounded-lg p-3 border border-slate-200/50">
               <div className="text-xs text-slate-500 mb-0.5">Stores Reporting</div>
-              <div className="text-lg sm:text-xl font-bold text-slate-900">{companyTotal.storeCount || 0}</div>
+              <div className="text-lg sm:text-xl font-bold text-slate-900">
+                {companyTotal.storeCount || 0}
+                {notReporting.length > 0 && (
+                  <span className="text-xs font-semibold text-red-600 ml-1.5">({notReporting.length} missing)</span>
+                )}
+              </div>
             </div>
           </div>
         </div>
+
+        {/* Stores Not Reporting */}
+        {(function () {
+          var count = notReporting.length;
+          var hasMissing = count > 0;
+          var tc = function (str) { return String(str || "").replace(/\b\w+/g, function (w) { return w.charAt(0) + w.slice(1).toLowerCase(); }); };
+          var fmt$ = function (n) { return "$" + Math.round(n || 0).toLocaleString(); };
+          if (!hasMissing) {
+            return (
+              <div className="rounded-xl border-2 border-emerald-200 bg-emerald-50 p-3 sm:p-4 mb-5 flex items-center gap-3">
+                <CheckCircle className="w-5 h-5 text-emerald-600 shrink-0" />
+                <div className="text-sm font-medium text-emerald-800">
+                  All expected stores are reporting ({companyTotal.storeCount || 0} of {companyTotal.storeCount || 0})
+                </div>
+              </div>
+            );
+          }
+          return (
+            <div className="rounded-xl border-2 border-amber-300 bg-amber-50 mb-5 overflow-hidden">
+              <button
+                onClick={function () { setShowNotReporting(!showNotReporting); }}
+                className="w-full flex items-center justify-between gap-3 p-4 sm:p-5 text-left hover:bg-amber-100/50 transition-colors"
+              >
+                <div className="flex items-center gap-2 flex-wrap">
+                  <AlertTriangle className="w-5 h-5 text-amber-700 shrink-0" />
+                  <h2 className="font-bold text-slate-900">Stores Not Reporting</h2>
+                  <span className="text-[10px] uppercase tracking-wide font-bold px-2 py-0.5 rounded-full bg-amber-200 text-amber-900 border border-amber-300">
+                    {count}
+                  </span>
+                  {!showNotReporting && (
+                    <span className="text-xs text-amber-800 ml-1 truncate">
+                      {notReporting.slice(0, 3).map(function (s) { return "#" + s.code; }).join(", ")}
+                      {count > 3 ? " + " + (count - 3) + " more" : ""}
+                    </span>
+                  )}
+                </div>
+                <ChevronDown className={"w-5 h-5 text-amber-700 shrink-0 transition-transform duration-200 " + (showNotReporting ? "rotate-180" : "")} />
+              </button>
+              {showNotReporting && (
+                <div className="border-t border-amber-200 bg-white overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-amber-50/60 text-left">
+                        <th className="px-3 py-2 font-semibold text-slate-600 text-xs">#</th>
+                        <th className="px-3 py-2 font-semibold text-slate-600 text-xs">Store</th>
+                        <th className="px-3 py-2 font-semibold text-slate-600 text-xs text-right">Daily Plan</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {notReporting.map(function (s, i) {
+                        return (
+                          <tr key={s.code} className={i % 2 === 0 ? "bg-white" : "bg-amber-50/30"}>
+                            <td className="px-3 py-2 text-slate-400 font-medium">#{s.code}</td>
+                            <td className="px-3 py-2">
+                              <div className="font-semibold text-slate-900">{tc(s.name)}</div>
+                              <div className="text-xs text-slate-400">{tc(s.city)}{s.state ? ", " + s.state : ""}</div>
+                            </td>
+                            <td className="px-3 py-2 text-right font-medium text-slate-700">{fmt$(s.plan)}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          );
+        })()}
 
         {/* Top Stores */}
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm mb-5 overflow-hidden">
@@ -5648,194 +5816,4 @@ function LiveSalesSnowflakeView({ goBack }) {
         {/* Top Products */}
         {topProducts.length > 0 ? (
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm mb-5 overflow-hidden">
-            <div className="px-4 sm:px-5 py-3 sm:py-4 border-b border-slate-100 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Tag className="w-5 h-5 text-sky-600" />
-                <h2 className="font-bold text-slate-900 text-sm sm:text-base">Top Products by Sales</h2>
-              </div>
-              <span className="text-xs text-slate-400">{topProducts.length} products</span>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="bg-slate-50 text-left">
-                    <th className="px-3 py-2 font-semibold text-slate-600 text-xs">#</th>
-                    <th className="px-3 py-2 font-semibold text-slate-600 text-xs">Product</th>
-                    <th className="px-3 py-2 font-semibold text-slate-600 text-xs text-right">Line Ext. Amt</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {visibleProducts.map(function (p, i) {
-                    var tc = function (str) { return String(str || "").replace(/\b\w+/g, function (w) { return w.charAt(0) + w.slice(1).toLowerCase(); }); };
-                    return (
-                      <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-slate-50/50"}>
-                        <td className="px-3 py-2 text-slate-400 font-medium">{p.rank}</td>
-                        <td className="px-3 py-2 font-medium text-slate-900">{tc(p.desc)}</td>
-                        <td className="px-3 py-2 text-right font-semibold text-slate-900">{fmtD(p.sales)}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-            {topProducts.length > 5 && (
-              <button
-                onClick={function () { setShowAllProducts(!showAllProducts); }}
-                className="w-full py-3 text-sm font-medium text-sky-700 hover:bg-sky-50 border-t border-slate-100 flex items-center justify-center gap-1 transition-colors"
-              >
-                {showAllProducts ? "Show Top 5" : "Show All " + topProducts.length + " Products"}
-                <ChevronDown className={"w-4 h-4 transition-transform duration-200 " + (showAllProducts ? "rotate-180" : "")} />
-              </button>
-            )}
-          </div>
-        ) : (
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm mb-5 p-6 text-center">
-            <Tag className="w-6 h-6 text-slate-300 mx-auto mb-2" />
-            <p className="text-slate-500 text-sm">Product-level data is not available for today yet.</p>
-          </div>
-        )}
-
-        <div className="text-center text-xs text-slate-400 py-4">
-          Data from Snowflake · PRD_EDW_DB.ANALYTICS_BASE.FCT_LIVE_SALE · Live query on each load
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function YODAReports({ goHome }) {
-  const [subView, setSubView] = useState(null);
-
-  if (subView === "live-sales") {
-    return <LiveSalesView goBack={function () { setSubView(null); }} />;
-  }
-
-  if (subView === "live-sales-snowflake") {
-    return <LiveSalesSnowflakeView goBack={function () { setSubView(null); }} />;
-  }
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-emerald-50 to-slate-100 p-4 md:p-8">
-      <div className="max-w-5xl mx-auto">
-        <div className="flex items-center gap-4 mb-8">
-          <button
-            onClick={goHome}
-            className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium shadow-sm"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back
-          </button>
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center shadow-lg">
-              <Database className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-3xl font-bold text-slate-900">YODA Reports</h1>
-              <p className="text-slate-600 text-sm">Operational reports powered by YODA / Power BI data</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {YODA_REPORTS.map(function (rpt) {
-            var Icon = rpt.icon || FileText;
-            if (rpt.view) {
-              return (
-                <button
-                  key={rpt.id}
-                  onClick={function () { setSubView(rpt.view); }}
-                  className="group bg-white rounded-xl border border-slate-200 p-5 hover:border-emerald-400 hover:shadow-lg transition-all text-left cursor-pointer"
-                >
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-amber-50 border border-amber-200 flex items-center justify-center flex-shrink-0">
-                      <Icon className="w-5 h-5 text-amber-700" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <h3 className="font-semibold text-slate-900 group-hover:text-emerald-700">{rpt.label}</h3>
-                        <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-emerald-600" />
-                      </div>
-                      <p className="text-sm text-slate-600 mt-1">{rpt.description}</p>
-                    </div>
-                  </div>
-                </button>
-              );
-            }
-            return (
-              <a
-                key={rpt.id}
-                href={rpt.url}
-                className="group bg-white rounded-xl border border-slate-200 p-5 hover:border-emerald-400 hover:shadow-lg transition-all"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center flex-shrink-0">
-                    <Icon className="w-5 h-5 text-emerald-700" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-semibold text-slate-900 group-hover:text-emerald-700">{rpt.label}</h3>
-                      <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-emerald-600" />
-                    </div>
-                    <p className="text-sm text-slate-600 mt-1">{rpt.description}</p>
-                  </div>
-                </div>
-              </a>
-            );
-          })}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export default function App() {
-  const [activeSection, setActiveSection] = useState(() => {
-    const params = new URLSearchParams(window.location.search);
-    return params.get("section") || null;
-  });
-  const { userAccess, allUsers, isAdmin, canAccessSection, saveAllUsers, userEmail } = useUserAccess();
-
-  // Loading state
-  if (userAccess === null) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-10 h-10 border-3 border-gray-200 border-t-indigo-500 rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-sm text-gray-400">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Access denied
-  if (userAccess === false) {
-    return <AccessDeniedScreen />;
-  }
-
-  // Admin panel (admin only)
-  if (activeSection === "admin" && isAdmin) {
-    return <AdminPanel goHome={() => setActiveSection(null)} allUsers={allUsers} saveAllUsers={saveAllUsers} />;
-  }
-
-  // Section routing — only if user has access
-  if (activeSection === "projects" && canAccessSection("projects")) {
-    return <ITProjectDashboard goHome={() => setActiveSection(null)} isAdmin={isAdmin} allAccessUsers={allUsers} />;
-  }
-
-  if (activeSection === "ap-invoices" && canAccessSection("ap-invoices")) {
-    return <APInvoices goHome={() => setActiveSection(null)} goHistory={() => setActiveSection("payment-history")} />;
-  }
-
-  if (activeSection === "payment-history" && canAccessSection("payment-history")) {
-    return <PaymentHistory goHome={() => setActiveSection(null)} goBack={() => setActiveSection(null)} />;
-  }
-
-  if (activeSection === "yoda" && canAccessSection("yoda")) {
-    return <YODAReports goHome={() => setActiveSection(null)} />;
-  }
-
-  // Future sections:
-  // if (activeSection === "wells-cc" && canAccessSection("wells-cc")) return <WellsCC goHome={() => setActiveSection(null)} goHistory={() => setActiveSection("payment-history")} />;
-
-  return <HomeScreen onNavigate={setActiveSection} canAccessSection={canAccessSection} isAdmin={isAdmin} />;
-}
+            <div className="px-4 sm:px-5 py-3 sm:py-4 border-b borde
