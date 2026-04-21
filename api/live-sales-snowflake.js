@@ -12,12 +12,6 @@
 //   SNOWFLAKE_DATABASE      e.g. PRD_EDW_DB
 //   SNOWFLAKE_SCHEMA        e.g. ANALYTICS_BASE
 //   SNOWFLAKE_ROLE          (optional)
-//
-// Data sources:
-//   PRD_EDW_DB.ANALYTICS_BASE.FCT_LIVE_SALE                    (per-store/day rollup)
-//   PRD_EDW_DB.ANALYTICS_BASE.FCT_LIVE_SALE_TRANSACTION_LINE   (per line, for top products)
-//   PRD_EDW_DB.ANALYTICS_BASE.DIM_STORE                        (store name/city/state)
-//   PRD_EDW_DB.ANALYTICS_BASE.RPT_PAYROLL_BUDGET_AND_ACTUALS   (weekly target -> daily plan via /7)
 // ============================================================
 
 // Route every writable path the SDK might touch into /tmp (Vercel's only
@@ -98,9 +92,6 @@ LIMIT 20
 `;
 
 // ---------- Snowflake helpers ----------
-// Lazy-load snowflake-sdk so a module-load crash bubbles up as a catchable
-// error (returned as JSON) instead of Vercel's opaque
-// FUNCTION_INVOCATION_FAILED.
 let _snowflake = null;
 async function getSdk() {
   if (_snowflake) return _snowflake;
@@ -189,8 +180,6 @@ export default async function handler(req, res) {
   res.setHeader("Cache-Control", "no-store, max-age=0");
   if (req.method === "OPTIONS") { res.status(200).end(); return; }
 
-  // Fail fast with a useful message if env vars are missing,
-  // so the client gets JSON instead of FUNCTION_INVOCATION_FAILED.
   const missing = [];
   if (!process.env.SNOWFLAKE_ACCOUNT)   missing.push("SNOWFLAKE_ACCOUNT");
   if (!process.env.SNOWFLAKE_USER)      missing.push("SNOWFLAKE_USER");
@@ -213,4 +202,55 @@ export default async function handler(req, res) {
     const [companyRows, storeRows, productRows] = await Promise.all([
       exec(conn, COMPANY_SQL),
       exec(conn, STORES_SQL),
-      
+      exec(conn, PRODUCTS_SQL),
+    ]);
+
+    const c = companyRows[0] || {};
+    const sales = toNumber(c.SALES);
+    const plan  = toNumber(c.PLAN);
+    const gp    = toNumber(c.GP);
+    const gpPct = sales > 0 ? (gp / sales) * 100 : 0;
+    const pctToPlan = plan > 0 ? (sales / plan) * 100 : 0;
+
+    const payload = {
+      status: "ok",
+      companyTotal: {
+        sales, plan, gp, gpPct,
+        txns:       toNumber(c.TXNS),
+        customers:  toNumber(c.CUSTOMERS),
+        storeCount: toNumber(c.STORE_COUNT),
+        pctToPlan,
+      },
+      topStores: storeRows.map((r) => ({
+        store: r.STORE,
+        name:  r.NAME,
+        city:  r.CITY,
+        state: r.STATE,
+        sales: toNumber(r.SALES),
+        plan:  toNumber(r.PLAN),
+        gp:    toNumber(r.GP),
+        txns:  toNumber(r.TXNS),
+      })),
+      topProducts: productRows.map((r) => ({
+        product: r.PRODUCT,
+        sales:   toNumber(r.SALES),
+      })),
+      asOfET: fmtAsOfET(c.AS_OF_TS) + " ET",
+      cached: false,
+      refreshedAt: new Date().toISOString(),
+      source: "snowflake",
+    };
+
+    res.status(200).json(payload);
+  } catch (err) {
+    console.error("[live-sales-snowflake] error:", err);
+    res.status(500).json({
+      status: "error",
+      error: (err && err.message) || String(err),
+      code:  (err && err.code)    || null,
+      source: "snowflake",
+    });
+  } finally {
+    if (conn) await destroy(conn);
+  }
+}
