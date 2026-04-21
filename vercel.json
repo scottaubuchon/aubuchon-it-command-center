@@ -21,5 +21,6 @@
       "path": "/api/log-live-sales",
       "schedule": "0 12 * * *"
     }
-  ]
+  ],
+  "ignoreCommand": "git log -1 --pretty=%B | grep -qE '^(chore|report): (log|update) live sales|^chore: bump deploy|^report: daily sales' && exit 0 || exit 1"
 }
