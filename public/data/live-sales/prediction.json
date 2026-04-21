@@ -1,42 +1,42 @@
 {
-  "updatedAt": "2026-04-20T23:56:02.266Z",
-  "updatedAtET": "Apr 20, 2026, 7:56 PM",
+  "updatedAt": "2026-04-21T00:06:40.471Z",
+  "updatedAtET": "Apr 20, 2026, 8:06 PM",
   "dateET": "2026-04-20",
   "dow": 1,
   "season": "spring",
   "current": {
-    "ts": "2026-04-20T23:56:02.266Z",
-    "tsET": "Apr 20, 2026, 7:56 PM",
+    "ts": "2026-04-21T00:06:40.471Z",
+    "tsET": "Apr 20, 2026, 8:06 PM",
     "dateET": "2026-04-20",
-    "hourET": 19,
-    "minuteET": 56,
+    "hourET": 20,
+    "minuteET": 6,
     "dow": 1,
-    "sales": 1013188.5700000002,
+    "sales": 1013903.2200000003,
     "plan": 1137721.49,
-    "pctToPlan": 89.05418232013884,
-    "gp": 429713.3147000002,
-    "gpPct": 42.41197812762536,
-    "txns": 30417,
-    "customers": 28001,
+    "pctToPlan": 89.11699646281625,
+    "gp": 429965.8743000005,
+    "gpPct": 42.40699366750215,
+    "txns": 30436,
+    "customers": 28018,
     "storeCount": 134,
-    "asOf": "2026-04-20T23:45:08.013000",
-    "asOfET": "Apr 20, 2026, 7:45 PM"
+    "asOf": "2026-04-21T00:00:08.910000",
+    "asOfET": "Apr 20, 2026, 8:00 PM"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.98 shape + 0.02 level)",
     "confidence": "medium",
-    "projectedEOD": 1013933.2994830946,
-    "projectedPctToPlan": 89.11964029818006,
-    "projectedVariance": -123788.1905169054,
+    "projectedEOD": 1013970.9188879724,
+    "projectedPctToPlan": 89.1229468547678,
+    "projectedVariance": -123750.57111202762,
     "band": {
-      "low": 927290.6823520467,
-      "high": 1100575.9166141422
+      "low": 927333.1856298472,
+      "high": 1100608.6521460975
     },
-    "pctOfDayElapsed": 0.9993333333333333,
+    "pctOfDayElapsed": 1,
     "level_EOD": 1017152.2970111526,
-    "shape_EOD": 1013864.4796531023,
-    "blendWeight": 0.97906823205254,
+    "shape_EOD": 1013903.2200000003,
+    "blendWeight": 0.9791636554813196,
     "factors": {
       "plan": 1137721.49,
       "recencyFactor": 0.9393,
@@ -48,23 +48,23 @@
       "weatherSummary": "concord-nh: 20F Partly Cloudy | worcester-ma: 27F Mostly Cloudy | burlington-vt: 25F Mostly Clear | portland-me: 27F Isolated Rain And Snow Showers then Partly Cloudy | albany-ny: 25F Isolated Rain Showers then Partly Cloudy | scranton-pa: 25F Isolated Snow Showers then Mostly Clear"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.9993333333333333,
+      "basePaceFromCurve": 1,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.9993333333333333,
+      "blendedPaceAtNow": 1,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 42778.462,
+      "estimatedCurrent": 42807,
       "estimatedEOD": 42807,
-      "paceUsed": 0.9993333333333333,
+      "paceUsed": 1,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 28199,
-          "estimatedCurrent": 28180.200666666664,
+          "estimatedCurrent": 28199,
           "estimatedEOD": 28199,
           "stdev": 0.2923
         },
@@ -72,16 +72,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 14608,
-          "estimatedCurrent": 14598.261333333332,
+          "estimatedCurrent": 14608,
           "estimatedEOD": 14608,
           "stdev": 0.1658
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1056740.2994830946,
-    "combinedCurrentSales": 1055967.0320000001,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $42,778 so far, +$42,807 to EOD."
+    "combinedProjectedEOD": 1056777.9188879724,
+    "combinedCurrentSales": 1056710.2200000002,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $42,807 so far, +$42,807 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 7,
@@ -141,7 +141,7 @@
         "temp": 25,
         "unit": "F",
         "short": "Isolated Snow Showers then Mostly Clear",
-        "detailed": "Isolated rain showers before 8pm, then isolated snow showers between 8pm and 11pm. Mostly clear, with a low around 25. North wind 1 to 7 mph. Chance of precipitation is 20%."
+        "detailed": "Isolated snow showers before 11pm. Mostly clear, with a low around 25. North wind 1 to 6 mph. Chance of precipitation is 20%."
       }
     ]
   }
