@@ -1,15 +1,15 @@
 {
-  "updatedAt": "2026-04-21T01:32:43.855Z",
-  "updatedAtET": "Apr 20, 2026, 9:32 PM",
+  "updatedAt": "2026-04-21T01:43:17.879Z",
+  "updatedAtET": "Apr 20, 2026, 9:43 PM",
   "dateET": "2026-04-20",
   "dow": 1,
   "season": "spring",
   "current": {
-    "ts": "2026-04-21T01:32:43.855Z",
-    "tsET": "Apr 20, 2026, 9:32 PM",
+    "ts": "2026-04-21T01:43:17.879Z",
+    "tsET": "Apr 20, 2026, 9:43 PM",
     "dateET": "2026-04-20",
     "hourET": 21,
-    "minuteET": 32,
+    "minuteET": 43,
     "dow": 1,
     "sales": 1015170.4800000007,
     "plan": 1137721.49,
@@ -45,7 +45,7 @@
       "holidayMult": 1,
       "weatherKey": "normal",
       "weatherMult": 1,
-      "weatherSummary": "concord-nh: 20F Partly Cloudy | worcester-ma: 27F Mostly Cloudy | burlington-vt: 25F Mostly Clear | portland-me: 27F Isolated Rain And Snow Showers then Partly Cloudy | albany-ny: 25F Mostly Clear | scranton-pa: 25F Isolated Snow Showers then Mostly Clear"
+      "weatherSummary": "concord-nh: 20F Partly Cloudy | worcester-ma: 27F Mostly Cloudy | burlington-vt: 25F Mostly Clear | portland-me: 27F Isolated Rain And Snow Showers then Partly Cloudy | albany-ny: 25F Partly Cloudy | scranton-pa: 25F Isolated Snow Showers then Mostly Clear"
     },
     "shapeDetail": {
       "basePaceFromCurve": 1,
@@ -84,12 +84,12 @@
     "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $42,807 so far, +$42,807 to EOD."
   },
   "offlineStoresVersion": 2,
-  "baselineVersion": 7,
+  "baselineVersion": 8,
   "weatherRaw": {
     "mult": 1,
     "key": "normal",
     "season": "spring",
-    "summary": "concord-nh: 20F Partly Cloudy | worcester-ma: 27F Mostly Cloudy | burlington-vt: 25F Mostly Clear | portland-me: 27F Isolated Rain And Snow Showers then Partly Cloudy | albany-ny: 25F Mostly Clear | scranton-pa: 25F Isolated Snow Showers then Mostly Clear",
+    "summary": "concord-nh: 20F Partly Cloudy | worcester-ma: 27F Mostly Cloudy | burlington-vt: 25F Mostly Clear | portland-me: 27F Isolated Rain And Snow Showers then Partly Cloudy | albany-ny: 25F Partly Cloudy | scranton-pa: 25F Isolated Snow Showers then Mostly Clear",
     "tagWeights": {
       "normal": 0.76,
       "coldRain_lt_50F": 0.24
@@ -132,8 +132,8 @@
         "weight": 0.12,
         "temp": 25,
         "unit": "F",
-        "short": "Mostly Clear",
-        "detailed": "Mostly clear, with a low around 25. Northwest wind 1 to 7 mph."
+        "short": "Partly Cloudy",
+        "detailed": "Partly cloudy, with a low around 25. Northwest wind 1 to 8 mph."
       },
       {
         "station": "scranton-pa",
@@ -141,7 +141,7 @@
         "temp": 25,
         "unit": "F",
         "short": "Isolated Snow Showers then Mostly Clear",
-        "detailed": "Isolated snow showers before 11pm. Mostly clear, with a low around 25. North wind 1 to 6 mph."
+        "detailed": "Isolated snow showers before 11pm. Mostly clear, with a low around 25. North wind 1 to 6 mph. Chance of precipitation is 20%."
       }
     ]
   }
