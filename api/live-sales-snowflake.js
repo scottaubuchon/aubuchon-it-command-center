@@ -1,3 +1,4 @@
+// post-pro-upgrade-redeploy: 2026-04-21T19:28:46Z
 // ============================================================
 // /api/live-sales-snowflake  (ESM — matches project's "type": "module")
 // Returns today's live sales snapshot sourced from Snowflake.
