@@ -4950,6 +4950,13 @@ const YODA_REPORTS = [
     icon: Zap,
     view: "live-sales",
   },
+  {
+    id: "live-sales-snowflake",
+    label: "Live Sales (Snowflake)",
+    description: "Same view, sourced live from Snowflake (FCT_LIVE_SALE) instead of YODA / Power BI",
+    icon: Database,
+    view: "live-sales-snowflake",
+  },
 ];
 
 
@@ -5386,11 +5393,325 @@ function LiveSalesView({ goBack }) {
   );
 }
 
+/* ============================================================
+   LIVE SALES (SNOWFLAKE) VIEW — reads from /api/live-sales-snowflake
+   Same visual layout as LiveSalesView, but data is pulled live
+   from Snowflake FCT_LIVE_SALE on each request. No EOD forecast
+   (that pipeline is YODA-specific).
+   ============================================================ */
+function LiveSalesSnowflakeView({ goBack }) {
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState(null);
+  const [companyTotal, setCompanyTotal] = useState(null);
+  const [topStores, setTopStores] = useState([]);
+  const [topProducts, setTopProducts] = useState([]);
+  const [asOf, setAsOf] = useState("");
+  const [cacheInfo, setCacheInfo] = useState("");
+  const [showAllStores, setShowAllStores] = useState(false);
+  const [showAllProducts, setShowAllProducts] = useState(false);
+
+  var applyPayload = function (d) {
+    if (!d || d.status !== "ok") throw new Error((d && d.error) || "Failed to load live sales");
+    setCompanyTotal({
+      sales: d.companyTotal.sales,
+      plan: d.companyTotal.plan,
+      gp: d.companyTotal.gp,
+      gpPct: d.companyTotal.gpPct,
+      txn: d.companyTotal.txns,
+      customers: d.companyTotal.customers,
+      storeCount: d.companyTotal.storeCount,
+      pctToPlan: d.companyTotal.pctToPlan,
+    });
+    setTopStores((d.topStores || []).map(function (s) {
+      return {
+        code: s.store,
+        name: s.name || "Store " + s.store,
+        city: s.city || "",
+        state: s.state || "",
+        sales: s.sales, plan: s.plan, gp: s.gp, txnCnt: s.txns,
+      };
+    }));
+    setTopProducts((d.topProducts || []).map(function (p, i) {
+      return { rank: i + 1, desc: p.product, sales: p.sales };
+    }));
+    if (d.asOfET) setAsOf(d.asOfET);
+    var info = "Snowflake";
+    if (d.refreshedAt) info += " · refreshed " + new Date(d.refreshedAt).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+    setCacheInfo(info);
+  };
+
+  var loadSnowflake = function () {
+    var url = "/api/live-sales-snowflake?t=" + Date.now();
+    return fetch(url, { cache: "no-store" }).then(function (r) {
+      if (!r.ok) throw new Error("Snowflake API unavailable (" + r.status + ")");
+      return r.json();
+    });
+  };
+
+  useEffect(function () {
+    var cancelled = false;
+    loadSnowflake()
+      .then(function (d) { if (!cancelled) { applyPayload(d); setLoading(false); } })
+      .catch(function (err) { if (!cancelled) { setError(err.message); setLoading(false); } });
+    return function () { cancelled = true; };
+  }, []);
+
+  var handleRefresh = function () {
+    if (refreshing) return;
+    setRefreshing(true);
+    setError(null);
+    loadSnowflake()
+      .then(function (d) { applyPayload(d); })
+      .catch(function (err) { setError(err.message); })
+      .finally(function () { setRefreshing(false); });
+  };
+
+  var fmtD = function (n) { return "$" + Math.round(n || 0).toLocaleString(); };
+  var fmtPct = function (actual, plan) {
+    if (!plan) return "\u2014";
+    return ((actual / plan) * 100).toFixed(1) + "%";
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-sky-50 to-slate-100 p-3 sm:p-4 md:p-8">
+        <div className="max-w-5xl mx-auto">
+          <button onClick={goBack} className="flex items-center gap-2 px-3 py-2 bg-white rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium shadow-sm mb-6 text-sm">
+            <ArrowLeft className="w-4 h-4" /> <span className="hidden sm:inline">Back to Reports</span><span className="sm:hidden">Back</span>
+          </button>
+          <div className="flex flex-col items-center justify-center py-24">
+            <div className="w-10 h-10 border-3 border-sky-200 border-t-sky-600 rounded-full animate-spin mb-4" />
+            <p className="text-slate-600 font-medium">Querying Snowflake...</p>
+            <p className="text-slate-400 text-sm mt-1">FCT_LIVE_SALE · may take a few seconds on first load</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-red-50 to-slate-100 p-3 sm:p-4 md:p-8">
+        <div className="max-w-5xl mx-auto">
+          <button onClick={goBack} className="flex items-center gap-2 px-3 py-2 bg-white rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium shadow-sm mb-6 text-sm">
+            <ArrowLeft className="w-4 h-4" /> <span className="hidden sm:inline">Back to Reports</span><span className="sm:hidden">Back</span>
+          </button>
+          <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
+            <AlertTriangle className="w-8 h-8 text-red-500 mx-auto mb-3" />
+            <h3 className="text-lg font-bold text-red-800 mb-2">Unable to load Snowflake live sales</h3>
+            <p className="text-red-600 text-sm">{error}</p>
+            <p className="text-red-400 text-xs mt-2">Check that the Vercel Snowflake env vars are set and the warehouse is awake.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  var pctPlan = companyTotal.plan > 0 ? (companyTotal.sales / companyTotal.plan) * 100 : 0;
+  var vTotal = (companyTotal.sales || 0) - (companyTotal.plan || 0);
+  var onTrack = vTotal >= 0;
+  var progressPct = Math.min(pctPlan, 100);
+
+  var visibleStores = showAllStores ? topStores : topStores.slice(0, 5);
+  var visibleProducts = showAllProducts ? topProducts : topProducts.slice(0, 5);
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-sky-50 to-slate-100 p-3 sm:p-4 md:p-8">
+      <div className="max-w-5xl mx-auto">
+        {/* Header */}
+        <div className="flex items-center gap-3 sm:gap-4 mb-6">
+          <button onClick={goBack} className="flex items-center gap-1.5 px-3 py-2 bg-white rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium shadow-sm text-sm shrink-0">
+            <ArrowLeft className="w-4 h-4" /> <span className="hidden sm:inline">Back</span>
+          </button>
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-sky-500 to-cyan-600 flex items-center justify-center shadow-lg shrink-0">
+              <Database className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+            </div>
+            <div className="min-w-0">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900">Live Sales <span className="text-sky-600">(Snowflake)</span></h1>
+              <p className="text-slate-500 text-xs sm:text-sm truncate">{asOf}{cacheInfo ? " · " + cacheInfo : ""}</p>
+            </div>
+          </div>
+          <button
+            onClick={handleRefresh}
+            disabled={refreshing}
+            title="Re-query Snowflake"
+            className={"flex items-center gap-1.5 px-3 py-2 rounded-lg font-medium shadow-sm border text-sm " + (refreshing ? "bg-slate-100 text-slate-400 border-slate-200 cursor-wait" : "bg-white text-slate-700 border-slate-200 hover:bg-sky-50 hover:border-sky-300")}
+          >
+            <RotateCcw className={"w-4 h-4 " + (refreshing ? "animate-spin" : "")} />
+            <span className="hidden sm:inline">{refreshing ? "Refreshing\u2026" : "Refresh"}</span>
+          </button>
+        </div>
+
+        {/* Today's Performance */}
+        <div className={"rounded-xl border-2 p-4 sm:p-5 md:p-6 mb-5 " + (onTrack ? "bg-emerald-50 border-emerald-200" : "bg-red-50 border-red-200")}>
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 sm:gap-2 mb-4">
+            <div>
+              <h2 className="text-lg sm:text-xl font-bold text-slate-900">Today's Performance</h2>
+              <div className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 mt-1">{fmtD(companyTotal.sales)}</div>
+            </div>
+            <div className={"text-2xl sm:text-3xl font-extrabold text-right " + (onTrack ? "text-emerald-700" : "text-red-600")}>
+              {pctPlan.toFixed(1)}% <span className="text-sm font-semibold text-slate-500">to plan</span>
+            </div>
+          </div>
+
+          <div className="mb-4">
+            <div className="flex justify-between text-xs text-slate-500 mb-1">
+              <span>{fmtD(companyTotal.sales)}</span>
+              <span>Plan: {fmtD(companyTotal.plan)}</span>
+            </div>
+            <div className="w-full h-3 bg-white/70 rounded-full overflow-hidden border border-slate-200">
+              <div
+                className={"h-full rounded-full transition-all duration-500 " + (onTrack ? "bg-gradient-to-r from-emerald-400 to-emerald-600" : "bg-gradient-to-r from-red-400 to-red-500")}
+                style={{ width: progressPct + "%" }}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
+            <div className="bg-white/60 rounded-lg p-3 border border-slate-200/50">
+              <div className="text-xs text-slate-500 mb-0.5">Variance</div>
+              <div className={"text-lg sm:text-xl font-bold " + (onTrack ? "text-emerald-700" : "text-red-600")}>{vTotal >= 0 ? "+" : ""}{fmtD(vTotal)}</div>
+            </div>
+            <div className="bg-white/60 rounded-lg p-3 border border-slate-200/50">
+              <div className="text-xs text-slate-500 mb-0.5">Transactions</div>
+              <div className="text-lg sm:text-xl font-bold text-slate-900">{Math.round(companyTotal.txn || 0).toLocaleString()}</div>
+            </div>
+            <div className="bg-white/60 rounded-lg p-3 border border-slate-200/50">
+              <div className="text-xs text-slate-500 mb-0.5">Gross Profit</div>
+              <div className="text-lg sm:text-xl font-bold text-slate-900">{fmtD(companyTotal.gp)}</div>
+            </div>
+            <div className="bg-white/60 rounded-lg p-3 border border-slate-200/50">
+              <div className="text-xs text-slate-500 mb-0.5">Stores Reporting</div>
+              <div className="text-lg sm:text-xl font-bold text-slate-900">{companyTotal.storeCount || 0}</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Top Stores */}
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm mb-5 overflow-hidden">
+          <div className="px-4 sm:px-5 py-3 sm:py-4 border-b border-slate-100 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <BarChart3 className="w-5 h-5 text-sky-600" />
+              <h2 className="font-bold text-slate-900 text-sm sm:text-base">Top Stores by Sales</h2>
+            </div>
+            <span className="text-xs text-slate-400">{topStores.length} stores</span>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-slate-50 text-left">
+                  <th className="px-3 py-2 font-semibold text-slate-600 text-xs">#</th>
+                  <th className="px-3 py-2 font-semibold text-slate-600 text-xs">Store</th>
+                  <th className="px-3 py-2 font-semibold text-slate-600 text-xs text-right">Sales</th>
+                  <th className="px-3 py-2 font-semibold text-slate-600 text-xs text-right hidden sm:table-cell">Plan</th>
+                  <th className="px-3 py-2 font-semibold text-slate-600 text-xs text-right hidden sm:table-cell">Var</th>
+                  <th className="px-3 py-2 font-semibold text-slate-600 text-xs text-right">% Plan</th>
+                  <th className="px-3 py-2 font-semibold text-slate-600 text-xs text-right hidden md:table-cell">Txns</th>
+                </tr>
+              </thead>
+              <tbody>
+                {visibleStores.map(function (s, i) {
+                  var v = (s.sales || 0) - (s.plan || 0);
+                  var vc = v >= 0 ? "text-emerald-700" : "text-red-600";
+                  var tc = function (str) { return String(str || "").replace(/\b\w+/g, function (w) { return w.charAt(0) + w.slice(1).toLowerCase(); }); };
+                  return (
+                    <tr key={s.code} className={i % 2 === 0 ? "bg-white" : "bg-slate-50/50"}>
+                      <td className="px-3 py-2 text-slate-400 font-medium">{i + 1}</td>
+                      <td className="px-3 py-2">
+                        <div className="font-semibold text-slate-900">{tc(s.name)}</div>
+                        <div className="text-xs text-slate-400">{tc(s.city)}{s.state ? ", " + s.state : ""} · #{s.code}</div>
+                      </td>
+                      <td className="px-3 py-2 text-right font-semibold text-slate-900">{fmtD(s.sales)}</td>
+                      <td className="px-3 py-2 text-right text-slate-500 hidden sm:table-cell">{fmtD(s.plan)}</td>
+                      <td className={"px-3 py-2 text-right font-medium hidden sm:table-cell " + vc}>{v >= 0 ? "+" : ""}{fmtD(v)}</td>
+                      <td className={"px-3 py-2 text-right font-medium " + vc}>{fmtPct(s.sales, s.plan)}</td>
+                      <td className="px-3 py-2 text-right text-slate-500 hidden md:table-cell">{Math.round(s.txnCnt || 0).toLocaleString()}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+          {topStores.length > 5 && (
+            <button
+              onClick={function () { setShowAllStores(!showAllStores); }}
+              className="w-full py-3 text-sm font-medium text-sky-700 hover:bg-sky-50 border-t border-slate-100 flex items-center justify-center gap-1 transition-colors"
+            >
+              {showAllStores ? "Show Top 5" : "Show All " + topStores.length + " Stores"}
+              <ChevronDown className={"w-4 h-4 transition-transform duration-200 " + (showAllStores ? "rotate-180" : "")} />
+            </button>
+          )}
+        </div>
+
+        {/* Top Products */}
+        {topProducts.length > 0 ? (
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm mb-5 overflow-hidden">
+            <div className="px-4 sm:px-5 py-3 sm:py-4 border-b border-slate-100 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Tag className="w-5 h-5 text-sky-600" />
+                <h2 className="font-bold text-slate-900 text-sm sm:text-base">Top Products by Sales</h2>
+              </div>
+              <span className="text-xs text-slate-400">{topProducts.length} products</span>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-slate-50 text-left">
+                    <th className="px-3 py-2 font-semibold text-slate-600 text-xs">#</th>
+                    <th className="px-3 py-2 font-semibold text-slate-600 text-xs">Product</th>
+                    <th className="px-3 py-2 font-semibold text-slate-600 text-xs text-right">Line Ext. Amt</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {visibleProducts.map(function (p, i) {
+                    var tc = function (str) { return String(str || "").replace(/\b\w+/g, function (w) { return w.charAt(0) + w.slice(1).toLowerCase(); }); };
+                    return (
+                      <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-slate-50/50"}>
+                        <td className="px-3 py-2 text-slate-400 font-medium">{p.rank}</td>
+                        <td className="px-3 py-2 font-medium text-slate-900">{tc(p.desc)}</td>
+                        <td className="px-3 py-2 text-right font-semibold text-slate-900">{fmtD(p.sales)}</td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            {topProducts.length > 5 && (
+              <button
+                onClick={function () { setShowAllProducts(!showAllProducts); }}
+                className="w-full py-3 text-sm font-medium text-sky-700 hover:bg-sky-50 border-t border-slate-100 flex items-center justify-center gap-1 transition-colors"
+              >
+                {showAllProducts ? "Show Top 5" : "Show All " + topProducts.length + " Products"}
+                <ChevronDown className={"w-4 h-4 transition-transform duration-200 " + (showAllProducts ? "rotate-180" : "")} />
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm mb-5 p-6 text-center">
+            <Tag className="w-6 h-6 text-slate-300 mx-auto mb-2" />
+            <p className="text-slate-500 text-sm">Product-level data is not available for today yet.</p>
+          </div>
+        )}
+
+        <div className="text-center text-xs text-slate-400 py-4">
+          Data from Snowflake · PRD_EDW_DB.ANALYTICS_BASE.FCT_LIVE_SALE · Live query on each load
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function YODAReports({ goHome }) {
   const [subView, setSubView] = useState(null);
 
   if (subView === "live-sales") {
     return <LiveSalesView goBack={function () { setSubView(null); }} />;
+  }
+
+  if (subView === "live-sales-snowflake") {
+    return <LiveSalesSnowflakeView goBack={function () { setSubView(null); }} />;
   }
 
   return (
