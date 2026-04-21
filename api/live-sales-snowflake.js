@@ -20,7 +20,11 @@
 //   PRD_EDW_DB.ANALYTICS_BASE.RPT_PAYROLL_BUDGET_AND_ACTUALS   (weekly target -> daily plan via /7)
 // ============================================================
 
-import snowflake from "snowflake-sdk";
+// Route every writable path the SDK might touch into /tmp (Vercel's only
+// writable dir). These must be set BEFORE snowflake-sdk is imported.
+process.env.HOME = "/tmp";
+process.env.SF_OCSP_RESPONSE_CACHE_DIR = "/tmp";
+process.env.SNOWFLAKE_LOG_LEVEL = "ERROR";
 
 export const config = { maxDuration: 30 };
 
@@ -94,7 +98,25 @@ LIMIT 20
 `;
 
 // ---------- Snowflake helpers ----------
-function connect() {
+// Lazy-load snowflake-sdk so a module-load crash bubbles up as a catchable
+// error (returned as JSON) instead of Vercel's opaque
+// FUNCTION_INVOCATION_FAILED.
+let _snowflake = null;
+async function getSdk() {
+  if (_snowflake) return _snowflake;
+  const mod = await import("snowflake-sdk");
+  _snowflake = mod.default || mod;
+  try {
+    _snowflake.configure({
+      logLevel: "ERROR",
+      additionalLogToConsole: false,
+    });
+  } catch (_) { /* older versions may not accept these options */ }
+  return _snowflake;
+}
+
+async function connect() {
+  const sdk = await getSdk();
   return new Promise((resolve, reject) => {
     const opts = {
       account:   process.env.SNOWFLAKE_ACCOUNT,
@@ -113,7 +135,7 @@ function connect() {
     } else {
       opts.password = process.env.SNOWFLAKE_PASSWORD;
     }
-    const conn = snowflake.createConnection(opts);
+    const conn = sdk.createConnection(opts);
     conn.connect((err) => {
       if (err) return reject(err);
       resolve(conn);
@@ -191,31 +213,4 @@ export default async function handler(req, res) {
     const [companyRows, storeRows, productRows] = await Promise.all([
       exec(conn, COMPANY_SQL),
       exec(conn, STORES_SQL),
-      exec(conn, PRODUCTS_SQL),
-    ]);
-
-    const c = companyRows[0] || {};
-    const sales = toNumber(c.SALES);
-    const plan  = toNumber(c.PLAN);
-    const gp    = toNumber(c.GP);
-    const gpPct = sales > 0 ? (gp / sales) * 100 : 0;
-    const pctToPlan = plan > 0 ? (sales / plan) * 100 : 0;
-
-    const payload = {
-      status: "ok",
-      companyTotal: {
-        sales, plan, gp, gpPct,
-        txns:       toNumber(c.TXNS),
-        customers:  toNumber(c.CUSTOMERS),
-        storeCount: toNumber(c.STORE_COUNT),
-        pctToPlan,
-      },
-      topStores: storeRows.map((r) => ({
-        store: r.STORE,
-        name:  r.NAME,
-        city:  r.CITY,
-        state: r.STATE,
-        sales: toNumber(r.SALES),
-        plan:  toNumber(r.PLAN),
-        gp:    toNumber(r.GP),
-    
+      
