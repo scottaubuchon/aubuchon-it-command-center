@@ -1,3 +1,4 @@
+// deploy-bump: 2026-04-21T17:30:27Z
 // ============================================================
 // /api/live-sales-snowflake  (ESM — matches project's "type": "module")
 // Returns today's live sales snapshot sourced from Snowflake.
