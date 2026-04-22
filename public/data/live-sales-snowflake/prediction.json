@@ -1,43 +1,43 @@
 {
-  "updatedAt": "2026-04-22T18:20:47.394Z",
-  "updatedAtET": "Apr 22, 2026, 2:20 PM",
+  "updatedAt": "2026-04-22T18:21:44.609Z",
+  "updatedAtET": "Apr 22, 2026, 2:21 PM",
   "dateET": "2026-04-22",
   "dow": 3,
   "season": "spring",
   "source": "snowflake",
   "current": {
-    "ts": "2026-04-22T18:20:47.394Z",
-    "tsET": "Apr 22, 2026, 2:20 PM",
+    "ts": "2026-04-22T18:21:44.609Z",
+    "tsET": "Apr 22, 2026, 2:21 PM",
     "dateET": "2026-04-22",
     "hourET": 14,
-    "minuteET": 20,
+    "minuteET": 21,
     "dow": 3,
-    "sales": 560522.05,
+    "sales": 592109.14,
     "plan": 1059397.88,
-    "pctToPlan": 52.909493268006166,
-    "gp": 236742.149,
-    "gpPct": 42.23600998390696,
-    "txns": 16029,
-    "customers": 14766,
+    "pctToPlan": 55.89110108470295,
+    "gp": 250707.3027,
+    "gpPct": 42.341400556660886,
+    "txns": 16969,
+    "customers": 15673,
     "storeCount": 134,
     "asOf": null,
-    "asOfET": "Apr 22, 2:00 PM ET"
+    "asOfET": "Apr 22, 2:15 PM ET"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.84 shape + 0.16 level)",
     "confidence": "medium",
-    "projectedEOD": 837035.996032598,
-    "projectedPctToPlan": 79.01054097187716,
-    "projectedVariance": -222361.88396740193,
+    "projectedEOD": 874369.2416322947,
+    "projectedPctToPlan": 82.53454704216463,
+    "projectedVariance": -185028.63836770516,
     "band": {
-      "low": 764569.3793051976,
-      "high": 909502.6127599983
+      "low": 798744.4186412807,
+      "high": 949994.0646233088
     },
-    "pctOfDayElapsed": 0.6838666666666666,
+    "pctOfDayElapsed": 0.68506,
     "level_EOD": 926470.8548019513,
-    "shape_EOD": 819636.4544745566,
-    "blendWeight": 0.8371354029720739,
+    "shape_EOD": 864317.1984935626,
+    "blendWeight": 0.8382710891720244,
     "factors": {
       "plan": 1059397.88,
       "recencyFactor": 0.9393,
@@ -49,23 +49,23 @@
       "weatherSummary": "concord-nh: 46F Isolated Rain Showers | worcester-ma: 45F Scattered Rain Showers | burlington-vt: 50F Slight Chance Rain Showers then Mostly Cloudy | portland-me: 44F Cloudy then Scattered Rain Showers | albany-ny: 51F Scattered Rain Showers | scranton-pa: 62F Mostly Sunny"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.6838666666666666,
+      "basePaceFromCurve": 0.68506,
       "observedPaceCount": 1,
-      "blendedPaceAtNow": 0.6838666666666666,
+      "blendedPaceAtNow": 0.68506,
       "historyDays": 1,
       "avgHistoricalEOD": 1053994.8399999999
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 28604.77493333333,
+      "estimatedCurrent": 28654.68968,
       "estimatedEOD": 41828,
-      "paceUsed": 0.6838666666666666,
+      "paceUsed": 0.68506,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 26994,
-          "estimatedCurrent": 18460.2968,
+          "estimatedCurrent": 18492.50964,
           "estimatedEOD": 26994,
           "stdev": 0.4325
         },
@@ -73,16 +73,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 14834,
-          "estimatedCurrent": 10144.478133333332,
+          "estimatedCurrent": 10162.18004,
           "estimatedEOD": 14834,
           "stdev": 0.1986
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 878863.996032598,
-    "combinedCurrentSales": 589126.8249333333,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $28,605 so far, +$41,828 to EOD."
+    "combinedProjectedEOD": 916197.2416322947,
+    "combinedCurrentSales": 620763.82968,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $28,655 so far, +$41,828 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 9,
