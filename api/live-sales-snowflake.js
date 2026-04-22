@@ -112,10 +112,13 @@ LIMIT 20
 
 // Lightweight list of every active store, used to populate the store
 // dropdown on the front-end. Cheap to query — small dimension table.
+// Excludes store 000 (warehouse / non-retail placeholder that users don't
+// need to see in the dropdown).
 const ALL_STORES_SQL = `
 SELECT STORE_CD AS store, STORE_NM AS name, STORE_CITY_NM AS city, STORE_STATE_CD AS state
 FROM PRD_EDW_DB.ANALYTICS_BASE.DIM_STORE
 WHERE ACTIVE_FLG = TRUE
+  AND STORE_CD <> '000'
 ORDER BY STORE_CD
 `;
 
