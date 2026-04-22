@@ -2,7 +2,7 @@ import https from 'https';
 
 // ============================================================
 // Live Sales Logger + Predictor  (v2 — plan-anchored + weather)
-// Runs every 10 minutes (7am-9pm ET) via scheduled task.
+// Runs every 15 minutes (7am-9pm ET) via scheduled task.
 //
 // FORECAST MODEL (see baseline.json for factor values):
 //   level_EOD = plan * recencyFactor * dowPlanRatio[dow] * holidayMult * weatherMult
