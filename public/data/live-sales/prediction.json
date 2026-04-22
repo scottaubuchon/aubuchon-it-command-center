@@ -1,16 +1,16 @@
 {
-  "updatedAt": "2026-04-22T02:13:21.676Z",
-  "updatedAtET": "Apr 21, 2026, 10:13 PM",
+  "updatedAt": "2026-04-22T02:29:03.216Z",
+  "updatedAtET": "Apr 21, 2026, 10:29 PM",
   "dateET": "2026-04-21",
   "dow": 2,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-04-22T02:13:21.676Z",
-    "tsET": "Apr 21, 2026, 10:13 PM",
+    "ts": "2026-04-22T02:29:03.216Z",
+    "tsET": "Apr 21, 2026, 10:29 PM",
     "dateET": "2026-04-21",
     "hourET": 22,
-    "minuteET": 13,
+    "minuteET": 29,
     "dow": 2,
     "sales": 1023405.7099999997,
     "plan": 1091990,
@@ -46,7 +46,7 @@
       "holidayMult": 1,
       "weatherKey": "coldRain_lt_50F",
       "weatherMult": 0.92,
-      "weatherSummary": "concord-nh: 31F Mostly Cloudy then Slight Chance Rain Showers | worcester-ma: 34F Partly Cloudy then Chance Rain Showers | burlington-vt: 39F Slight Chance Rain Showers | portland-me: 36F Partly Cloudy | albany-ny: 38F Mostly Cloudy then Chance Rain Showers | scranton-pa: 42F Chance Rain Showers"
+      "weatherSummary": "concord-nh: 31F Mostly Cloudy then Slight Chance Rain Showers | worcester-ma: 34F Mostly Cloudy then Chance Rain Showers | burlington-vt: 39F Slight Chance Rain Showers | portland-me: 36F Partly Cloudy | albany-ny: 38F Mostly Cloudy then Chance Rain Showers | scranton-pa: 42F Chance Rain Showers"
     },
     "shapeDetail": {
       "basePaceFromCurve": 1,
@@ -90,7 +90,7 @@
     "mult": 0.92,
     "key": "coldRain_lt_50F",
     "season": "spring",
-    "summary": "concord-nh: 31F Mostly Cloudy then Slight Chance Rain Showers | worcester-ma: 34F Partly Cloudy then Chance Rain Showers | burlington-vt: 39F Slight Chance Rain Showers | portland-me: 36F Partly Cloudy | albany-ny: 38F Mostly Cloudy then Chance Rain Showers | scranton-pa: 42F Chance Rain Showers",
+    "summary": "concord-nh: 31F Mostly Cloudy then Slight Chance Rain Showers | worcester-ma: 34F Mostly Cloudy then Chance Rain Showers | burlington-vt: 39F Slight Chance Rain Showers | portland-me: 36F Partly Cloudy | albany-ny: 38F Mostly Cloudy then Chance Rain Showers | scranton-pa: 42F Chance Rain Showers",
     "tagWeights": {
       "coldRain_lt_50F": 0.848,
       "normal": 0.152
@@ -109,8 +109,8 @@
         "weight": 0.272,
         "temp": 34,
         "unit": "F",
-        "short": "Partly Cloudy then Chance Rain Showers",
-        "detailed": "A chance of rain showers after 4am. Partly cloudy, with a low around 34. South wind around 6 mph. Chance of precipitation is 30%."
+        "short": "Mostly Cloudy then Chance Rain Showers",
+        "detailed": "A chance of rain showers after 4am. Mostly cloudy, with a low around 34. South wind around 6 mph. Chance of precipitation is 30%."
       },
       {
         "station": "burlington-vt",
@@ -134,7 +134,7 @@
         "temp": 38,
         "unit": "F",
         "short": "Mostly Cloudy then Chance Rain Showers",
-        "detailed": "A chance of rain showers after midnight. Mostly cloudy, with a low around 38. South wind 5 to 8 mph. Chance of precipitation is 40%. New rainfall amounts less than a tenth of an inch possible."
+        "detailed": "A chance of rain showers after midnight. Mostly cloudy, with a low around 38. South wind 3 to 8 mph. Chance of precipitation is 40%. New rainfall amounts less than a tenth of an inch possible."
       },
       {
         "station": "scranton-pa",
@@ -142,7 +142,7 @@
         "temp": 42,
         "unit": "F",
         "short": "Chance Rain Showers",
-        "detailed": "A chance of rain showers. Mostly cloudy, with a low around 42. Southeast wind 3 to 7 mph. Chance of precipitation is 50%. New rainfall amounts between a tenth and quarter of an inch possible."
+        "detailed": "A chance of rain showers. Mostly cloudy, with a low around 42. Southeast wind around 7 mph. Chance of precipitation is 50%. New rainfall amounts between a tenth and quarter of an inch possible."
       }
     ]
   }
