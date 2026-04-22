@@ -5491,6 +5491,7 @@ function LiveSalesSnowflakeView({ goBack }) {
   const [topStores, setTopStores] = useState([]);
   const [topProducts, setTopProducts] = useState([]);
   const [notReporting, setNotReporting] = useState([]);
+  const [estimatedMissing, setEstimatedMissing] = useState(null);
   const [asOf, setAsOf] = useState("");
   const [cacheInfo, setCacheInfo] = useState("");
   const [showAllStores, setShowAllStores] = useState(false);
@@ -5566,6 +5567,32 @@ function LiveSalesSnowflakeView({ goBack }) {
         plan: s.plan || 0,
       };
     }));
+    // Per-store estimates (today) or EOD estimates (historical). Indexed
+    // client-side by store code so the missing-stores table can lookup its
+    // own row without a second pass.
+    if (d.estimatedMissing && Array.isArray(d.estimatedMissing.stores)) {
+      var byCode = {};
+      d.estimatedMissing.stores.forEach(function (s) {
+        byCode[String(s.store)] = {
+          dowAvg: s.dowAvg || 0,
+          samples: s.samples || 0,
+          basis: s.basis || "dowAvg",
+          estimatedCurrent: s.estimatedCurrent || 0,
+          estimatedEOD: s.estimatedEOD || 0,
+        };
+      });
+      setEstimatedMissing({
+        paceAtNow: d.estimatedMissing.paceAtNow || 0,
+        sampleWeeks: d.estimatedMissing.sampleWeeks || 0,
+        totalEstimatedCurrent: d.estimatedMissing.totalEstimatedCurrent || 0,
+        totalEstimatedEOD: d.estimatedMissing.totalEstimatedEOD || 0,
+        projectedCompanyCurrent: d.estimatedMissing.projectedCompanyCurrent || 0,
+        projectedCompanyEOD: d.estimatedMissing.projectedCompanyEOD || 0,
+        byCode: byCode,
+      });
+    } else {
+      setEstimatedMissing(null);
+    }
     if (Array.isArray(d.allStores) && d.allStores.length) {
       setAllStores(d.allStores.map(function (s) {
         return { code: s.store, name: s.name || ("Store " + s.store), city: s.city || "", state: s.state || "" };
@@ -5884,6 +5911,20 @@ function LiveSalesSnowflakeView({ goBack }) {
             <div>
               <h2 className="text-lg sm:text-xl font-bold text-slate-900">Today's Performance</h2>
               <div className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 mt-1">{fmtD(companyTotal.sales)}</div>
+              {/* Projected-with-estimate line. Only shown when we have
+                  estimates for non-reporting stores AND the user isn't viewing
+                  a single store. Keeps the big number above honest (raw
+                  actuals) and surfaces the best-guess total as a subtler
+                  second line. */}
+              {!selectedStore && estimatedMissing && estimatedMissing.totalEstimatedCurrent > 0 && (
+                <div className="text-xs sm:text-sm text-slate-600 mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
+                  <span className="text-[10px] uppercase tracking-wide font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-200">est.</span>
+                  <span>+{fmtD(estimatedMissing.totalEstimatedCurrent)}</span>
+                  <span className="text-slate-400">from {notReporting.length} missing</span>
+                  <span className="text-slate-300">&rarr;</span>
+                  <span className="font-semibold text-slate-700">{fmtD(isToday ? estimatedMissing.projectedCompanyCurrent : estimatedMissing.projectedCompanyEOD)} projected</span>
+                </div>
+              )}
             </div>
             <div className={"text-2xl sm:text-3xl font-extrabold text-right " + (onTrack ? "text-emerald-700" : "text-red-600")}>
               {pctPlan.toFixed(1)}% <span className="text-sm font-semibold text-slate-500">to plan</span>
@@ -5986,10 +6027,16 @@ function LiveSalesSnowflakeView({ goBack }) {
                       <th className="px-3 py-2 font-semibold text-slate-600 text-xs">#</th>
                       <th className="px-3 py-2 font-semibold text-slate-600 text-xs">Store</th>
                       <th className="px-3 py-2 font-semibold text-slate-600 text-xs text-right">Daily Plan</th>
+                      <th className="px-3 py-2 font-semibold text-slate-600 text-xs text-right">Est. Current</th>
                     </tr>
                   </thead>
                   <tbody>
                     {notReporting.map(function (s, i) {
+                      var est = estimatedMissing && estimatedMissing.byCode ? estimatedMissing.byCode[String(s.code)] : null;
+                      var estVal = est ? est.estimatedCurrent : 0;
+                      var basisLabel = est
+                        ? (est.basis === "dowAvg" ? (est.samples + "w avg") : "plan-based")
+                        : "";
                       return (
                         <tr key={s.code} className={i % 2 === 0 ? "bg-white" : "bg-slate-50/40"}>
                           <td className="px-3 py-2 text-slate-400 font-medium">#{s.code}</td>
@@ -5998,10 +6045,34 @@ function LiveSalesSnowflakeView({ goBack }) {
                             <div className="text-xs text-slate-400">{tc(s.city)}{s.state ? ", " + s.state : ""}</div>
                           </td>
                           <td className="px-3 py-2 text-right font-medium text-slate-700">{fmt$(s.plan)}</td>
+                          <td className="px-3 py-2 text-right">
+                            {est ? (
+                              <div className="flex flex-col items-end gap-0.5">
+                                <div className="flex items-center gap-1.5">
+                                  <span className="text-[9px] uppercase tracking-wide font-bold px-1 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-200">est.</span>
+                                  <span className="font-semibold text-slate-800">{fmt$(estVal)}</span>
+                                </div>
+                                <div className="text-[10px] text-slate-400">{basisLabel}</div>
+                              </div>
+                            ) : (
+                              <span className="text-slate-300">&mdash;</span>
+                            )}
+                          </td>
                         </tr>
                       );
                     })}
                   </tbody>
+                  {estimatedMissing && estimatedMissing.totalEstimatedCurrent > 0 && (
+                    <tfoot>
+                      <tr className="bg-slate-50 border-t border-slate-200">
+                        <td className="px-3 py-2 text-xs text-slate-500" colSpan={2}>
+                          Est. based on {estimatedMissing.sampleWeeks || 8}-week same-DOW average · pace {(((estimatedMissing.paceAtNow || 0) * 100) | 0)}%. Replaced with actuals when the store reports (typically next day).
+                        </td>
+                        <td className="px-3 py-2 text-right text-xs text-slate-500 font-semibold">Total</td>
+                        <td className="px-3 py-2 text-right font-bold text-slate-800">{fmt$(estimatedMissing.totalEstimatedCurrent)}</td>
+                      </tr>
+                    </tfoot>
+                  )}
                 </table>
               </div>
             </div>
