@@ -192,29 +192,29 @@ function buildProductsSql(storeFilter, dateFilter) {
       : "";
     const dateKey = dateKeyOf(dateFilter);
     return `
-SELECT dp.PRODUCT_DESC AS product, SUM(asp.NET_SALE_AMT) AS sales
+SELECT dp.PRODUCT_CD AS sku, dp.PRODUCT_DESC AS product, SUM(asp.NET_SALE_AMT) AS sales
 FROM PRD_EDW_DB.ANALYTICS_BASE.AGG_SALES_DAY_STORE_PRODUCT asp
 LEFT JOIN PRD_EDW_DB.ANALYTICS_BASE.DIM_PRODUCT dp ON dp.PRODUCT_KEY = asp.PRODUCT_KEY
 WHERE asp.TRANSACTION_DATE_KEY = ${dateKey}
   AND dp.PRODUCT_DESC IS NOT NULL
   ${aggCond}
-GROUP BY dp.PRODUCT_DESC
+GROUP BY dp.PRODUCT_CD, dp.PRODUCT_DESC
 ORDER BY sales DESC NULLS LAST
-LIMIT 20
+LIMIT 100
 `;
   }
 
   // Today — live line table.
   const cond = storeFilter ? `AND STORE_CD = '${storeFilter}'` : "";
   return `
-SELECT PRODUCT_DESC AS product, SUM(ITEM_EXTENDED_AMT) AS sales
+SELECT PRODUCT_CD AS sku, PRODUCT_DESC AS product, SUM(ITEM_EXTENDED_AMT) AS sales
 FROM PRD_EDW_DB.ANALYTICS_BASE.FCT_LIVE_SALE_TRANSACTION_LINE
 WHERE CREATED_DT = CURRENT_DATE()
   AND PRODUCT_DESC IS NOT NULL
   ${cond}
-GROUP BY PRODUCT_DESC
+GROUP BY PRODUCT_CD, PRODUCT_DESC
 ORDER BY sales DESC NULLS LAST
-LIMIT 20
+LIMIT 100
 `;
 }
 
@@ -746,6 +746,7 @@ export default async function handler(req, res) {
         txns:  toNumber(r.TXNS),
       })),
       topProducts: productRows.map((r) => ({
+        sku:     r.SKU,
         product: r.PRODUCT,
         sales:   toNumber(r.SALES),
       })),
