@@ -5503,6 +5503,29 @@ function LiveSalesSnowflakeView({ goBack }) {
   const [allStores, setAllStores] = useState([]);
   // Typed text that narrows the store dropdown (matches code / name / city).
   const [storeSearch, setStoreSearch] = useState("");
+  // Combobox open/closed state — the search input lives inside the panel.
+  const [storeOpen, setStoreOpen] = useState(false);
+  const storeBoxRef = useRef(null);
+  // Close on outside click / ESC. The search input resets on close so the
+  // user always opens a fresh list.
+  useEffect(function () {
+    if (!storeOpen) return;
+    var onDocClick = function (e) {
+      if (storeBoxRef.current && !storeBoxRef.current.contains(e.target)) {
+        setStoreOpen(false);
+        setStoreSearch("");
+      }
+    };
+    var onKey = function (e) {
+      if (e.key === "Escape") { setStoreOpen(false); setStoreSearch(""); }
+    };
+    document.addEventListener("mousedown", onDocClick);
+    document.addEventListener("keydown", onKey);
+    return function () {
+      document.removeEventListener("mousedown", onDocClick);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [storeOpen]);
   // Date to query. "" = today's live snapshot (default); otherwise a
   // YYYY-MM-DD string for the historical end-of-day view. Computed against
   // America/New_York so the dashboard agrees with the Aubuchon business day.
@@ -5730,35 +5753,95 @@ function LiveSalesSnowflakeView({ goBack }) {
           }
           return (
             <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-3 sm:p-4 mb-5 flex items-center gap-2 flex-wrap max-w-3xl">
-              <label htmlFor="snowflake-store-select" className="text-sm font-semibold text-slate-700 shrink-0">
+              <label htmlFor="snowflake-store-button" className="text-sm font-semibold text-slate-700 shrink-0">
                 View:
               </label>
-              <input
-                type="text"
-                value={storeSearch}
-                onChange={function (e) { setStoreSearch(e.target.value); }}
-                placeholder="Search…"
-                aria-label="Search stores"
-                disabled={refreshing}
-                className="w-28 sm:w-32 px-2 py-2 rounded-lg border border-slate-200 bg-white text-sm text-slate-800 placeholder:text-slate-400 hover:border-sky-300 focus:outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-400 disabled:bg-slate-50 disabled:text-slate-400"
-              />
-              <select
-                id="snowflake-store-select"
-                value={selectedStore}
-                onChange={function (e) { setSelectedStore(e.target.value); }}
-                disabled={refreshing}
-                className="flex-1 min-w-[180px] px-2 py-2 rounded-lg border border-slate-200 bg-white text-sm text-slate-800 hover:border-sky-300 focus:outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-400 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-wait"
-              >
-                <option value="">Entire Company</option>
-                {visibleStores.map(function (s) {
-                  var label = "#" + s.code + " · " + (tc(s.name) || ("Store " + s.code));
-                  if (s.city) label += " (" + tc(s.city) + (s.state ? ", " + s.state : "") + ")";
-                  return <option key={s.code} value={s.code}>{label}</option>;
-                })}
-                {visibleStores.length === 0 && q && (
-                  <option value="" disabled>No matches for "{storeSearch}"</option>
-                )}
-              </select>
+              {(function () {
+                var selectedLabel = "Entire Company";
+                if (selectedStore) {
+                  var sel = allStores.find(function (s) { return s.code === selectedStore; });
+                  if (sel) {
+                    selectedLabel = "#" + sel.code + " · " + (tc(sel.name) || ("Store " + sel.code));
+                    if (sel.city) selectedLabel += " (" + tc(sel.city) + (sel.state ? ", " + sel.state : "") + ")";
+                  } else {
+                    selectedLabel = "Store #" + selectedStore;
+                  }
+                }
+                return (
+                  <div ref={storeBoxRef} className="relative flex-1 min-w-[200px]">
+                    <button
+                      id="snowflake-store-button"
+                      type="button"
+                      onClick={function () {
+                        var next = !storeOpen;
+                        setStoreOpen(next);
+                        if (!next) setStoreSearch("");
+                      }}
+                      disabled={refreshing}
+                      aria-haspopup="listbox"
+                      aria-expanded={storeOpen}
+                      className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg border border-slate-200 bg-white text-sm text-slate-800 text-left hover:border-sky-300 focus:outline-none focus:ring-2 focus:ring-sky-200 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-wait"
+                    >
+                      <span className="truncate">{selectedLabel}</span>
+                      <ChevronDown className={"w-4 h-4 text-slate-500 shrink-0 transition-transform duration-150 " + (storeOpen ? "rotate-180" : "")} />
+                    </button>
+                    {storeOpen && (
+                      <div className="absolute z-20 top-full mt-1 left-0 right-0 bg-white border border-slate-200 rounded-lg shadow-lg max-h-80 flex flex-col overflow-hidden">
+                        <div className="p-2 border-b border-slate-100 bg-slate-50">
+                          <input
+                            type="text"
+                            value={storeSearch}
+                            onChange={function (e) { setStoreSearch(e.target.value); }}
+                            placeholder="Search stores…"
+                            aria-label="Search stores"
+                            autoFocus
+                            className="w-full px-2 py-1.5 rounded-md border border-slate-200 bg-white text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-400"
+                          />
+                        </div>
+                        <div role="listbox" className="overflow-y-auto">
+                          <button
+                            type="button"
+                            onClick={function () {
+                              setSelectedStore("");
+                              setStoreSearch("");
+                              setStoreOpen(false);
+                            }}
+                            className={"w-full text-left px-3 py-2 text-sm border-b border-slate-100 hover:bg-sky-50 " + (!selectedStore ? "bg-sky-100 text-sky-900 font-semibold" : "text-slate-700")}
+                          >
+                            Entire Company
+                          </button>
+                          {visibleStores.map(function (s) {
+                            var label = "#" + s.code + " · " + (tc(s.name) || ("Store " + s.code));
+                            if (s.city) label += " (" + tc(s.city) + (s.state ? ", " + s.state : "") + ")";
+                            var isSel = s.code === selectedStore;
+                            return (
+                              <button
+                                key={s.code}
+                                type="button"
+                                role="option"
+                                aria-selected={isSel}
+                                onClick={function () {
+                                  setSelectedStore(s.code);
+                                  setStoreSearch("");
+                                  setStoreOpen(false);
+                                }}
+                                className={"w-full text-left px-3 py-2 text-sm hover:bg-sky-50 " + (isSel ? "bg-sky-100 text-sky-900 font-semibold" : "text-slate-700")}
+                              >
+                                {label}
+                              </button>
+                            );
+                          })}
+                          {visibleStores.length === 0 && q && (
+                            <div className="px-3 py-4 text-sm text-slate-500 italic text-center">
+                              No matches for "{storeSearch}"
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
               <label htmlFor="snowflake-date-input" className="text-sm font-semibold text-slate-700 shrink-0 ml-1">
                 Date:
               </label>
@@ -5773,11 +5856,16 @@ function LiveSalesSnowflakeView({ goBack }) {
                 title={isToday ? "Today (live)" : "Historical end-of-day view"}
                 className={"px-2 py-2 rounded-lg border text-sm text-slate-800 bg-white hover:border-sky-300 focus:outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-400 disabled:bg-slate-50 disabled:text-slate-400 " + (isToday ? "border-slate-200" : "border-sky-400 bg-sky-50")}
               />
-              {(selectedStore || storeSearch || !isToday) && (
+              {(selectedStore || !isToday) && (
                 <button
-                  onClick={function () { setSelectedStore(""); setStoreSearch(""); setSelectedDate(todayET); }}
+                  onClick={function () {
+                    setSelectedStore("");
+                    setStoreSearch("");
+                    setSelectedDate(todayET);
+                    setStoreOpen(false);
+                  }}
                   className="px-3 py-2 rounded-lg border border-slate-200 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:border-slate-300 shrink-0"
-                  title="Reset to today, entire company, no search"
+                  title="Reset to today, entire company"
                 >
                   Clear
                 </button>
