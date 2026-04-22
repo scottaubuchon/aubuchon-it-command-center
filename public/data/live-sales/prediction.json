@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-04-22T21:33:08.456Z",
+  "updatedAt": "2026-04-22T21:33:52.619Z",
   "updatedAtET": "Apr 22, 2026, 5:33 PM",
   "dateET": "2026-04-22",
   "dow": 3,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-04-22T21:33:08.456Z",
+    "ts": "2026-04-22T21:33:52.619Z",
     "tsET": "Apr 22, 2026, 5:33 PM",
     "dateET": "2026-04-22",
     "hourET": 17,
@@ -110,7 +110,7 @@
         "temp": 45,
         "unit": "F",
         "short": "Cloudy",
-        "detailed": "Cloudy, with a high near 45. South wind around 10 mph."
+        "detailed": "Cloudy, with a high near 45. South wind around 9 mph."
       },
       {
         "station": "burlington-vt",
@@ -118,7 +118,7 @@
         "temp": 56,
         "unit": "F",
         "short": "Partly Sunny",
-        "detailed": "Partly sunny, with a high near 56. South wind 9 to 13 mph, with gusts as high as 25 mph."
+        "detailed": "Partly sunny, with a high near 56. South wind around 10 mph, with gusts as high as 23 mph."
       },
       {
         "station": "portland-me",
@@ -126,7 +126,7 @@
         "temp": 44,
         "unit": "F",
         "short": "Scattered Rain Showers",
-        "detailed": "Scattered rain showers after 3pm. Cloudy, with a high near 44. South wind around 15 mph, with gusts as high as 25 mph. Chance of precipitation is 30%. New rainfall amounts less than a tenth of an inch possible."
+        "detailed": "Scattered rain showers. Mostly cloudy, with a high near 44. South wind around 15 mph, with gusts as high as 25 mph. Chance of precipitation is 30%. New rainfall amounts less than a tenth of an inch possible."
       },
       {
         "station": "albany-ny",
@@ -134,7 +134,7 @@
         "temp": 50,
         "unit": "F",
         "short": "Partly Sunny",
-        "detailed": "Partly sunny, with a high near 50. South wind around 9 mph."
+        "detailed": "Partly sunny, with a high near 50. South wind around 8 mph."
       },
       {
         "station": "scranton-pa",
