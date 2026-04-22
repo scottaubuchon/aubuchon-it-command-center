@@ -1,16 +1,16 @@
 {
-  "updatedAt": "2026-04-22T21:49:30.432Z",
-  "updatedAtET": "Apr 22, 2026, 5:49 PM",
+  "updatedAt": "2026-04-22T22:05:10.917Z",
+  "updatedAtET": "Apr 22, 2026, 6:05 PM",
   "dateET": "2026-04-22",
   "dow": 3,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-04-22T21:49:30.432Z",
-    "tsET": "Apr 22, 2026, 5:49 PM",
+    "ts": "2026-04-22T22:05:10.917Z",
+    "tsET": "Apr 22, 2026, 6:05 PM",
     "dateET": "2026-04-22",
-    "hourET": 17,
-    "minuteET": 49,
+    "hourET": 18,
+    "minuteET": 5,
     "dow": 3,
     "sales": 889236.8399999999,
     "plan": 1059397.8799999997,
@@ -27,17 +27,17 @@
     "available": true,
     "method": "blended (w=0.97 shape + 0.03 level)",
     "confidence": "medium",
-    "projectedEOD": 935685.8556560287,
-    "projectedPctToPlan": 88.32242100163812,
-    "projectedVariance": -123712.02434397093,
+    "projectedEOD": 921803.5922227073,
+    "projectedPctToPlan": 87.01202915591143,
+    "projectedVariance": -137594.2877772923,
     "band": {
-      "low": 864016.6848686016,
-      "high": 1007355.0264434558
+      "low": 851384.2795810506,
+      "high": 992222.9048643641
     },
-    "pctOfDayElapsed": 0.9525133333333333,
+    "pctOfDayElapsed": 0.9670666666666666,
     "level_EOD": 1007033.5378282077,
-    "shape_EOD": 933568.9159206869,
-    "blendWeight": 0.9711842288114307,
+    "shape_EOD": 919519.6884047979,
+    "blendWeight": 0.973902372790627,
     "factors": {
       "plan": 1059397.8799999997,
       "recencyFactor": 0.9393,
@@ -46,26 +46,26 @@
       "holidayMult": 1,
       "weatherKey": "normal",
       "weatherMult": 1,
-      "weatherSummary": "concord-nh: 46F Isolated Rain Showers | worcester-ma: 45F Cloudy | burlington-vt: 56F Partly Sunny | portland-me: 44F Scattered Rain Showers | albany-ny: 50F Partly Sunny | scranton-pa: 63F Mostly Sunny"
+      "weatherSummary": "concord-nh: 46F Isolated Rain Showers | worcester-ma: 39F Patchy Fog | burlington-vt: 56F Partly Sunny | albany-ny: 50F Partly Sunny | scranton-pa: 44F Slight Chance Rain Showers then Partly Cloudy"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.9525133333333333,
+      "basePaceFromCurve": 0.9670666666666666,
       "observedPaceCount": 1,
-      "blendedPaceAtNow": 0.9525133333333333,
+      "blendedPaceAtNow": 0.9670666666666666,
       "historyDays": 1,
       "avgHistoricalEOD": 1053994.8399999999
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 39841.727706666665,
+      "estimatedCurrent": 40450.46453333333,
       "estimatedEOD": 41828,
-      "paceUsed": 0.9525133333333333,
+      "paceUsed": 0.9670666666666666,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 26994,
-          "estimatedCurrent": 25712.14492,
+          "estimatedCurrent": 26104.9976,
           "estimatedEOD": 26994,
           "stdev": 0.4325
         },
@@ -73,16 +73,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 14834,
-          "estimatedCurrent": 14129.582786666666,
+          "estimatedCurrent": 14345.466933333333,
           "estimatedEOD": 14834,
           "stdev": 0.1986
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 977513.8556560287,
-    "combinedCurrentSales": 929078.5677066665,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $39,842 so far, +$41,828 to EOD."
+    "combinedProjectedEOD": 963631.5922227073,
+    "combinedCurrentSales": 929687.3045333332,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $40,450 so far, +$41,828 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 9,
@@ -90,10 +90,10 @@
     "mult": 1,
     "key": "normal",
     "season": "spring",
-    "summary": "concord-nh: 46F Isolated Rain Showers | worcester-ma: 45F Cloudy | burlington-vt: 56F Partly Sunny | portland-me: 44F Scattered Rain Showers | albany-ny: 50F Partly Sunny | scranton-pa: 63F Mostly Sunny",
+    "summary": "concord-nh: 46F Isolated Rain Showers | worcester-ma: 39F Patchy Fog | burlington-vt: 56F Partly Sunny | albany-ny: 50F Partly Sunny | scranton-pa: 44F Slight Chance Rain Showers then Partly Cloudy",
     "tagWeights": {
-      "coldRain_lt_50F": 0.296,
-      "normal": 0.704
+      "coldRain_lt_50F": 0.23199999999999998,
+      "normal": 0.616
     },
     "forecasts": [
       {
@@ -107,10 +107,10 @@
       {
         "station": "worcester-ma",
         "weight": 0.272,
-        "temp": 45,
+        "temp": 39,
         "unit": "F",
-        "short": "Cloudy",
-        "detailed": "Cloudy, with a high near 45. South wind around 9 mph."
+        "short": "Patchy Fog",
+        "detailed": "Patchy fog after 8pm. Cloudy, with a low around 39. Southwest wind 2 to 7 mph."
       },
       {
         "station": "burlington-vt",
@@ -118,15 +118,7 @@
         "temp": 56,
         "unit": "F",
         "short": "Partly Sunny",
-        "detailed": "Partly sunny, with a high near 56. South wind around 10 mph, with gusts as high as 23 mph."
-      },
-      {
-        "station": "portland-me",
-        "weight": 0.152,
-        "temp": 44,
-        "unit": "F",
-        "short": "Scattered Rain Showers",
-        "detailed": "Scattered rain showers. Mostly cloudy, with a high near 44. South wind around 15 mph, with gusts as high as 25 mph. Chance of precipitation is 30%. New rainfall amounts less than a tenth of an inch possible."
+        "detailed": "Partly sunny, with a high near 56. South wind 9 to 13 mph, with gusts as high as 25 mph."
       },
       {
         "station": "albany-ny",
@@ -134,15 +126,15 @@
         "temp": 50,
         "unit": "F",
         "short": "Partly Sunny",
-        "detailed": "Partly sunny, with a high near 50. South wind around 8 mph."
+        "detailed": "Partly sunny, with a high near 50. South wind around 9 mph."
       },
       {
         "station": "scranton-pa",
         "weight": 0.088,
-        "temp": 63,
+        "temp": 44,
         "unit": "F",
-        "short": "Mostly Sunny",
-        "detailed": "Mostly sunny, with a high near 63. Southwest wind around 2 mph."
+        "short": "Slight Chance Rain Showers then Partly Cloudy",
+        "detailed": "A slight chance of rain showers before 8pm. Partly cloudy, with a low around 44. Southeast wind around 2 mph. Chance of precipitation is 20%."
       }
     ]
   }
