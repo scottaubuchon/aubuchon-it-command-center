@@ -5480,7 +5480,7 @@ function LiveSalesView({ goBack }) {
 /* ============================================================
    LIVE SALES (SNOWFLAKE) VIEW — reads from /api/live-sales-snowflake
    Same visual layout as LiveSalesView, and same EOD predictor
-   (shared engine — reads from /data/live-sales-snowflake/prediction.json,
+   (shared engine — reads from /api/prediction?source=snowflake,
    written by /api/log-live-sales?source=snowflake every 10 min).
    ============================================================ */
 function LiveSalesSnowflakeView({ goBack }) {
@@ -5551,7 +5551,7 @@ function LiveSalesSnowflakeView({ goBack }) {
   // /api/log-live-sales?source=snowflake to public/data/live-sales-snowflake/
   // and served as a static JSON file.
   var loadPrediction = function () {
-    var url = "/data/live-sales-snowflake/prediction.json?t=" + Date.now();
+    var url = "/api/prediction?source=snowflake&t=" + Date.now();
     return fetch(url, { cache: "no-store" }).then(function (r) {
       if (!r.ok) return null;
       return r.json().catch(function () { return null; });
@@ -6110,4 +6110,4 @@ export default function App() {
 
   return <HomeScreen onNavigate={setActiveSection} canAccessSection={canAccessSection} isAdmin={isAdmin} />;
 }
-   
+  
