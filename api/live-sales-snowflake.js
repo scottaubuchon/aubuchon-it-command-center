@@ -338,6 +338,16 @@ function todayInET() {
   return new Date().toLocaleDateString("en-CA", { timeZone: "America/New_York" });
 }
 
+// Integer days between two YYYY-MM-DD strings (a - b). Both interpreted as
+// UTC midnight, which is safe since we only ever subtract same-form values.
+// We don't care about DST/time-zone drift at day granularity.
+function daysBetweenIsoDates(a, b) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(a) || !/^\d{4}-\d{2}-\d{2}$/.test(b)) return 0;
+  const aMs = Date.UTC(+a.slice(0,4), +a.slice(5,7)-1, +a.slice(8,10));
+  const bMs = Date.UTC(+b.slice(0,4), +b.slice(5,7)-1, +b.slice(8,10));
+  return Math.round((aMs - bMs) / 86400000);
+}
+
 // ---------- Handler ----------
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -389,16 +399,34 @@ export default async function handler(req, res) {
   if (cacheable) {
     const cached = await readHistoryCache(dateFilter);
     if (cached) {
-      res.status(200).json({
-        ...cached,
-        // Keep echoed filters accurate for the current request.
-        storeFilter,
-        dateFilter,
-        // Mark as served from cache so the UI can show a badge.
-        cached: true,
-        source: cached.source || "snowflake",
-      });
-      return;
+      // Cache "provisional" window: snapshots 1-2 days old with still-missing
+      // stores are re-checked in case those stores have since posted late
+      // data. After day+2 (or when no stores are missing) the cache is
+      // treated as final and served as-is. This matches the spirit of the
+      // logger's once-a-day cadence while giving late-reporters a chance to
+      // roll in without a manual cache bust.
+      const daysOld = daysBetweenIsoDates(etToday, dateFilter);
+      const missingCount = Array.isArray(cached.notReporting) ? cached.notReporting.length : 0;
+      const provisional = daysOld >= 1 && daysOld <= 2 && missingCount > 0;
+
+      if (!provisional) {
+        res.status(200).json({
+          ...cached,
+          // Keep echoed filters accurate for the current request.
+          storeFilter,
+          dateFilter,
+          // Mark as served from cache so the UI can show a badge.
+          cached: true,
+          source: cached.source || "snowflake",
+        });
+        return;
+      }
+      // else: fall through to a fresh Snowflake query. The subsequent
+      // cache write will overwrite this provisional snapshot with the
+      // latest data, including any previously-missing stores that have
+      // since reported.
+      console.log("[live-sales-snowflake] provisional cache refresh for", dateFilter,
+        "(daysOld=" + daysOld + ", missing=" + missingCount + ")");
     }
   }
 
