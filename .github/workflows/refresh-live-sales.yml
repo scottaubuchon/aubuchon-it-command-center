@@ -2,7 +2,7 @@ name: Refresh Live Sales
 
 on:
   # Cron here is a safety net. Primary trigger is workflow_dispatch fired by the
-  # Cowork hourly scheduled task (which then runs an internal 10-min loop for
+  # Cowork hourly scheduled task (which then runs an internal 15-min loop for
   # the full hour).
   schedule:
     - cron: '0 11-23 * * *'
@@ -18,12 +18,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 58
     steps:
-      - name: Ping /api/log-live-sales (yoda + snowflake) every 10 min for ~55 min
+      - name: Ping /api/log-live-sales (yoda + snowflake) every 15 min for ~45 min
         run: |
           set -u
           BASE="https://aubuchon-it-command-center.vercel.app/api/log-live-sales"
-          TOTAL_PINGS=6
-          SLEEP_SEC=600
+          TOTAL_PINGS=4
+          SLEEP_SEC=900
           # Pipelines: label + URL. Both run each pass; same prediction engine,
           # different live-sales source, different per-source log dir.
           SOURCES="yoda:${BASE} snowflake:${BASE}?source=snowflake"
