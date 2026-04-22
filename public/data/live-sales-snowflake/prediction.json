@@ -1,42 +1,42 @@
 {
-  "updatedAt": "2026-04-22T21:33:11.832Z",
+  "updatedAt": "2026-04-22T21:33:55.856Z",
   "updatedAtET": "Apr 22, 2026, 5:33 PM",
   "dateET": "2026-04-22",
   "dow": 3,
   "season": "spring",
   "source": "snowflake",
   "current": {
-    "ts": "2026-04-22T21:33:11.832Z",
+    "ts": "2026-04-22T21:33:55.856Z",
     "tsET": "Apr 22, 2026, 5:33 PM",
     "dateET": "2026-04-22",
     "hourET": 17,
     "minuteET": 33,
     "dow": 3,
-    "sales": 854541.41,
+    "sales": 864905.78,
     "plan": 1059397.88,
-    "pctToPlan": 80.6629337411927,
-    "gp": 359050.6795,
-    "gpPct": 42.01676774212733,
-    "txns": 24917,
-    "customers": 23187,
+    "pctToPlan": 81.64126022226891,
+    "gp": 363650.2009,
+    "gpPct": 42.04506540585265,
+    "txns": 25290,
+    "customers": 23540,
     "storeCount": 134,
     "asOf": null,
-    "asOfET": "Apr 22, 5:15 PM ET"
+    "asOfET": "Apr 22, 5:30 PM ET"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.97 shape + 0.03 level)",
     "confidence": "medium",
-    "projectedEOD": 916331.5207586606,
-    "projectedPctToPlan": 86.49550259234621,
-    "projectedVariance": -143066.35924133926,
+    "projectedEOD": 927050.7187002767,
+    "projectedPctToPlan": 87.5073224330293,
+    "projectedVariance": -132347.1612997232,
     "band": {
-      "low": 845906.6036299269,
-      "high": 986756.4378873943
+      "low": 855801.9745944901,
+      "high": 998299.4628060632
     },
     "pctOfDayElapsed": 0.9356599999999999,
     "level_EOD": 1007033.537828208,
-    "shape_EOD": 913303.3473697712,
+    "shape_EOD": 924380.4159630636,
     "blendWeight": 0.9676926572529236,
     "factors": {
       "plan": 1059397.88,
@@ -80,8 +80,8 @@
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 958159.5207586606,
-    "combinedCurrentSales": 893678.19648,
+    "combinedProjectedEOD": 968878.7187002767,
+    "combinedCurrentSales": 904042.56648,
     "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $39,137 so far, +$41,828 to EOD."
   },
   "offlineStoresVersion": 2,
@@ -110,7 +110,7 @@
         "temp": 45,
         "unit": "F",
         "short": "Cloudy",
-        "detailed": "Cloudy, with a high near 45. South wind around 10 mph."
+        "detailed": "Cloudy, with a high near 45. South wind around 9 mph."
       },
       {
         "station": "burlington-vt",
@@ -118,7 +118,7 @@
         "temp": 56,
         "unit": "F",
         "short": "Partly Sunny",
-        "detailed": "Partly sunny, with a high near 56. South wind 9 to 13 mph, with gusts as high as 25 mph."
+        "detailed": "Partly sunny, with a high near 56. South wind around 10 mph, with gusts as high as 23 mph."
       },
       {
         "station": "portland-me",
@@ -126,7 +126,7 @@
         "temp": 44,
         "unit": "F",
         "short": "Scattered Rain Showers",
-        "detailed": "Scattered rain showers after 3pm. Cloudy, with a high near 44. South wind around 15 mph, with gusts as high as 25 mph. Chance of precipitation is 30%. New rainfall amounts less than a tenth of an inch possible."
+        "detailed": "Scattered rain showers. Mostly cloudy, with a high near 44. South wind around 15 mph, with gusts as high as 25 mph. Chance of precipitation is 30%. New rainfall amounts less than a tenth of an inch possible."
       },
       {
         "station": "albany-ny",
@@ -134,7 +134,7 @@
         "temp": 50,
         "unit": "F",
         "short": "Partly Sunny",
-        "detailed": "Partly sunny, with a high near 50. South wind around 9 mph."
+        "detailed": "Partly sunny, with a high near 50. South wind around 8 mph."
       },
       {
         "station": "scranton-pa",
