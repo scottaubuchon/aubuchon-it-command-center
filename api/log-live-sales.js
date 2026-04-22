@@ -727,4 +727,36 @@ export default async function handler(req, res) {
         prediction.offlineEstimate = offlineEstimate;
         prediction.combinedProjectedEOD = prediction.projectedEOD + offlineEstimate.estimatedEOD;
         prediction.combinedCurrentSales = Number(entry.sales || 0) + offlineEstimate.estimatedCurrent;
-        prediction.footnote = `Company total excludes ${offlineEstimate.perStore.
+        prediction.footnote = `Company total excludes ${offlineEstimate.perStore.length} store${offlineEstimate.perStore.length===1?'':'s'} not on live feed (${offlineEstimate.perStore.map(s=>s.storeCd).join(', ')}). Estimated contribution: $${Math.round(offlineEstimate.estimatedCurrent).toLocaleString()} so far, +$${Math.round(offlineEstimate.estimatedEOD).toLocaleString()} to EOD.`;
+      }
+    }
+
+    const predictionDoc = {
+      updatedAt: now.toISOString(),
+      updatedAtET: et.tsET,
+      dateET: et.dateET,
+      dow: et.dow,
+      season,
+      source,
+      current: entry,
+      prediction,
+      offlineStoresVersion: offlineStores?.version ?? null,
+      baselineVersion: baseline?.version ?? null,
+      weatherRaw: weather,
+    };
+
+    const predWrote = await writePrediction(predictionDoc, logDir);
+    const snapshotWrote = await writeCurrentSnapshot(d, predictionDoc, logDir);
+
+    return res.status(200).json({
+      status: 'ok',
+      source,
+      log: { file: `${logDir}/${et.dateET}.jsonl`, ...appendResult },
+      prediction: predictionDoc,
+      predictionWritten: predWrote,
+      snapshotWritten: snapshotWrote,
+    });
+  } catch (e) {
+    return res.status(500).json({ status: 'error', error: e.message, stack: e.stack });
+  }
+}
