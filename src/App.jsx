@@ -5912,91 +5912,94 @@ function LiveSalesSnowflakeView({ goBack }) {
               <div className="text-xs text-slate-500 mb-0.5">Gross Profit</div>
               <div className="text-lg sm:text-xl font-bold text-slate-900">{fmtD(companyTotal.gp)}</div>
             </div>
-            <div className="bg-white/60 rounded-lg p-3 border border-slate-200/50">
-              <div className="text-xs text-slate-500 mb-0.5">
-                {selectedStore ? "Store" : "Stores Reporting"}
-              </div>
-              <div className="text-lg sm:text-xl font-bold text-slate-900">
-                {selectedStore ? (
-                  "#" + selectedStore
-                ) : (
-                  <>
-                    {companyTotal.storeCount || 0}
-                    {notReporting.length > 0 && (
-                      <span className="text-xs font-semibold text-red-600 ml-1.5">({notReporting.length} missing)</span>
+            {/* Stores Reporting — click-to-expand missing list when any are
+                absent. Non-clickable for per-store view or historical dates
+                (notReporting is meaningful only for today's company-wide view). */}
+            {(function () {
+              var canExpand = !selectedStore && isToday && notReporting.length > 0;
+              var inner = (
+                <>
+                  <div className="text-xs text-slate-500 mb-0.5 flex items-center justify-between gap-2">
+                    <span>{selectedStore ? "Store" : "Stores Reporting"}</span>
+                    {canExpand && (
+                      <ChevronDown className={"w-4 h-4 text-slate-400 transition-transform duration-200 " + (showNotReporting ? "rotate-180" : "")} />
                     )}
-                  </>
-                )}
-              </div>
-            </div>
+                  </div>
+                  <div className="text-lg sm:text-xl font-bold text-slate-900">
+                    {selectedStore ? (
+                      "#" + selectedStore
+                    ) : (
+                      <>
+                        {companyTotal.storeCount || 0}
+                        {notReporting.length > 0 && (
+                          <span className="text-xs font-semibold text-red-600 ml-1.5">({notReporting.length} missing)</span>
+                        )}
+                      </>
+                    )}
+                  </div>
+                </>
+              );
+              if (canExpand) {
+                return (
+                  <button
+                    type="button"
+                    onClick={function () { setShowNotReporting(!showNotReporting); }}
+                    className="bg-white/60 rounded-lg p-3 border border-slate-200/50 text-left hover:bg-white hover:border-slate-300 transition-colors cursor-pointer"
+                  >
+                    {inner}
+                  </button>
+                );
+              }
+              return (
+                <div className="bg-white/60 rounded-lg p-3 border border-slate-200/50">
+                  {inner}
+                </div>
+              );
+            })()}
           </div>
         </div>
 
-        {/* Stores Not Reporting — company-wide only, and only makes sense
-            for today's live view (historical data has nothing "missing"). */}
-        {!selectedStore && isToday && (function () {
-          var count = notReporting.length;
-          var hasMissing = count > 0;
+        {/* Stores Not Reporting — inline expansion opened by clicking the
+            Stores Reporting metric card above. Only renders for today's
+            company-wide view (past dates / per-store filters have nothing
+            meaningful to show). */}
+        {!selectedStore && isToday && showNotReporting && notReporting.length > 0 && (function () {
           var tc = function (str) { return String(str || "").replace(/\b\w+/g, function (w) { return w.charAt(0) + w.slice(1).toLowerCase(); }); };
           var fmt$ = function (n) { return "$" + Math.round(n || 0).toLocaleString(); };
-          if (!hasMissing) {
-            return (
-              <div className="rounded-xl border-2 border-emerald-200 bg-emerald-50 p-3 sm:p-4 mb-5 flex items-center gap-3">
-                <CheckCircle className="w-5 h-5 text-emerald-600 shrink-0" />
-                <div className="text-sm font-medium text-emerald-800">
-                  All expected stores are reporting ({companyTotal.storeCount || 0} of {companyTotal.storeCount || 0})
-                </div>
-              </div>
-            );
-          }
           return (
-            <div className="rounded-xl border-2 border-amber-300 bg-amber-50 mb-5 overflow-hidden">
-              <button
-                onClick={function () { setShowNotReporting(!showNotReporting); }}
-                className="w-full flex items-center justify-between gap-3 p-4 sm:p-5 text-left hover:bg-amber-100/50 transition-colors"
-              >
-                <div className="flex items-center gap-2 flex-wrap">
-                  <AlertTriangle className="w-5 h-5 text-amber-700 shrink-0" />
-                  <h2 className="font-bold text-slate-900">Stores Not Reporting</h2>
-                  <span className="text-[10px] uppercase tracking-wide font-bold px-2 py-0.5 rounded-full bg-amber-200 text-amber-900 border border-amber-300">
-                    {count}
-                  </span>
-                  {!showNotReporting && (
-                    <span className="text-xs text-amber-800 ml-1 truncate">
-                      {notReporting.slice(0, 3).map(function (s) { return "#" + s.code; }).join(", ")}
-                      {count > 3 ? " + " + (count - 3) + " more" : ""}
-                    </span>
-                  )}
-                </div>
-                <ChevronDown className={"w-5 h-5 text-amber-700 shrink-0 transition-transform duration-200 " + (showNotReporting ? "rotate-180" : "")} />
-              </button>
-              {showNotReporting && (
-                <div className="border-t border-amber-200 bg-white overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="bg-amber-50/60 text-left">
-                        <th className="px-3 py-2 font-semibold text-slate-600 text-xs">#</th>
-                        <th className="px-3 py-2 font-semibold text-slate-600 text-xs">Store</th>
-                        <th className="px-3 py-2 font-semibold text-slate-600 text-xs text-right">Daily Plan</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {notReporting.map(function (s, i) {
-                        return (
-                          <tr key={s.code} className={i % 2 === 0 ? "bg-white" : "bg-amber-50/30"}>
-                            <td className="px-3 py-2 text-slate-400 font-medium">#{s.code}</td>
-                            <td className="px-3 py-2">
-                              <div className="font-semibold text-slate-900">{tc(s.name)}</div>
-                              <div className="text-xs text-slate-400">{tc(s.city)}{s.state ? ", " + s.state : ""}</div>
-                            </td>
-                            <td className="px-3 py-2 text-right font-medium text-slate-700">{fmt$(s.plan)}</td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              )}
+            <div className="rounded-xl border border-slate-200 bg-white mb-5 overflow-hidden">
+              <div className="px-4 py-2 bg-slate-50 border-b border-slate-200 flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+                <span className="text-sm font-semibold text-slate-700">Stores Not Reporting</span>
+                <span className="text-[10px] uppercase tracking-wide font-bold px-2 py-0.5 rounded-full bg-amber-200 text-amber-900 border border-amber-300">
+                  {notReporting.length}
+                </span>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-slate-50/60 text-left">
+                      <th className="px-3 py-2 font-semibold text-slate-600 text-xs">#</th>
+                      <th className="px-3 py-2 font-semibold text-slate-600 text-xs">Store</th>
+                      <th className="px-3 py-2 font-semibold text-slate-600 text-xs text-right">Daily Plan</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {notReporting.map(function (s, i) {
+                      return (
+                        <tr key={s.code} className={i % 2 === 0 ? "bg-white" : "bg-slate-50/40"}>
+                          <td className="px-3 py-2 text-slate-400 font-medium">#{s.code}</td>
+                          <td className="px-3 py-2">
+                            <div className="font-semibold text-slate-900">{tc(s.name)}</div>
+                            <div className="text-xs text-slate-400">{tc(s.city)}{s.state ? ", " + s.state : ""}</div>
+                          </td>
+                          <td className="px-3 py-2 text-right font-medium text-slate-700">{fmt$(s.plan)}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
             </div>
           );
         })()}
