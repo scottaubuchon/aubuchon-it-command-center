@@ -5503,6 +5503,12 @@ function LiveSalesSnowflakeView({ goBack }) {
   const [allStores, setAllStores] = useState([]);
   // Typed text that narrows the store dropdown (matches code / name / city).
   const [storeSearch, setStoreSearch] = useState("");
+  // Date to query. "" = today's live snapshot (default); otherwise a
+  // YYYY-MM-DD string for the historical end-of-day view. Computed against
+  // America/New_York so the dashboard agrees with the Aubuchon business day.
+  var todayET = new Date().toLocaleDateString("en-CA", { timeZone: "America/New_York" });
+  const [selectedDate, setSelectedDate] = useState(todayET);
+  var isToday = selectedDate === todayET;
 
   var applyPayload = function (d) {
     if (!d || d.status !== "ok") throw new Error((d && d.error) || "Failed to load live sales");
@@ -5548,9 +5554,10 @@ function LiveSalesSnowflakeView({ goBack }) {
     setCacheInfo(info);
   };
 
-  var loadSnowflake = function (storeCode) {
+  var loadSnowflake = function (storeCode, dateStr) {
     var url = "/api/live-sales-snowflake?t=" + Date.now();
     if (storeCode) url += "&store=" + encodeURIComponent(storeCode);
+    if (dateStr && dateStr !== todayET) url += "&date=" + encodeURIComponent(dateStr);
     return fetch(url, { cache: "no-store" }).then(function (r) {
       if (!r.ok) throw new Error("Snowflake API unavailable (" + r.status + ")");
       return r.json();
@@ -5569,17 +5576,17 @@ function LiveSalesSnowflakeView({ goBack }) {
     }).catch(function () { return null; });
   };
 
-  // Re-fetch whenever the selected store changes (and on initial mount).
-  // The EOD predictor is company-wide only, so we only fetch it on mount.
+  // Re-fetch whenever the selected store OR selected date changes. The EOD
+  // predictor is company-wide-today-only, so we only fetch it on mount.
   useEffect(function () {
     var cancelled = false;
     setRefreshing(true);
     setError(null);
-    loadSnowflake(selectedStore)
+    loadSnowflake(selectedStore, selectedDate)
       .then(function (d) { if (!cancelled) { applyPayload(d); setLoading(false); setRefreshing(false); } })
       .catch(function (err) { if (!cancelled) { setError(err.message); setLoading(false); setRefreshing(false); } });
     return function () { cancelled = true; };
-  }, [selectedStore]);
+  }, [selectedStore, selectedDate]);
 
   useEffect(function () {
     var cancelled = false;
@@ -5592,9 +5599,12 @@ function LiveSalesSnowflakeView({ goBack }) {
     setRefreshing(true);
     setError(null);
     Promise.all([
-      loadSnowflake(selectedStore).then(applyPayload),
-      // Predictor is company-wide; only refresh it when viewing the company.
-      selectedStore ? Promise.resolve(null) : loadPrediction().then(function (p) { if (p) setPrediction(p); }),
+      loadSnowflake(selectedStore, selectedDate).then(applyPayload),
+      // Predictor is company-wide-today-only; skip it when viewing a single
+      // store or a historical date.
+      (selectedStore || !isToday)
+        ? Promise.resolve(null)
+        : loadPrediction().then(function (p) { if (p) setPrediction(p); }),
     ])
       .catch(function (err) { setError(err.message); })
       .finally(function () { setRefreshing(false); });
@@ -5709,7 +5719,7 @@ function LiveSalesSnowflakeView({ goBack }) {
             if (pinned) visibleStores = [pinned].concat(visibleStores);
           }
           return (
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-3 sm:p-4 mb-5 flex items-center gap-2 flex-wrap max-w-xl">
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-3 sm:p-4 mb-5 flex items-center gap-2 flex-wrap max-w-3xl">
               <label htmlFor="snowflake-store-select" className="text-sm font-semibold text-slate-700 shrink-0">
                 View:
               </label>
@@ -5739,11 +5749,25 @@ function LiveSalesSnowflakeView({ goBack }) {
                   <option value="" disabled>No matches for "{storeSearch}"</option>
                 )}
               </select>
-              {(selectedStore || storeSearch) && (
+              <label htmlFor="snowflake-date-input" className="text-sm font-semibold text-slate-700 shrink-0 ml-1">
+                Date:
+              </label>
+              <input
+                id="snowflake-date-input"
+                type="date"
+                value={selectedDate}
+                max={todayET}
+                onChange={function (e) { setSelectedDate(e.target.value || todayET); }}
+                disabled={refreshing}
+                aria-label="Date"
+                title={isToday ? "Today (live)" : "Historical end-of-day view"}
+                className={"px-2 py-2 rounded-lg border text-sm text-slate-800 bg-white hover:border-sky-300 focus:outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-400 disabled:bg-slate-50 disabled:text-slate-400 " + (isToday ? "border-slate-200" : "border-sky-400 bg-sky-50")}
+              />
+              {(selectedStore || storeSearch || !isToday) && (
                 <button
-                  onClick={function () { setSelectedStore(""); setStoreSearch(""); }}
+                  onClick={function () { setSelectedStore(""); setStoreSearch(""); setSelectedDate(todayET); }}
                   className="px-3 py-2 rounded-lg border border-slate-200 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:border-slate-300 shrink-0"
-                  title="Clear store filter and search"
+                  title="Reset to today, entire company, no search"
                 >
                   Clear
                 </button>
@@ -5810,8 +5834,9 @@ function LiveSalesSnowflakeView({ goBack }) {
           </div>
         </div>
 
-        {/* Stores Not Reporting — company-wide only. */}
-        {!selectedStore && (function () {
+        {/* Stores Not Reporting — company-wide only, and only makes sense
+            for today's live view (historical data has nothing "missing"). */}
+        {!selectedStore && isToday && (function () {
           var count = notReporting.length;
           var hasMissing = count > 0;
           var tc = function (str) { return String(str || "").replace(/\b\w+/g, function (w) { return w.charAt(0) + w.slice(1).toLowerCase(); }); };
@@ -5878,8 +5903,9 @@ function LiveSalesSnowflakeView({ goBack }) {
           );
         })()}
 
-        {/* ── EOD Forecast (collapsed by default) — company-wide only. ── */}
-        {!selectedStore && (function () {
+        {/* ── EOD Forecast (collapsed by default) — company-wide and
+              today only (the "forecast" is meaningless for past dates). ── */}
+        {!selectedStore && isToday && (function () {
           if (!prediction || !prediction.prediction) return null;
           var p = prediction.prediction;
           if (!p.available) return null;
