@@ -1,16 +1,16 @@
 {
-  "updatedAt": "2026-04-22T07:18:17.324Z",
-  "updatedAtET": "Apr 22, 2026, 3:18 AM",
+  "updatedAt": "2026-04-22T07:34:04.583Z",
+  "updatedAtET": "Apr 22, 2026, 3:34 AM",
   "dateET": "2026-04-22",
   "dow": 3,
   "season": "spring",
   "source": "snowflake",
   "current": {
-    "ts": "2026-04-22T07:18:17.324Z",
-    "tsET": "Apr 22, 2026, 3:18 AM",
+    "ts": "2026-04-22T07:34:04.583Z",
+    "tsET": "Apr 22, 2026, 3:34 AM",
     "dateET": "2026-04-22",
     "hourET": 3,
-    "minuteET": 18,
+    "minuteET": 34,
     "dow": 3,
     "sales": 0,
     "plan": 1059397.88,
@@ -27,17 +27,17 @@
     "available": true,
     "method": "blended (w=0.04 shape + 0.96 level)",
     "confidence": "low",
-    "projectedEOD": 887177.8890801078,
-    "projectedPctToPlan": 83.74359679482349,
-    "projectedVariance": -172219.9909198921,
+    "projectedEOD": 887077.4292366367,
+    "projectedPctToPlan": 83.73411406455116,
+    "projectedVariance": -172320.45076336316,
     "band": {
-      "low": 757878.3939005302,
-      "high": 1016477.3842596854
+      "low": 757799.7365417788,
+      "high": 1016355.1219314948
     },
-    "pctOfDayElapsed": 0.004714285714285714,
+    "pctOfDayElapsed": 0.005095238095238095,
     "level_EOD": 926470.8548019513,
     "shape_EOD": 0,
-    "blendWeight": 0.04241144286211037,
+    "blendWeight": 0.04251987567783297,
     "factors": {
       "plan": 1059397.88,
       "recencyFactor": 0.9393,
@@ -49,23 +49,23 @@
       "weatherSummary": "concord-nh: 31F Mostly Cloudy | worcester-ma: 34F Isolated Rain Showers | burlington-vt: 43F Mostly Cloudy | portland-me: 36F Mostly Cloudy | albany-ny: 38F Scattered Rain Showers | scranton-pa: 42F Chance Rain Showers"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.004714285714285714,
+      "basePaceFromCurve": 0.005095238095238095,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.004714285714285714,
+      "blendedPaceAtNow": 0.005095238095238095,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 197.18914285714285,
+      "estimatedCurrent": 213.12361904761906,
       "estimatedEOD": 41828,
-      "paceUsed": 0.004714285714285714,
+      "paceUsed": 0.005095238095238095,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 26994,
-          "estimatedCurrent": 127.25742857142858,
+          "estimatedCurrent": 137.54085714285713,
           "estimatedEOD": 26994,
           "stdev": 0.4325
         },
@@ -73,16 +73,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 14834,
-          "estimatedCurrent": 69.93171428571428,
+          "estimatedCurrent": 75.58276190476191,
           "estimatedEOD": 14834,
           "stdev": 0.1986
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 929005.8890801078,
-    "combinedCurrentSales": 197.18914285714285,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $197 so far, +$41,828 to EOD."
+    "combinedProjectedEOD": 928905.4292366367,
+    "combinedCurrentSales": 213.12361904761906,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $213 so far, +$41,828 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 9,
@@ -110,7 +110,7 @@
         "temp": 34,
         "unit": "F",
         "short": "Isolated Rain Showers",
-        "detailed": "Isolated rain showers after 5am. Mostly cloudy, with a low around 34. Southwest wind around 6 mph. Chance of precipitation is 20%."
+        "detailed": "Isolated rain showers after 5am. Mostly cloudy, with a low around 34. South wind around 6 mph. Chance of precipitation is 20%."
       },
       {
         "station": "burlington-vt",
