@@ -5549,8 +5549,18 @@ function LiveSalesSnowflakeView({ goBack }) {
       }));
     }
     if (d.asOfET) setAsOf(d.asOfET);
-    var info = "Snowflake";
-    if (d.refreshedAt) info += " · refreshed " + new Date(d.refreshedAt).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+    var info;
+    if (d.cached) {
+      // Historical snapshot from the repo cache — no Snowflake round-trip.
+      var ts = d.cachedAt ? new Date(d.cachedAt) : null;
+      info = "From snapshot";
+      if (ts && !isNaN(ts.getTime())) {
+        info += " · frozen " + ts.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+      }
+    } else {
+      info = "Snowflake";
+      if (d.refreshedAt) info += " · refreshed " + new Date(d.refreshedAt).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+    }
     setCacheInfo(info);
   };
 
