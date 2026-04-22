@@ -1,16 +1,16 @@
 {
-  "updatedAt": "2026-04-22T01:19:49.424Z",
-  "updatedAtET": "Apr 21, 2026, 9:19 PM",
+  "updatedAt": "2026-04-22T01:57:39.153Z",
+  "updatedAtET": "Apr 21, 2026, 9:57 PM",
   "dateET": "2026-04-21",
   "dow": 2,
   "season": "spring",
   "source": "snowflake",
   "current": {
-    "ts": "2026-04-22T01:19:49.424Z",
-    "tsET": "Apr 21, 2026, 9:19 PM",
+    "ts": "2026-04-22T01:57:39.153Z",
+    "tsET": "Apr 21, 2026, 9:57 PM",
     "dateET": "2026-04-21",
     "hourET": 21,
-    "minuteET": 19,
+    "minuteET": 57,
     "dow": 2,
     "sales": 1023405.71,
     "plan": 1091990,
@@ -21,7 +21,7 @@
     "customers": 27924,
     "storeCount": 134,
     "asOf": null,
-    "asOfET": "Apr 21, 9:15 PM ET"
+    "asOfET": "Apr 21, 9:30 PM ET"
   },
   "prediction": {
     "available": true,
@@ -85,7 +85,7 @@
     "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $42,391 so far, +$42,391 to EOD."
   },
   "offlineStoresVersion": 2,
-  "baselineVersion": 8,
+  "baselineVersion": 9,
   "weatherRaw": {
     "mult": 0.92,
     "key": "coldRain_lt_50F",
