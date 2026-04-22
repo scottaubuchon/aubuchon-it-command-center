@@ -5764,9 +5764,14 @@ function LiveSalesSnowflakeView({ goBack }) {
             than full width so a date selector can sit next to it later. Also
             hides store 000 (warehouse) as a client-side safety net. */}
         {(function () {
+          // Title-case everything, then force standalone 2-letter tokens after
+          // a comma back to UPPERCASE so "Gardner, Ma" renders as "Gardner, MA".
           var tc = function (str) {
-            return String(str || "").replace(/\b\w+/g, function (w) {
-              return w.charAt(0) + w.slice(1).toLowerCase();
+            var out = String(str || "").replace(/\b\w+/g, function (w) {
+              return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
+            });
+            return out.replace(/,\s*([A-Za-z]{2})\b/g, function (_m, st) {
+              return ", " + st.toUpperCase();
             });
           };
           var q = String(storeSearch || "").trim().toLowerCase();
@@ -5792,10 +5797,9 @@ function LiveSalesSnowflakeView({ goBack }) {
                 if (selectedStore) {
                   var sel = allStores.find(function (s) { return s.code === selectedStore; });
                   if (sel) {
-                    selectedLabel = "#" + sel.code + " · " + (tc(sel.name) || ("Store " + sel.code));
-                    if (sel.city) selectedLabel += " (" + tc(sel.city) + (sel.state ? ", " + sel.state : "") + ")";
+                    selectedLabel = sel.code + " · " + (tc(sel.name) || ("Store " + sel.code));
                   } else {
-                    selectedLabel = "Store #" + selectedStore;
+                    selectedLabel = "Store " + selectedStore;
                   }
                 }
                 return (
@@ -5842,8 +5846,7 @@ function LiveSalesSnowflakeView({ goBack }) {
                             Entire Company
                           </button>
                           {visibleStores.map(function (s) {
-                            var label = "#" + s.code + " · " + (tc(s.name) || ("Store " + s.code));
-                            if (s.city) label += " (" + tc(s.city) + (s.state ? ", " + s.state : "") + ")";
+                            var label = s.code + " · " + (tc(s.name) || ("Store " + s.code));
                             var isSel = s.code === selectedStore;
                             return (
                               <button
