@@ -31,10 +31,53 @@ export const config = { maxDuration: 30 };
 // browse past days. We don't use SDK binds because Snowflake's Node SDK
 // uses positional `?` placeholders, and the same value is referenced
 // multiple times across the queries — string interpolation is simpler.
+// Integer date key (YYYYMMDD) used by the AGG_SALES_DAY_* tables for historical
+// lookups. Call with a YYYY-MM-DD string; returns a plain integer safe to
+// interpolate into SQL.
+function dateKeyOf(dateFilter) {
+  return parseInt(dateFilter.replace(/-/g, ""), 10);
+}
+
 function buildCompanySql(storeFilter, dateFilter) {
-  const lsCond = storeFilter ? `AND ls.STORE_CD = '${storeFilter}'` : "";
   const planCond = storeFilter ? `AND sbd.LOCATION_CD = '${storeFilter}'` : "";
-  const dateExpr = dateFilter ? `TO_DATE('${dateFilter}')` : "CURRENT_DATE()";
+  const planDate = dateFilter ? `TO_DATE('${dateFilter}')` : "CURRENT_DATE()";
+
+  // Historical path: FCT_LIVE_SALE only holds today's data, so past-date
+  // queries read the daily-granularity aggregate instead. Customer count is
+  // not tracked in AGG_SALES_DAY_STORE_ALL, so it's returned as 0 for past
+  // dates — the UI doesn't surface customer count prominently anyway.
+  if (dateFilter) {
+    const aggCond = storeFilter ? `AND STORE_CD = '${storeFilter}'` : "";
+    const dateKey = dateKeyOf(dateFilter);
+    return `
+WITH day_sales AS (
+  SELECT
+    SUM(NET_SALE_AMT)                          AS sales,
+    SUM(GROSS_PROFIT_AMT)                      AS gp,
+    SUM(TRANSACTION_CNT)                       AS txns,
+    COUNT(DISTINCT STORE_CD)                   AS store_count
+  FROM PRD_EDW_DB.ANALYTICS_BASE.AGG_SALES_DAY_STORE_ALL
+  WHERE TRANSACTION_DATE_KEY = ${dateKey} ${aggCond}
+),
+day_plan AS (
+  SELECT SUM(sbd.TARGET_DAILY_SALES_AMT) AS daily_plan
+  FROM PRD_EDW_DB.ANALYTICS_BASE.RPT_SCORECARD_BY_DAY sbd
+  WHERE sbd.TRANSACTION_DT = ${planDate} ${planCond}
+)
+SELECT
+  COALESCE(ds.sales, 0)       AS sales,
+  COALESCE(dp.daily_plan, 0)  AS plan,
+  COALESCE(ds.gp, 0)          AS gp,
+  COALESCE(ds.txns, 0)        AS txns,
+  0                           AS customers,
+  COALESCE(ds.store_count, 0) AS store_count,
+  NULL                        AS as_of_ts
+FROM day_sales ds CROSS JOIN day_plan dp
+`;
+  }
+
+  // Today: live table.
+  const lsCond = storeFilter ? `AND ls.STORE_CD = '${storeFilter}'` : "";
   return `
 WITH today_sales AS (
   SELECT
@@ -45,14 +88,14 @@ WITH today_sales AS (
     COUNT(DISTINCT ls.STORE_CD)                AS store_count,
     MAX(ls.LAST_UPDATED_TS)                    AS as_of_ts
   FROM PRD_EDW_DB.ANALYTICS_BASE.FCT_LIVE_SALE ls
-  WHERE ls.CURRENT_DT = ${dateExpr} ${lsCond}
+  WHERE ls.CURRENT_DT = CURRENT_DATE() ${lsCond}
 ),
 today_plan AS (
   -- Per-day plan from the scorecard. Matches YODA's source. Do NOT use
   -- RPT_PAYROLL_BUDGET_AND_ACTUALS/7 — days of week have different plans.
   SELECT SUM(sbd.TARGET_DAILY_SALES_AMT) AS daily_plan
   FROM PRD_EDW_DB.ANALYTICS_BASE.RPT_SCORECARD_BY_DAY sbd
-  WHERE sbd.TRANSACTION_DT = ${dateExpr} ${planCond}
+  WHERE sbd.TRANSACTION_DT = CURRENT_DATE() ${planCond}
 )
 SELECT
   COALESCE(ts.sales, 0)       AS sales,
@@ -67,20 +110,61 @@ FROM today_sales ts CROSS JOIN today_plan tp
 }
 
 function buildStoresSql(storeFilter, dateFilter) {
+  const planCond = storeFilter ? `AND LOCATION_CD = '${storeFilter}'` : "";
+  const planDate = dateFilter ? `TO_DATE('${dateFilter}')` : "CURRENT_DATE()";
+
+  // Historical path — AGG_SALES_DAY_STORE_ALL carries its own STORE_NM, but
+  // we still join DIM_STORE for city/state which aren't in the agg table.
+  if (dateFilter) {
+    const aggCond = storeFilter ? `AND asd.STORE_CD = '${storeFilter}'` : "";
+    const dateKey = dateKeyOf(dateFilter);
+    return `
+WITH day_store AS (
+  SELECT
+    asd.STORE_CD,
+    asd.STORE_NM,
+    asd.NET_SALE_AMT    AS NET_SALES,
+    asd.GROSS_PROFIT_AMT AS GP,
+    asd.TRANSACTION_CNT
+  FROM PRD_EDW_DB.ANALYTICS_BASE.AGG_SALES_DAY_STORE_ALL asd
+  WHERE asd.TRANSACTION_DATE_KEY = ${dateKey} ${aggCond}
+),
+store_plan AS (
+  SELECT LOCATION_CD AS STORE_CD, TARGET_DAILY_SALES_AMT AS daily_plan
+  FROM PRD_EDW_DB.ANALYTICS_BASE.RPT_SCORECARD_BY_DAY
+  WHERE TRANSACTION_DT = ${planDate} ${planCond}
+)
+SELECT
+  t.STORE_CD               AS store,
+  COALESCE(ds.STORE_NM, t.STORE_NM) AS name,
+  ds.STORE_CITY_NM         AS city,
+  ds.STORE_STATE_CD        AS state,
+  t.NET_SALES              AS sales,
+  COALESCE(sp.daily_plan, 0) AS plan,
+  t.GP                     AS gp,
+  t.TRANSACTION_CNT        AS txns
+FROM day_store t
+LEFT JOIN PRD_EDW_DB.ANALYTICS_BASE.DIM_STORE ds
+  ON ds.STORE_CD = t.STORE_CD AND ds.ACTIVE_FLG = TRUE
+LEFT JOIN store_plan sp ON sp.STORE_CD = t.STORE_CD
+ORDER BY t.NET_SALES DESC NULLS LAST
+LIMIT 20
+`;
+  }
+
+  // Today — live table.
   const todayCond = storeFilter ? `AND STORE_CD = '${storeFilter}'` : "";
-  const planCond  = storeFilter ? `AND LOCATION_CD = '${storeFilter}'` : "";
-  const dateExpr  = dateFilter ? `TO_DATE('${dateFilter}')` : "CURRENT_DATE()";
   return `
 WITH today AS (
   SELECT STORE_CD, NET_SALES, NET_SALES - COST_OF_GOODS AS GP, TRANSACTION_CNT
   FROM PRD_EDW_DB.ANALYTICS_BASE.FCT_LIVE_SALE
-  WHERE CURRENT_DT = ${dateExpr} ${todayCond}
+  WHERE CURRENT_DT = CURRENT_DATE() ${todayCond}
 ),
 store_plan AS (
   -- Per-day plan from the scorecard (LOCATION_CD == STORE_CD). Matches YODA.
   SELECT LOCATION_CD AS STORE_CD, TARGET_DAILY_SALES_AMT AS daily_plan
   FROM PRD_EDW_DB.ANALYTICS_BASE.RPT_SCORECARD_BY_DAY
-  WHERE TRANSACTION_DT = ${dateExpr} ${planCond}
+  WHERE TRANSACTION_DT = CURRENT_DATE() ${planCond}
 )
 SELECT
   t.STORE_CD               AS store,
@@ -101,12 +185,31 @@ LIMIT 20
 }
 
 function buildProductsSql(storeFilter, dateFilter) {
+  if (dateFilter) {
+    // Historical path — daily product aggregate joined to product dim.
+    const aggCond = storeFilter
+      ? `AND asp.STORE_KEY IN (SELECT STORE_KEY FROM PRD_EDW_DB.ANALYTICS_BASE.DIM_STORE WHERE STORE_CD = '${storeFilter}')`
+      : "";
+    const dateKey = dateKeyOf(dateFilter);
+    return `
+SELECT dp.PRODUCT_DESC AS product, SUM(asp.NET_SALE_AMT) AS sales
+FROM PRD_EDW_DB.ANALYTICS_BASE.AGG_SALES_DAY_STORE_PRODUCT asp
+LEFT JOIN PRD_EDW_DB.ANALYTICS_BASE.DIM_PRODUCT dp ON dp.PRODUCT_KEY = asp.PRODUCT_KEY
+WHERE asp.TRANSACTION_DATE_KEY = ${dateKey}
+  AND dp.PRODUCT_DESC IS NOT NULL
+  ${aggCond}
+GROUP BY dp.PRODUCT_DESC
+ORDER BY sales DESC NULLS LAST
+LIMIT 20
+`;
+  }
+
+  // Today — live line table.
   const cond = storeFilter ? `AND STORE_CD = '${storeFilter}'` : "";
-  const dateExpr = dateFilter ? `TO_DATE('${dateFilter}')` : "CURRENT_DATE()";
   return `
 SELECT PRODUCT_DESC AS product, SUM(ITEM_EXTENDED_AMT) AS sales
 FROM PRD_EDW_DB.ANALYTICS_BASE.FCT_LIVE_SALE_TRANSACTION_LINE
-WHERE CREATED_DT = ${dateExpr}
+WHERE CREATED_DT = CURRENT_DATE()
   AND PRODUCT_DESC IS NOT NULL
   ${cond}
 GROUP BY PRODUCT_DESC
@@ -122,7 +225,23 @@ LIMIT 20
 // with the dropdown. Company-wide only — when a single store is selected the
 // "not reporting" concept doesn't apply, so the handler skips this query.
 function buildNotReportingSql(dateFilter) {
-  const dateExpr = dateFilter ? `TO_DATE('${dateFilter}')` : "CURRENT_DATE()";
+  const planDate = dateFilter ? `TO_DATE('${dateFilter}')` : "CURRENT_DATE()";
+  // For historical dates we anti-join against the day-level agg table rather
+  // than the today-only live feed. For today's view we keep the FCT_LIVE_SALE
+  // anti-join because that's what "hasn't reported yet" actually means.
+  let actualsJoin;
+  if (dateFilter) {
+    const dateKey = dateKeyOf(dateFilter);
+    actualsJoin = `
+LEFT JOIN PRD_EDW_DB.ANALYTICS_BASE.AGG_SALES_DAY_STORE_ALL act
+  ON act.STORE_CD = sbd.LOCATION_CD
+ AND act.TRANSACTION_DATE_KEY = ${dateKey}`;
+  } else {
+    actualsJoin = `
+LEFT JOIN PRD_EDW_DB.ANALYTICS_BASE.FCT_LIVE_SALE act
+  ON act.STORE_CD = sbd.LOCATION_CD
+ AND act.CURRENT_DT = CURRENT_DATE()`;
+  }
   return `
 SELECT
   sbd.LOCATION_CD               AS store,
@@ -131,15 +250,13 @@ SELECT
   ds.STORE_STATE_CD             AS state,
   sbd.TARGET_DAILY_SALES_AMT    AS plan
 FROM PRD_EDW_DB.ANALYTICS_BASE.RPT_SCORECARD_BY_DAY sbd
-LEFT JOIN PRD_EDW_DB.ANALYTICS_BASE.FCT_LIVE_SALE ls
-  ON ls.STORE_CD = sbd.LOCATION_CD
- AND ls.CURRENT_DT = ${dateExpr}
+${actualsJoin}
 LEFT JOIN PRD_EDW_DB.ANALYTICS_BASE.DIM_STORE ds
   ON ds.STORE_CD = sbd.LOCATION_CD
  AND ds.ACTIVE_FLG = TRUE
-WHERE sbd.TRANSACTION_DT = ${dateExpr}
+WHERE sbd.TRANSACTION_DT = ${planDate}
   AND sbd.TARGET_DAILY_SALES_AMT > 0
-  AND ls.STORE_CD IS NULL
+  AND act.STORE_CD IS NULL
   AND sbd.LOCATION_CD <> '000'
 ORDER BY sbd.TARGET_DAILY_SALES_AMT DESC NULLS LAST
 `;
