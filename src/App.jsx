@@ -6089,4 +6089,88 @@ function YODAReports({ goHome }) {
                         <h3 className="font-semibold text-slate-900 group-hover:text-emerald-700">{rpt.label}</h3>
                         <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-emerald-600" />
                       </div>
-                      <p className="text-sm text-slate-600 mt-1">{rpt.descriptio
+                      <p className="text-sm text-slate-600 mt-1">{rpt.description}</p>
+                    </div>
+                  </div>
+                </button>
+              );
+            }
+            return (
+              <a
+                key={rpt.id}
+                href={rpt.url}
+                className="group bg-white rounded-xl border border-slate-200 p-5 hover:border-emerald-400 hover:shadow-lg transition-all"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center flex-shrink-0">
+                    <Icon className="w-5 h-5 text-emerald-700" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-semibold text-slate-900 group-hover:text-emerald-700">{rpt.label}</h3>
+                      <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-emerald-600" />
+                    </div>
+                    <p className="text-sm text-slate-600 mt-1">{rpt.description}</p>
+                  </div>
+                </div>
+              </a>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function App() {
+  const [activeSection, setActiveSection] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    return params.get("section") || null;
+  });
+  const { userAccess, allUsers, isAdmin, canAccessSection, saveAllUsers, userEmail } = useUserAccess();
+
+  // Loading state
+  if (userAccess === null) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-10 h-10 border-3 border-gray-200 border-t-indigo-500 rounded-full animate-spin mx-auto mb-3" />
+          <p className="text-sm text-gray-400">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Access denied
+  if (userAccess === false) {
+    return <AccessDeniedScreen />;
+  }
+
+  // Admin panel (admin only)
+  if (activeSection === "admin" && isAdmin) {
+    return <AdminPanel goHome={() => setActiveSection(null)} allUsers={allUsers} saveAllUsers={saveAllUsers} />;
+  }
+
+  // Section routing — only if user has access
+  if (activeSection === "projects" && canAccessSection("projects")) {
+    return <ITProjectDashboard goHome={() => setActiveSection(null)} isAdmin={isAdmin} allAccessUsers={allUsers} />;
+  }
+
+  if (activeSection === "ap-invoices" && canAccessSection("ap-invoices")) {
+    return <APInvoices goHome={() => setActiveSection(null)} goHistory={() => setActiveSection("payment-history")} />;
+  }
+
+  if (activeSection === "payment-history" && canAccessSection("payment-history")) {
+    return <PaymentHistory goHome={() => setActiveSection(null)} goBack={() => setActiveSection(null)} />;
+  }
+
+  if (activeSection === "yoda" && canAccessSection("yoda")) {
+    return <YODAReports goHome={() => setActiveSection(null)} />;
+  }
+
+  // Future sections:
+  // if (activeSection === "wells-cc" && canAccessSection("wells-cc")) return <WellsCC goHome={() => setActiveSection(null)} goHistory={() => setActiveSection("payment-history")} />;
+
+  return <HomeScreen onNavigate={setActiveSection} canAccessSection={canAccessSection} isAdmin={isAdmin} />;
+}
+  
