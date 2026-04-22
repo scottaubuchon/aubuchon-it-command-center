@@ -5,7 +5,7 @@ const YODA_PORT = 5088;
 const YODA_KEY = 'aubuchon-yoda-2026';
 const CACHE_TTL = 10 * 60 * 1000; // 10 minutes
 
-// Module-level cache Ã¢ÂÂ persists across requests within the same Vercel instance
+// Module-level cache — persists across requests within the same Vercel instance
 let cache = { data: null, timestamp: 0 };
 
 function queryYoda(dax) {
@@ -43,7 +43,7 @@ function safeQuery(dax, label) {
 }
 
 async function refreshData() {
-  // Use Eastern Time (Aubuchon HQ) Ã¢ÂÂ Vercel runs in UTC
+  // Use Eastern Time (Aubuchon HQ) — Vercel runs in UTC
   const etNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }));
   const y = etNow.getFullYear();
   const m = etNow.getMonth() + 1;
@@ -57,7 +57,7 @@ async function refreshData() {
 
   const productQuery = `EVALUATE TOPN(100, SUMMARIZECOLUMNS(FCT_LIVE_SALE_TRANSACTION_LINE[PRODUCT_CD], FCT_LIVE_SALE_TRANSACTION_LINE[PRODUCT_DESC], "Sales", SUM(FCT_LIVE_SALE_TRANSACTION_LINE[ITEM_EXTENDED_AMT])), [Sales], DESC)`;
 
-  // Run queries in parallel with safe wrappers Ã¢ÂÂ each one catches its own errors
+  // Run queries in parallel with safe wrappers — each one catches its own errors
   const [liveR, planR, dimR, prodR] = await Promise.all([
     safeQuery(liveStoreQuery, 'live'),
     safeQuery(planQuery, 'plan'),
@@ -192,4 +192,27 @@ export const config = {
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Con
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  if (req.method === 'OPTIONS') return res.status(200).end();
+
+  const now = Date.now();
+  const forceRefresh = req.query && req.query.refresh === 'true';
+
+  // Return cached data if fresh
+  if (cache.data && !forceRefresh && (now - cache.timestamp) < CACHE_TTL) {
+    return res.status(200).json({ status: 'ok', cached: true, ...cache.data });
+  }
+
+  try {
+    const data = await refreshData();
+    cache = { data, timestamp: now };
+    return res.status(200).json({ status: 'ok', cached: false, ...data });
+  } catch (e) {
+    // If refresh fails but we have stale cache, return it
+    if (cache.data) {
+      return res.status(200).json({ status: 'ok', cached: true, stale: true, ...cache.data });
+    }
+    return res.status(502).json({ status: 'error', error: e.message });
+  }
+}
