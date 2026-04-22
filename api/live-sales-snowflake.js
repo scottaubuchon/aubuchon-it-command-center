@@ -23,7 +23,16 @@ process.env.SNOWFLAKE_LOG_LEVEL = "ERROR";
 export const config = { maxDuration: 30 };
 
 // ---------- SQL ----------
-const COMPANY_SQL = `
+// SQL builders below take an optional storeFilter (already normalized to
+// uppercase alphanumeric, so safe to interpolate). When null, the queries
+// are company-wide (legacy behaviour). When set, every aggregate is scoped
+// to just that store. We don't use SDK binds because Snowflake's Node SDK
+// uses positional `?` placeholders, and the same value is referenced
+// multiple times across the queries — string interpolation is simpler.
+function buildCompanySql(storeFilter) {
+  const lsCond = storeFilter ? `AND ls.STORE_CD = '${storeFilter}'` : "";
+  const planCond = storeFilter ? `AND sbd.LOCATION_CD = '${storeFilter}'` : "";
+  return `
 WITH today_sales AS (
   SELECT
     SUM(ls.NET_SALES)                          AS sales,
@@ -33,14 +42,14 @@ WITH today_sales AS (
     COUNT(DISTINCT ls.STORE_CD)                AS store_count,
     MAX(ls.LAST_UPDATED_TS)                    AS as_of_ts
   FROM PRD_EDW_DB.ANALYTICS_BASE.FCT_LIVE_SALE ls
-  WHERE ls.CURRENT_DT = CURRENT_DATE()
+  WHERE ls.CURRENT_DT = CURRENT_DATE() ${lsCond}
 ),
 today_plan AS (
   -- Per-day plan from the scorecard. Matches YODA's source. Do NOT use
   -- RPT_PAYROLL_BUDGET_AND_ACTUALS/7 — days of week have different plans.
   SELECT SUM(sbd.TARGET_DAILY_SALES_AMT) AS daily_plan
   FROM PRD_EDW_DB.ANALYTICS_BASE.RPT_SCORECARD_BY_DAY sbd
-  WHERE sbd.TRANSACTION_DT = CURRENT_DATE()
+  WHERE sbd.TRANSACTION_DT = CURRENT_DATE() ${planCond}
 )
 SELECT
   COALESCE(ts.sales, 0)       AS sales,
@@ -52,18 +61,22 @@ SELECT
   ts.as_of_ts
 FROM today_sales ts CROSS JOIN today_plan tp
 `;
+}
 
-const STORES_SQL = `
+function buildStoresSql(storeFilter) {
+  const todayCond = storeFilter ? `AND STORE_CD = '${storeFilter}'` : "";
+  const planCond  = storeFilter ? `AND LOCATION_CD = '${storeFilter}'` : "";
+  return `
 WITH today AS (
   SELECT STORE_CD, NET_SALES, NET_SALES - COST_OF_GOODS AS GP, TRANSACTION_CNT
   FROM PRD_EDW_DB.ANALYTICS_BASE.FCT_LIVE_SALE
-  WHERE CURRENT_DT = CURRENT_DATE()
+  WHERE CURRENT_DT = CURRENT_DATE() ${todayCond}
 ),
 store_plan AS (
   -- Per-day plan from the scorecard (LOCATION_CD == STORE_CD). Matches YODA.
   SELECT LOCATION_CD AS STORE_CD, TARGET_DAILY_SALES_AMT AS daily_plan
   FROM PRD_EDW_DB.ANALYTICS_BASE.RPT_SCORECARD_BY_DAY
-  WHERE TRANSACTION_DT = CURRENT_DATE()
+  WHERE TRANSACTION_DT = CURRENT_DATE() ${planCond}
 )
 SELECT
   t.STORE_CD               AS store,
@@ -81,15 +94,29 @@ LEFT JOIN store_plan sp ON sp.STORE_CD = t.STORE_CD
 ORDER BY t.NET_SALES DESC NULLS LAST
 LIMIT 20
 `;
+}
 
-const PRODUCTS_SQL = `
+function buildProductsSql(storeFilter) {
+  const cond = storeFilter ? `AND STORE_CD = '${storeFilter}'` : "";
+  return `
 SELECT PRODUCT_DESC AS product, SUM(ITEM_EXTENDED_AMT) AS sales
 FROM PRD_EDW_DB.ANALYTICS_BASE.FCT_LIVE_SALE_TRANSACTION_LINE
 WHERE CREATED_DT = CURRENT_DATE()
   AND PRODUCT_DESC IS NOT NULL
+  ${cond}
 GROUP BY PRODUCT_DESC
 ORDER BY sales DESC NULLS LAST
 LIMIT 20
+`;
+}
+
+// Lightweight list of every active store, used to populate the store
+// dropdown on the front-end. Cheap to query — small dimension table.
+const ALL_STORES_SQL = `
+SELECT STORE_CD AS store, STORE_NM AS name, STORE_CITY_NM AS city, STORE_STATE_CD AS state
+FROM PRD_EDW_DB.ANALYTICS_BASE.DIM_STORE
+WHERE ACTIVE_FLG = TRUE
+ORDER BY STORE_CD
 `;
 
 // ---------- Snowflake helpers ----------
@@ -197,61 +224,9 @@ export default async function handler(req, res) {
     return;
   }
 
-  let conn = null;
+  // Optional store filter — when present, every aggregate is scoped to that
+  // single store. Normalize to upper-case alphanumeric (matches DIM_STORE).
+  let storeFilter = null;
   try {
-    conn = await connect();
-    const [companyRows, storeRows, productRows] = await Promise.all([
-      exec(conn, COMPANY_SQL),
-      exec(conn, STORES_SQL),
-      exec(conn, PRODUCTS_SQL),
-    ]);
-
-    const c = companyRows[0] || {};
-    const sales = toNumber(c.SALES);
-    const plan  = toNumber(c.PLAN);
-    const gp    = toNumber(c.GP);
-    const gpPct = sales > 0 ? (gp / sales) * 100 : 0;
-    const pctToPlan = plan > 0 ? (sales / plan) * 100 : 0;
-
-    const payload = {
-      status: "ok",
-      companyTotal: {
-        sales, plan, gp, gpPct,
-        txns:       toNumber(c.TXNS),
-        customers:  toNumber(c.CUSTOMERS),
-        storeCount: toNumber(c.STORE_COUNT),
-        pctToPlan,
-      },
-      topStores: storeRows.map((r) => ({
-        store: r.STORE,
-        name:  r.NAME,
-        city:  r.CITY,
-        state: r.STATE,
-        sales: toNumber(r.SALES),
-        plan:  toNumber(r.PLAN),
-        gp:    toNumber(r.GP),
-        txns:  toNumber(r.TXNS),
-      })),
-      topProducts: productRows.map((r) => ({
-        product: r.PRODUCT,
-        sales:   toNumber(r.SALES),
-      })),
-      asOfET: fmtAsOfET(c.AS_OF_TS) + " ET",
-      cached: false,
-      refreshedAt: new Date().toISOString(),
-      source: "snowflake",
-    };
-
-    res.status(200).json(payload);
-  } catch (err) {
-    console.error("[live-sales-snowflake] error:", err);
-    res.status(500).json({
-      status: "error",
-      error: (err && err.message) || String(err),
-      code:  (err && err.code)    || null,
-      source: "snowflake",
-    });
-  } finally {
-    if (conn) await destroy(conn);
-  }
-}
+    const raw = (req.query && req.query.store) || "";
+    const cleaned = String(raw).trim().toUpperCase().replace(/[
