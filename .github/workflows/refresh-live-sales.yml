@@ -18,34 +18,44 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 58
     steps:
-      - name: Ping /api/log-live-sales every 10 min for ~55 min
+      - name: Ping /api/log-live-sales (yoda + snowflake) every 10 min for ~55 min
         run: |
           set -u
-          URL="https://aubuchon-it-command-center.vercel.app/api/log-live-sales"
+          BASE="https://aubuchon-it-command-center.vercel.app/api/log-live-sales"
           TOTAL_PINGS=6
           SLEEP_SEC=600
+          # Pipelines: label + URL. Both run each pass; same prediction engine,
+          # different live-sales source, different per-source log dir.
+          SOURCES="yoda:${BASE} snowflake:${BASE}?source=snowflake"
           for i in $(seq 1 $TOTAL_PINGS); do
-            echo "=== Ping $i/$TOTAL_PINGS at $(date -u +%FT%TZ) ==="
-            CODE=$(curl -s -o /tmp/resp.json -w "%{http_code}" --max-time 180 "$URL" || echo "curl_err")
-            echo "HTTP $CODE"
-            if [ "$CODE" = "200" ]; then
-              python3 -c "
+            for PAIR in $SOURCES; do
+              LABEL="${PAIR%%:*}"
+              URL="${PAIR#*:}"
+              echo "=== Ping $i/$TOTAL_PINGS [$LABEL] at $(date -u +%FT%TZ) ==="
+              CODE=$(curl -s -o /tmp/resp.json -w "%{http_code}" --max-time 180 "$URL" || echo "curl_err")
+              echo "HTTP $CODE"
+              if [ "$CODE" = "200" ]; then
+                python3 -c "
           import json
           try:
               d = json.load(open('/tmp/resp.json'))
-              p = (d.get('prediction') or {}).get('prediction') or {}
+              p = ((d.get('prediction') or {}).get('prediction')) or {}
+              cur = (d.get('prediction') or {}).get('current') or {}
               print('  status:', d.get('status'))
-              print('  tsET:', (d.get('entry') or {}).get('tsET'))
+              print('  source:', d.get('source'))
+              print('  tsET:', cur.get('tsET'))
+              print('  sales:', cur.get('sales'))
+              print('  plan:', cur.get('plan'))
               print('  method:', p.get('method'))
               print('  projectedEOD:', p.get('projectedEOD'))
               print('  confidence:', p.get('confidence'))
-              print('  historyDays:', p.get('historyDays'))
           except Exception as e:
               print('  parse err:', e)
           "
-            else
-              echo "  body: $(head -c 300 /tmp/resp.json 2>/dev/null || echo '-')"
-            fi
+              else
+                echo "  body: $(head -c 300 /tmp/resp.json 2>/dev/null || echo '-')"
+              fi
+            done
             if [ "$i" -lt "$TOTAL_PINGS" ]; then
               echo "  sleeping ${SLEEP_SEC}s..."
               sleep $SLEEP_SEC
