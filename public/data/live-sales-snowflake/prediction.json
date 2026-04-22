@@ -1,43 +1,43 @@
 {
-  "updatedAt": "2026-04-22T19:25:42.539Z",
-  "updatedAtET": "Apr 22, 2026, 3:25 PM",
+  "updatedAt": "2026-04-22T19:41:30.471Z",
+  "updatedAtET": "Apr 22, 2026, 3:41 PM",
   "dateET": "2026-04-22",
   "dow": 3,
   "season": "spring",
   "source": "snowflake",
   "current": {
-    "ts": "2026-04-22T19:25:42.539Z",
-    "tsET": "Apr 22, 2026, 3:25 PM",
+    "ts": "2026-04-22T19:41:30.471Z",
+    "tsET": "Apr 22, 2026, 3:41 PM",
     "dateET": "2026-04-22",
     "hourET": 15,
-    "minuteET": 25,
+    "minuteET": 41,
     "dow": 3,
-    "sales": 687860.93,
+    "sales": 702912.7,
     "plan": 1059397.88,
-    "pctToPlan": 64.929422928428,
-    "gp": 289197.6638,
-    "gpPct": 42.04304259583401,
-    "txns": 19822,
-    "customers": 18334,
+    "pctToPlan": 66.3502082900147,
+    "gp": 295673.6149,
+    "gpPct": 42.06405929214254,
+    "txns": 20306,
+    "customers": 18801,
     "storeCount": 134,
     "asOf": null,
-    "asOfET": "Apr 22, 3:15 PM ET"
+    "asOfET": "Apr 22, 3:30 PM ET"
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.91 shape + 0.09 level)",
+    "method": "blended (w=0.93 shape + 0.07 level)",
     "confidence": "medium",
-    "projectedEOD": 876230.6339256533,
-    "projectedPctToPlan": 82.71024989455836,
-    "projectedVariance": -183167.2460743466,
+    "projectedEOD": 867420.9029244563,
+    "projectedPctToPlan": 81.87867082804209,
+    "projectedVariance": -191976.9770755436,
     "band": {
-      "low": 805441.9328838437,
-      "high": 947019.3349674629
+      "low": 798175.7076579069,
+      "high": 936666.0981910056
     },
-    "pctOfDayElapsed": 0.7892333333333333,
+    "pctOfDayElapsed": 0.8146666666666667,
     "level_EOD": 926470.8548019513,
-    "shape_EOD": 871555.8516703974,
-    "blendWeight": 0.9148724030105764,
+    "shape_EOD": 862822.4631751227,
+    "blendWeight": 0.9277524595390532,
     "factors": {
       "plan": 1059397.88,
       "recencyFactor": 0.9393,
@@ -49,23 +49,23 @@
       "weatherSummary": "concord-nh: 46F Isolated Rain Showers | worcester-ma: 45F Scattered Rain Showers | burlington-vt: 56F Partly Sunny | portland-me: 44F Scattered Rain Showers | albany-ny: 50F Partly Sunny | scranton-pa: 63F Mostly Sunny"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.7892333333333333,
+      "basePaceFromCurve": 0.8146666666666667,
       "observedPaceCount": 1,
-      "blendedPaceAtNow": 0.7892333333333333,
+      "blendedPaceAtNow": 0.8146666666666667,
       "historyDays": 1,
       "avgHistoricalEOD": 1053994.8399999999
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 33012.05186666667,
+      "estimatedCurrent": 34075.87733333333,
       "estimatedEOD": 41828,
-      "paceUsed": 0.7892333333333333,
+      "paceUsed": 0.8146666666666667,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 26994,
-          "estimatedCurrent": 21304.5646,
+          "estimatedCurrent": 21991.112,
           "estimatedEOD": 26994,
           "stdev": 0.4325
         },
@@ -73,16 +73,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 14834,
-          "estimatedCurrent": 11707.487266666667,
+          "estimatedCurrent": 12084.765333333333,
           "estimatedEOD": 14834,
           "stdev": 0.1986
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 918058.6339256533,
-    "combinedCurrentSales": 720872.9818666667,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $33,012 so far, +$41,828 to EOD."
+    "combinedProjectedEOD": 909248.9029244563,
+    "combinedCurrentSales": 736988.5773333333,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $34,076 so far, +$41,828 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 9,
@@ -110,7 +110,7 @@
         "temp": 45,
         "unit": "F",
         "short": "Scattered Rain Showers",
-        "detailed": "Scattered rain showers before 5pm. Cloudy, with a high near 45. South wind around 10 mph. Chance of precipitation is 40%. New rainfall amounts less than a tenth of an inch possible."
+        "detailed": "Scattered rain showers before 5pm. Cloudy, with a high near 45. South wind around 10 mph. Chance of precipitation is 30%. New rainfall amounts less than a tenth of an inch possible."
       },
       {
         "station": "burlington-vt",
