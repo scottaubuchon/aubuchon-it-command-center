@@ -5501,6 +5501,8 @@ function LiveSalesSnowflakeView({ goBack }) {
   // Store-filter state. "" means company-wide; otherwise a STORE_CD like "001".
   const [selectedStore, setSelectedStore] = useState("");
   const [allStores, setAllStores] = useState([]);
+  // Typed text that narrows the store dropdown (matches code / name / city).
+  const [storeSearch, setStoreSearch] = useState("");
 
   var applyPayload = function (d) {
     if (!d || d.status !== "ok") throw new Error((d && d.error) || "Failed to load live sales");
@@ -5684,36 +5686,71 @@ function LiveSalesSnowflakeView({ goBack }) {
           </button>
         </div>
 
-        {/* Store filter dropdown — empty value means company-wide. */}
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-3 sm:p-4 mb-5 flex items-center gap-3 flex-wrap">
-          <label htmlFor="snowflake-store-select" className="text-sm font-semibold text-slate-700 shrink-0">
-            View:
-          </label>
-          <select
-            id="snowflake-store-select"
-            value={selectedStore}
-            onChange={function (e) { setSelectedStore(e.target.value); }}
-            disabled={refreshing}
-            className="flex-1 min-w-[200px] px-3 py-2 rounded-lg border border-slate-200 bg-white text-sm text-slate-800 hover:border-sky-300 focus:outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-400 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-wait"
-          >
-            <option value="">Entire Company</option>
-            {allStores.map(function (s) {
-              var tc = function (str) { return String(str || "").replace(/\b\w+/g, function (w) { return w.charAt(0) + w.slice(1).toLowerCase(); }); };
-              var label = "#" + s.code + " · " + (tc(s.name) || ("Store " + s.code));
-              if (s.city) label += " (" + tc(s.city) + (s.state ? ", " + s.state : "") + ")";
-              return <option key={s.code} value={s.code}>{label}</option>;
-            })}
-          </select>
-          {selectedStore && (
-            <button
-              onClick={function () { setSelectedStore(""); }}
-              className="px-3 py-2 rounded-lg border border-slate-200 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:border-slate-300 shrink-0"
-              title="Switch back to company-wide view"
-            >
-              Clear
-            </button>
-          )}
-        </div>
+        {/* Store filter dropdown — empty value means company-wide. Narrower
+            than full width so a date selector can sit next to it later. Also
+            hides store 000 (warehouse) as a client-side safety net. */}
+        {(function () {
+          var tc = function (str) {
+            return String(str || "").replace(/\b\w+/g, function (w) {
+              return w.charAt(0) + w.slice(1).toLowerCase();
+            });
+          };
+          var q = String(storeSearch || "").trim().toLowerCase();
+          var visibleStores = allStores.filter(function (s) {
+            if (String(s.code) === "000") return false;                 // hide warehouse
+            if (!q) return true;
+            var hay = (String(s.code) + " " + String(s.name || "") + " " + String(s.city || "") + " " + String(s.state || "")).toLowerCase();
+            return hay.indexOf(q) !== -1;
+          });
+          // Always surface the currently-selected store even if the search filters it out.
+          var hasSelected = !selectedStore || visibleStores.some(function (s) { return s.code === selectedStore; });
+          if (!hasSelected) {
+            var pinned = allStores.find(function (s) { return s.code === selectedStore; });
+            if (pinned) visibleStores = [pinned].concat(visibleStores);
+          }
+          return (
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-3 sm:p-4 mb-5 flex items-center gap-2 flex-wrap max-w-xl">
+              <label htmlFor="snowflake-store-select" className="text-sm font-semibold text-slate-700 shrink-0">
+                View:
+              </label>
+              <input
+                type="text"
+                value={storeSearch}
+                onChange={function (e) { setStoreSearch(e.target.value); }}
+                placeholder="Search…"
+                aria-label="Search stores"
+                disabled={refreshing}
+                className="w-28 sm:w-32 px-2 py-2 rounded-lg border border-slate-200 bg-white text-sm text-slate-800 placeholder:text-slate-400 hover:border-sky-300 focus:outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-400 disabled:bg-slate-50 disabled:text-slate-400"
+              />
+              <select
+                id="snowflake-store-select"
+                value={selectedStore}
+                onChange={function (e) { setSelectedStore(e.target.value); }}
+                disabled={refreshing}
+                className="flex-1 min-w-[180px] px-2 py-2 rounded-lg border border-slate-200 bg-white text-sm text-slate-800 hover:border-sky-300 focus:outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-400 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-wait"
+              >
+                <option value="">Entire Company</option>
+                {visibleStores.map(function (s) {
+                  var label = "#" + s.code + " · " + (tc(s.name) || ("Store " + s.code));
+                  if (s.city) label += " (" + tc(s.city) + (s.state ? ", " + s.state : "") + ")";
+                  return <option key={s.code} value={s.code}>{label}</option>;
+                })}
+                {visibleStores.length === 0 && q && (
+                  <option value="" disabled>No matches for "{storeSearch}"</option>
+                )}
+              </select>
+              {(selectedStore || storeSearch) && (
+                <button
+                  onClick={function () { setSelectedStore(""); setStoreSearch(""); }}
+                  className="px-3 py-2 rounded-lg border border-slate-200 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:border-slate-300 shrink-0"
+                  title="Clear store filter and search"
+                >
+                  Clear
+                </button>
+              )}
+            </div>
+          );
+        })()}
 
         {/* Today's Performance */}
         <div className={"rounded-xl border-2 p-4 sm:p-5 md:p-6 mb-5 " + (onTrack ? "bg-emerald-50 border-emerald-200" : "bg-red-50 border-red-200")}>
