@@ -18,10 +18,17 @@ import https from 'https';
 const GH_OWNER = 'scottaubuchon';
 const GH_REPO = 'aubuchon-it-command-center';
 const GH_TOKEN = process.env.GITHUB_TOKEN || '';
-const LIVE_SALES_URL = 'https://aubuchon-it-command-center.vercel.app/api/live-sales?refresh=true';
-const LOG_DIR = 'public/data/live-sales';
-const BASELINE_PATH = `${LOG_DIR}/baseline.json`;
-const OFFLINE_STORES_PATH = `${LOG_DIR}/offline-stores.json`;
+const BASE_URL = 'https://aubuchon-it-command-center.vercel.app';
+// SHARED tuning surface — baseline and offline-stores live in YODA's dir and are
+// read by both YODA- and Snowflake-sourced runs. Per-source logs, current.json
+// and prediction.json live in `public/data/live-sales{-snowflake}/` respectively.
+const SHARED_DIR = 'public/data/live-sales';
+const BASELINE_PATH = `${SHARED_DIR}/baseline.json`;
+const OFFLINE_STORES_PATH = `${SHARED_DIR}/offline-stores.json`;
+const SOURCES = {
+  yoda:      { liveSalesUrl: `${BASE_URL}/api/live-sales?refresh=true`, logDir: 'public/data/live-sales' },
+  snowflake: { liveSalesUrl: `${BASE_URL}/api/live-sales-snowflake`,    logDir: 'public/data/live-sales-snowflake' },
+};
 
 const BUSINESS_OPEN_HOUR = 7;    // 7 AM ET
 const BUSINESS_CLOSE_HOUR = 20;  // 8 PM ET  (Sunday closes at 17/5pm — handled by pace curve)
@@ -79,8 +86,8 @@ function ghPut(path, contentB64, message, sha) {
   }, payload);
 }
 
-function fetchLiveSales() {
-  const u = new URL(LIVE_SALES_URL);
+function fetchLiveSales(url) {
+  const u = new URL(url);
   return httpsJson({
     hostname: u.hostname,
     path: u.pathname + u.search,
@@ -411,7 +418,7 @@ function paceAtTime(curve, hh, mm) {
 
 // --------- Load observed paces from recent same-DOW history (learning layer) ----------
 
-async function loadObservedPaces(dateET, dow, lookbackWeeks) {
+async function loadObservedPaces(dateET, dow, lookbackWeeks, logDir) {
   // Returns array of { dateET, pacesByMinute: Map<minuteOfDay, pct> }
   const out = [];
   const [y, m, d] = dateET.split('-').map(Number);
@@ -425,7 +432,7 @@ async function loadObservedPaces(dateET, dow, lookbackWeeks) {
     dates.push(`${yy}-${mm}-${dd}`);
   }
   const fetched = await Promise.all(dates.map(async (dstr) => {
-    const r = await ghGet(`${LOG_DIR}/${dstr}.jsonl`);
+    const r = await ghGet(`${logDir}/${dstr}.jsonl`);
     if (r.status !== 200 || !r.body?.content) return null;
     const text = Buffer.from(r.body.content, 'base64').toString('utf8');
     const rows = text.split('\n').filter(Boolean).map(ln => { try { return JSON.parse(ln); } catch { return null; } }).filter(Boolean);
@@ -600,8 +607,8 @@ function buildPrediction({ entry, et, baseline, weather, observedHistory }) {
 
 // --------- Logging ----------
 
-async function appendLogLine(dateET, entry) {
-  const path = `${LOG_DIR}/${dateET}.jsonl`;
+async function appendLogLine(dateET, entry, logDir) {
+  const path = `${logDir}/${dateET}.jsonl`;
   const existing = await ghGet(path);
   let prevText = '', sha = null;
   if (existing.status === 200 && existing.body?.content) {
@@ -620,8 +627,8 @@ async function appendLogLine(dateET, entry) {
   return { ok: false, error: `PUT ${path} -> ${put.status} ${put.raw?.slice(0, 200)}` };
 }
 
-async function writePrediction(obj) {
-  const path = `${LOG_DIR}/prediction.json`;
+async function writePrediction(obj, logDir) {
+  const path = `${logDir}/prediction.json`;
   const existing = await ghGet(path);
   const sha = existing.status === 200 ? existing.body?.sha : null;
   const b64 = Buffer.from(JSON.stringify(obj, null, 2), 'utf8').toString('base64');
@@ -629,8 +636,8 @@ async function writePrediction(obj) {
   return put.status >= 200 && put.status < 300;
 }
 
-async function writeCurrentSnapshot(liveBody, prediction) {
-  const path = `${LOG_DIR}/current.json`;
+async function writeCurrentSnapshot(liveBody, prediction, logDir) {
+  const path = `${logDir}/current.json`;
   const existing = await ghGet(path);
   const sha = existing.status === 200 ? existing.body?.sha : null;
   const snapshot = { ...liveBody, prediction, snapshotAt: new Date().toISOString() };
@@ -649,10 +656,17 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   try {
+    // 0) Source routing. Default is yoda; pass ?source=snowflake to hit the
+    //    Snowflake-backed endpoint and write into the live-sales-snowflake dir.
+    //    Both sources share baseline.json and offline-stores.json.
+    const sourceRaw = String((req.query && req.query.source) || 'yoda').toLowerCase();
+    const source = SOURCES[sourceRaw] ? sourceRaw : 'yoda';
+    const { liveSalesUrl, logDir } = SOURCES[source];
+
     // 1) Live sales
-    const live = await fetchLiveSales();
+    const live = await fetchLiveSales(liveSalesUrl);
     if (live.status !== 200 || !live.body || live.body.status !== 'ok') {
-      return res.status(502).json({ status: 'error', stage: 'fetch-live', detail: live.body || live.raw });
+      return res.status(502).json({ status: 'error', stage: 'fetch-live', source, liveSalesUrl, detail: live.body || live.raw });
     }
     const d = live.body;
     const ct = d.companyTotal || {};
@@ -677,14 +691,16 @@ export default async function handler(req, res) {
       asOfET: d.asOfET || null,
     };
 
-    // 2) Append to log
-    const appendResult = await appendLogLine(et.dateET, entry);
+    // 2) Append to log (per-source log dir)
+    const appendResult = await appendLogLine(et.dateET, entry, logDir);
 
-    // 3) Load baseline + weather + observed history + offline stores (parallel)
+    // 3) Load baseline + weather + observed history + offline stores (parallel).
+    //    Baseline and offline-stores are SHARED across sources (single tuning
+    //    surface). Observed paces come from THIS source's log history.
     const season = seasonForMonth(et.month);
     const [baseline, observedHistory, offlineStores] = await Promise.all([
       loadBaseline(),
-      loadObservedPaces(et.dateET, et.dow, 8),
+      loadObservedPaces(et.dateET, et.dow, 8, logDir),
       loadOfflineStores(),
     ]);
     let weather = null;
@@ -711,34 +727,4 @@ export default async function handler(req, res) {
         prediction.offlineEstimate = offlineEstimate;
         prediction.combinedProjectedEOD = prediction.projectedEOD + offlineEstimate.estimatedEOD;
         prediction.combinedCurrentSales = Number(entry.sales || 0) + offlineEstimate.estimatedCurrent;
-        prediction.footnote = `Company total excludes ${offlineEstimate.perStore.length} store${offlineEstimate.perStore.length===1?'':'s'} not on live feed (${offlineEstimate.perStore.map(s=>s.storeCd).join(', ')}). Estimated contribution: $${Math.round(offlineEstimate.estimatedCurrent).toLocaleString()} so far, +$${Math.round(offlineEstimate.estimatedEOD).toLocaleString()} to EOD.`;
-      }
-    }
-
-    const predictionDoc = {
-      updatedAt: now.toISOString(),
-      updatedAtET: et.tsET,
-      dateET: et.dateET,
-      dow: et.dow,
-      season,
-      current: entry,
-      prediction,
-      offlineStoresVersion: offlineStores?.version ?? null,
-      baselineVersion: baseline?.version ?? null,
-      weatherRaw: weather,
-    };
-
-    const predWrote = await writePrediction(predictionDoc);
-    const snapshotWrote = await writeCurrentSnapshot(d, predictionDoc);
-
-    return res.status(200).json({
-      status: 'ok',
-      log: { file: `${LOG_DIR}/${et.dateET}.jsonl`, ...appendResult },
-      prediction: predictionDoc,
-      predictionWritten: predWrote,
-      snapshotWritten: snapshotWrote,
-    });
-  } catch (e) {
-    return res.status(500).json({ status: 'error', error: e.message, stack: e.stack });
-  }
-}
+        prediction.footnote = `Company total excludes ${offlineEstimate.perStore.
