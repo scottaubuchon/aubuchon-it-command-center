@@ -1136,9 +1136,37 @@
       "plan": 22985.07
     }
   ],
+  "estimatedMissing": {
+    "paceAtNow": 1,
+    "sampleWeeks": 8,
+    "stores": [
+      {
+        "store": "233",
+        "dowAvg": 29806.54285714,
+        "samples": 7,
+        "basis": "dowAvg",
+        "plan": 29648.13,
+        "estimatedCurrent": 29806.54285714,
+        "estimatedEOD": 29806.54285714
+      },
+      {
+        "store": "234",
+        "dowAvg": 13112.1375,
+        "samples": 8,
+        "basis": "dowAvg",
+        "plan": 22985.07,
+        "estimatedCurrent": 13112.1375,
+        "estimatedEOD": 13112.1375
+      }
+    ],
+    "totalEstimatedCurrent": 42918.68035714,
+    "totalEstimatedEOD": 42918.68035714,
+    "projectedCompanyEOD": 1081336.56035714,
+    "projectedCompanyCurrent": 1081336.56035714
+  },
   "asOfET": "End of day · 2026-04-21",
   "cached": true,
-  "refreshedAt": "2026-04-22T12:24:33.304Z",
+  "refreshedAt": "2026-04-22T13:48:12.138Z",
   "source": "snowflake",
-  "cachedAt": "2026-04-22T12:24:33.304Z"
+  "cachedAt": "2026-04-22T13:48:12.138Z"
 }
