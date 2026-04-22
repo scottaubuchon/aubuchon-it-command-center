@@ -5498,6 +5498,9 @@ function LiveSalesSnowflakeView({ goBack }) {
   const [showNotReporting, setShowNotReporting] = useState(false);
   const [prediction, setPrediction] = useState(null);
   const [showEOD, setShowEOD] = useState(false);
+  // Store-filter state. "" means company-wide; otherwise a STORE_CD like "001".
+  const [selectedStore, setSelectedStore] = useState("");
+  const [allStores, setAllStores] = useState([]);
 
   var applyPayload = function (d) {
     if (!d || d.status !== "ok") throw new Error((d && d.error) || "Failed to load live sales");
@@ -5532,14 +5535,20 @@ function LiveSalesSnowflakeView({ goBack }) {
         plan: s.plan || 0,
       };
     }));
+    if (Array.isArray(d.allStores) && d.allStores.length) {
+      setAllStores(d.allStores.map(function (s) {
+        return { code: s.store, name: s.name || ("Store " + s.store), city: s.city || "", state: s.state || "" };
+      }));
+    }
     if (d.asOfET) setAsOf(d.asOfET);
     var info = "Snowflake";
     if (d.refreshedAt) info += " · refreshed " + new Date(d.refreshedAt).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
     setCacheInfo(info);
   };
 
-  var loadSnowflake = function () {
+  var loadSnowflake = function (storeCode) {
     var url = "/api/live-sales-snowflake?t=" + Date.now();
+    if (storeCode) url += "&store=" + encodeURIComponent(storeCode);
     return fetch(url, { cache: "no-store" }).then(function (r) {
       if (!r.ok) throw new Error("Snowflake API unavailable (" + r.status + ")");
       return r.json();
@@ -5558,11 +5567,20 @@ function LiveSalesSnowflakeView({ goBack }) {
     }).catch(function () { return null; });
   };
 
+  // Re-fetch whenever the selected store changes (and on initial mount).
+  // The EOD predictor is company-wide only, so we only fetch it on mount.
   useEffect(function () {
     var cancelled = false;
-    loadSnowflake()
-      .then(function (d) { if (!cancelled) { applyPayload(d); setLoading(false); } })
-      .catch(function (err) { if (!cancelled) { setError(err.message); setLoading(false); } });
+    setRefreshing(true);
+    setError(null);
+    loadSnowflake(selectedStore)
+      .then(function (d) { if (!cancelled) { applyPayload(d); setLoading(false); setRefreshing(false); } })
+      .catch(function (err) { if (!cancelled) { setError(err.message); setLoading(false); setRefreshing(false); } });
+    return function () { cancelled = true; };
+  }, [selectedStore]);
+
+  useEffect(function () {
+    var cancelled = false;
     loadPrediction().then(function (p) { if (!cancelled && p) setPrediction(p); });
     return function () { cancelled = true; };
   }, []);
@@ -5572,8 +5590,9 @@ function LiveSalesSnowflakeView({ goBack }) {
     setRefreshing(true);
     setError(null);
     Promise.all([
-      loadSnowflake().then(applyPayload),
-      loadPrediction().then(function (p) { if (p) setPrediction(p); }),
+      loadSnowflake(selectedStore).then(applyPayload),
+      // Predictor is company-wide; only refresh it when viewing the company.
+      selectedStore ? Promise.resolve(null) : loadPrediction().then(function (p) { if (p) setPrediction(p); }),
     ])
       .catch(function (err) { setError(err.message); })
       .finally(function () { setRefreshing(false); });
@@ -5665,6 +5684,37 @@ function LiveSalesSnowflakeView({ goBack }) {
           </button>
         </div>
 
+        {/* Store filter dropdown — empty value means company-wide. */}
+        <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-3 sm:p-4 mb-5 flex items-center gap-3 flex-wrap">
+          <label htmlFor="snowflake-store-select" className="text-sm font-semibold text-slate-700 shrink-0">
+            View:
+          </label>
+          <select
+            id="snowflake-store-select"
+            value={selectedStore}
+            onChange={function (e) { setSelectedStore(e.target.value); }}
+            disabled={refreshing}
+            className="flex-1 min-w-[200px] px-3 py-2 rounded-lg border border-slate-200 bg-white text-sm text-slate-800 hover:border-sky-300 focus:outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-400 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-wait"
+          >
+            <option value="">Entire Company</option>
+            {allStores.map(function (s) {
+              var tc = function (str) { return String(str || "").replace(/\b\w+/g, function (w) { return w.charAt(0) + w.slice(1).toLowerCase(); }); };
+              var label = "#" + s.code + " · " + (tc(s.name) || ("Store " + s.code));
+              if (s.city) label += " (" + tc(s.city) + (s.state ? ", " + s.state : "") + ")";
+              return <option key={s.code} value={s.code}>{label}</option>;
+            })}
+          </select>
+          {selectedStore && (
+            <button
+              onClick={function () { setSelectedStore(""); }}
+              className="px-3 py-2 rounded-lg border border-slate-200 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:border-slate-300 shrink-0"
+              title="Switch back to company-wide view"
+            >
+              Clear
+            </button>
+          )}
+        </div>
+
         {/* Today's Performance */}
         <div className={"rounded-xl border-2 p-4 sm:p-5 md:p-6 mb-5 " + (onTrack ? "bg-emerald-50 border-emerald-200" : "bg-red-50 border-red-200")}>
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 sm:gap-2 mb-4">
@@ -5704,19 +5754,27 @@ function LiveSalesSnowflakeView({ goBack }) {
               <div className="text-lg sm:text-xl font-bold text-slate-900">{fmtD(companyTotal.gp)}</div>
             </div>
             <div className="bg-white/60 rounded-lg p-3 border border-slate-200/50">
-              <div className="text-xs text-slate-500 mb-0.5">Stores Reporting</div>
+              <div className="text-xs text-slate-500 mb-0.5">
+                {selectedStore ? "Store" : "Stores Reporting"}
+              </div>
               <div className="text-lg sm:text-xl font-bold text-slate-900">
-                {companyTotal.storeCount || 0}
-                {notReporting.length > 0 && (
-                  <span className="text-xs font-semibold text-red-600 ml-1.5">({notReporting.length} missing)</span>
+                {selectedStore ? (
+                  "#" + selectedStore
+                ) : (
+                  <>
+                    {companyTotal.storeCount || 0}
+                    {notReporting.length > 0 && (
+                      <span className="text-xs font-semibold text-red-600 ml-1.5">({notReporting.length} missing)</span>
+                    )}
+                  </>
                 )}
               </div>
             </div>
           </div>
         </div>
 
-        {/* Stores Not Reporting */}
-        {(function () {
+        {/* Stores Not Reporting — company-wide only. */}
+        {!selectedStore && (function () {
           var count = notReporting.length;
           var hasMissing = count > 0;
           var tc = function (str) { return String(str || "").replace(/\b\w+/g, function (w) { return w.charAt(0) + w.slice(1).toLowerCase(); }); };
@@ -5783,8 +5841,8 @@ function LiveSalesSnowflakeView({ goBack }) {
           );
         })()}
 
-        {/* ── EOD Forecast (collapsed by default) ── */}
-        {(function () {
+        {/* ── EOD Forecast (collapsed by default) — company-wide only. ── */}
+        {!selectedStore && (function () {
           if (!prediction || !prediction.prediction) return null;
           var p = prediction.prediction;
           if (!p.available) return null;
@@ -5860,14 +5918,18 @@ function LiveSalesSnowflakeView({ goBack }) {
           );
         })()}
 
-        {/* Top Stores */}
+        {/* Top Stores — header label adapts when scoped to a single store. */}
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm mb-5 overflow-hidden">
           <div className="px-4 sm:px-5 py-3 sm:py-4 border-b border-slate-100 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <BarChart3 className="w-5 h-5 text-sky-600" />
-              <h2 className="font-bold text-slate-900 text-sm sm:text-base">Top Stores by Sales</h2>
+              <h2 className="font-bold text-slate-900 text-sm sm:text-base">
+                {selectedStore ? "Store Detail" : "Top Stores by Sales"}
+              </h2>
             </div>
-            <span className="text-xs text-slate-400">{topStores.length} stores</span>
+            <span className="text-xs text-slate-400">
+              {selectedStore ? "1 store" : (topStores.length + " stores")}
+            </span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
@@ -5968,6 +6030,7 @@ function LiveSalesSnowflakeView({ goBack }) {
 
         <div className="text-center text-xs text-slate-400 py-4">
           Data from Snowflake · PRD_EDW_DB.ANALYTICS_BASE.FCT_LIVE_SALE · Live query on each load
+          {selectedStore ? " · Filtered to store #" + selectedStore : ""}
         </div>
       </div>
     </div>
@@ -6026,88 +6089,4 @@ function YODAReports({ goHome }) {
                         <h3 className="font-semibold text-slate-900 group-hover:text-emerald-700">{rpt.label}</h3>
                         <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-emerald-600" />
                       </div>
-                      <p className="text-sm text-slate-600 mt-1">{rpt.description}</p>
-                    </div>
-                  </div>
-                </button>
-              );
-            }
-            return (
-              <a
-                key={rpt.id}
-                href={rpt.url}
-                className="group bg-white rounded-xl border border-slate-200 p-5 hover:border-emerald-400 hover:shadow-lg transition-all"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center flex-shrink-0">
-                    <Icon className="w-5 h-5 text-emerald-700" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between">
-                      <h3 className="font-semibold text-slate-900 group-hover:text-emerald-700">{rpt.label}</h3>
-                      <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-emerald-600" />
-                    </div>
-                    <p className="text-sm text-slate-600 mt-1">{rpt.description}</p>
-                  </div>
-                </div>
-              </a>
-            );
-          })}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export default function App() {
-  const [activeSection, setActiveSection] = useState(() => {
-    const params = new URLSearchParams(window.location.search);
-    return params.get("section") || null;
-  });
-  const { userAccess, allUsers, isAdmin, canAccessSection, saveAllUsers, userEmail } = useUserAccess();
-
-  // Loading state
-  if (userAccess === null) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-10 h-10 border-3 border-gray-200 border-t-indigo-500 rounded-full animate-spin mx-auto mb-3" />
-          <p className="text-sm text-gray-400">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Access denied
-  if (userAccess === false) {
-    return <AccessDeniedScreen />;
-  }
-
-  // Admin panel (admin only)
-  if (activeSection === "admin" && isAdmin) {
-    return <AdminPanel goHome={() => setActiveSection(null)} allUsers={allUsers} saveAllUsers={saveAllUsers} />;
-  }
-
-  // Section routing — only if user has access
-  if (activeSection === "projects" && canAccessSection("projects")) {
-    return <ITProjectDashboard goHome={() => setActiveSection(null)} isAdmin={isAdmin} allAccessUsers={allUsers} />;
-  }
-
-  if (activeSection === "ap-invoices" && canAccessSection("ap-invoices")) {
-    return <APInvoices goHome={() => setActiveSection(null)} goHistory={() => setActiveSection("payment-history")} />;
-  }
-
-  if (activeSection === "payment-history" && canAccessSection("payment-history")) {
-    return <PaymentHistory goHome={() => setActiveSection(null)} goBack={() => setActiveSection(null)} />;
-  }
-
-  if (activeSection === "yoda" && canAccessSection("yoda")) {
-    return <YODAReports goHome={() => setActiveSection(null)} />;
-  }
-
-  // Future sections:
-  // if (activeSection === "wells-cc" && canAccessSection("wells-cc")) return <WellsCC goHome={() => setActiveSection(null)} goHistory={() => setActiveSection("payment-history")} />;
-
-  return <HomeScreen onNavigate={setActiveSection} canAccessSection={canAccessSection} isAdmin={isAdmin} />;
-}
-  
+                      <p className="text-sm text-slate-600 mt-1">{rpt.descriptio
