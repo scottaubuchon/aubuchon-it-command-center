@@ -5556,7 +5556,7 @@ function LiveSalesSnowflakeView({ goBack }) {
       };
     }));
     setTopProducts((d.topProducts || []).map(function (p, i) {
-      return { rank: i + 1, desc: p.product, sales: p.sales };
+      return { rank: i + 1, sku: p.sku || "", desc: p.product, sales: p.sales };
     }));
     setNotReporting((d.notReporting || []).map(function (s) {
       return {
@@ -5730,7 +5730,7 @@ function LiveSalesSnowflakeView({ goBack }) {
   var progressPct = Math.min(pctPlan, 100);
 
   var visibleStores = showAllStores ? topStores : topStores.slice(0, 5);
-  var visibleProducts = showAllProducts ? topProducts : topProducts.slice(0, 5);
+  var visibleProducts = showAllProducts ? topProducts : topProducts.slice(0, 20);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-sky-50 to-slate-100 p-3 sm:p-4 md:p-8">
@@ -6235,6 +6235,7 @@ function LiveSalesSnowflakeView({ goBack }) {
                 <thead>
                   <tr className="bg-slate-50 text-left">
                     <th className="px-3 py-2 font-semibold text-slate-600 text-xs">#</th>
+                    <th className="px-3 py-2 font-semibold text-slate-600 text-xs">SKU</th>
                     <th className="px-3 py-2 font-semibold text-slate-600 text-xs">Product</th>
                     <th className="px-3 py-2 font-semibold text-slate-600 text-xs text-right">Line Ext. Amt</th>
                   </tr>
@@ -6245,6 +6246,7 @@ function LiveSalesSnowflakeView({ goBack }) {
                     return (
                       <tr key={i} className={i % 2 === 0 ? "bg-white" : "bg-slate-50/50"}>
                         <td className="px-3 py-2 text-slate-400 font-medium">{p.rank}</td>
+                        <td className="px-3 py-2 text-slate-500 font-mono text-xs">{p.sku || "—"}</td>
                         <td className="px-3 py-2 font-medium text-slate-900">{tc(p.desc)}</td>
                         <td className="px-3 py-2 text-right font-semibold text-slate-900">{fmtD(p.sales)}</td>
                       </tr>
@@ -6253,12 +6255,12 @@ function LiveSalesSnowflakeView({ goBack }) {
                 </tbody>
               </table>
             </div>
-            {topProducts.length > 5 && (
+            {topProducts.length > 20 && (
               <button
                 onClick={function () { setShowAllProducts(!showAllProducts); }}
                 className="w-full py-3 text-sm font-medium text-sky-700 hover:bg-sky-50 border-t border-slate-100 flex items-center justify-center gap-1 transition-colors"
               >
-                {showAllProducts ? "Show Top 5" : "Show All " + topProducts.length + " Products"}
+                {showAllProducts ? "Show Top 20 Items" : "Show Top " + topProducts.length + " Items"}
                 <ChevronDown className={"w-4 h-4 transition-transform duration-200 " + (showAllProducts ? "rotate-180" : "")} />
               </button>
             )}
