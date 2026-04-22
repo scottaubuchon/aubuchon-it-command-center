@@ -5334,7 +5334,7 @@ function LiveSalesView({ goBack }) {
                       <div className={"text-xl sm:text-2xl md:text-3xl font-bold " + pColor}>{fmtD(proj)}</div>
                       {hasBand ? (
                         <div className="text-xs text-slate-400 mt-0.5">
-                          Range: {fmtD(p.band.low)} \u2013 {fmtD(p.band.high)}
+                          Range: {fmtD(p.band.low)} – {fmtD(p.band.high)}
                         </div>
                       ) : null}
                     </div>
@@ -6131,7 +6131,7 @@ function LiveSalesSnowflakeView({ goBack }) {
                       <div className={"text-xl sm:text-2xl md:text-3xl font-bold " + pColor}>{fmtD(proj)}</div>
                       {hasBand ? (
                         <div className="text-xs text-slate-400 mt-0.5">
-                          Range: {fmtD(p.band.low)} \u2013 {fmtD(p.band.high)}
+                          Range: {fmtD(p.band.low)} – {fmtD(p.band.high)}
                         </div>
                       ) : null}
                     </div>
