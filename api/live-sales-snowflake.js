@@ -115,6 +115,36 @@ LIMIT 20
 `;
 }
 
+// Stores that had a daily plan > 0 but did NOT send a FCT_LIVE_SALE row for
+// the date in question. Mirrors the YODA logic in live-sales.js: the plan
+// universe comes from RPT_SCORECARD_BY_DAY so we don't flag closed/inactive
+// stores that simply aren't expected to sell. Filters store 000 for parity
+// with the dropdown. Company-wide only — when a single store is selected the
+// "not reporting" concept doesn't apply, so the handler skips this query.
+function buildNotReportingSql(dateFilter) {
+  const dateExpr = dateFilter ? `TO_DATE('${dateFilter}')` : "CURRENT_DATE()";
+  return `
+SELECT
+  sbd.LOCATION_CD               AS store,
+  ds.STORE_NM                   AS name,
+  ds.STORE_CITY_NM              AS city,
+  ds.STORE_STATE_CD             AS state,
+  sbd.TARGET_DAILY_SALES_AMT    AS plan
+FROM PRD_EDW_DB.ANALYTICS_BASE.RPT_SCORECARD_BY_DAY sbd
+LEFT JOIN PRD_EDW_DB.ANALYTICS_BASE.FCT_LIVE_SALE ls
+  ON ls.STORE_CD = sbd.LOCATION_CD
+ AND ls.CURRENT_DT = ${dateExpr}
+LEFT JOIN PRD_EDW_DB.ANALYTICS_BASE.DIM_STORE ds
+  ON ds.STORE_CD = sbd.LOCATION_CD
+ AND ds.ACTIVE_FLG = TRUE
+WHERE sbd.TRANSACTION_DT = ${dateExpr}
+  AND sbd.TARGET_DAILY_SALES_AMT > 0
+  AND ls.STORE_CD IS NULL
+  AND sbd.LOCATION_CD <> '000'
+ORDER BY sbd.TARGET_DAILY_SALES_AMT DESC NULLS LAST
+`;
+}
+
 // Lightweight list of every active store, used to populate the store
 // dropdown on the front-end. Cheap to query — small dimension table.
 // Excludes store 000 (warehouse / non-retail placeholder that users don't
@@ -386,18 +416,26 @@ export default async function handler(req, res) {
 
   try {
     conn = await connect();
-    const [companyRes, storeRes, productRes, allStoreRes] = await Promise.all([
+    // Stores-not-reporting is company-wide only; when a single store is
+    // selected we skip that query and return an empty list. We still run it
+    // for both today's live view and past-date cache misses so the resulting
+    // JSON snapshot carries the complete picture.
+    const notReportingPromise = storeFilter
+      ? Promise.resolve({ rows: [], error: null, label: "notReporting" })
+      : safeExec("notReporting", buildNotReportingSql(dateFilter));
+    const [companyRes, storeRes, productRes, allStoreRes, notReportingRes] = await Promise.all([
       safeExec("company",   buildCompanySql(storeFilter, dateFilter)),
       safeExec("stores",    buildStoresSql(storeFilter, dateFilter)),
       safeExec("products",  buildProductsSql(storeFilter, dateFilter)),
       safeExec("allStores", ALL_STORES_SQL),
+      notReportingPromise,
     ]);
 
     // Collect any per-query errors so the front-end can show them. We only
     // hard-fail (HTTP 500) if BOTH the company total AND the stores query
     // failed — meaning we have nothing useful to show. Otherwise return 200
     // with whatever data we did get.
-    const queryErrors = [companyRes, storeRes, productRes, allStoreRes]
+    const queryErrors = [companyRes, storeRes, productRes, allStoreRes, notReportingRes]
       .filter((r) => r.error)
       .map((r) => ({ query: r.label, error: r.error }));
     if (companyRes.error && storeRes.error) {
@@ -405,10 +443,11 @@ export default async function handler(req, res) {
       throw new Error(msg || "All Snowflake queries failed");
     }
 
-    const companyRows  = companyRes.rows;
-    const storeRows    = storeRes.rows;
-    const productRows  = productRes.rows;
-    const allStoreRows = allStoreRes.rows;
+    const companyRows      = companyRes.rows;
+    const storeRows        = storeRes.rows;
+    const productRows      = productRes.rows;
+    const allStoreRows     = allStoreRes.rows;
+    const notReportingRows = notReportingRes.rows;
 
     const c = companyRows[0] || {};
     const sales = toNumber(c.SALES);
@@ -449,6 +488,17 @@ export default async function handler(req, res) {
         name:  r.NAME,
         city:  r.CITY,
         state: r.STATE,
+      })),
+      // Stores with a daily plan > 0 that haven't reported any sales yet.
+      // Empty when a single store is selected (the concept only applies
+      // company-wide). The UI additionally only surfaces this for today's
+      // live view — past dates don't have a meaningful "missing" list.
+      notReporting: notReportingRows.map((r) => ({
+        store: r.STORE,
+        name:  r.NAME,
+        city:  r.CITY,
+        state: r.STATE,
+        plan:  toNumber(r.PLAN),
       })),
       asOfET: dateFilter
         ? ("End of day · " + dateFilter)
