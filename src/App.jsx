@@ -5479,9 +5479,9 @@ function LiveSalesView({ goBack }) {
 
 /* ============================================================
    LIVE SALES (SNOWFLAKE) VIEW — reads from /api/live-sales-snowflake
-   Same visual layout as LiveSalesView, but data is pulled live
-   from Snowflake FCT_LIVE_SALE on each request. No EOD forecast
-   (that pipeline is YODA-specific).
+   Same visual layout as LiveSalesView, and same EOD predictor
+   (shared engine — reads from /data/live-sales-snowflake/prediction.json,
+   written by /api/log-live-sales?source=snowflake every 10 min).
    ============================================================ */
 function LiveSalesSnowflakeView({ goBack }) {
   const [loading, setLoading] = useState(true);
@@ -5496,6 +5496,8 @@ function LiveSalesSnowflakeView({ goBack }) {
   const [showAllStores, setShowAllStores] = useState(false);
   const [showAllProducts, setShowAllProducts] = useState(false);
   const [showNotReporting, setShowNotReporting] = useState(false);
+  const [prediction, setPrediction] = useState(null);
+  const [showEOD, setShowEOD] = useState(false);
 
   var applyPayload = function (d) {
     if (!d || d.status !== "ok") throw new Error((d && d.error) || "Failed to load live sales");
@@ -5544,11 +5546,24 @@ function LiveSalesSnowflakeView({ goBack }) {
     });
   };
 
+  // The Snowflake endpoint only returns raw data — no predictor. The EOD
+  // prediction is written out-of-band every 10 min by
+  // /api/log-live-sales?source=snowflake to public/data/live-sales-snowflake/
+  // and served as a static JSON file.
+  var loadPrediction = function () {
+    var url = "/data/live-sales-snowflake/prediction.json?t=" + Date.now();
+    return fetch(url, { cache: "no-store" }).then(function (r) {
+      if (!r.ok) return null;
+      return r.json().catch(function () { return null; });
+    }).catch(function () { return null; });
+  };
+
   useEffect(function () {
     var cancelled = false;
     loadSnowflake()
       .then(function (d) { if (!cancelled) { applyPayload(d); setLoading(false); } })
       .catch(function (err) { if (!cancelled) { setError(err.message); setLoading(false); } });
+    loadPrediction().then(function (p) { if (!cancelled && p) setPrediction(p); });
     return function () { cancelled = true; };
   }, []);
 
@@ -5556,8 +5571,10 @@ function LiveSalesSnowflakeView({ goBack }) {
     if (refreshing) return;
     setRefreshing(true);
     setError(null);
-    loadSnowflake()
-      .then(function (d) { applyPayload(d); })
+    Promise.all([
+      loadSnowflake().then(applyPayload),
+      loadPrediction().then(function (p) { if (p) setPrediction(p); }),
+    ])
       .catch(function (err) { setError(err.message); })
       .finally(function () { setRefreshing(false); });
   };
@@ -5605,7 +5622,16 @@ function LiveSalesSnowflakeView({ goBack }) {
 
   var pctPlan = companyTotal.plan > 0 ? (companyTotal.sales / companyTotal.plan) * 100 : 0;
   var vTotal = (companyTotal.sales || 0) - (companyTotal.plan || 0);
-  var onTrack = vTotal >= 0;
+  // Color the % to plan based on whether the EOD predictor thinks we will hit plan
+  var predictorSaysHit = (function () {
+    if (prediction && prediction.prediction && prediction.prediction.available) {
+      var proj = Number(prediction.prediction.projectedEOD || 0);
+      var plan = Number((prediction.current && prediction.current.plan) || companyTotal.plan || 0);
+      return proj >= plan;
+    }
+    return vTotal >= 0;
+  })();
+  var onTrack = predictorSaysHit;
   var progressPct = Math.min(pctPlan, 100);
 
   var visibleStores = showAllStores ? topStores : topStores.slice(0, 5);
@@ -5751,6 +5777,83 @@ function LiveSalesSnowflakeView({ goBack }) {
                       })}
                     </tbody>
                   </table>
+                </div>
+              )}
+            </div>
+          );
+        })()}
+
+        {/* ── EOD Forecast (collapsed by default) ── */}
+        {(function () {
+          if (!prediction || !prediction.prediction) return null;
+          var p = prediction.prediction;
+          if (!p.available) return null;
+          var proj = Number(p.projectedEOD || 0);
+          var plan = Number((prediction.current && prediction.current.plan) || 0);
+          var projVar = plan > 0 ? proj - plan : 0;
+          var projPct = plan > 0 ? (proj / plan) * 100 : 0;
+          var above = projVar >= 0;
+          var pBg = above ? "bg-gradient-to-br from-emerald-50 to-white border-emerald-200" : "bg-gradient-to-br from-red-50 to-white border-red-200";
+          var pColor = above ? "text-emerald-700" : "text-red-600";
+          var conf = String(p.confidence || "low");
+          var confStyles = {
+            "very low": "bg-slate-100 text-slate-600 border-slate-200",
+            "low":      "bg-amber-100 text-amber-800 border-amber-200",
+            "medium":   "bg-blue-100 text-blue-800 border-blue-200",
+            "high":     "bg-emerald-100 text-emerald-800 border-emerald-200",
+          };
+          var confClass = confStyles[conf] || confStyles["low"];
+          var hasBand = p.band && (p.band.low || p.band.high);
+          var sd = p.shapeDetail || {};
+          return (
+            <div className={"rounded-xl border-2 mb-5 overflow-hidden " + pBg}>
+              <button
+                onClick={function () { setShowEOD(!showEOD); }}
+                className="w-full flex items-center justify-between gap-3 p-4 sm:p-5 text-left hover:bg-black/[0.02] transition-colors"
+              >
+                <div className="flex items-center gap-2 flex-wrap">
+                  <TrendingUp className="w-5 h-5 text-slate-700 shrink-0" />
+                  <h2 className="font-bold text-slate-900">EOD Forecast</h2>
+                  <span className={"text-[10px] uppercase tracking-wide font-semibold px-2 py-0.5 rounded-full border " + confClass}>
+                    {conf}
+                  </span>
+                  {!showEOD && (
+                    <span className={"text-sm font-bold ml-1 " + pColor}>{fmtD(proj)} ({projPct.toFixed(1)}%)</span>
+                  )}
+                </div>
+                <ChevronDown className={"w-5 h-5 text-slate-400 shrink-0 transition-transform duration-200 " + (showEOD ? "rotate-180" : "")} />
+              </button>
+              {showEOD && (
+                <div className="px-4 sm:px-5 pb-4 sm:pb-5">
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
+                    <div>
+                      <div className="text-xs text-slate-500">Projected EOD</div>
+                      <div className={"text-xl sm:text-2xl md:text-3xl font-bold " + pColor}>{fmtD(proj)}</div>
+                      {hasBand ? (
+                        <div className="text-xs text-slate-400 mt-0.5">
+                          Range: {fmtD(p.band.low)} \u2013 {fmtD(p.band.high)}
+                        </div>
+                      ) : null}
+                    </div>
+                    <div>
+                      <div className="text-xs text-slate-500">Projected % to Plan</div>
+                      <div className={"text-xl sm:text-2xl md:text-3xl font-bold " + pColor}>{projPct.toFixed(1)}%</div>
+                      <div className="text-xs text-slate-400 mt-0.5">Plan: {fmtD(plan)}</div>
+                    </div>
+                    <div className="col-span-2 md:col-span-1">
+                      <div className="text-xs text-slate-500">Projected Variance</div>
+                      <div className={"text-xl sm:text-2xl md:text-3xl font-bold " + pColor}>{above ? "+" : ""}{fmtD(projVar)}</div>
+                      <div className="text-xs text-slate-400 mt-0.5">{above ? "over plan" : "under plan"}</div>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap gap-x-4 sm:gap-x-6 gap-y-1 mt-3 pt-3 border-t border-slate-200 text-xs text-slate-500">
+                    <span><strong className="text-slate-700">Method:</strong> {p.method}</span>
+                    <span><strong className="text-slate-700">History days:</strong> {sd.historyDays != null ? sd.historyDays : "\u2014"}</span>
+                    {p.pctOfDayElapsed != null ? <span><strong className="text-slate-700">Day elapsed:</strong> {(p.pctOfDayElapsed * 100).toFixed(0)}%</span> : null}
+                    {sd.avgHistoricalEOD ? <span><strong className="text-slate-700">Avg prior EOD:</strong> {fmtD(sd.avgHistoricalEOD)}</span> : null}
+                  </div>
+                  {p.note ? <div className="mt-2 text-xs text-slate-400 italic">{p.note}</div> : null}
+                  {prediction.updatedAtET ? <div className="mt-1 text-xs text-slate-400 text-right">as of {prediction.updatedAtET}</div> : null}
                 </div>
               )}
             </div>
@@ -6007,3 +6110,4 @@ export default function App() {
 
   return <HomeScreen onNavigate={setActiveSection} canAccessSection={canAccessSection} isAdmin={isAdmin} />;
 }
+   
