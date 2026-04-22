@@ -274,6 +274,47 @@ WHERE ACTIVE_FLG = TRUE
 ORDER BY STORE_CD
 `;
 
+// ---------- Missing-store estimation ----------
+// For any store with a plan today that hasn't reported sales yet, estimate its
+// contribution using its own historical same-DOW average. Pace is derived by
+// comparing reporting peers' current sales against their own historical
+// same-DOW EOD average — i.e. "if peers have hit 65% of their typical same-DOW
+// sales so far, assume the missing stores are also at ~65% of theirs." This
+// mirrors the `estimateOfflineSales()` pattern already used by YODA's
+// log-live-sales.js logger (dowEOD × paceAtNow).
+//
+// Returns an array of YYYYMMDD integer keys for the previous N occurrences of
+// the target date's day-of-week — e.g. called with ("2026-04-21", 8) returns
+// the 8 prior Tuesdays. Used as a literal IN-list in the DOW-avg SQL so we
+// never rely on Snowflake-side date arithmetic.
+function dowDateKeys(targetIsoDate, weeksBack) {
+  const base = new Date(targetIsoDate + "T12:00:00Z");
+  const keys = [];
+  for (let i = 1; i <= weeksBack; i++) {
+    const prev = new Date(base);
+    prev.setUTCDate(base.getUTCDate() - 7 * i);
+    const iso = prev.toISOString().slice(0, 10);
+    keys.push(parseInt(iso.replace(/-/g, ""), 10));
+  }
+  return keys;
+}
+
+// One query, small result (~150 rows). Returns per-store historical same-DOW
+// averages over the provided date keys. Store 000 is excluded so it doesn't
+// pollute the company-wide denominator.
+function buildDowAvgSql(dowKeys) {
+  return `
+SELECT
+  STORE_CD                 AS store,
+  AVG(NET_SALE_AMT)        AS dow_avg,
+  COUNT(*)                 AS samples
+FROM PRD_EDW_DB.ANALYTICS_BASE.AGG_SALES_DAY_STORE_ALL
+WHERE TRANSACTION_DATE_KEY IN (${dowKeys.join(",")})
+  AND STORE_CD <> '000'
+GROUP BY STORE_CD
+`;
+}
+
 // ---------- Snowflake helpers ----------
 let _snowflake = null;
 async function getSdk() {
@@ -601,6 +642,88 @@ export default async function handler(req, res) {
     const gpPct = sales > 0 ? (gp / sales) * 100 : 0;
     const pctToPlan = plan > 0 ? (sales / plan) * 100 : 0;
 
+    // Missing-store estimation — only fires company-wide when at least one
+    // store is flagged as not reporting. Uses each missing store's historical
+    // same-DOW NET_SALE_AMT average as its expected EOD, then scales by a
+    // peer-based pace factor (reporting stores' current total / their own
+    // historical same-DOW total). For past-date views the day is already over,
+    // so pace is forced to 1.0 and estimatedCurrent == estimatedEOD.
+    let estimatedMissing = null;
+    if (!storeFilter && notReportingRows.length > 0) {
+      const targetDate = dateFilter || etToday;
+      const dowKeys = dowDateKeys(targetDate, 8);
+      const dowRes = await safeExec("dowAvg", buildDowAvgSql(dowKeys));
+      if (dowRes.error) {
+        queryErrors.push({ query: dowRes.label, error: dowRes.error });
+      } else if (dowRes.rows.length) {
+        // Index DOW averages by store code for fast lookup.
+        const dowByStore = new Map();
+        for (const row of dowRes.rows) {
+          dowByStore.set(String(row.STORE), {
+            dowAvg: toNumber(row.DOW_AVG),
+            samples: toNumber(row.SAMPLES),
+          });
+        }
+
+        // Split the company's historical DOW total into "reporting" vs
+        // "missing" halves so we can compute pace = reporting_actual /
+        // reporting_dow_avg without needing a second SQL round-trip.
+        const missingCodes = new Set(notReportingRows.map((r) => String(r.STORE)));
+        let reportingDowTotal = 0;
+        for (const [code, v] of dowByStore.entries()) {
+          if (!missingCodes.has(code)) reportingDowTotal += v.dowAvg;
+        }
+
+        // Pace for today: how far through the DOW average reporting peers are.
+        // Clamp to [0, 1.2] to keep a freak spike from blowing up the estimate.
+        // For historical dates the day is done — force pace to 1.0.
+        let paceAtNow = 1.0;
+        if (!dateFilter && reportingDowTotal > 0) {
+          paceAtNow = sales / reportingDowTotal;
+          if (!isFinite(paceAtNow) || paceAtNow < 0) paceAtNow = 0;
+          if (paceAtNow > 1.2) paceAtNow = 1.2;
+        }
+
+        // Build per-store estimates. If a missing store has no DOW history
+        // (brand-new), fall back to (plan × pace) so the row still carries a
+        // reasonable number rather than zero.
+        let totalEstimatedCurrent = 0;
+        let totalEstimatedEOD     = 0;
+        const storesOut = notReportingRows.map((r) => {
+          const code = String(r.STORE);
+          const hist = dowByStore.get(code);
+          const planAmt = toNumber(r.PLAN);
+          const dowAvg = hist ? hist.dowAvg : 0;
+          const samples = hist ? hist.samples : 0;
+          const basis = dowAvg > 0 ? dowAvg : planAmt;
+          const basisSource = dowAvg > 0 ? "dowAvg" : "plan";
+          const estEOD     = basis;
+          const estCurrent = basis * paceAtNow;
+          totalEstimatedEOD     += estEOD;
+          totalEstimatedCurrent += estCurrent;
+          return {
+            store: code,
+            dowAvg,
+            samples,
+            basis: basisSource,
+            plan: planAmt,
+            estimatedCurrent: estCurrent,
+            estimatedEOD: estEOD,
+          };
+        });
+
+        estimatedMissing = {
+          paceAtNow,
+          sampleWeeks: 8,
+          stores: storesOut,
+          totalEstimatedCurrent,
+          totalEstimatedEOD,
+          projectedCompanyEOD: sales + totalEstimatedEOD,
+          projectedCompanyCurrent: sales + totalEstimatedCurrent,
+        };
+      }
+    }
+
     const payload = {
       status: "ok",
       storeFilter,           // null = company-wide, otherwise the store code
@@ -645,6 +768,11 @@ export default async function handler(req, res) {
         state: r.STATE,
         plan:  toNumber(r.PLAN),
       })),
+      // Per-store estimates for non-reporting stores. Null when everyone has
+      // reported or a single store is selected. The UI shows these as
+      // clearly-labeled "est." values next to each missing store and a
+      // projected-company-total line underneath companyTotal.sales.
+      estimatedMissing,
       asOfET: dateFilter
         ? ("End of day · " + dateFilter)
         : (fmtAsOfET(c.AS_OF_TS) + " ET"),
