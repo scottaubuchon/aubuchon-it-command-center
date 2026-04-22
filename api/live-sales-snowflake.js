@@ -24,14 +24,17 @@ export const config = { maxDuration: 30 };
 
 // ---------- SQL ----------
 // SQL builders below take an optional storeFilter (already normalized to
-// uppercase alphanumeric, so safe to interpolate). When null, the queries
-// are company-wide (legacy behaviour). When set, every aggregate is scoped
-// to just that store. We don't use SDK binds because Snowflake's Node SDK
+// uppercase alphanumeric, so safe to interpolate) and an optional dateFilter
+// (YYYY-MM-DD, validated by regex before reaching here). When dateFilter is
+// null the queries use CURRENT_DATE() — i.e. today's live snapshot. When
+// set, every aggregate is scoped to that specific date, letting the UI
+// browse past days. We don't use SDK binds because Snowflake's Node SDK
 // uses positional `?` placeholders, and the same value is referenced
 // multiple times across the queries — string interpolation is simpler.
-function buildCompanySql(storeFilter) {
+function buildCompanySql(storeFilter, dateFilter) {
   const lsCond = storeFilter ? `AND ls.STORE_CD = '${storeFilter}'` : "";
   const planCond = storeFilter ? `AND sbd.LOCATION_CD = '${storeFilter}'` : "";
+  const dateExpr = dateFilter ? `TO_DATE('${dateFilter}')` : "CURRENT_DATE()";
   return `
 WITH today_sales AS (
   SELECT
@@ -42,14 +45,14 @@ WITH today_sales AS (
     COUNT(DISTINCT ls.STORE_CD)                AS store_count,
     MAX(ls.LAST_UPDATED_TS)                    AS as_of_ts
   FROM PRD_EDW_DB.ANALYTICS_BASE.FCT_LIVE_SALE ls
-  WHERE ls.CURRENT_DT = CURRENT_DATE() ${lsCond}
+  WHERE ls.CURRENT_DT = ${dateExpr} ${lsCond}
 ),
 today_plan AS (
   -- Per-day plan from the scorecard. Matches YODA's source. Do NOT use
   -- RPT_PAYROLL_BUDGET_AND_ACTUALS/7 — days of week have different plans.
   SELECT SUM(sbd.TARGET_DAILY_SALES_AMT) AS daily_plan
   FROM PRD_EDW_DB.ANALYTICS_BASE.RPT_SCORECARD_BY_DAY sbd
-  WHERE sbd.TRANSACTION_DT = CURRENT_DATE() ${planCond}
+  WHERE sbd.TRANSACTION_DT = ${dateExpr} ${planCond}
 )
 SELECT
   COALESCE(ts.sales, 0)       AS sales,
@@ -63,20 +66,21 @@ FROM today_sales ts CROSS JOIN today_plan tp
 `;
 }
 
-function buildStoresSql(storeFilter) {
+function buildStoresSql(storeFilter, dateFilter) {
   const todayCond = storeFilter ? `AND STORE_CD = '${storeFilter}'` : "";
   const planCond  = storeFilter ? `AND LOCATION_CD = '${storeFilter}'` : "";
+  const dateExpr  = dateFilter ? `TO_DATE('${dateFilter}')` : "CURRENT_DATE()";
   return `
 WITH today AS (
   SELECT STORE_CD, NET_SALES, NET_SALES - COST_OF_GOODS AS GP, TRANSACTION_CNT
   FROM PRD_EDW_DB.ANALYTICS_BASE.FCT_LIVE_SALE
-  WHERE CURRENT_DT = CURRENT_DATE() ${todayCond}
+  WHERE CURRENT_DT = ${dateExpr} ${todayCond}
 ),
 store_plan AS (
   -- Per-day plan from the scorecard (LOCATION_CD == STORE_CD). Matches YODA.
   SELECT LOCATION_CD AS STORE_CD, TARGET_DAILY_SALES_AMT AS daily_plan
   FROM PRD_EDW_DB.ANALYTICS_BASE.RPT_SCORECARD_BY_DAY
-  WHERE TRANSACTION_DT = CURRENT_DATE() ${planCond}
+  WHERE TRANSACTION_DT = ${dateExpr} ${planCond}
 )
 SELECT
   t.STORE_CD               AS store,
@@ -96,12 +100,13 @@ LIMIT 20
 `;
 }
 
-function buildProductsSql(storeFilter) {
+function buildProductsSql(storeFilter, dateFilter) {
   const cond = storeFilter ? `AND STORE_CD = '${storeFilter}'` : "";
+  const dateExpr = dateFilter ? `TO_DATE('${dateFilter}')` : "CURRENT_DATE()";
   return `
 SELECT PRODUCT_DESC AS product, SUM(ITEM_EXTENDED_AMT) AS sales
 FROM PRD_EDW_DB.ANALYTICS_BASE.FCT_LIVE_SALE_TRANSACTION_LINE
-WHERE CREATED_DT = CURRENT_DATE()
+WHERE CREATED_DT = ${dateExpr}
   AND PRODUCT_DESC IS NOT NULL
   ${cond}
 GROUP BY PRODUCT_DESC
@@ -236,6 +241,17 @@ export default async function handler(req, res) {
     if (cleaned) storeFilter = cleaned;
   } catch (_) { storeFilter = null; }
 
+  // Optional date filter — when set, every query is scoped to that day
+  // rather than CURRENT_DATE(). Accepts only strict YYYY-MM-DD; anything
+  // else (including future dates that pass regex) is left to Snowflake to
+  // return zero rows for. We deliberately compare as a literal DATE.
+  let dateFilter = null;
+  try {
+    const raw = (req.query && req.query.date) || "";
+    const cleaned = String(raw).trim();
+    if (/^\d{4}-\d{2}-\d{2}$/.test(cleaned)) dateFilter = cleaned;
+  } catch (_) { dateFilter = null; }
+
   let conn = null;
   // Wrap exec so a single bad query (most likely the new ALL_STORES_SQL or
   // a per-store filter against an unexpected column) doesn't take down the
@@ -251,9 +267,9 @@ export default async function handler(req, res) {
   try {
     conn = await connect();
     const [companyRes, storeRes, productRes, allStoreRes] = await Promise.all([
-      safeExec("company",   buildCompanySql(storeFilter)),
-      safeExec("stores",    buildStoresSql(storeFilter)),
-      safeExec("products",  buildProductsSql(storeFilter)),
+      safeExec("company",   buildCompanySql(storeFilter, dateFilter)),
+      safeExec("stores",    buildStoresSql(storeFilter, dateFilter)),
+      safeExec("products",  buildProductsSql(storeFilter, dateFilter)),
       safeExec("allStores", ALL_STORES_SQL),
     ]);
 
@@ -284,6 +300,7 @@ export default async function handler(req, res) {
     const payload = {
       status: "ok",
       storeFilter,           // null = company-wide, otherwise the store code
+      dateFilter,            // null = today, otherwise "YYYY-MM-DD"
       companyTotal: {
         sales, plan, gp, gpPct,
         txns:       toNumber(c.TXNS),
@@ -313,7 +330,9 @@ export default async function handler(req, res) {
         city:  r.CITY,
         state: r.STATE,
       })),
-      asOfET: fmtAsOfET(c.AS_OF_TS) + " ET",
+      asOfET: dateFilter
+        ? ("End of day · " + dateFilter)
+        : (fmtAsOfET(c.AS_OF_TS) + " ET"),
       cached: false,
       refreshedAt: new Date().toISOString(),
       source: "snowflake",
