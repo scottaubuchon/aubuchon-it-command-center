@@ -5686,7 +5686,11 @@ function LiveSalesSnowflakeView({ goBack }) {
 
   var pctPlan = companyTotal.plan > 0 ? (companyTotal.sales / companyTotal.plan) * 100 : 0;
   var vTotal = (companyTotal.sales || 0) - (companyTotal.plan || 0);
-  // Color the % to plan based on whether the EOD predictor thinks we will hit plan
+  // Color the % to plan based on whether the EOD predictor thinks we will hit
+  // plan. The predictor is a company-wide, today-only model, so when a single
+  // store is selected we fall back to the simpler "are they already above plan"
+  // measure — otherwise a store that's beaten plan would still show red
+  // whenever the company as a whole is projected to miss.
   var predictorSaysHit = (function () {
     if (prediction && prediction.prediction && prediction.prediction.available) {
       var proj = Number(prediction.prediction.projectedEOD || 0);
@@ -5695,7 +5699,7 @@ function LiveSalesSnowflakeView({ goBack }) {
     }
     return vTotal >= 0;
   })();
-  var onTrack = predictorSaysHit;
+  var onTrack = selectedStore ? (vTotal >= 0) : predictorSaysHit;
   var progressPct = Math.min(pctPlan, 100);
 
   var visibleStores = showAllStores ? topStores : topStores.slice(0, 5);
