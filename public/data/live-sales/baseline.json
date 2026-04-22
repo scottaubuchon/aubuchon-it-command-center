@@ -1,7 +1,7 @@
 {
-  "version": 8,
-  "generatedAt": "2026-04-20",
-  "sourceDates": "2026-04-15..2026-04-20",
+  "version": 9,
+  "generatedAt": "2026-04-21",
+  "sourceDates": "2026-04-15..2026-04-21",
   "description": "Plan-anchored Aubuchon EOD forecast baseline. forecast = plan * recencyFactor * holidayMult * weatherMult. See log-live-sales.js for the blending logic with the pace-curve shape projection.",
   "recencyFactor": 0.9393,
   "recencyStdev": 0.093,
@@ -336,11 +336,11 @@
     ]
   ],
   "learningLog": {
-    "updatedAt": "2026-04-21T01:36:40",
+    "updatedAt": "2026-04-21T21:38:09",
     "daysOfData": 6,
     "dowsUpdated": [],
     "holidayUpdated": null,
-    "holidayDetail": null,
+    "holidayDetail": "today is not a holiday",
     "paceDeltas": {},
     "recencyOld": 0.9393,
     "recencyNew": 0.9393,
@@ -360,7 +360,9 @@
       "dow=6: only 1 day(s), curve unchanged",
       "dow=0: only 1 day(s), curve unchanged",
       "dow=1: only 1 day(s), curve unchanged",
-      "recencyFactor unchanged \u2014 only 6 days (<20)"
-    ]
+      "unchanged \u2014 only 6 days (<20)",
+      "ANOMALY: 2026-04-21.jsonl has no snapshots after hour 15; other recent days logged through hour 21. Live-sales logger may have stopped mid-day."
+    ],
+    "todayStatus": "today (2026-04-21, dow=2) INCOMPLETE \u2014 logger last snapshot at 15:39 ET (expected through 21:00+); data not used for tuning"
   }
 }
