@@ -211,6 +211,104 @@ function fmtAsOfET(ts) {
 }
 
 // ---------- Handler ----------
+// ---------- History cache (past-date, company-wide only) ----------
+// Past days don't change — we cache the payload as a JSON file in the repo
+// under public/data/live-sales-snowflake/history/YYYY-MM-DD.json so every
+// future click of that date is ~instant and free. Writes use the GitHub
+// Contents API with the GITHUB_TOKEN env var (same one the live-sales
+// logger uses). Reads go through api.github.com too for freshness — the
+// Vercel CDN copy may lag a commit or two behind the last write.
+const CACHE_REPO  = "scottaubuchon/aubuchon-it-command-center";
+const CACHE_BRANCH = "main";
+
+function cachePathFor(date) {
+  return `public/data/live-sales-snowflake/history/${date}.json`;
+}
+
+async function readHistoryCache(date) {
+  const token = process.env.GITHUB_TOKEN;
+  if (!token) return null;
+  const path = cachePathFor(date);
+  try {
+    const r = await fetch(
+      `https://api.github.com/repos/${CACHE_REPO}/contents/${path}?ref=${CACHE_BRANCH}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/vnd.github+json",
+          "User-Agent": "lss-history-cache",
+        },
+      }
+    );
+    if (r.status === 404) return null;
+    if (!r.ok) return null;
+    const j = await r.json();
+    if (!j || !j.content) return null;
+    const decoded = Buffer.from(j.content, "base64").toString("utf-8");
+    return JSON.parse(decoded);
+  } catch (err) {
+    console.error("[live-sales-snowflake] cache read error:", err && err.message);
+    return null;
+  }
+}
+
+async function writeHistoryCache(date, payload) {
+  const token = process.env.GITHUB_TOKEN;
+  if (!token) return;
+  const path = cachePathFor(date);
+  const json = JSON.stringify({
+    ...payload,
+    cached: true,
+    cachedAt: new Date().toISOString(),
+  }, null, 2);
+  const content = Buffer.from(json, "utf-8").toString("base64");
+
+  // Look up existing SHA in case we're overwriting an older write.
+  let sha = null;
+  try {
+    const r = await fetch(
+      `https://api.github.com/repos/${CACHE_REPO}/contents/${path}?ref=${CACHE_BRANCH}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/vnd.github+json",
+          "User-Agent": "lss-history-cache",
+        },
+      }
+    );
+    if (r.ok) {
+      const j = await r.json();
+      if (j && j.sha) sha = j.sha;
+    }
+  } catch (_) { /* first write; no SHA needed */ }
+
+  const body = {
+    message: `chore(cache): freeze live-sales snapshot for ${date} [skip ci]`,
+    content,
+    branch: CACHE_BRANCH,
+  };
+  if (sha) body.sha = sha;
+
+  const r = await fetch(`https://api.github.com/repos/${CACHE_REPO}/contents/${path}`, {
+    method: "PUT",
+    headers: {
+      Authorization: `Bearer ${token}`,
+      Accept: "application/vnd.github+json",
+      "Content-Type": "application/json",
+      "User-Agent": "lss-history-cache",
+    },
+    body: JSON.stringify(body),
+  });
+  if (!r.ok) {
+    throw new Error(`cache write HTTP ${r.status}: ${await r.text()}`);
+  }
+}
+
+function todayInET() {
+  return new Date().toLocaleDateString("en-CA", { timeZone: "America/New_York" });
+}
+
+// ---------- Handler ----------
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Cache-Control", "no-store, max-age=0");
@@ -251,6 +349,28 @@ export default async function handler(req, res) {
     const cleaned = String(raw).trim();
     if (/^\d{4}-\d{2}-\d{2}$/.test(cleaned)) dateFilter = cleaned;
   } catch (_) { dateFilter = null; }
+
+  // Fast path: past-date, company-wide queries are served from the
+  // repo-file cache when available. Snowflake is only queried on cache
+  // miss, and we re-write the cache before responding so the next hit is
+  // free. Per-store and today-live queries bypass the cache.
+  const etToday = todayInET();
+  const cacheable = Boolean(dateFilter) && !storeFilter && dateFilter !== etToday;
+  if (cacheable) {
+    const cached = await readHistoryCache(dateFilter);
+    if (cached) {
+      res.status(200).json({
+        ...cached,
+        // Keep echoed filters accurate for the current request.
+        storeFilter,
+        dateFilter,
+        // Mark as served from cache so the UI can show a badge.
+        cached: true,
+        source: cached.source || "snowflake",
+      });
+      return;
+    }
+  }
 
   let conn = null;
   // Wrap exec so a single bad query (most likely the new ALL_STORES_SQL or
@@ -338,6 +458,16 @@ export default async function handler(req, res) {
       source: "snowflake",
       queryErrors: queryErrors.length ? queryErrors : undefined,
     };
+
+    // Persist this date's snapshot so future requests skip Snowflake.
+    // Non-fatal: logged and swallowed if GitHub rejects the write.
+    if (cacheable) {
+      try {
+        await writeHistoryCache(dateFilter, payload);
+      } catch (err) {
+        console.error("[live-sales-snowflake] cache write failed:", err && err.message);
+      }
+    }
 
     res.status(200).json(payload);
   } catch (err) {
