@@ -229,4 +229,104 @@ export default async function handler(req, res) {
   let storeFilter = null;
   try {
     const raw = (req.query && req.query.store) || "";
-    const cleaned = String(raw).trim().toUpperCase().replace(/[
+    const cleaned = String(raw).trim().toUpperCase().replace(/[^A-Z0-9]/g, "");
+    if (cleaned) storeFilter = cleaned;
+  } catch (_) { storeFilter = null; }
+
+  let conn = null;
+  // Wrap exec so a single bad query (most likely the new ALL_STORES_SQL or
+  // a per-store filter against an unexpected column) doesn't take down the
+  // whole endpoint. We capture each failure and surface it in the payload.
+  const safeExec = async (label, sql) => {
+    try { return { rows: await exec(conn, sql), error: null, label }; }
+    catch (err) {
+      console.error(`[live-sales-snowflake] ${label} failed:`, err && err.message);
+      return { rows: [], error: (err && err.message) || String(err), label };
+    }
+  };
+
+  try {
+    conn = await connect();
+    const [companyRes, storeRes, productRes, allStoreRes] = await Promise.all([
+      safeExec("company",   buildCompanySql(storeFilter)),
+      safeExec("stores",    buildStoresSql(storeFilter)),
+      safeExec("products",  buildProductsSql(storeFilter)),
+      safeExec("allStores", ALL_STORES_SQL),
+    ]);
+
+    // Collect any per-query errors so the front-end can show them. We only
+    // hard-fail (HTTP 500) if BOTH the company total AND the stores query
+    // failed — meaning we have nothing useful to show. Otherwise return 200
+    // with whatever data we did get.
+    const queryErrors = [companyRes, storeRes, productRes, allStoreRes]
+      .filter((r) => r.error)
+      .map((r) => ({ query: r.label, error: r.error }));
+    if (companyRes.error && storeRes.error) {
+      const msg = queryErrors.map((e) => `${e.query}: ${e.error}`).join(" | ");
+      throw new Error(msg || "All Snowflake queries failed");
+    }
+
+    const companyRows  = companyRes.rows;
+    const storeRows    = storeRes.rows;
+    const productRows  = productRes.rows;
+    const allStoreRows = allStoreRes.rows;
+
+    const c = companyRows[0] || {};
+    const sales = toNumber(c.SALES);
+    const plan  = toNumber(c.PLAN);
+    const gp    = toNumber(c.GP);
+    const gpPct = sales > 0 ? (gp / sales) * 100 : 0;
+    const pctToPlan = plan > 0 ? (sales / plan) * 100 : 0;
+
+    const payload = {
+      status: "ok",
+      storeFilter,           // null = company-wide, otherwise the store code
+      companyTotal: {
+        sales, plan, gp, gpPct,
+        txns:       toNumber(c.TXNS),
+        customers:  toNumber(c.CUSTOMERS),
+        storeCount: toNumber(c.STORE_COUNT),
+        pctToPlan,
+      },
+      topStores: storeRows.map((r) => ({
+        store: r.STORE,
+        name:  r.NAME,
+        city:  r.CITY,
+        state: r.STATE,
+        sales: toNumber(r.SALES),
+        plan:  toNumber(r.PLAN),
+        gp:    toNumber(r.GP),
+        txns:  toNumber(r.TXNS),
+      })),
+      topProducts: productRows.map((r) => ({
+        product: r.PRODUCT,
+        sales:   toNumber(r.SALES),
+      })),
+      // Full active-store list for populating the dropdown. Small dim table,
+      // ~150 rows, so we just return it on every call.
+      allStores: allStoreRows.map((r) => ({
+        store: r.STORE,
+        name:  r.NAME,
+        city:  r.CITY,
+        state: r.STATE,
+      })),
+      asOfET: fmtAsOfET(c.AS_OF_TS) + " ET",
+      cached: false,
+      refreshedAt: new Date().toISOString(),
+      source: "snowflake",
+      queryErrors: queryErrors.length ? queryErrors : undefined,
+    };
+
+    res.status(200).json(payload);
+  } catch (err) {
+    console.error("[live-sales-snowflake] error:", err);
+    res.status(500).json({
+      status: "error",
+      error: (err && err.message) || String(err),
+      code:  (err && err.code)    || null,
+      source: "snowflake",
+    });
+  } finally {
+    if (conn) await destroy(conn);
+  }
+}
