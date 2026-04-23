@@ -1,16 +1,16 @@
 {
-  "updatedAt": "2026-04-23T21:48:39.958Z",
-  "updatedAtET": "Apr 23, 2026, 5:48 PM",
+  "updatedAt": "2026-04-23T22:04:19.109Z",
+  "updatedAtET": "Apr 23, 2026, 6:04 PM",
   "dateET": "2026-04-23",
   "dow": 4,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-04-23T21:48:39.958Z",
-    "tsET": "Apr 23, 2026, 5:48 PM",
+    "ts": "2026-04-23T22:04:19.109Z",
+    "tsET": "Apr 23, 2026, 6:04 PM",
     "dateET": "2026-04-23",
-    "hourET": 17,
-    "minuteET": 48,
+    "hourET": 18,
+    "minuteET": 4,
     "dow": 4,
     "sales": 1026334.5199999999,
     "plan": 1073381.2100000002,
@@ -27,17 +27,17 @@
     "available": true,
     "method": "blended (w=0.97 shape + 0.03 level)",
     "confidence": "medium",
-    "projectedEOD": 1084499.0394311044,
-    "projectedPctToPlan": 101.03577641638653,
-    "projectedVariance": 11117.829431104241,
+    "projectedEOD": 1069596.9000664372,
+    "projectedPctToPlan": 99.64744026648621,
+    "projectedVariance": -3784.309933562996,
     "band": {
-      "low": 964510.9010327731,
-      "high": 1204487.1778294358
+      "low": 951563.4946908072,
+      "high": 1187630.3054420673
     },
-    "pctOfDayElapsed": 0.9458,
+    "pctOfDayElapsed": 0.9593999999999999,
     "level_EOD": 1063578.63123636,
-    "shape_EOD": 1085149.6299429054,
-    "blendWeight": 0.9698395739273973,
+    "shape_EOD": 1069767.0627475504,
+    "blendWeight": 0.9725031002111832,
     "factors": {
       "plan": 1073381.2100000002,
       "recencyFactor": 0.9393,
@@ -46,26 +46,26 @@
       "holidayMult": 1,
       "weatherKey": "normal",
       "weatherMult": 1,
-      "weatherSummary": "concord-nh: 62F Sunny | worcester-ma: 60F Sunny | burlington-vt: 57F Sunny | portland-me: 55F Mostly Sunny | albany-ny: 69F Mostly Sunny | scranton-pa: 72F Sunny"
+      "weatherSummary": "concord-nh: 62F Sunny | worcester-ma: 60F Sunny | burlington-vt: 57F Sunny | portland-me: 55F Mostly Sunny | albany-ny: 39F Mostly Cloudy | scranton-pa: 45F Partly Cloudy"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.9458,
+      "basePaceFromCurve": 0.9593999999999999,
       "observedPaceCount": 1,
-      "blendedPaceAtNow": 0.9458,
+      "blendedPaceAtNow": 0.9593999999999999,
       "historyDays": 1,
       "avgHistoricalEOD": 1053994.8399999996
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 43468.0222,
+      "estimatedCurrent": 44093.0646,
       "estimatedEOD": 45959,
-      "paceUsed": 0.9458,
+      "paceUsed": 0.9593999999999999,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 30687,
-          "estimatedCurrent": 29023.7646,
+          "estimatedCurrent": 29441.107799999998,
           "estimatedEOD": 30687,
           "stdev": 0.3949
         },
@@ -73,16 +73,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 15272,
-          "estimatedCurrent": 14444.257599999999,
+          "estimatedCurrent": 14651.956799999998,
           "estimatedEOD": 15272,
           "stdev": 0.1435
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1130458.0394311044,
-    "combinedCurrentSales": 1069802.5421999998,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $43,468 so far, +$45,959 to EOD."
+    "combinedProjectedEOD": 1115555.9000664372,
+    "combinedCurrentSales": 1070427.5846,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $44,093 so far, +$45,959 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 10,
@@ -90,10 +90,9 @@
     "mult": 1,
     "key": "normal",
     "season": "spring",
-    "summary": "concord-nh: 62F Sunny | worcester-ma: 60F Sunny | burlington-vt: 57F Sunny | portland-me: 55F Mostly Sunny | albany-ny: 69F Mostly Sunny | scranton-pa: 72F Sunny",
+    "summary": "concord-nh: 62F Sunny | worcester-ma: 60F Sunny | burlington-vt: 57F Sunny | portland-me: 55F Mostly Sunny | albany-ny: 39F Mostly Cloudy | scranton-pa: 45F Partly Cloudy",
     "tagWeights": {
-      "normal": 0.792,
-      "perfect_65_80F_dry": 0.208
+      "normal": 1
     },
     "forecasts": [
       {
@@ -131,18 +130,18 @@
       {
         "station": "albany-ny",
         "weight": 0.12,
-        "temp": 69,
+        "temp": 39,
         "unit": "F",
-        "short": "Mostly Sunny",
-        "detailed": "Mostly sunny, with a high near 69. Northwest wind around 15 mph, with gusts as high as 30 mph."
+        "short": "Mostly Cloudy",
+        "detailed": "Mostly cloudy, with a low around 39. Northwest wind 3 to 14 mph, with gusts as high as 29 mph."
       },
       {
         "station": "scranton-pa",
         "weight": 0.088,
-        "temp": 72,
+        "temp": 45,
         "unit": "F",
-        "short": "Sunny",
-        "detailed": "Sunny, with a high near 72. Northwest wind around 13 mph, with gusts as high as 23 mph."
+        "short": "Partly Cloudy",
+        "detailed": "Partly cloudy, with a low around 45. Northeast wind 1 to 10 mph, with gusts as high as 21 mph."
       }
     ]
   }
