@@ -6900,21 +6900,23 @@ function Yoda2Insights({ selectedStore, setSelectedStore, dateLabel, selectedDat
   }, [selectedDate]);
 
   if (loading && !data) {
-    return <div className="bg-white rounded-xl p-12 text-center text-slate-500 border border-slate-200">Analyzing all stores...</div>;
+    return <div className="bg-white rounded-xl p-12 text-center text-slate-500 border border-slate-200">Running the retail advisor...</div>;
   }
   if (error) {
     return (
       <div className="bg-red-50 border border-red-200 text-red-800 rounded-lg p-4 text-sm">
-        <div className="font-semibold mb-1">Couldn't generate insights</div>
+        <div className="font-semibold mb-1">Could not generate insights</div>
         <div>{error}</div>
       </div>
     );
   }
 
-  var stores = (data && data.stores) || [];
-  if (selectedStore) stores = stores.filter(function (s) { return s.code === selectedStore; });
+  var execSummary = (data && data.exec) || null;
+  var peers = (data && data.peers) || {};
+  var dataGaps = (data && data.dataGaps) || [];
+  var storesAll = (data && data.stores) || [];
+  var stores = selectedStore ? storesAll.filter(function (s) { return s.code === selectedStore; }) : storesAll;
 
-  // Count actions by category across the filtered set
   var totalActions = 0;
   var cats = { Sales: 0, Ops: 0, Payroll: 0 };
   stores.forEach(function (s) {
@@ -6930,57 +6932,36 @@ function Yoda2Insights({ selectedStore, setSelectedStore, dateLabel, selectedDat
     return Object.assign({}, s, { insights: insights });
   }).filter(function (s) { return (s.insights || []).length > 0; });
 
-  var peers = (data && data.peers) || {};
-
   return (
     <div>
-      {/* Intro / context strip */}
-      <div className="bg-white border border-slate-200 rounded-xl p-4 mb-4">
-        <div className="flex items-start justify-between gap-4 flex-wrap">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="inline-flex items-center justify-center w-6 h-6 rounded-full text-sm" style={{ background: "#FFF4E6", color: "#F58220" }}>AI</span>
-              <h2 className="text-lg font-bold text-slate-900">Top 5 actions per store</h2>
-              <span className="text-xs text-slate-500">- {dateLabel}</span>
-            </div>
-            <div className="text-xs text-slate-600 max-w-3xl">
-              Ranked by estimated dollar impact. Each store is benchmarked against the company peer median
-              (ATV, UPT, member share, pro share). Rules span sales lifts, ops execution, and payroll/coverage.
-            </div>
-          </div>
-          <div className="flex items-center gap-4 text-xs">
-            <div><span className="font-semibold text-slate-900">{stores.length}</span> <span className="text-slate-500">stores</span></div>
-            <div><span className="font-semibold text-slate-900">{totalActions}</span> <span className="text-slate-500">actions</span></div>
-          </div>
-        </div>
+      {execSummary && !selectedStore && <Y2IExecSummary exec={execSummary} peers={peers} dateLabel={dateLabel} />}
 
-        {/* Peer benchmarks strip */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3">
-          <Y2IMiniStat label="Peer ATV" value={peers.atvMedian ? "$" + peers.atvMedian.toFixed(2) : "-"} />
-          <Y2IMiniStat label="Peer UPT" value={peers.uptMedian ? peers.uptMedian.toFixed(2) : "-"} />
-          <Y2IMiniStat label="Peer Member %" value={peers.memberPctMedian ? (peers.memberPctMedian * 100).toFixed(1) + "%" : "-"} />
-          <Y2IMiniStat label="Peer Pro %" value={peers.proPctMedian ? (peers.proPctMedian * 100).toFixed(1) + "%" : "-"} />
+      {dataGaps.length > 0 && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-4 text-xs text-amber-900">
+          <div className="font-semibold mb-1">Some enrichment data is not connected in this environment:</div>
+          <ul className="list-disc pl-5 space-y-0.5">
+            {dataGaps.map(function (g, i) { return <li key={i} className="font-mono">{g}</li>; })}
+          </ul>
+          <div className="mt-1 text-amber-800">Core sales analysis still ran. Payroll/weather/inventory rules are skipped where the table was not reachable.</div>
         </div>
+      )}
 
-        {/* Filters */}
-        <div className="flex items-center gap-2 mt-4 flex-wrap text-xs">
-          <span className="text-slate-500 font-semibold uppercase tracking-wide">Filter</span>
+      <div className="bg-white border border-slate-200 rounded-xl p-3 mb-4">
+        <div className="flex items-center gap-2 flex-wrap text-xs">
+          <span className="text-slate-500 font-semibold uppercase tracking-wide mr-1">Filter</span>
           <Y2ICatChip label={"All (" + totalActions + ")"} active={categoryFilter === "All"} onClick={function(){setCategoryFilter("All");}} />
           <Y2ICatChip label={"Sales (" + cats.Sales + ")"} active={categoryFilter === "Sales"} onClick={function(){setCategoryFilter("Sales");}} />
           <Y2ICatChip label={"Ops (" + cats.Ops + ")"} active={categoryFilter === "Ops"} onClick={function(){setCategoryFilter("Ops");}} />
           <Y2ICatChip label={"Payroll (" + cats.Payroll + ")"} active={categoryFilter === "Payroll"} onClick={function(){setCategoryFilter("Payroll");}} />
           {selectedStore && (
-            <button
-              onClick={function () { setSelectedStore(""); }}
-              className="ml-auto text-slate-500 hover:text-slate-900 underline"
-            >
+            <button onClick={function () { setSelectedStore(""); }} className="ml-auto text-slate-500 hover:text-slate-900 underline">
               Show all stores
             </button>
           )}
+          <div className="ml-auto text-slate-400">{stores.length} store{stores.length === 1 ? "" : "s"} &middot; {totalActions} actions</div>
         </div>
       </div>
 
-      {/* Per-store cards */}
       {visibleStores.length === 0 ? (
         <div className="bg-white rounded-xl p-12 text-center text-slate-500 border border-slate-200">
           No matching recommendations for the current filter.
@@ -6992,8 +6973,124 @@ function Yoda2Insights({ selectedStore, setSelectedStore, dateLabel, selectedDat
       )}
 
       <div className="text-center text-[11px] text-slate-400 mt-4">
-        Rule-based analyst layered over AUBUCHON_RETAIL_ANALYTICS semantic view. Priorities/impact are estimates, not promises.
+        Decision-useful windows: trailing 7d, trailing 28d, MTD vs LY MTD, 4w-vs-prior-4w recency. Benchmarks are company peer medians. Impacts are estimates, not promises.
       </div>
+    </div>
+  );
+}
+
+function Y2IExecSummary({ exec, peers, dateLabel }) {
+  var w = exec.windows || {};
+  var c = exec.counts  || {};
+  var themes = exec.topThemes || [];
+  var topStores = exec.topOppStores || [];
+
+  function signCls(v) {
+    if (v == null) return "text-slate-700";
+    if (v >= 0)    return "text-emerald-600";
+    return "text-rose-600";
+  }
+  function signFmt(v) {
+    if (v == null) return "\u2014";
+    return (v >= 0 ? "+" : "") + (v * 100).toFixed(1) + "%";
+  }
+  function dollar(v) {
+    if (!Number.isFinite(v)) return "$0";
+    return "$" + Math.round(v).toLocaleString();
+  }
+
+  return (
+    <div className="bg-white border border-slate-200 rounded-xl p-4 mb-4">
+      <div className="flex items-center gap-2 mb-1">
+        <span className="inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-semibold" style={{ background: "#FFF4E6", color: "#F58220" }}>AI</span>
+        <h2 className="text-lg font-bold text-slate-900">Executive Summary</h2>
+        <span className="text-xs text-slate-500">&middot; as of {dateLabel}</span>
+      </div>
+
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 my-3">
+        <Y2IWindowCard title="Trailing 7d"  ty={w.trailing7d && w.trailing7d.ty}  ly={w.trailing7d && w.trailing7d.ly}  yoy={w.trailing7d && w.trailing7d.yoy}  signCls={signCls} signFmt={signFmt} dollar={dollar} />
+        <Y2IWindowCard title="Trailing 28d" ty={w.trailing28d && w.trailing28d.ty} ly={w.trailing28d && w.trailing28d.ly} yoy={w.trailing28d && w.trailing28d.yoy} signCls={signCls} signFmt={signFmt} dollar={dollar} />
+        <Y2IWindowCard title="MTD vs LY MTD" ty={w.mtd && w.mtd.ty} ly={w.mtd && w.mtd.ly} yoy={w.mtd && w.mtd.yoy} signCls={signCls} signFmt={signFmt} dollar={dollar} />
+        <Y2IWindowCard title="Recency (4w vs prior)" ty={w.recencyTrend && w.recencyTrend.recent} ly={w.recencyTrend && w.recencyTrend.prior} yoy={w.recencyTrend && w.recencyTrend.var} signCls={signCls} signFmt={signFmt} dollar={dollar} tyLabel="Recent 4w" lyLabel="Prior 4w" />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+        <div className="bg-slate-50 rounded-lg p-3 text-xs">
+          <div className="text-[10px] uppercase tracking-wide text-slate-500 font-semibold mb-2">Activity</div>
+          <div className="grid grid-cols-2 gap-y-1">
+            <div className="text-slate-600">Stores analyzed</div><div className="text-right font-semibold">{c.stores || 0}</div>
+            <div className="text-slate-600">Total actions</div><div className="text-right font-semibold">{c.actions || 0}</div>
+            <div className="text-slate-600">Urgent actions</div><div className="text-right font-semibold text-rose-600">{c.urgent || 0}</div>
+            <div className="text-slate-600">Stores below LY (7d)</div><div className="text-right font-semibold">{c.storesBelowLy7 || 0}</div>
+            <div className="text-slate-600">Stores below LY (28d)</div><div className="text-right font-semibold">{c.storesBelowLy28 || 0}</div>
+            <div className="text-slate-600">Weather alerts</div><div className="text-right font-semibold">{c.weatherAlerts || 0}</div>
+            <div className="text-slate-600">Payroll over target</div><div className="text-right font-semibold">{c.payrollOver || 0}</div>
+            <div className="text-slate-600">Likely understaffed</div><div className="text-right font-semibold">{c.payrollUnder || 0}</div>
+          </div>
+        </div>
+
+        <div className="bg-slate-50 rounded-lg p-3 text-xs">
+          <div className="text-[10px] uppercase tracking-wide text-slate-500 font-semibold mb-2">Top recurring themes</div>
+          {themes.length === 0 ? (
+            <div className="text-slate-500">No systemic themes detected.</div>
+          ) : (
+            <ul className="space-y-1">
+              {themes.map(function (t, i) {
+                return (
+                  <li key={i} className="flex items-center gap-2">
+                    <span className="w-5 text-center text-[11px] font-bold text-slate-500">{i + 1}</span>
+                    <span className="flex-1 truncate">{t.title}</span>
+                    <span className="text-slate-500">{t.storeCount} stores</span>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+
+        <div className="bg-slate-50 rounded-lg p-3 text-xs">
+          <div className="text-[10px] uppercase tracking-wide text-slate-500 font-semibold mb-2">Biggest opportunity stores</div>
+          {topStores.length === 0 ? (
+            <div className="text-slate-500">No ranked opportunities yet.</div>
+          ) : (
+            <ul className="space-y-1">
+              {topStores.map(function (s, i) {
+                return (
+                  <li key={s.code} className="flex items-center gap-2">
+                    <span className="w-5 text-center text-[11px] font-bold text-slate-500">{i + 1}</span>
+                    <span className="text-[10px] font-semibold px-1.5 rounded" style={{ background: "#01683F", color: "white" }}>{s.code}</span>
+                    <span className="flex-1 truncate">{s.name || "-"}</span>
+                    <span className="text-slate-500">~{dollar(s.topImpact)}/day</span>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mt-3">
+        <Y2IMiniStat label="Peer ATV (28d)" value={peers.atv28Median ? "$" + peers.atv28Median.toFixed(2) : "\u2014"} />
+        <Y2IMiniStat label="Peer UPT (28d)" value={peers.upt28Median ? peers.upt28Median.toFixed(2) : "\u2014"} />
+        <Y2IMiniStat label="Peer Member %"  value={peers.memberPctMedian ? (peers.memberPctMedian * 100).toFixed(1) + "%" : "\u2014"} />
+        <Y2IMiniStat label="Peer Pro %"     value={peers.proPctMedian ? (peers.proPctMedian * 100).toFixed(1) + "%" : "\u2014"} />
+        <Y2IMiniStat label="Peer SPPH (4w)" value={peers.spph4wMedian ? "$" + peers.spph4wMedian.toFixed(0) + "/hr" : "\u2014"} />
+      </div>
+    </div>
+  );
+}
+
+function Y2IWindowCard({ title, ty, ly, yoy, signCls, signFmt, dollar, tyLabel, lyLabel }) {
+  tyLabel = tyLabel || "TY";
+  lyLabel = lyLabel || "LY";
+  return (
+    <div className="bg-slate-50 rounded-lg p-3">
+      <div className="text-[10px] uppercase tracking-wide text-slate-500 font-semibold">{title}</div>
+      <div className="mt-1 flex items-baseline gap-1">
+        <div className="text-lg font-bold text-slate-900">{dollar(ty || 0)}</div>
+        <div className={"text-sm font-semibold " + signCls(yoy)}>{signFmt(yoy)}</div>
+      </div>
+      <div className="text-[11px] text-slate-500">{lyLabel} {dollar(ly || 0)}</div>
     </div>
   );
 }
@@ -7023,39 +7120,53 @@ function Y2ICatChip({ label, active, onClick }) {
 
 function Y2IStoreCard({ store }) {
   var loc = [store.city, store.state].filter(Boolean).join(", ");
-  var netSales    = Number(store.netSales) || 0;
-  var lyNetSales  = Number(store.lyNetSales) || 0;
-  var yoyVar      = lyNetSales ? (netSales - lyNetSales) / lyNetSales : null;
-  var dailyPlan   = Number(store.dailyPlan) || 0;
-  var planAttn    = dailyPlan ? netSales / dailyPlan : null;
+  var ns7   = Number(store.netSales)     || 0;
+  var lns7  = Number(store.lyNetSales)   || 0;
+  var yoy7  = lns7 ? (ns7 - lns7) / lns7 : null;
+  var ns28  = Number(store.netSales28)   || 0;
+  var lns28 = Number(store.lyNetSales28) || 0;
+  var yoy28 = lns28 ? (ns28 - lns28) / lns28 : null;
+  var mtd   = Number(store.mtdNetSales)  || 0;
+  var mtdPlan = Number(store.mtdPlan)    || 0;
+  var planAttn = mtdPlan ? mtd / mtdPlan : null;
 
   return (
     <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-slate-50">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-slate-50 gap-3 flex-wrap">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
             <span className="text-xs font-bold tracking-wide px-2 py-0.5 rounded" style={{ background: "#01683F", color: "white" }}>
               {store.code}
             </span>
             <div className="font-semibold text-slate-900 truncate">{store.name || "(unnamed)"}</div>
-            {loc && <div className="text-xs text-slate-500 hidden sm:block">- {loc}</div>}
+            {loc && <div className="text-xs text-slate-500 hidden sm:block">&middot; {loc}</div>}
           </div>
         </div>
-        <div className="flex items-center gap-4 text-xs flex-shrink-0">
-          <Y2IKpi label="Sales" value={"$" + Math.round(netSales).toLocaleString()} />
-          {yoyVar != null && <Y2IKpi label="YoY" value={(yoyVar >= 0 ? "+" : "") + (yoyVar * 100).toFixed(1) + "%"} tone={yoyVar >= 0 ? "pos" : "neg"} />}
-          {planAttn != null && <Y2IKpi label="Plan" value={(planAttn * 100).toFixed(0) + "%"} tone={planAttn >= 1 ? "pos" : (planAttn < 0.9 ? "neg" : "neutral")} />}
-          <Y2IKpi label="Txns" value={Math.round(Number(store.txnCount) || 0).toLocaleString()} />
-          <Y2IKpi label="ATV" value={"$" + (Number(store.avgTicket) || 0).toFixed(2)} />
-          <Y2IKpi label="UPT" value={(Number(store.upt) || 0).toFixed(2)} />
+        <div className="flex items-center gap-4 text-xs flex-shrink-0 flex-wrap">
+          <Y2IKpi label="7d Sales" value={"$" + Math.round(ns7).toLocaleString()} />
+          {yoy7 != null && <Y2IKpi label="7d YoY" value={(yoy7 >= 0 ? "+" : "") + (yoy7 * 100).toFixed(1) + "%"} tone={yoy7 >= 0 ? "pos" : "neg"} />}
+          <Y2IKpi label="28d Sales" value={"$" + Math.round(ns28).toLocaleString()} />
+          {yoy28 != null && <Y2IKpi label="28d YoY" value={(yoy28 >= 0 ? "+" : "") + (yoy28 * 100).toFixed(1) + "%"} tone={yoy28 >= 0 ? "pos" : "neg"} />}
+          {planAttn != null && <Y2IKpi label="MTD Plan" value={(planAttn * 100).toFixed(0) + "%"} tone={planAttn >= 1 ? "pos" : (planAttn < 0.9 ? "neg" : "neutral")} />}
+          <Y2IKpi label="ATV 28d" value={"$" + (Number(store.atv28) || 0).toFixed(2)} />
+          <Y2IKpi label="UPT 28d" value={(Number(store.upt28) || 0).toFixed(2)} />
+          {Number.isFinite(Number(store.spph4w)) && Number(store.spph4w) > 0 && <Y2IKpi label="SPPH 4w" value={"$" + Math.round(Number(store.spph4w)).toLocaleString() + "/hr"} />}
         </div>
       </div>
 
-      {/* Top 5 actions */}
+      {store.weather && (Number(store.weather.precipNext7) > 0 || Number(store.weather.snowNext7) > 0 || Number(store.weather.tempAvgNext7) > 0) && (
+        <div className="px-4 py-2 bg-sky-50 border-b border-sky-100 text-[11px] text-sky-900 flex items-center gap-4 flex-wrap">
+          <span className="font-semibold uppercase tracking-wide text-sky-700">Next 7d forecast</span>
+          {Number(store.weather.tempAvgNext7) > 0 && <span>Avg {Math.round(Number(store.weather.tempAvgNext7))}&deg;F</span>}
+          {Number(store.weather.precipNext7) > 0 && <span>Precip {Number(store.weather.precipNext7).toFixed(1)}&Prime;</span>}
+          {Number(store.weather.snowNext7) > 0 && <span>Snow {Number(store.weather.snowNext7).toFixed(1)}&Prime;</span>}
+          {Number(store.weather.tempAvgLast7) > 0 && <span className="text-sky-600">(last 7d avg {Math.round(Number(store.weather.tempAvgLast7))}&deg;F)</span>}
+        </div>
+      )}
+
       {(!store.insights || store.insights.length === 0) ? (
         <div className="px-4 py-4 text-xs text-slate-500">
-          No actionable gaps vs peers for this store today. Keep the crew focused on execution basics.
+          No actionable gaps vs peers for this store over the analyzed windows. Keep the crew focused on execution basics.
         </div>
       ) : (
         <ol className="divide-y divide-slate-100">
