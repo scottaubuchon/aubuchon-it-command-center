@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-04-23T21:48:01.779Z",
+  "updatedAt": "2026-04-23T21:48:42.863Z",
   "updatedAtET": "Apr 23, 2026, 5:48 PM",
   "dateET": "2026-04-23",
   "dow": 4,
   "season": "spring",
   "source": "snowflake",
   "current": {
-    "ts": "2026-04-23T21:48:01.779Z",
+    "ts": "2026-04-23T21:48:42.863Z",
     "tsET": "Apr 23, 2026, 5:48 PM",
     "dateET": "2026-04-23",
     "hourET": 17,
@@ -126,7 +126,7 @@
         "temp": 55,
         "unit": "F",
         "short": "Mostly Sunny",
-        "detailed": "Mostly sunny, with a high near 55. Northwest wind around 10 mph, with gusts as high as 25 mph."
+        "detailed": "Mostly sunny, with a high near 55. Northwest wind 10 to 15 mph, with gusts as high as 25 mph."
       },
       {
         "station": "albany-ny",
