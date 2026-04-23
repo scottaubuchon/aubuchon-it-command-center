@@ -6437,14 +6437,14 @@ function Yoda2View({ goBack }) {
       {/* Top accent strip */}
       <div style={{ height: 8, background: "linear-gradient(to bottom, #F58220 0%, #F58220 30%, #01683F 30%, #01683F 100%)" }} />
 
-      <div className="max-w-[1400px] mx-auto px-6 py-4">
+      <div className="max-w-[1400px] mx-auto px-3 sm:px-4 lg:px-6 py-3 lg:py-4">
         {/* Header */}
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-start sm:items-center justify-between mb-4 gap-2 flex-wrap">
           <div className="flex items-center gap-4">
             <button onClick={goBack} className="flex items-center gap-1 text-sm text-slate-600 hover:text-slate-900 font-medium">
               <ArrowLeft className="w-4 h-4" /> Back
             </button>
-            <div className="h-8 w-px bg-slate-300"></div>
+            <div className="hidden sm:block h-8 w-px bg-slate-300"></div>
             <div>
               <div className="text-2xl font-bold tracking-tight" style={{ color: "#01683F", fontFamily: "Trebuchet MS, sans-serif" }}>
                 YODA <span style={{ color: "#F58220" }}>2.0</span>
@@ -6457,9 +6457,11 @@ function Yoda2View({ goBack }) {
           </div>
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex flex-col lg:flex-row gap-3 lg:gap-4">
           {/* Sidebar */}
-          <aside className="w-64 flex-shrink-0 bg-white rounded-xl border border-slate-200 p-4 self-start sticky top-4">
+          <aside className="w-full lg:w-64 flex-shrink-0 bg-white rounded-xl border border-slate-200 p-3 lg:p-4 self-start lg:sticky lg:top-4">
+            <div className="lg:block grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-3 lg:gap-0">
+            <div>
             <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Store</div>
             <div ref={storeBoxRef} className="relative mb-4">
               <button
@@ -6502,6 +6504,8 @@ function Yoda2View({ goBack }) {
               )}
             </div>
 
+            </div>
+            <div>
             <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Report Date</div>
             <input
               type="date"
@@ -6511,8 +6515,10 @@ function Yoda2View({ goBack }) {
               className="w-full text-sm bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 mb-4"
             />
 
-            <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Page</div>
-            <nav className="flex flex-col gap-1 mb-4">
+            </div>
+            </div>
+            <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2 mt-2 lg:mt-0">Page</div>
+            <nav className="flex lg:flex-col gap-1 mb-3 lg:mb-4 overflow-x-auto -mx-1 px-1 lg:overflow-x-visible lg:mx-0 lg:px-0">
               <Y2NavBtn active={activePage === "main"}    onClick={function(){setActivePage("main");}}    emoji="📊" label="Main Dashboard" />
               <Y2NavBtn active={activePage === "drivers"} onClick={function(){setActivePage("drivers");}} emoji="🔍" label="Sales Drivers" />
               <Y2NavBtn active={activePage === "product"} onClick={function(){setActivePage("product");}} emoji="📦" label="Product Drill" />
@@ -6562,7 +6568,7 @@ function Y2NavBtn({ active, onClick, emoji, label }) {
   return (
     <button
       onClick={onClick}
-      className={"text-left text-sm px-3 py-2 rounded-lg transition-colors " + (active ? "bg-emerald-50 text-emerald-900 font-semibold border border-emerald-200" : "hover:bg-slate-50 text-slate-700 border border-transparent")}
+      className={"text-left text-sm px-3 py-2 rounded-lg transition-colors whitespace-nowrap flex-shrink-0 lg:flex-shrink " + (active ? "bg-emerald-50 text-emerald-900 font-semibold border border-emerald-200" : "hover:bg-slate-50 text-slate-700 border border-transparent")}
     >
       <span className="mr-2">{emoji}</span>{label}
     </button>
@@ -6588,15 +6594,15 @@ function Yoda2Main({ summary, storeLabel, dateLabel }) {
   return (
     <Fragment>
       {/* Hero */}
-      <div className="rounded-2xl p-7 mb-4 border shadow-sm" style={{ background: heroBg, borderColor: heroBorder }}>
-        <div className="flex items-start justify-between gap-4 flex-wrap">
+      <div className="rounded-2xl p-4 sm:p-5 lg:p-7 mb-4 border shadow-sm" style={{ background: heroBg, borderColor: heroBorder }}>
+        <div className="flex flex-col sm:flex-row items-start sm:justify-between gap-2 sm:gap-4 flex-wrap">
           <div>
             <div className="text-[15px] font-bold text-slate-900">{storeLabel} — {dateLabel}</div>
             <div className="text-xs text-slate-500 mt-0.5">Comparing to same day 364 days ago (trade-week alignment)</div>
-            <div className="text-4xl font-extrabold tracking-tight text-slate-900 mt-2 leading-none">{fmtDollar(k.netSales)}</div>
+            <div className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 mt-2 leading-none break-all">{fmtDollar(k.netSales)}</div>
             <div className="text-xs text-slate-600 mt-1">Net Sales (GL)</div>
           </div>
-          <div className="text-right">
+          <div className="text-left sm:text-right w-full sm:w-auto">
             <HeroVar label="vs Plan" pct={planVar} />
             <div className="mt-1">
               <HeroVar label="vs LY" pct={lyVar} small />
@@ -6640,7 +6646,7 @@ function Yoda2Main({ summary, storeLabel, dateLabel }) {
       <AnomalyCallout kpis={k} storeLabel={storeLabel} planVar={planVar} lyVar={lyVar} />
 
       {/* 8-week trend */}
-      <div className="bg-white rounded-xl border border-slate-200 p-5 mt-4">
+      <div className="bg-white rounded-xl border border-slate-200 p-4 lg:p-5 mt-4">
         <div className="flex items-center justify-between mb-3">
           <div className="font-semibold text-slate-900">📈 8-Week Net Sales Trend</div>
           <div className="text-xs text-slate-500">Daily net sales, last 8 weeks</div>
@@ -6674,7 +6680,7 @@ function Yoda2Drivers({ summary, storeLabel, dateLabel }) {
 
   return (
     <Fragment>
-      <div className="bg-white rounded-xl border border-slate-200 p-5">
+      <div className="bg-white rounded-xl border border-slate-200 p-4 lg:p-5">
         <div className="flex items-start justify-between mb-1 flex-wrap gap-2">
           <div>
             <div className="font-semibold text-slate-900" style={{ color: "#F58220", fontFamily: "Trebuchet MS, sans-serif" }}>Sales Drivers — {storeLabel}</div>
@@ -6722,7 +6728,7 @@ function Yoda2Drivers({ summary, storeLabel, dateLabel }) {
 /* ───────── Product Drill ───────── */
 function Yoda2Product({ products, loading, error, storeLabel, dateLabel }) {
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-5">
+    <div className="bg-white rounded-xl border border-slate-200 p-4 lg:p-5">
       <div className="mb-1 font-semibold" style={{ color: "#F58220", fontFamily: "Trebuchet MS, sans-serif" }}>Product Drill — {storeLabel}</div>
       <div className="text-xs text-slate-500 mb-4">{dateLabel} · Top 20 departments by net sales</div>
       {loading && <div className="text-slate-500 text-center py-8">Loading product data…</div>}
@@ -6738,7 +6744,7 @@ function Yoda2Product({ products, loading, error, storeLabel, dateLabel }) {
               var pctBar = ((p.netSales || 0) / maxVal) * 100;
               return (
                 <div key={i} className="flex items-center gap-3">
-                  <div className="w-48 flex-shrink-0 text-sm text-slate-700 truncate" title={p.department}>{p.department}</div>
+                  <div className="w-28 sm:w-40 lg:w-48 flex-shrink-0 text-xs sm:text-sm text-slate-700 truncate" title={p.department}>{p.department}</div>
                   <div className="flex-1 relative h-7 bg-slate-100 rounded overflow-hidden">
                     <div className="absolute top-0 left-0 h-full rounded" style={{ width: pctBar + "%", background: "#01683F" }}></div>
                     <div className="absolute inset-0 flex items-center justify-end pr-2 text-xs font-semibold text-slate-900">{fmtDollar(p.netSales)}</div>
@@ -6780,7 +6786,7 @@ function Yoda2Product({ products, loading, error, storeLabel, dateLabel }) {
 /* ───────── Customer Drill ───────── */
 function Yoda2Customer({ segments, loading, error, storeLabel, dateLabel }) {
   return (
-    <div className="bg-white rounded-xl border border-slate-200 p-5">
+    <div className="bg-white rounded-xl border border-slate-200 p-4 lg:p-5">
       <div className="mb-1 font-semibold" style={{ color: "#F58220", fontFamily: "Trebuchet MS, sans-serif" }}>Customer Drill — {storeLabel}</div>
       <div className="text-xs text-slate-500 mb-4">{dateLabel} · Sales and transactions by customer segment. ⚠ Segment-sliced figures are not verified in the skill.</div>
       {loading && <div className="text-slate-500 text-center py-8">Loading customer data…</div>}
@@ -6998,7 +7004,7 @@ function TrendChart({ data }) {
     return { v: v, y: y };
   });
   return (
-    <svg viewBox={"0 0 " + w + " " + h} className="w-full h-auto" preserveAspectRatio="none" style={{ maxHeight: 280 }}>
+    <svg viewBox={"0 0 " + w + " " + h} className="w-full h-auto" preserveAspectRatio="xMidYMid meet" style={{ maxHeight: 280 }}>
       {/* Gridlines + Y labels */}
       {yTicks.map(function(t, i){ return (
         <g key={i}>
