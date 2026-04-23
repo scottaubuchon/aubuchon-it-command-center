@@ -1,16 +1,16 @@
 {
-  "updatedAt": "2026-04-23T18:03:18.563Z",
-  "updatedAtET": "Apr 23, 2026, 2:03 PM",
+  "updatedAt": "2026-04-23T18:19:06.670Z",
+  "updatedAtET": "Apr 23, 2026, 2:19 PM",
   "dateET": "2026-04-23",
   "dow": 4,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-04-23T18:03:18.563Z",
-    "tsET": "Apr 23, 2026, 2:03 PM",
+    "ts": "2026-04-23T18:19:06.670Z",
+    "tsET": "Apr 23, 2026, 2:19 PM",
     "dateET": "2026-04-23",
     "hourET": 14,
-    "minuteET": 3,
+    "minuteET": 19,
     "dow": 4,
     "sales": 642171.39,
     "plan": 1073381.2100000002,
@@ -25,19 +25,19 @@
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.79 shape + 0.21 level)",
+    "method": "blended (w=0.82 shape + 0.18 level)",
     "confidence": "medium",
-    "projectedEOD": 1020856.2946072455,
-    "projectedPctToPlan": 95.10659261561372,
-    "projectedVariance": -52524.915392754716,
+    "projectedEOD": 983493.5751026856,
+    "projectedPctToPlan": 91.62574916908461,
+    "projectedVariance": -89887.6348973146,
     "band": {
-      "low": 887808.2714868999,
-      "high": 1153904.317727591
+      "low": 858672.9790355788,
+      "high": 1108314.1711697925
     },
-    "pctOfDayElapsed": 0.63628,
+    "pctOfDayElapsed": 0.6649733333333333,
     "level_EOD": 1063578.63123636,
-    "shape_EOD": 1009259.1154837494,
-    "blendWeight": 0.786500690169744,
+    "shape_EOD": 965709.988370461,
+    "blendWeight": 0.8182912707128078,
     "factors": {
       "plan": 1073381.2100000002,
       "recencyFactor": 0.9393,
@@ -49,23 +49,23 @@
       "weatherSummary": "concord-nh: 58F Sunny | worcester-ma: 60F Sunny | burlington-vt: 56F Sunny | portland-me: 51F Chance Rain Showers then Mostly Sunny | albany-ny: 69F Mostly Sunny | scranton-pa: 72F Sunny"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.63628,
+      "basePaceFromCurve": 0.6649733333333333,
       "observedPaceCount": 1,
-      "blendedPaceAtNow": 0.63628,
+      "blendedPaceAtNow": 0.6649733333333333,
       "historyDays": 1,
       "avgHistoricalEOD": 1053994.8399999996
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 29242.79252,
+      "estimatedCurrent": 30561.509426666664,
       "estimatedEOD": 45959,
-      "paceUsed": 0.63628,
+      "paceUsed": 0.6649733333333333,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 30687,
-          "estimatedCurrent": 19525.52436,
+          "estimatedCurrent": 20406.036679999997,
           "estimatedEOD": 30687,
           "stdev": 0.3949
         },
@@ -73,16 +73,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 15272,
-          "estimatedCurrent": 9717.26816,
+          "estimatedCurrent": 10155.472746666666,
           "estimatedEOD": 15272,
           "stdev": 0.1435
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1066815.2946072454,
-    "combinedCurrentSales": 671414.18252,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $29,243 so far, +$45,959 to EOD."
+    "combinedProjectedEOD": 1029452.5751026856,
+    "combinedCurrentSales": 672732.8994266667,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $30,562 so far, +$45,959 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 10,
@@ -127,7 +127,7 @@
         "temp": 51,
         "unit": "F",
         "short": "Chance Rain Showers then Mostly Sunny",
-        "detailed": "A chance of rain showers before 8am. Mostly sunny, with a high near 51. West wind 5 to 15 mph, with gusts as high as 25 mph. Chance of precipitation is 30%. New rainfall amounts less than a tenth of an inch possible."
+        "detailed": "A chance of rain showers before 8am. Mostly sunny, with a high near 51. Northwest wind 5 to 15 mph, with gusts as high as 25 mph. Chance of precipitation is 30%. New rainfall amounts less than a tenth of an inch possible."
       },
       {
         "station": "albany-ny",
