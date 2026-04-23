@@ -7247,4 +7247,13 @@ export default function App() {
     return <PaymentHistory goHome={() => setActiveSection(null)} goBack={() => setActiveSection(null)} />;
   }
 
-  if (activeSection === "yoda" &&
+  if (activeSection === "yoda" && canAccessSection("yoda")) {
+    return <YODAReports goHome={() => setActiveSection(null)} />;
+  }
+
+  // Future sections:
+  // if (activeSection === "wells-cc" && canAccessSection("wells-cc")) return <WellsCC goHome={() => setActiveSection(null)} goHistory={() => setActiveSection("payment-history")} />;
+
+  return <HomeScreen onNavigate={setActiveSection} canAccessSection={canAccessSection} isAdmin={isAdmin} />;
+}
+  
