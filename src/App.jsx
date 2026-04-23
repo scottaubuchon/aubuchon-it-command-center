@@ -6333,14 +6333,14 @@ function Yoda2View({ goBack }) {
     if (selectedStore) url += "&store=" + encodeURIComponent(selectedStore);
     if (selectedDate) url += "&date=" + encodeURIComponent(selectedDate);
     fetch(url, { cache: "no-store" })
-      .then(function (r) { if (!r.ok) throw new Error("API error " + r.status); return r.json(); })
+      .then(function (r) { return r.json().catch(function () { return { status: "error", error: "API HTTP " + r.status + " (non-JSON response)" }; }); })
       .then(function (d) {
         if (cancelled) return;
-        if (d.status !== "ok") throw new Error(d.error || "Unknown error");
+        if (d.status !== "ok") throw new Error(d.error || ("API HTTP error (no body)"));
         setSummary(d);
         setSummaryLoading(false);
       })
-      .catch(function (e) { if (!cancelled) { setSummaryError(e.message); setSummaryLoading(false); } });
+      .catch(function (e) { if (!cancelled) { setSummaryError(String(e.message || e)); setSummaryLoading(false); } });
     return function () { cancelled = true; };
   }, [selectedStore, selectedDate]);
 
@@ -6376,13 +6376,13 @@ function Yoda2View({ goBack }) {
     if (selectedStore) url += "&store=" + encodeURIComponent(selectedStore);
     if (selectedDate) url += "&date=" + encodeURIComponent(selectedDate);
     fetch(url, { cache: "no-store" })
-      .then(function (r) { return r.json(); })
+      .then(function (r) { return r.json().catch(function () { return { status: "error", error: "API HTTP " + r.status + " (non-JSON response)" }; }); })
       .then(function (d) {
         if (cancelled) return;
-        if (d.status !== "ok") throw new Error(d.error || "Unknown error");
+        if (d.status !== "ok") throw new Error(d.error || "API HTTP error (no body)");
         setProducts(d.products || []); setProductsLoading(false);
       })
-      .catch(function (e) { if (!cancelled) { setProductsError(e.message); setProductsLoading(false); } });
+      .catch(function (e) { if (!cancelled) { setProductsError(String(e.message || e)); setProductsLoading(false); } });
     return function () { cancelled = true; };
   }, [activePage, products, productsLoading, selectedStore, selectedDate]);
 
@@ -6394,13 +6394,13 @@ function Yoda2View({ goBack }) {
     if (selectedStore) url += "&store=" + encodeURIComponent(selectedStore);
     if (selectedDate) url += "&date=" + encodeURIComponent(selectedDate);
     fetch(url, { cache: "no-store" })
-      .then(function (r) { return r.json(); })
+      .then(function (r) { return r.json().catch(function () { return { status: "error", error: "API HTTP " + r.status + " (non-JSON response)" }; }); })
       .then(function (d) {
         if (cancelled) return;
-        if (d.status !== "ok") throw new Error(d.error || "Unknown error");
+        if (d.status !== "ok") throw new Error(d.error || "API HTTP error (no body)");
         setCustomers(d.segments || []); setCustomersLoading(false);
       })
-      .catch(function (e) { if (!cancelled) { setCustomersError(e.message); setCustomersLoading(false); } });
+      .catch(function (e) { if (!cancelled) { setCustomersError(String(e.message || e)); setCustomersLoading(false); } });
     return function () { cancelled = true; };
   }, [activePage, customers, customersLoading, selectedStore, selectedDate]);
 
