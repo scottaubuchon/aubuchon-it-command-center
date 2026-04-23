@@ -1563,14 +1563,17 @@ export default async function handler(req, res) {
       });
 
       // ---- Executive summary (company-wide) ----
-      const exec = buildExecutiveSummary(storesOut, peers, dt, ly);
+      // NB: don't name this local `exec` - it shadows the outer `function exec()`
+      // helper via block-scoping and introduces a TDZ that trips the earlier
+      // `exec(conn, ...)` calls in this same block.
+      const execSummary = buildExecutiveSummary(storesOut, peers, dt, ly);
 
       res.status(200).json({
         status: "ok",
         page: "insights",
         dt, ly,
         peers,
-        exec,
+        exec: execSummary,
         stores: storesOut,
         dataGaps,
         asOf: new Date().toISOString(),
