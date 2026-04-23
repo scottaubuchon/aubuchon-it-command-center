@@ -1,43 +1,43 @@
 {
-  "updatedAt": "2026-04-23T22:52:00.380Z",
-  "updatedAtET": "Apr 23, 2026, 6:52 PM",
+  "updatedAt": "2026-04-23T23:07:37.707Z",
+  "updatedAtET": "Apr 23, 2026, 7:07 PM",
   "dateET": "2026-04-23",
   "dow": 4,
   "season": "spring",
   "source": "snowflake",
   "current": {
-    "ts": "2026-04-23T22:52:00.380Z",
-    "tsET": "Apr 23, 2026, 6:52 PM",
+    "ts": "2026-04-23T23:07:37.707Z",
+    "tsET": "Apr 23, 2026, 7:07 PM",
     "dateET": "2026-04-23",
-    "hourET": 18,
-    "minuteET": 52,
+    "hourET": 19,
+    "minuteET": 7,
     "dow": 4,
-    "sales": 1071609.46,
+    "sales": 1076412.68,
     "plan": 1073381.21,
-    "pctToPlan": 99.8349374869344,
-    "gp": 451082.6891,
-    "gpPct": 42.0939442901148,
-    "txns": 31197,
-    "customers": 28995,
+    "pctToPlan": 100.28242249554565,
+    "gp": 453230.5684,
+    "gpPct": 42.105651189467594,
+    "txns": 31439,
+    "customers": 29177,
     "storeCount": 134,
     "asOf": null,
-    "asOfET": "Apr 23, 6:45 PM ET"
+    "asOfET": "Apr 23, 7:00 PM ET"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.98 shape + 0.02 level)",
     "confidence": "medium",
-    "projectedEOD": 1084013.3906280128,
-    "projectedPctToPlan": 100.99053165165924,
-    "projectedVariance": 10632.180628012866,
+    "projectedEOD": 1082841.3018597902,
+    "projectedPctToPlan": 100.8813357054937,
+    "projectedVariance": 9460.091859790264,
     "band": {
-      "low": 964959.0390186142,
-      "high": 1203067.7422374114
+      "low": 964013.540682651,
+      "high": 1201669.0630369294
     },
-    "pctOfDayElapsed": 0.9881266666666667,
+    "pctOfDayElapsed": 0.99367,
     "level_EOD": 1063578.6312363597,
-    "shape_EOD": 1084485.9228573933,
-    "blendWeight": 0.9773986875992541,
+    "shape_EOD": 1083269.7776927953,
+    "blendWeight": 0.9782401784501066,
     "factors": {
       "plan": 1073381.21,
       "recencyFactor": 0.9393,
@@ -49,23 +49,23 @@
       "weatherSummary": "concord-nh: 31F Mostly Clear | worcester-ma: 36F Mostly Clear | burlington-vt: 32F Mostly Clear | portland-me: 36F Mostly Clear | albany-ny: 39F Mostly Cloudy | scranton-pa: 45F Partly Cloudy"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.9881266666666667,
+      "basePaceFromCurve": 0.99367,
       "observedPaceCount": 1,
-      "blendedPaceAtNow": 0.9881266666666667,
+      "blendedPaceAtNow": 0.99367,
       "historyDays": 1,
       "avgHistoricalEOD": 1053994.8399999996
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 45413.313473333335,
+      "estimatedCurrent": 45668.07953,
       "estimatedEOD": 45959,
-      "paceUsed": 0.9881266666666667,
+      "paceUsed": 0.99367,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 30687,
-          "estimatedCurrent": 30322.64302,
+          "estimatedCurrent": 30492.75129,
           "estimatedEOD": 30687,
           "stdev": 0.3949
         },
@@ -73,16 +73,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 15272,
-          "estimatedCurrent": 15090.670453333334,
+          "estimatedCurrent": 15175.32824,
           "estimatedEOD": 15272,
           "stdev": 0.1435
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1129972.3906280128,
-    "combinedCurrentSales": 1117022.7734733333,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $45,413 so far, +$45,959 to EOD."
+    "combinedProjectedEOD": 1128800.3018597902,
+    "combinedCurrentSales": 1122080.75953,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $45,668 so far, +$45,959 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 10,
@@ -133,7 +133,7 @@
         "temp": 39,
         "unit": "F",
         "short": "Mostly Cloudy",
-        "detailed": "Mostly cloudy, with a low around 39. Northwest wind 3 to 14 mph, with gusts as high as 29 mph."
+        "detailed": "Mostly cloudy, with a low around 39. Northwest wind 3 to 12 mph, with gusts as high as 28 mph."
       },
       {
         "station": "scranton-pa",
@@ -141,7 +141,7 @@
         "temp": 45,
         "unit": "F",
         "short": "Partly Cloudy",
-        "detailed": "Partly cloudy, with a low around 45. Northeast wind 1 to 10 mph, with gusts as high as 21 mph."
+        "detailed": "Partly cloudy, with a low around 45. Northeast wind 1 to 8 mph."
       }
     ]
   }
