@@ -1,43 +1,43 @@
 {
-  "updatedAt": "2026-04-23T22:19:58.252Z",
-  "updatedAtET": "Apr 23, 2026, 6:19 PM",
+  "updatedAt": "2026-04-23T22:35:37.397Z",
+  "updatedAtET": "Apr 23, 2026, 6:35 PM",
   "dateET": "2026-04-23",
   "dow": 4,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-04-23T22:19:58.252Z",
-    "tsET": "Apr 23, 2026, 6:19 PM",
+    "ts": "2026-04-23T22:35:37.397Z",
+    "tsET": "Apr 23, 2026, 6:35 PM",
     "dateET": "2026-04-23",
     "hourET": 18,
-    "minuteET": 19,
+    "minuteET": 35,
     "dow": 4,
-    "sales": 1055609.7799999998,
+    "sales": 1060664.8299999998,
     "plan": 1073381.2100000002,
-    "pctToPlan": 98.34435055929474,
-    "gp": 443961.8739999996,
-    "gpPct": 42.05738544786878,
-    "txns": 30546,
-    "customers": 28478,
+    "pctToPlan": 98.81529694375773,
+    "gp": 446398.6338999999,
+    "gpPct": 42.086681982280865,
+    "txns": 30767,
+    "customers": 28661,
     "storeCount": 134,
-    "asOf": "2026-04-23T22:15:12.747000",
-    "asOfET": "Apr 23, 2026, 6:15 PM"
+    "asOf": "2026-04-23T22:30:08.013000",
+    "asOfET": "Apr 23, 2026, 6:30 PM"
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.97 shape + 0.03 level)",
+    "method": "blended (w=0.98 shape + 0.02 level)",
     "confidence": "medium",
-    "projectedEOD": 1089370.803716528,
-    "projectedPctToPlan": 101.48964725370288,
-    "projectedVariance": 15989.593716527801,
+    "projectedEOD": 1084035.0082878433,
+    "projectedPctToPlan": 100.99254562951062,
+    "projectedVariance": 10653.798287843121,
     "band": {
-      "low": 969346.6302047792,
-      "high": 1209394.977228277
+      "low": 964789.344404664,
+      "high": 1203280.6721710227
     },
-    "pctOfDayElapsed": 0.9683999999999999,
+    "pctOfDayElapsed": 0.9779833333333333,
     "level_EOD": 1063578.63123636,
-    "shape_EOD": 1090055.5349029326,
-    "blendWeight": 0.9741385475043671,
+    "shape_EOD": 1084542.8483784657,
+    "blendWeight": 0.9757758619279606,
     "factors": {
       "plan": 1073381.2100000002,
       "recencyFactor": 0.9393,
@@ -46,26 +46,26 @@
       "holidayMult": 1,
       "weatherKey": "normal",
       "weatherMult": 1,
-      "weatherSummary": "concord-nh: 62F Sunny | worcester-ma: 60F Sunny | burlington-vt: 57F Sunny | portland-me: 55F Mostly Sunny | albany-ny: 39F Mostly Cloudy | scranton-pa: 45F Partly Cloudy"
+      "weatherSummary": "concord-nh: 31F Mostly Clear | worcester-ma: 36F Mostly Clear | burlington-vt: 32F Mostly Clear | portland-me: 55F Mostly Sunny | albany-ny: 39F Mostly Cloudy | scranton-pa: 45F Partly Cloudy"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.9683999999999999,
+      "basePaceFromCurve": 0.9779833333333333,
       "observedPaceCount": 1,
-      "blendedPaceAtNow": 0.9683999999999999,
+      "blendedPaceAtNow": 0.9779833333333333,
       "historyDays": 1,
       "avgHistoricalEOD": 1053994.8399999996
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 44506.6956,
+      "estimatedCurrent": 44947.13601666666,
       "estimatedEOD": 45959,
-      "paceUsed": 0.9683999999999999,
+      "paceUsed": 0.9779833333333333,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 30687,
-          "estimatedCurrent": 29717.2908,
+          "estimatedCurrent": 30011.37455,
           "estimatedEOD": 30687,
           "stdev": 0.3949
         },
@@ -73,16 +73,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 15272,
-          "estimatedCurrent": 14789.404799999998,
+          "estimatedCurrent": 14935.761466666667,
           "estimatedEOD": 15272,
           "stdev": 0.1435
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1135329.803716528,
-    "combinedCurrentSales": 1100116.4755999998,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $44,507 so far, +$45,959 to EOD."
+    "combinedProjectedEOD": 1129994.0082878433,
+    "combinedCurrentSales": 1105611.9660166665,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $44,947 so far, +$45,959 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 10,
@@ -90,7 +90,7 @@
     "mult": 1,
     "key": "normal",
     "season": "spring",
-    "summary": "concord-nh: 62F Sunny | worcester-ma: 60F Sunny | burlington-vt: 57F Sunny | portland-me: 55F Mostly Sunny | albany-ny: 39F Mostly Cloudy | scranton-pa: 45F Partly Cloudy",
+    "summary": "concord-nh: 31F Mostly Clear | worcester-ma: 36F Mostly Clear | burlington-vt: 32F Mostly Clear | portland-me: 55F Mostly Sunny | albany-ny: 39F Mostly Cloudy | scranton-pa: 45F Partly Cloudy",
     "tagWeights": {
       "normal": 1
     },
@@ -98,26 +98,26 @@
       {
         "station": "concord-nh",
         "weight": 0.144,
-        "temp": 62,
+        "temp": 31,
         "unit": "F",
-        "short": "Sunny",
-        "detailed": "Sunny, with a high near 62. Northwest wind around 15 mph, with gusts as high as 30 mph."
+        "short": "Mostly Clear",
+        "detailed": "Mostly clear, with a low around 31. Northwest wind 0 to 10 mph, with gusts as high as 25 mph."
       },
       {
         "station": "worcester-ma",
         "weight": 0.272,
-        "temp": 60,
+        "temp": 36,
         "unit": "F",
-        "short": "Sunny",
-        "detailed": "Sunny, with a high near 60. Northwest wind 10 to 14 mph, with gusts as high as 30 mph."
+        "short": "Mostly Clear",
+        "detailed": "Mostly clear, with a low around 36. North wind 3 to 9 mph, with gusts as high as 23 mph."
       },
       {
         "station": "burlington-vt",
         "weight": 0.224,
-        "temp": 57,
+        "temp": 32,
         "unit": "F",
-        "short": "Sunny",
-        "detailed": "Sunny, with a high near 57. North wind around 16 mph, with gusts as high as 28 mph."
+        "short": "Mostly Clear",
+        "detailed": "Mostly clear, with a low around 32. North wind 6 to 14 mph, with gusts as high as 25 mph."
       },
       {
         "station": "portland-me",
