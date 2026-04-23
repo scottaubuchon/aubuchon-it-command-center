@@ -125,6 +125,21 @@ function n(x) {
   return Number.isFinite(v) ? v : 0;
 }
 
+// Snowflake Node SDK returns DATE columns as JS Date objects. String(date) gives
+// "Sun Mar 29 2026 ..." which .slice(0,10) clips to "Sun Mar 29" — not ISO. Force
+// ISO-8601 YYYY-MM-DD regardless of whether we got a Date, ISO string, or other.
+function toIsoDate(v) {
+  if (!v) return "";
+  if (v instanceof Date) return v.toISOString().slice(0, 10);
+  const s = String(v);
+  // Already ISO?
+  if (/^\d{4}-\d{2}-\d{2}/.test(s)) return s.slice(0, 10);
+  // Try parsing it
+  const d = new Date(s);
+  if (!isNaN(d.getTime())) return d.toISOString().slice(0, 10);
+  return s.slice(0, 10);
+}
+
 // Row lookup — Snowflake Node SDK returns uppercase keys, but defend both ways.
 function k(row, name) {
   if (!row) return null;
@@ -458,7 +473,7 @@ export default async function handler(req, res) {
       };
 
       const weeklyTrend = (trendRows || []).map((row) => ({
-        date:     String(k(row, "TXN_DT") || "").slice(0, 10),
+        date:     toIsoDate(k(row, "TXN_DT")),
         netSales: n(k(row, "NET_SALES")),
       }));
 
@@ -577,7 +592,7 @@ export default async function handler(req, res) {
         if (!sku) continue;
         if (!sparkBySku.has(sku)) sparkBySku.set(sku, []);
         sparkBySku.get(sku).push({
-          date: String(k(r, "DT") || "").slice(0, 10),
+          date: toIsoDate(k(r, "DT")),
           netSales: n(k(r, "NET_SALES")),
         });
       }
