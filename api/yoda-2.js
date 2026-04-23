@@ -295,6 +295,91 @@ ORDER BY net_sales_ty DESC NULLS LAST
 `;
 }
 
+
+function sqlSkuList(storeFilter, dt, deptFilter, skuList) {
+  // Per-SKU net sales, gross profit, units sold for the selected day.
+  // deptFilter and skuList are mutually usable (paste-list overrides dept scoping).
+  // Semantic view refs verified 2026-04-23: product.product_cd, product.product_desc,
+  // product.department_nm, transaction_line.total_net_sales_gl / total_gross_profit / total_sale_qty.
+  const parts = [`transaction_date.transaction_dt = '${dt}'`];
+  if (storeFilter) parts.push(`transaction_line.store_cd = '${storeFilter}'`);
+  if (skuList && skuList.length) {
+    const quoted = skuList.map(s => `'${s}'`).join(",");
+    parts.push(`product.product_cd IN (${quoted})`);
+  } else if (deptFilter) {
+    // Escape single quotes in dept name (e.g., "Men's Apparel" — unlikely here but safe)
+    const safe = String(deptFilter).replace(/'/g, "''");
+    parts.push(`product.department_nm = '${safe}'`);
+  }
+  const whereClause = parts.join(" AND ");
+  return `
+SELECT * FROM SEMANTIC_VIEW(
+  PRD_EDW_DB.SI_AGENTS.AUBUCHON_RETAIL_ANALYTICS
+  METRICS
+    transaction_line.total_net_sales_gl AS net_sales,
+    transaction_line.total_gross_profit AS gross_profit,
+    transaction_line.total_sale_qty AS units_sold
+  DIMENSIONS
+    product.product_cd AS sku,
+    product.product_desc AS description,
+    product.department_nm AS department,
+    product.class_nm AS class_nm
+  WHERE ${whereClause}
+)
+ORDER BY net_sales DESC NULLS LAST
+`;
+}
+
+function sqlSkuOnHand(storeFilter, skuList) {
+  // Point-in-time on-hand qty per SKU. inventory_current is a snapshot — no date needed.
+  // When storeFilter is blank, total_on_hand is summed across all active stores.
+  if (!skuList || !skuList.length) return null;
+  const quoted = skuList.map(s => `'${s}'`).join(",");
+  const parts = [`product.product_cd IN (${quoted})`];
+  if (storeFilter) parts.push(`inventory_current.store_cd = '${storeFilter}'`);
+  return `
+SELECT * FROM SEMANTIC_VIEW(
+  PRD_EDW_DB.SI_AGENTS.AUBUCHON_RETAIL_ANALYTICS
+  METRICS inventory_current.total_on_hand AS on_hand
+  DIMENSIONS product.product_cd AS sku
+  WHERE ${parts.join(" AND ")}
+)
+`;
+}
+
+function sqlSkuSparkline(storeFilter, dt, skuList, windowKey) {
+  // Sparkline data per SKU. Grain scales with window:
+  //   "4w"  -> daily, 28 points per SKU
+  //   "8w"  -> weekly, ~8 points per SKU  (via transaction_date.week_start_dt)
+  //   "12w" -> weekly, ~12 points per SKU
+  if (!skuList || !skuList.length) return { sql: null, grain: "daily" };
+  const quoted = skuList.map(s => `'${s}'`).join(",");
+  const parts = [
+    `product.product_cd IN (${quoted})`,
+  ];
+  if (storeFilter) parts.push(`transaction_line.store_cd = '${storeFilter}'`);
+
+  let days, grainDim, grain;
+  if (windowKey === "12w") { days = 84; grainDim = "transaction_date.week_start_dt"; grain = "weekly"; }
+  else if (windowKey === "8w") { days = 56; grainDim = "transaction_date.week_start_dt"; grain = "weekly"; }
+  else { days = 28; grainDim = "transaction_date.transaction_dt"; grain = "daily"; }
+
+  const start = shiftDays(dt, -(days - 1));
+  parts.push(`transaction_date.transaction_dt BETWEEN '${start}' AND '${dt}'`);
+  const sql = `
+SELECT * FROM SEMANTIC_VIEW(
+  PRD_EDW_DB.SI_AGENTS.AUBUCHON_RETAIL_ANALYTICS
+  METRICS transaction_line.total_net_sales_gl AS net_sales
+  DIMENSIONS
+    product.product_cd AS sku,
+    ${grainDim} AS dt
+  WHERE ${parts.join(" AND ")}
+)
+ORDER BY sku, dt
+`;
+  return { sql, grain };
+}
+
 // ---------- Handler ----------
 export default async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -432,6 +517,101 @@ export default async function handler(req, res) {
       return;
     }
 
+    // --- sku-drill: Two-tier Product Drill — SKU-level within a department ---
+    if (page === "sku-drill") {
+      // Query-string parsing. The paste-SKU-list overrides the department filter.
+      const deptRaw = (req.query && req.query.department) || "";
+      const department = String(deptRaw).trim().slice(0, 100);
+      const skusRaw = (req.query && req.query.skus) || "";
+      const skuList = String(skusRaw)
+        .split(/[,\s]+/)
+        .map(s => s.trim().toUpperCase().replace(/[^A-Z0-9-]/g, ""))
+        .filter(Boolean)
+        .slice(0, 500);  // cap to avoid unbounded IN lists
+      const windowKey = ((req.query && req.query.window) || "8w").toString();
+      const validWindow = ["4w", "8w", "12w"].includes(windowKey) ? windowKey : "8w";
+
+      // Guard: require at least one scope (department OR skuList) — otherwise this would
+      // return every SKU sold company-wide on the day, which is too large.
+      if (!department && !skuList.length) {
+        res.status(400).json({ status: "error", error: "sku-drill requires either 'department' or 'skus' query param" });
+        return;
+      }
+
+      // Step 1: pull the SKU list for the day with net sales / gross profit / units.
+      const listRows = await exec(conn, sqlSkuList(store, dt, department, skuList), "skuList");
+      if (!listRows || listRows.length === 0) {
+        res.status(200).json({
+          status: "ok",
+          skus: [],
+          window: validWindow,
+          grain: validWindow === "4w" ? "daily" : "weekly",
+          department: department || null,
+          asOf: new Date().toISOString(),
+        });
+        return;
+      }
+      const skuCodes = listRows.map(r => k(r, "SKU")).filter(Boolean);
+
+      // Step 2 & 3: on-hand snapshot + sparkline — in parallel (same SKU set).
+      const { sql: sparkSql, grain } = sqlSkuSparkline(store, dt, skuCodes, validWindow);
+      const [onHandRows, sparkRows] = await Promise.all([
+        exec(conn, sqlSkuOnHand(store, skuCodes), "skuOnHand").catch(e => {
+          // On-hand is nice-to-have — don't kill the whole response if it fails.
+          return [{ _error: e.message }];
+        }),
+        sparkSql
+          ? exec(conn, sparkSql, "skuSparkline").catch(e => [{ _error: e.message }])
+          : Promise.resolve([]),
+      ]);
+
+      const onHandBySku = new Map();
+      for (const r of (onHandRows || [])) {
+        const sku = k(r, "SKU");
+        if (sku) onHandBySku.set(sku, n(k(r, "ON_HAND")));
+      }
+
+      const sparkBySku = new Map();
+      for (const r of (sparkRows || [])) {
+        const sku = k(r, "SKU");
+        if (!sku) continue;
+        if (!sparkBySku.has(sku)) sparkBySku.set(sku, []);
+        sparkBySku.get(sku).push({
+          date: String(k(r, "DT") || "").slice(0, 10),
+          netSales: n(k(r, "NET_SALES")),
+        });
+      }
+
+      const skus = listRows.map(row => {
+        const skuCd = k(row, "SKU") || "";
+        const netSales = n(k(row, "NET_SALES"));
+        const grossProfit = n(k(row, "GROSS_PROFIT"));
+        const grossMarginPct = netSales ? grossProfit / netSales : 0;
+        return {
+          sku: skuCd,
+          description: k(row, "DESCRIPTION") || "",
+          department: k(row, "DEPARTMENT") || "",
+          className:  k(row, "CLASS_NM") || "",
+          netSales,
+          grossProfit,
+          grossMarginPct,
+          unitsSold: n(k(row, "UNITS_SOLD")),
+          onHand: onHandBySku.has(skuCd) ? onHandBySku.get(skuCd) : null,
+          sparkline: sparkBySku.get(skuCd) || [],
+        };
+      });
+
+      res.status(200).json({
+        status: "ok",
+        skus,
+        window: validWindow,
+        grain,
+        department: department || null,
+        asOf: new Date().toISOString(),
+      });
+      return;
+    }
+
     res.status(400).json({ status: "error", error: "Unknown page: " + page });
   } catch (err) {
     res.status(500).json({
@@ -445,3 +625,4 @@ export default async function handler(req, res) {
     if (conn) await destroy(conn);
   }
 }
+
