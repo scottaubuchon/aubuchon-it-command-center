@@ -1,43 +1,43 @@
 {
-  "updatedAt": "2026-04-23T23:23:56.650Z",
-  "updatedAtET": "Apr 23, 2026, 7:23 PM",
+  "updatedAt": "2026-04-23T23:39:35.503Z",
+  "updatedAtET": "Apr 23, 2026, 7:39 PM",
   "dateET": "2026-04-23",
   "dow": 4,
   "season": "spring",
   "source": "snowflake",
   "current": {
-    "ts": "2026-04-23T23:23:56.650Z",
-    "tsET": "Apr 23, 2026, 7:23 PM",
+    "ts": "2026-04-23T23:39:35.503Z",
+    "tsET": "Apr 23, 2026, 7:39 PM",
     "dateET": "2026-04-23",
     "hourET": 19,
-    "minuteET": 23,
+    "minuteET": 39,
     "dow": 4,
-    "sales": 1081139.02,
+    "sales": 1081678.44,
     "plan": 1073381.21,
-    "pctToPlan": 100.72274509072132,
-    "gp": 455403.483,
-    "gpPct": 42.12256468182972,
-    "txns": 31724,
-    "customers": 29347,
+    "pctToPlan": 100.77299937083862,
+    "gp": 455694.6499,
+    "gpPct": 42.12847673103293,
+    "txns": 31754,
+    "customers": 29363,
     "storeCount": 134,
     "asOf": null,
-    "asOfET": "Apr 23, 7:15 PM ET"
+    "asOfET": "Apr 23, 7:30 PM ET"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.98 shape + 0.02 level)",
     "confidence": "medium",
-    "projectedEOD": 1085618.265074931,
-    "projectedPctToPlan": 101.14004744641758,
-    "projectedVariance": 12237.055074931122,
+    "projectedEOD": 1084595.870185895,
+    "projectedPctToPlan": 101.04479751288874,
+    "projectedVariance": 11214.660185894929,
     "band": {
-      "low": 966516.1656536798,
-      "high": 1204720.3644961822
+      "low": 965630.8586672988,
+      "high": 1203560.8817044909
     },
-    "pctOfDayElapsed": 0.99543,
+    "pctOfDayElapsed": 0.99689,
     "level_EOD": 1063578.6312363597,
-    "shape_EOD": 1086102.5084636789,
-    "blendWeight": 0.9785008866874626,
+    "shape_EOD": 1085052.954689083,
+    "blendWeight": 0.9787148356876406,
     "factors": {
       "plan": 1073381.21,
       "recencyFactor": 0.9393,
@@ -49,23 +49,23 @@
       "weatherSummary": "concord-nh: 31F Mostly Clear | worcester-ma: 36F Mostly Clear | burlington-vt: 32F Mostly Clear | portland-me: 36F Mostly Clear | albany-ny: 39F Mostly Cloudy | scranton-pa: 45F Partly Cloudy"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.99543,
+      "basePaceFromCurve": 0.99689,
       "observedPaceCount": 1,
-      "blendedPaceAtNow": 0.99543,
+      "blendedPaceAtNow": 0.99689,
       "historyDays": 1,
       "avgHistoricalEOD": 1053994.8399999996
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 45748.96737,
+      "estimatedCurrent": 45816.06751,
       "estimatedEOD": 45959,
-      "paceUsed": 0.99543,
+      "paceUsed": 0.99689,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 30687,
-          "estimatedCurrent": 30546.760410000003,
+          "estimatedCurrent": 30591.563430000002,
           "estimatedEOD": 30687,
           "stdev": 0.3949
         },
@@ -73,16 +73,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 15272,
-          "estimatedCurrent": 15202.206960000001,
+          "estimatedCurrent": 15224.50408,
           "estimatedEOD": 15272,
           "stdev": 0.1435
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1131577.265074931,
-    "combinedCurrentSales": 1126887.98737,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $45,749 so far, +$45,959 to EOD."
+    "combinedProjectedEOD": 1130554.870185895,
+    "combinedCurrentSales": 1127494.50751,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $45,816 so far, +$45,959 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 10,
