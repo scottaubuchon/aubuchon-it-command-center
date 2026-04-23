@@ -22,7 +22,7 @@ process.env.HOME = "/tmp";
 process.env.SF_OCSP_RESPONSE_CACHE_DIR = "/tmp";
 process.env.SNOWFLAKE_LOG_LEVEL = "ERROR";
 
-export const config = { maxDuration: 30 };
+export const config = { maxDuration: 60 };
 
 // ---------- Snowflake connection (lifted from live-sales-snowflake.js) ----------
 let sdk = null;
@@ -222,13 +222,18 @@ function sqlStoreList() {
 
 function sqlProducts(storeFilter, dt) {
   const storeClause = storeFilter ? `AND transaction_line.store_cd = '${storeFilter}'` : "";
+  // Fixed 2026-04-23: the Streamlit prototype used 'total_gross_merchandise_profit'
+  // (a synonym, NL-only) and 'product.product_department_nm' (a column expression,
+  // not the semantic dimension name). Canonical references from semantic model:
+  //   TRANSACTION_LINE.TOTAL_GROSS_PROFIT  (qualify — also exists on PAYROLL_BUDGET_AND_ACTUALS)
+  //   PRODUCT.DEPARTMENT_NM                (not PRODUCT_DEPARTMENT_NM)
   return `
 SELECT * FROM SEMANTIC_VIEW(
   PRD_EDW_DB.SI_AGENTS.AUBUCHON_RETAIL_ANALYTICS
   METRICS
-    total_net_sales_gl AS net_sales,
-    total_gross_merchandise_profit AS gross_profit
-  DIMENSIONS product.product_department_nm AS department
+    transaction_line.total_net_sales_gl AS net_sales,
+    transaction_line.total_gross_profit AS gross_profit
+  DIMENSIONS product.department_nm AS department
   WHERE transaction_date.transaction_dt = '${dt}' ${storeClause}
 )
 ORDER BY net_sales DESC NULLS LAST
@@ -382,18 +387,4 @@ export default async function handler(req, res) {
           salesVar:     lySales ? (tySales - lySales) / lySales : null,
           txnCountTy:   tyTxn,
           txnCountLy:   lyTxn,
-          txnVar:       lyTxn ? (tyTxn - lyTxn) / lyTxn : null,
-        };
-      });
-      res.status(200).json({ status: "ok", page: "customers", dt, ly, store, segments });
-      return;
-    }
-
-    res.status(400).json({ status: "error", error: `Unknown page '${page}'` });
-  } catch (err) {
-    console.error("[yoda-2] error:", err && err.message);
-    res.status(500).json({ status: "error", error: (err && err.message) || String(err) });
-  } finally {
-    if (conn) await destroy(conn);
-  }
-}
+          txnVar:       lyTxn ? (tyTxn - lyTxn) / lyTxn : null
