@@ -22,7 +22,7 @@ process.env.HOME = "/tmp";
 process.env.SF_OCSP_RESPONSE_CACHE_DIR = "/tmp";
 process.env.SNOWFLAKE_LOG_LEVEL = "ERROR";
 
-export const config = { maxDuration: 60 };
+export const config = { maxDuration: 30 };
 
 // ---------- Snowflake connection (lifted from live-sales-snowflake.js) ----------
 let sdk = null;
