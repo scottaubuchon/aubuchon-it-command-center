@@ -6384,7 +6384,11 @@ function Yoda2View({ goBack }) {
       })
       .catch(function (e) { if (!cancelled) { setProductsError(String(e.message || e)); setProductsLoading(false); } });
     return function () { cancelled = true; };
-  }, [activePage, products, productsLoading, selectedStore, selectedDate]);
+    // NOTE: productsLoading intentionally excluded from deps. If it were in deps,
+    // setProductsLoading(true) above would flip the deps mid-effect, causing React
+    // to run this effect's cleanup (cancelled=true) before the fetch resolves —
+    // silently swallowing the response and leaving products=null forever.
+  }, [activePage, products, selectedStore, selectedDate]);
 
   useEffect(function () {
     if (activePage !== "customer" || customers !== null || customersLoading) return;
@@ -6402,7 +6406,9 @@ function Yoda2View({ goBack }) {
       })
       .catch(function (e) { if (!cancelled) { setCustomersError(String(e.message || e)); setCustomersLoading(false); } });
     return function () { cancelled = true; };
-  }, [activePage, customers, customersLoading, selectedStore, selectedDate]);
+    // See Yoda2 products effect above — customersLoading excluded from deps for
+    // the same cleanup-cancels-fetch reason.
+  }, [activePage, customers, selectedStore, selectedDate]);
 
   var stores = (summary && summary.stores) || [];
   var storeLabel = (function () {
@@ -7241,13 +7247,4 @@ export default function App() {
     return <PaymentHistory goHome={() => setActiveSection(null)} goBack={() => setActiveSection(null)} />;
   }
 
-  if (activeSection === "yoda" && canAccessSection("yoda")) {
-    return <YODAReports goHome={() => setActiveSection(null)} />;
-  }
-
-  // Future sections:
-  // if (activeSection === "wells-cc" && canAccessSection("wells-cc")) return <WellsCC goHome={() => setActiveSection(null)} goHistory={() => setActiveSection("payment-history")} />;
-
-  return <HomeScreen onNavigate={setActiveSection} canAccessSection={canAccessSection} isAdmin={isAdmin} />;
-}
-  
+  if (activeSection === "yoda" &&
