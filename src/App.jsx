@@ -6567,6 +6567,7 @@ function Yoda2View({ goBack }) {
               <Y2NavBtn active={activePage === "drivers"} onClick={function(){setActivePage("drivers");}} emoji="🔍" label="Sales Drivers" />
               <Y2NavBtn active={activePage === "product"} onClick={function(){setActivePage("product");}} emoji="📦" label="Product Drill" />
               <Y2NavBtn active={activePage === "customer"}onClick={function(){setActivePage("customer");}}emoji="👥" label="Customer Drill" />
+              <Y2NavBtn active={activePage === "insights"} onClick={function(){setActivePage("insights");}} emoji="💡" label="AI Insights" />
               <Y2NavBtn active={activePage === "online"}  onClick={function(){setActivePage("online");}}  emoji="🌐" label="Online Sales" />
             </nav>
 
@@ -6591,6 +6592,7 @@ function Yoda2View({ goBack }) {
                 {activePage === "drivers"  && <Yoda2Drivers  summary={summary} storeLabel={storeLabel} dateLabel={dateLabel} />}
                 {activePage === "product"  && <Yoda2Product  products={products} loading={productsLoading} error={productsError} storeLabel={storeLabel} dateLabel={dateLabel} skuDrill={skuDrill} skuLoading={skuLoading} skuError={skuError} skuDept={skuDept} setSkuDept={setSkuDept} skuPaste={skuPaste} setSkuPaste={setSkuPaste} skuWindow={skuWindow} setSkuWindow={setSkuWindow} />}
                 {activePage === "customer" && <Yoda2Customer segments={customers} loading={customersLoading} error={customersError} storeLabel={storeLabel} dateLabel={dateLabel} />}
+                {activePage === "insights" && <Yoda2Insights selectedStore={selectedStore} setSelectedStore={setSelectedStore} dateLabel={dateLabel} selectedDate={selectedDate} />}
                 {activePage === "online"   && <Yoda2Online />}
               </>
             )}
@@ -6618,6 +6620,253 @@ function Y2NavBtn({ active, onClick, emoji, label }) {
     </button>
   );
 }
+
+/* ============================================================
+   YODA 2.0 - AI Insights
+   Per-store Top 5 actionable recommendations from
+   /api/yoda-2?page=insights. Backend runs a rule-based retail-
+   analyst over the AUBUCHON_RETAIL_ANALYTICS semantic view.
+   ============================================================ */
+
+function Yoda2Insights({ selectedStore, setSelectedStore, dateLabel, selectedDate }) {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [categoryFilter, setCategoryFilter] = useState("All");
+
+  useEffect(function () {
+    var cancelled = false;
+    setLoading(true); setError(null);
+    var url = "/api/yoda-2?page=insights&t=" + Date.now();
+    if (selectedDate) url += "&date=" + encodeURIComponent(selectedDate);
+    fetch(url, { cache: "no-store" })
+      .then(function (r) { return r.json().catch(function () { return { status: "error", error: "API HTTP " + r.status + " (non-JSON response)" }; }); })
+      .then(function (d) {
+        if (cancelled) return;
+        if (d.status !== "ok") throw new Error(d.error || "API HTTP error (no body)");
+        setData(d); setLoading(false);
+      })
+      .catch(function (e) { if (!cancelled) { setError(String(e.message || e)); setLoading(false); } });
+    return function () { cancelled = true; };
+  }, [selectedDate]);
+
+  if (loading && !data) {
+    return <div className="bg-white rounded-xl p-12 text-center text-slate-500 border border-slate-200">Analyzing all stores...</div>;
+  }
+  if (error) {
+    return (
+      <div className="bg-red-50 border border-red-200 text-red-800 rounded-lg p-4 text-sm">
+        <div className="font-semibold mb-1">Couldn't generate insights</div>
+        <div>{error}</div>
+      </div>
+    );
+  }
+
+  var stores = (data && data.stores) || [];
+  if (selectedStore) stores = stores.filter(function (s) { return s.code === selectedStore; });
+
+  // Count actions by category across the filtered set
+  var totalActions = 0;
+  var cats = { Sales: 0, Ops: 0, Payroll: 0 };
+  stores.forEach(function (s) {
+    (s.insights || []).forEach(function (a) {
+      totalActions += 1;
+      if (cats[a.category] != null) cats[a.category] += 1;
+    });
+  });
+
+  var visibleStores = stores.map(function (s) {
+    var insights = (s.insights || []);
+    if (categoryFilter !== "All") insights = insights.filter(function (a) { return a.category === categoryFilter; });
+    return Object.assign({}, s, { insights: insights });
+  }).filter(function (s) { return (s.insights || []).length > 0; });
+
+  var peers = (data && data.peers) || {};
+
+  return (
+    <div>
+      {/* Intro / context strip */}
+      <div className="bg-white border border-slate-200 rounded-xl p-4 mb-4">
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <div className="flex items-center gap-2 mb-1">
+              <span className="inline-flex items-center justify-center w-6 h-6 rounded-full text-sm" style={{ background: "#FFF4E6", color: "#F58220" }}>AI</span>
+              <h2 className="text-lg font-bold text-slate-900">Top 5 actions per store</h2>
+              <span className="text-xs text-slate-500">- {dateLabel}</span>
+            </div>
+            <div className="text-xs text-slate-600 max-w-3xl">
+              Ranked by estimated dollar impact. Each store is benchmarked against the company peer median
+              (ATV, UPT, member share, pro share). Rules span sales lifts, ops execution, and payroll/coverage.
+            </div>
+          </div>
+          <div className="flex items-center gap-4 text-xs">
+            <div><span className="font-semibold text-slate-900">{stores.length}</span> <span className="text-slate-500">stores</span></div>
+            <div><span className="font-semibold text-slate-900">{totalActions}</span> <span className="text-slate-500">actions</span></div>
+          </div>
+        </div>
+
+        {/* Peer benchmarks strip */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3">
+          <Y2IMiniStat label="Peer ATV" value={peers.atvMedian ? "$" + peers.atvMedian.toFixed(2) : "-"} />
+          <Y2IMiniStat label="Peer UPT" value={peers.uptMedian ? peers.uptMedian.toFixed(2) : "-"} />
+          <Y2IMiniStat label="Peer Member %" value={peers.memberPctMedian ? (peers.memberPctMedian * 100).toFixed(1) + "%" : "-"} />
+          <Y2IMiniStat label="Peer Pro %" value={peers.proPctMedian ? (peers.proPctMedian * 100).toFixed(1) + "%" : "-"} />
+        </div>
+
+        {/* Filters */}
+        <div className="flex items-center gap-2 mt-4 flex-wrap text-xs">
+          <span className="text-slate-500 font-semibold uppercase tracking-wide">Filter</span>
+          <Y2ICatChip label={"All (" + totalActions + ")"} active={categoryFilter === "All"} onClick={function(){setCategoryFilter("All");}} />
+          <Y2ICatChip label={"Sales (" + cats.Sales + ")"} active={categoryFilter === "Sales"} onClick={function(){setCategoryFilter("Sales");}} />
+          <Y2ICatChip label={"Ops (" + cats.Ops + ")"} active={categoryFilter === "Ops"} onClick={function(){setCategoryFilter("Ops");}} />
+          <Y2ICatChip label={"Payroll (" + cats.Payroll + ")"} active={categoryFilter === "Payroll"} onClick={function(){setCategoryFilter("Payroll");}} />
+          {selectedStore && (
+            <button
+              onClick={function () { setSelectedStore(""); }}
+              className="ml-auto text-slate-500 hover:text-slate-900 underline"
+            >
+              Show all stores
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Per-store cards */}
+      {visibleStores.length === 0 ? (
+        <div className="bg-white rounded-xl p-12 text-center text-slate-500 border border-slate-200">
+          No matching recommendations for the current filter.
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {visibleStores.map(function (s) { return <Y2IStoreCard key={s.code} store={s} />; })}
+        </div>
+      )}
+
+      <div className="text-center text-[11px] text-slate-400 mt-4">
+        Rule-based analyst layered over AUBUCHON_RETAIL_ANALYTICS semantic view. Priorities/impact are estimates, not promises.
+      </div>
+    </div>
+  );
+}
+
+function Y2IMiniStat({ label, value }) {
+  return (
+    <div className="bg-slate-50 rounded-lg px-3 py-2">
+      <div className="text-[10px] uppercase tracking-wide text-slate-500">{label}</div>
+      <div className="text-sm font-semibold text-slate-900">{value}</div>
+    </div>
+  );
+}
+
+function Y2ICatChip({ label, active, onClick }) {
+  return (
+    <button
+      onClick={onClick}
+      className={"px-2.5 py-1 rounded-full border text-xs font-medium transition-colors " +
+        (active
+          ? "bg-emerald-600 text-white border-emerald-600"
+          : "bg-white text-slate-700 border-slate-200 hover:border-emerald-300 hover:bg-emerald-50")}
+    >
+      {label}
+    </button>
+  );
+}
+
+function Y2IStoreCard({ store }) {
+  var loc = [store.city, store.state].filter(Boolean).join(", ");
+  var netSales    = Number(store.netSales) || 0;
+  var lyNetSales  = Number(store.lyNetSales) || 0;
+  var yoyVar      = lyNetSales ? (netSales - lyNetSales) / lyNetSales : null;
+  var dailyPlan   = Number(store.dailyPlan) || 0;
+  var planAttn    = dailyPlan ? netSales / dailyPlan : null;
+
+  return (
+    <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      {/* Header */}
+      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-100 bg-slate-50">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold tracking-wide px-2 py-0.5 rounded" style={{ background: "#01683F", color: "white" }}>
+              {store.code}
+            </span>
+            <div className="font-semibold text-slate-900 truncate">{store.name || "(unnamed)"}</div>
+            {loc && <div className="text-xs text-slate-500 hidden sm:block">- {loc}</div>}
+          </div>
+        </div>
+        <div className="flex items-center gap-4 text-xs flex-shrink-0">
+          <Y2IKpi label="Sales" value={"$" + Math.round(netSales).toLocaleString()} />
+          {yoyVar != null && <Y2IKpi label="YoY" value={(yoyVar >= 0 ? "+" : "") + (yoyVar * 100).toFixed(1) + "%"} tone={yoyVar >= 0 ? "pos" : "neg"} />}
+          {planAttn != null && <Y2IKpi label="Plan" value={(planAttn * 100).toFixed(0) + "%"} tone={planAttn >= 1 ? "pos" : (planAttn < 0.9 ? "neg" : "neutral")} />}
+          <Y2IKpi label="Txns" value={Math.round(Number(store.txnCount) || 0).toLocaleString()} />
+          <Y2IKpi label="ATV" value={"$" + (Number(store.avgTicket) || 0).toFixed(2)} />
+          <Y2IKpi label="UPT" value={(Number(store.upt) || 0).toFixed(2)} />
+        </div>
+      </div>
+
+      {/* Top 5 actions */}
+      {(!store.insights || store.insights.length === 0) ? (
+        <div className="px-4 py-4 text-xs text-slate-500">
+          No actionable gaps vs peers for this store today. Keep the crew focused on execution basics.
+        </div>
+      ) : (
+        <ol className="divide-y divide-slate-100">
+          {store.insights.map(function (a, i) { return <Y2IActionRow key={i} rank={i + 1} action={a} />; })}
+        </ol>
+      )}
+    </div>
+  );
+}
+
+function Y2IKpi({ label, value, tone }) {
+  var cls = "text-slate-900";
+  if (tone === "pos") cls = "text-emerald-600";
+  else if (tone === "neg") cls = "text-rose-600";
+  return (
+    <div className="text-right">
+      <div className="text-[10px] uppercase tracking-wide text-slate-500 leading-tight">{label}</div>
+      <div className={"text-sm font-semibold leading-tight " + cls}>{value}</div>
+    </div>
+  );
+}
+
+function Y2IActionRow({ rank, action }) {
+  var priorityStyles = {
+    Urgent: { bg: "#FEE2E2", color: "#991B1B" },
+    High:   { bg: "#FEF3C7", color: "#92400E" },
+    Medium: { bg: "#E0F2FE", color: "#075985" },
+    Low:    { bg: "#F1F5F9", color: "#475569" },
+  };
+  var catStyles = {
+    Sales:   { bg: "#ECFDF5", color: "#065F46" },
+    Ops:     { bg: "#EFF6FF", color: "#1E40AF" },
+    Payroll: { bg: "#FDF2F8", color: "#9D174D" },
+  };
+  var p = priorityStyles[action.priority] || priorityStyles.Medium;
+  var c = catStyles[action.category] || catStyles.Sales;
+
+  return (
+    <li className="px-4 py-3 flex gap-3">
+      <div className="flex-shrink-0 w-7 h-7 rounded-full bg-slate-100 text-slate-700 text-xs font-bold flex items-center justify-center mt-0.5">
+        {rank}
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-2 flex-wrap mb-1">
+          <div className="font-semibold text-slate-900 text-sm">{action.title}</div>
+          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wide" style={{ background: c.bg, color: c.color }}>{action.category}</span>
+          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wide" style={{ background: p.bg, color: p.color }}>{action.priority}</span>
+          {action.impact != null && action.impact > 0 && (
+            <span className="text-[10px] font-semibold text-slate-500 ml-auto">~${Math.round(action.impact).toLocaleString()}/day opp</span>
+          )}
+        </div>
+        <div className="text-xs text-slate-700 leading-relaxed">{action.detail}</div>
+        {action.metric && (
+          <div className="text-[11px] text-slate-500 mt-1 font-mono">{action.metric}</div>
+        )}
+      </div>
+    </li>
+  );
+}
+
 
 /* ───────── Main Dashboard ───────── */
 function Yoda2Main({ summary, storeLabel, dateLabel }) {
