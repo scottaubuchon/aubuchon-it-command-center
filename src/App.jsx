@@ -1,4 +1,4 @@
-﻿﻿﻿﻿import { Fragment, useState, useMemo, useCallback, useEffect, useRef } from "react";
+﻿﻿﻿import { Fragment, useState, useMemo, useCallback, useEffect, useRef } from "react";
 import {
   ChevronDown, ChevronRight, Plus, Trash2, Download, AlertTriangle, Clock,
   CheckCircle, XCircle, Pause, FlaskConical, BarChart3, Calendar, Edit3,
@@ -6571,6 +6571,9 @@ function Yoda2View({ goBack }) {
               <Y2NavBtn active={activePage === "online"}  onClick={function(){setActivePage("online");}}  emoji="🌐" label="Online Sales" />
             </nav>
 
+            {/* Ask YODA — chat over the semantic view */}
+            <Yoda2ChatPanel selectedStore={selectedStore} selectedDate={selectedDate} />
+
             <div className="text-[10px] text-slate-400 leading-snug pt-3 border-t border-slate-100">
               v2.0 prototype — built on <code>AUBUCHON_RETAIL_ANALYTICS</code> semantic view. Replaces Power BI Store-Manager-Dashboard-v3. KPI labels per aubuchon-snowflake-beta-v1 skill §7a.
             </div>
@@ -6618,6 +6621,252 @@ function Y2NavBtn({ active, onClick, emoji, label }) {
     >
       <span className="mr-2">{emoji}</span>{label}
     </button>
+  );
+}
+
+/* ============================================================
+   YODA 2.0 — Ask YODA chat panel
+   Sidebar-embedded chat. Posts question + current store/date
+   context to /api/yoda-chat, which:
+     1. has Claude generate SQL against AUBUCHON_RETAIL_ANALYTICS
+     2. executes the SQL against Snowflake
+     3. has Claude summarize the rows
+   Renders: message history, plain-English answer, collapsible
+   SQL + result table per assistant turn.
+   ============================================================ */
+function Yoda2ChatPanel({ selectedStore, selectedDate }) {
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState(null);
+  const [showDetails, setShowDetails] = useState({});
+  const listRef = useRef(null);
+
+  useEffect(function () {
+    if (listRef.current) {
+      listRef.current.scrollTop = listRef.current.scrollHeight;
+    }
+  }, [messages, sending]);
+
+  function toggleDetails(idx) {
+    setShowDetails(function (s) {
+      var next = Object.assign({}, s);
+      next[idx] = !s[idx];
+      return next;
+    });
+  }
+
+  async function send() {
+    var q = String(input || "").trim();
+    if (!q || sending) return;
+    setError(null);
+    setInput("");
+    var hist = messages
+      .filter(function (m) { return m.role === "user" || m.role === "assistant"; })
+      .slice(-8)
+      .map(function (m) { return { role: m.role, content: String(m.content || "").slice(0, 2000) }; });
+    var nextMsgs = messages.concat([{ role: "user", content: q }]);
+    setMessages(nextMsgs);
+    setSending(true);
+    try {
+      var resp = await fetch("/api/yoda-chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          question: q,
+          store: selectedStore || "",
+          date: selectedDate || "",
+          history: hist,
+        }),
+      });
+      var text = await resp.text();
+      var data;
+      try { data = JSON.parse(text); }
+      catch (_) { data = { status: "error", error: "Non-JSON response (HTTP " + resp.status + ")" }; }
+      if (data.status !== "ok") {
+        throw new Error(data.error || ("HTTP " + resp.status));
+      }
+      setMessages(nextMsgs.concat([{
+        role: "assistant",
+        content: String(data.answer || ""),
+        sql: data.sql || null,
+        rows: Array.isArray(data.rows) ? data.rows : [],
+        columns: Array.isArray(data.columns) ? data.columns : [],
+        row_count: Number(data.row_count || 0),
+        kind: data.kind || "answer",
+        took_ms: Number(data.took_ms || 0),
+      }]));
+    } catch (e) {
+      setError(String(e.message || e));
+      setMessages(nextMsgs.concat([{
+        role: "assistant",
+        content: "Sorry — I couldn't answer that. " + String(e.message || e),
+        kind: "error",
+      }]));
+    } finally {
+      setSending(false);
+    }
+  }
+
+  function onKey(e) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      send();
+    }
+  }
+
+  var suggestions = [
+    "Top 5 departments yesterday",
+    "Member sales vs last year",
+    "How many transactions yesterday?",
+    "Which stores beat plan yesterday?",
+  ];
+
+  return (
+    <div className="mt-4 pt-4 border-t border-slate-100">
+      <div className="flex items-center justify-between mb-2">
+        <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Ask YODA</div>
+        {messages.length > 0 && (
+          <button
+            onClick={function () { setMessages([]); setShowDetails({}); setError(null); }}
+            className="text-[10px] text-slate-400 hover:text-slate-600"
+            title="Clear conversation"
+          >
+            Clear
+          </button>
+        )}
+      </div>
+
+      <div
+        ref={listRef}
+        className="bg-slate-50 border border-slate-200 rounded-lg p-2 mb-2 overflow-y-auto text-[12px]"
+        style={{ maxHeight: 280, minHeight: 60 }}
+      >
+        {messages.length === 0 && !sending && (
+          <div className="text-slate-400 text-[11px] leading-snug">
+            Ask a question about stores, products, members, margins, or inventory. Answers come from the same semantic view as the rest of YODA 2.0.
+          </div>
+        )}
+        {messages.map(function (m, i) {
+          if (m.role === "user") {
+            return (
+              <div key={i} className="mb-2 flex justify-end">
+                <div className="bg-emerald-600 text-white rounded-lg px-2 py-1 max-w-[95%] whitespace-pre-wrap break-words">
+                  {m.content}
+                </div>
+              </div>
+            );
+          }
+          var isErr = m.kind === "error" || m.kind === "blocked";
+          var hasRows = Array.isArray(m.rows) && m.rows.length > 0;
+          return (
+            <div key={i} className="mb-2">
+              <div className={"rounded-lg px-2 py-1 max-w-full whitespace-pre-wrap break-words " + (isErr ? "bg-red-50 text-red-800 border border-red-200" : "bg-white text-slate-800 border border-slate-200")}>
+                {m.content}
+              </div>
+              {(m.sql || hasRows) && (
+                <div className="mt-1">
+                  <button
+                    onClick={function () { toggleDetails(i); }}
+                    className="text-[10px] text-emerald-700 hover:text-emerald-900 underline"
+                  >
+                    {showDetails[i] ? "Hide" : "Show"} SQL{hasRows ? " & data (" + (m.row_count || m.rows.length) + " row" + ((m.row_count || m.rows.length) === 1 ? "" : "s") + ")" : ""}
+                  </button>
+                  {showDetails[i] && (
+                    <div className="mt-1 space-y-1">
+                      {m.sql && (
+                        <pre className="bg-slate-900 text-emerald-200 text-[10px] leading-snug rounded p-2 overflow-x-auto whitespace-pre-wrap break-words">
+                          {m.sql}
+                        </pre>
+                      )}
+                      {hasRows && (
+                        <div className="overflow-x-auto border border-slate-200 rounded bg-white">
+                          <table className="text-[10px] w-full">
+                            <thead>
+                              <tr className="bg-slate-100">
+                                {m.columns.map(function (c) {
+                                  return <th key={c} className="text-left px-1.5 py-1 font-semibold text-slate-600 whitespace-nowrap">{c}</th>;
+                                })}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {m.rows.slice(0, 25).map(function (r, ri) {
+                                return (
+                                  <tr key={ri} className="border-t border-slate-100">
+                                    {m.columns.map(function (c) {
+                                      var v = r[c];
+                                      var disp;
+                                      if (v === null || v === undefined) disp = "—";
+                                      else if (typeof v === "number") disp = Math.abs(v) >= 1000 ? v.toLocaleString() : String(v);
+                                      else disp = String(v);
+                                      return <td key={c} className="px-1.5 py-1 whitespace-nowrap text-slate-700">{disp}</td>;
+                                    })}
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                          {m.rows.length > 25 && (
+                            <div className="text-[10px] text-slate-400 px-1.5 py-1 border-t border-slate-100">
+                              Showing first 25 of {m.rows.length} rows
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+        {sending && (
+          <div className="text-slate-500 italic text-[11px]">YODA is thinking…</div>
+        )}
+      </div>
+
+      <textarea
+        value={input}
+        onChange={function (e) { setInput(e.target.value); }}
+        onKeyDown={onKey}
+        rows={2}
+        placeholder="Ask about sales, SKUs, members…"
+        disabled={sending}
+        className="w-full text-xs bg-white border border-slate-200 rounded-lg px-2 py-1.5 resize-none focus:outline-none focus:ring-1 focus:ring-emerald-500"
+      />
+      <div className="flex items-center justify-between mt-1">
+        <div className="text-[10px] text-slate-400 leading-tight">
+          {selectedStore ? ("Scoped to " + selectedStore) : "All stores"} · {selectedDate}
+        </div>
+        <button
+          onClick={send}
+          disabled={sending || !input.trim()}
+          className={"text-xs font-medium px-3 py-1 rounded " + (sending || !input.trim() ? "bg-slate-200 text-slate-400 cursor-not-allowed" : "bg-emerald-600 text-white hover:bg-emerald-700")}
+        >
+          {sending ? "…" : "Ask"}
+        </button>
+      </div>
+
+      {messages.length === 0 && !sending && (
+        <div className="mt-2 flex flex-wrap gap-1">
+          {suggestions.map(function (s) {
+            return (
+              <button
+                key={s}
+                onClick={function () { setInput(s); }}
+                className="text-[10px] bg-white hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 text-slate-600 rounded-full px-2 py-0.5"
+              >
+                {s}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {error && (
+        <div className="mt-1 text-[10px] text-red-600 leading-snug">{error}</div>
+      )}
+    </div>
   );
 }
 
