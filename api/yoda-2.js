@@ -61,12 +61,25 @@ async function connect() {
   });
 }
 
-function exec(conn, sqlText) {
+function exec(conn, sqlText, tag) {
+  // Wrap Snowflake exec in a per-query timeout so we fail fast with a JSON
+  // response instead of letting Vercel's platform-level 30s cap kill the
+  // function (which returns a non-JSON HTML error page).
+  const TIMEOUT_MS = 22000;
   return new Promise((resolve, reject) => {
+    let done = false;
+    const timer = setTimeout(() => {
+      if (done) return;
+      done = true;
+      reject(new Error(`Query timeout (${TIMEOUT_MS}ms)` + (tag ? ` on ${tag}` : "")));
+    }, TIMEOUT_MS);
     conn.execute({
       sqlText,
       complete: (err, _stmt, rows) => {
-        if (err) return reject(err);
+        if (done) return;
+        done = true;
+        clearTimeout(timer);
+        if (err) return reject(new Error(`SQL error${tag ? " on " + tag : ""}: ${err.message || err}`));
         resolve(rows || []);
       },
     });
@@ -307,84 +320,41 @@ export default async function handler(req, res) {
 
   let conn = null;
   try {
-    conn = await connect();
+    // Bound the connect with a timeout too — on a cold/suspended warehouse this
+    // can take a while, but hitting the Vercel 30s cap gives a non-JSON response.
+    conn = await Promise.race([
+      connect(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error("Snowflake connect timeout (15s) — warehouse may be resuming from suspend")), 15000)),
+    ]);
+
+    // Diagnostic: ?page=ping — minimal connectivity probe. Returns role, warehouse,
+    // current time, and whether the semantic view is queryable. Fast, safe, and
+    // tells us which of the typical failure modes is in play when the UI errors.
+    if (page === "ping") {
+      const [ctxRows, semRows] = await Promise.all([
+        exec(conn, "SELECT CURRENT_ROLE() AS role, CURRENT_WAREHOUSE() AS wh, CURRENT_DATABASE() AS db, CURRENT_SCHEMA() AS sch, CURRENT_TIMESTAMP() AS ts", "ctx").catch(e => [{ _error: e.message }]),
+        exec(conn,
+          "SELECT * FROM SEMANTIC_VIEW(PRD_EDW_DB.SI_AGENTS.AUBUCHON_RETAIL_ANALYTICS " +
+          "METRICS total_net_sales_gl AS net_sales " +
+          "DIMENSIONS transaction_date.transaction_dt AS txn_dt " +
+          `WHERE transaction_date.transaction_dt = '${dt}') LIMIT 1`, "semantic_probe").catch(e => [{ _error: e.message }]),
+      ]);
+      res.status(200).json({ status: "ok", page: "ping", dt, ctx: ctxRows[0], semantic: semRows[0] });
+      return;
+    }
 
     if (page === "summary") {
-      const [kpiRows, planRows, trendRows, storeRows] = await Promise.all([
-        exec(conn, sqlKpiStrip(store, dt, ly)),
-        exec(conn, sqlPlan(store, dt)),
-        exec(conn, sqlWeeklyTrend(store, dt)),
-        exec(conn, sqlStoreList()),
-      ]);
+      // Switched from Promise.all to sequential to reduce warehouse concurrency
+      // pressure during cold-start. The 6-CTE kpi-strip plus 3 other queries in
+      // parallel were exhausting the 30s Vercel budget on warm-from-suspended
+      // warehouses. Sequential is slightly slower when warm but much more
+      // predictable — and every query has a 22s per-query guard.
+      const kpiRows   = await exec(conn, sqlKpiStrip(store, dt, ly), "kpiStrip");
+      const planRows  = await exec(conn, sqlPlan(store, dt),          "plan");
+      const trendRows = await exec(conn, sqlWeeklyTrend(store, dt),   "weeklyTrend");
+      const storeRows = await exec(conn, sqlStoreList(),              "storeList");
       const r = kpiRows[0] || {};
       const planRow = planRows[0] || {};
       const kpis = {
         netSales:      n(k(r, "NET_SALES")),
-        txnCount:      n(k(r, "TXN_COUNT")),
-        avgTicket:     n(k(r, "AVG_TICKET")),
-        upt:           n(k(r, "UPT")),
-        lyNetSales:    n(k(r, "LY_NET_SALES")),
-        lyTxnCount:    n(k(r, "LY_TXN_COUNT")),
-        lyAvgTicket:   n(k(r, "LY_AVG_TICKET")),
-        lyUpt:         n(k(r, "LY_UPT")),
-        memberSales:   n(k(r, "MEMBER_SALES")),
-        lyMemberSales: n(k(r, "LY_MEMBER_SALES")),
-        proSales:      n(k(r, "PRO_SALES")),
-        lyProSales:    n(k(r, "LY_PRO_SALES")),
-        dailyPlan:     n(k(planRow, "DAILY_PLAN")),
-      };
-      const weeklyTrend = (trendRows || []).map((row) => ({
-        date: (k(row, "TXN_DT") || "").toString().slice(0, 10),
-        netSales: n(k(row, "NET_SALES")),
-      }));
-      const stores = (storeRows || []).map((row) => ({
-        code:  k(row, "STORE_CD"),
-        name:  k(row, "STORE_NM"),
-        city:  k(row, "STORE_CITY_NM"),
-        state: k(row, "STORE_STATE_CD"),
-      }));
-      res.status(200).json({
-        status: "ok",
-        page: "summary",
-        dt,
-        ly,
-        store,
-        kpis,
-        weeklyTrend,
-        stores,
-        asOf: new Date().toISOString(),
-      });
-      return;
-    }
-
-    if (page === "products") {
-      const rows = await exec(conn, sqlProducts(store, dt));
-      const products = (rows || []).map((row) => {
-        const ns = n(k(row, "NET_SALES"));
-        const gp = n(k(row, "GROSS_PROFIT"));
-        return {
-          department: k(row, "DEPARTMENT") || "(Unknown)",
-          netSales: ns,
-          grossProfit: gp,
-          grossMarginPct: ns ? gp / ns : 0,
-        };
-      });
-      res.status(200).json({ status: "ok", page: "products", dt, store, products });
-      return;
-    }
-
-    if (page === "customers") {
-      const rows = await exec(conn, sqlCustomers(store, dt, ly));
-      const segments = (rows || []).map((row) => {
-        const tySales = n(k(row, "NET_SALES_TY"));
-        const lySales = n(k(row, "NET_SALES_LY"));
-        const tyTxn = n(k(row, "TXN_COUNT_TY"));
-        const lyTxn = n(k(row, "TXN_COUNT_LY"));
-        return {
-          category:     k(row, "CUSTOMER_CATEGORY") || "(Unknown)",
-          netSalesTy:   tySales,
-          netSalesLy:   lySales,
-          salesVar:     lySales ? (tySales - lySales) / lySales : null,
-          txnCountTy:   tyTxn,
-          txnCountLy:   lyTxn,
-          txnVar:       lyTxn ? (tyTxn - lyTxn) / lyTxn : null
+ 
