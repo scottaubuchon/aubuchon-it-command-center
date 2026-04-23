@@ -6882,7 +6882,10 @@ function Yoda2Insights({ selectedStore, setSelectedStore, dateLabel, selectedDat
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [categoryFilter, setCategoryFilter] = useState("All");
+  const [feedbackMap, setFeedbackMap] = useState({});     // id -> feedback doc
+  const [showSuppressed, setShowSuppressed] = useState(false);
 
+  // Pull insights payload
   useEffect(function () {
     var cancelled = false;
     setLoading(true); setError(null);
@@ -6899,13 +6902,77 @@ function Yoda2Insights({ selectedStore, setSelectedStore, dateLabel, selectedDat
     return function () { cancelled = true; };
   }, [selectedDate]);
 
+  // Pull feedback docs from Firestore on mount + whenever selectedDate changes
+  useEffect(function () {
+    var cancelled = false;
+    (async function () {
+      try {
+        const snap = await getDocs(collection(db, "insights_feedback"));
+        if (cancelled) return;
+        const map = {};
+        snap.forEach(function (d) { map[d.id] = d.data(); });
+        setFeedbackMap(map);
+      } catch (e) {
+        console.warn("insights_feedback load failed:", e && e.message);
+      }
+    })();
+    return function () { cancelled = true; };
+  }, [selectedDate]);
+
+  // Save feedback helper. status is one of "good" | "bad" | "done" | null (clear).
+  async function saveFeedback(action, store, status) {
+    if (!action || !action.id) return;
+    const ref = doc(db, "insights_feedback", action.id);
+    const user = (typeof auth !== "undefined" && auth && auth.currentUser) ? (auth.currentUser.email || auth.currentUser.displayName || "unknown") : "unknown";
+    const existing = feedbackMap[action.id] || {};
+    const payload = {
+      id: action.id,
+      storeCode: (store && store.code) || "",
+      storeName: (store && store.name) || "",
+      ruleKey: action.ruleKey || null,
+      title: action.title || "",
+      category: action.category || "",
+      priority: action.priority || "",
+      status: status,
+      statusAt: serverTimestamp(),
+      statusBy: user,
+      lastShown: serverTimestamp(),
+      shownCount: (existing.shownCount || 0) + 0,
+    };
+    if (status === "done") {
+      // Snapshot the store's current KPIs so we can measure post-completion delta.
+      payload.snapshot = {
+        capturedAt: new Date().toISOString(),
+        netSales7d:   Number(store.netSales)     || 0,
+        lyNetSales7d: Number(store.lyNetSales)   || 0,
+        netSales28d:  Number(store.netSales28)   || 0,
+        lyNetSales28d:Number(store.lyNetSales28) || 0,
+        atv28:        Number(store.atv28)        || 0,
+        upt28:        Number(store.upt28)        || 0,
+        memberSales28:Number(store.memberSales28)|| 0,
+        proSales28:   Number(store.proSales28)   || 0,
+        mtdNetSales:  Number(store.mtdNetSales)  || 0,
+        mtdPlan:      Number(store.mtdPlan)      || 0,
+        plan28d:      Number(store.plan28d)      || 0,
+      };
+    }
+    try {
+      await setDoc(ref, payload, { merge: true });
+      setFeedbackMap(function (prev) {
+        return Object.assign({}, prev, { [action.id]: Object.assign({}, prev[action.id] || {}, payload, { statusAt: new Date() }) });
+      });
+    } catch (e) {
+      console.warn("saveFeedback failed:", e && e.message);
+    }
+  }
+
   if (loading && !data) {
     return <div className="bg-white rounded-xl p-12 text-center text-slate-500 border border-slate-200">Running the retail advisor...</div>;
   }
   if (error) {
     return (
       <div className="bg-red-50 border border-red-200 text-red-800 rounded-lg p-4 text-sm">
-        <div className="font-semibold mb-1">Could not generate insights</div>
+        <div className="font-semibold mb-1">Couldn't generate insights</div>
         <div>{error}</div>
       </div>
     );
@@ -6917,24 +6984,67 @@ function Yoda2Insights({ selectedStore, setSelectedStore, dateLabel, selectedDat
   var storesAll = (data && data.stores) || [];
   var stores = selectedStore ? storesAll.filter(function (s) { return s.code === selectedStore; }) : storesAll;
 
-  var totalActions = 0;
+  // Suppression window in ms (14 days) for done/bad feedback
+  const SUPPRESS_MS = 14 * 24 * 60 * 60 * 1000;
+  function feedbackOf(id) { return (feedbackMap || {})[id] || null; }
+  function feedbackAge(fb) {
+    if (!fb || !fb.statusAt) return Infinity;
+    var t = fb.statusAt;
+    if (t.toDate) t = t.toDate();
+    if (!(t instanceof Date)) t = new Date(t);
+    return Date.now() - t.getTime();
+  }
+  function isSuppressed(action) {
+    const fb = feedbackOf(action && action.id);
+    if (!fb) return false;
+    if ((fb.status === "done" || fb.status === "bad") && feedbackAge(fb) < SUPPRESS_MS) return true;
+    return false;
+  }
+
+  // Apply suppression + category filter
+  var totalActions = 0, suppressedCount = 0;
   var cats = { Sales: 0, Ops: 0, Payroll: 0 };
-  stores.forEach(function (s) {
-    (s.insights || []).forEach(function (a) {
+  var visibleStores = stores.map(function (s) {
+    var insights = (s.insights || []);
+    var filtered = insights.filter(function (a) {
+      if (isSuppressed(a)) { suppressedCount += 1; return false; }
+      if (categoryFilter !== "All" && a.category !== categoryFilter) return false;
+      return true;
+    });
+    filtered.forEach(function (a) {
       totalActions += 1;
       if (cats[a.category] != null) cats[a.category] += 1;
     });
-  });
-
-  var visibleStores = stores.map(function (s) {
-    var insights = (s.insights || []);
-    if (categoryFilter !== "All") insights = insights.filter(function (a) { return a.category === categoryFilter; });
-    return Object.assign({}, s, { insights: insights });
+    return Object.assign({}, s, { insights: filtered });
   }).filter(function (s) { return (s.insights || []).length > 0; });
+
+  // If "show suppressed" is on, add them back with a flag so the UI marks them
+  if (showSuppressed) {
+    visibleStores = stores.map(function (s) {
+      var insights = (s.insights || []);
+      var filtered = insights.filter(function (a) { return categoryFilter === "All" || a.category === categoryFilter; })
+        .map(function (a) { return Object.assign({}, a, { _suppressed: isSuppressed(a) }); });
+      return Object.assign({}, s, { insights: filtered });
+    }).filter(function (s) { return (s.insights || []).length > 0; });
+  }
+
+  // Feedback activity summary (across all stores, all time)
+  var fbStats = { good: 0, bad: 0, done: 0, doneLast7: 0, doneLast30: 0 };
+  Object.values(feedbackMap || {}).forEach(function (fb) {
+    if (!fb || !fb.status) return;
+    if (fb.status === "good") fbStats.good += 1;
+    else if (fb.status === "bad") fbStats.bad += 1;
+    else if (fb.status === "done") {
+      fbStats.done += 1;
+      var age = feedbackAge(fb);
+      if (age <= 7  * 86400000) fbStats.doneLast7  += 1;
+      if (age <= 30 * 86400000) fbStats.doneLast30 += 1;
+    }
+  });
 
   return (
     <div>
-      {execSummary && !selectedStore && <Y2IExecSummary exec={execSummary} peers={peers} dateLabel={dateLabel} />}
+      {execSummary && !selectedStore && <Y2IExecSummary exec={execSummary} peers={peers} dateLabel={dateLabel} fbStats={fbStats} />}
 
       {dataGaps.length > 0 && (
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-4 text-xs text-amber-900">
@@ -6953,6 +7063,10 @@ function Yoda2Insights({ selectedStore, setSelectedStore, dateLabel, selectedDat
           <Y2ICatChip label={"Sales (" + cats.Sales + ")"} active={categoryFilter === "Sales"} onClick={function(){setCategoryFilter("Sales");}} />
           <Y2ICatChip label={"Ops (" + cats.Ops + ")"} active={categoryFilter === "Ops"} onClick={function(){setCategoryFilter("Ops");}} />
           <Y2ICatChip label={"Payroll (" + cats.Payroll + ")"} active={categoryFilter === "Payroll"} onClick={function(){setCategoryFilter("Payroll");}} />
+          <label className="flex items-center gap-1 ml-2 text-slate-600">
+            <input type="checkbox" checked={showSuppressed} onChange={function(e){setShowSuppressed(e.target.checked);}} />
+            Show completed/dismissed ({suppressedCount})
+          </label>
           {selectedStore && (
             <button onClick={function () { setSelectedStore(""); }} className="ml-auto text-slate-500 hover:text-slate-900 underline">
               Show all stores
@@ -6964,22 +7078,25 @@ function Yoda2Insights({ selectedStore, setSelectedStore, dateLabel, selectedDat
 
       {visibleStores.length === 0 ? (
         <div className="bg-white rounded-xl p-12 text-center text-slate-500 border border-slate-200">
-          No matching recommendations for the current filter.
+          No matching recommendations for the current filter. {suppressedCount > 0 ? "(" + suppressedCount + " recent completions hidden - toggle 'Show completed/dismissed' to review.)" : ""}
         </div>
       ) : (
         <div className="space-y-4">
-          {visibleStores.map(function (s) { return <Y2IStoreCard key={s.code} store={s} />; })}
+          {visibleStores.map(function (s) {
+            return <Y2IStoreCard key={s.code} store={s} feedbackMap={feedbackMap} onFeedback={saveFeedback} />;
+          })}
         </div>
       )}
 
       <div className="text-center text-[11px] text-slate-400 mt-4">
-        Decision-useful windows: trailing 7d, trailing 28d, MTD vs LY MTD, 4w-vs-prior-4w recency. Benchmarks are company peer medians. Impacts are estimates, not promises.
+        Decision-useful windows: trailing 7d, trailing 28d, MTD vs LY &amp; Plan, 4w-vs-prior-4w recency. Benchmarks are company peer medians.
+        Click 👍 / 👎 / ✓ on each action to teach the engine and suppress repeats.
       </div>
     </div>
   );
 }
 
-function Y2IExecSummary({ exec, peers, dateLabel }) {
+function Y2IExecSummary({ exec, peers, dateLabel, fbStats }) {
   var w = exec.windows || {};
   var c = exec.counts  || {};
   var themes = exec.topThemes || [];
@@ -6991,7 +7108,7 @@ function Y2IExecSummary({ exec, peers, dateLabel }) {
     return "text-rose-600";
   }
   function signFmt(v) {
-    if (v == null) return "\u2014";
+    if (v == null) return "—";
     return (v >= 0 ? "+" : "") + (v * 100).toFixed(1) + "%";
   }
   function dollar(v) {
@@ -7008,9 +7125,9 @@ function Y2IExecSummary({ exec, peers, dateLabel }) {
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 my-3">
-        <Y2IWindowCard title="Trailing 7d"  ty={w.trailing7d && w.trailing7d.ty}  ly={w.trailing7d && w.trailing7d.ly}  yoy={w.trailing7d && w.trailing7d.yoy}  signCls={signCls} signFmt={signFmt} dollar={dollar} />
-        <Y2IWindowCard title="Trailing 28d" ty={w.trailing28d && w.trailing28d.ty} ly={w.trailing28d && w.trailing28d.ly} yoy={w.trailing28d && w.trailing28d.yoy} signCls={signCls} signFmt={signFmt} dollar={dollar} />
-        <Y2IWindowCard title="MTD vs LY MTD" ty={w.mtd && w.mtd.ty} ly={w.mtd && w.mtd.ly} yoy={w.mtd && w.mtd.yoy} signCls={signCls} signFmt={signFmt} dollar={dollar} />
+        <Y2IWindowCard title="Trailing 7d"  ty={w.trailing7d && w.trailing7d.ty}  ly={w.trailing7d && w.trailing7d.ly}  yoy={w.trailing7d && w.trailing7d.yoy}  plan={w.trailing7d && w.trailing7d.plan}  planAttn={w.trailing7d && w.trailing7d.planAttn}  signCls={signCls} signFmt={signFmt} dollar={dollar} />
+        <Y2IWindowCard title="Trailing 28d" ty={w.trailing28d && w.trailing28d.ty} ly={w.trailing28d && w.trailing28d.ly} yoy={w.trailing28d && w.trailing28d.yoy} plan={w.trailing28d && w.trailing28d.plan} planAttn={w.trailing28d && w.trailing28d.planAttn} signCls={signCls} signFmt={signFmt} dollar={dollar} />
+        <Y2IWindowCard title="MTD vs LY &amp; Plan" ty={w.mtd && w.mtd.ty} ly={w.mtd && w.mtd.ly} yoy={w.mtd && w.mtd.yoy} plan={w.mtd && w.mtd.plan} planAttn={w.mtd && w.mtd.planAttn} signCls={signCls} signFmt={signFmt} dollar={dollar} />
         <Y2IWindowCard title="Recency (4w vs prior)" ty={w.recencyTrend && w.recencyTrend.recent} ly={w.recencyTrend && w.recencyTrend.prior} yoy={w.recencyTrend && w.recencyTrend.var} signCls={signCls} signFmt={signFmt} dollar={dollar} tyLabel="Recent 4w" lyLabel="Prior 4w" />
       </div>
 
@@ -7027,6 +7144,14 @@ function Y2IExecSummary({ exec, peers, dateLabel }) {
             <div className="text-slate-600">Payroll over target</div><div className="text-right font-semibold">{c.payrollOver || 0}</div>
             <div className="text-slate-600">Likely understaffed</div><div className="text-right font-semibold">{c.payrollUnder || 0}</div>
           </div>
+          {fbStats && (
+            <div className="mt-3 pt-2 border-t border-slate-200 grid grid-cols-2 gap-y-1">
+              <div className="text-slate-600">Completed (total)</div><div className="text-right font-semibold text-emerald-700">{fbStats.done || 0}</div>
+              <div className="text-slate-600">Completed last 7d</div><div className="text-right font-semibold">{fbStats.doneLast7 || 0}</div>
+              <div className="text-slate-600">Endorsed 👍</div><div className="text-right font-semibold">{fbStats.good || 0}</div>
+              <div className="text-slate-600">Dismissed 👎</div><div className="text-right font-semibold">{fbStats.bad || 0}</div>
+            </div>
+          )}
         </div>
 
         <div className="bg-slate-50 rounded-lg p-3 text-xs">
@@ -7070,19 +7195,29 @@ function Y2IExecSummary({ exec, peers, dateLabel }) {
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mt-3">
-        <Y2IMiniStat label="Peer ATV (28d)" value={peers.atv28Median ? "$" + peers.atv28Median.toFixed(2) : "\u2014"} />
-        <Y2IMiniStat label="Peer UPT (28d)" value={peers.upt28Median ? peers.upt28Median.toFixed(2) : "\u2014"} />
-        <Y2IMiniStat label="Peer Member %"  value={peers.memberPctMedian ? (peers.memberPctMedian * 100).toFixed(1) + "%" : "\u2014"} />
-        <Y2IMiniStat label="Peer Pro %"     value={peers.proPctMedian ? (peers.proPctMedian * 100).toFixed(1) + "%" : "\u2014"} />
-        <Y2IMiniStat label="Peer SPPH (4w)" value={peers.spph4wMedian ? "$" + peers.spph4wMedian.toFixed(0) + "/hr" : "\u2014"} />
+        <Y2IMiniStat label="Peer ATV (28d)" value={peers.atv28Median ? "$" + peers.atv28Median.toFixed(2) : "—"} />
+        <Y2IMiniStat label="Peer UPT (28d)" value={peers.upt28Median ? peers.upt28Median.toFixed(2) : "—"} />
+        <Y2IMiniStat label="Peer Member %"  value={peers.memberPctMedian ? (peers.memberPctMedian * 100).toFixed(1) + "%" : "—"} />
+        <Y2IMiniStat label="Peer Pro %"     value={peers.proPctMedian ? (peers.proPctMedian * 100).toFixed(1) + "%" : "—"} />
+        <Y2IMiniStat label="Peer SPPH (4w)" value={peers.spph4wMedian ? "$" + peers.spph4wMedian.toFixed(0) + "/hr" : "—"} />
       </div>
     </div>
   );
 }
 
-function Y2IWindowCard({ title, ty, ly, yoy, signCls, signFmt, dollar, tyLabel, lyLabel }) {
+function Y2IWindowCard({ title, ty, ly, yoy, plan, planAttn, signCls, signFmt, dollar, tyLabel, lyLabel }) {
   tyLabel = tyLabel || "TY";
   lyLabel = lyLabel || "LY";
+  function planPct(v) {
+    if (v == null) return "—";
+    return (v * 100).toFixed(0) + "%";
+  }
+  function planCls(v) {
+    if (v == null) return "text-slate-500";
+    if (v >= 1.0)  return "text-emerald-600";
+    if (v < 0.9)   return "text-rose-600";
+    return "text-amber-600";
+  }
   return (
     <div className="bg-slate-50 rounded-lg p-3">
       <div className="text-[10px] uppercase tracking-wide text-slate-500 font-semibold">{title}</div>
@@ -7091,6 +7226,11 @@ function Y2IWindowCard({ title, ty, ly, yoy, signCls, signFmt, dollar, tyLabel, 
         <div className={"text-sm font-semibold " + signCls(yoy)}>{signFmt(yoy)}</div>
       </div>
       <div className="text-[11px] text-slate-500">{lyLabel} {dollar(ly || 0)}</div>
+      {plan != null && plan > 0 && (
+        <div className="text-[11px] text-slate-500">
+          Plan {dollar(plan)} · <span className={"font-semibold " + planCls(planAttn)}>{planPct(planAttn)} attn</span>
+        </div>
+      )}
     </div>
   );
 }
@@ -7118,7 +7258,7 @@ function Y2ICatChip({ label, active, onClick }) {
   );
 }
 
-function Y2IStoreCard({ store }) {
+function Y2IStoreCard({ store, feedbackMap, onFeedback }) {
   var loc = [store.city, store.state].filter(Boolean).join(", ");
   var ns7   = Number(store.netSales)     || 0;
   var lns7  = Number(store.lyNetSales)   || 0;
@@ -7128,7 +7268,9 @@ function Y2IStoreCard({ store }) {
   var yoy28 = lns28 ? (ns28 - lns28) / lns28 : null;
   var mtd   = Number(store.mtdNetSales)  || 0;
   var mtdPlan = Number(store.mtdPlan)    || 0;
-  var planAttn = mtdPlan ? mtd / mtdPlan : null;
+  var mtdPlanAttn = mtdPlan ? mtd / mtdPlan : null;
+  var plan7 = Number(store.plan7d)       || 0;
+  var plan7Attn = plan7 ? ns7 / plan7 : null;
 
   return (
     <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
@@ -7144,10 +7286,11 @@ function Y2IStoreCard({ store }) {
         </div>
         <div className="flex items-center gap-4 text-xs flex-shrink-0 flex-wrap">
           <Y2IKpi label="7d Sales" value={"$" + Math.round(ns7).toLocaleString()} />
-          {yoy7 != null && <Y2IKpi label="7d YoY" value={(yoy7 >= 0 ? "+" : "") + (yoy7 * 100).toFixed(1) + "%"} tone={yoy7 >= 0 ? "pos" : "neg"} />}
+          {yoy7 != null && <Y2IKpi label="7d vs LY" value={(yoy7 >= 0 ? "+" : "") + (yoy7 * 100).toFixed(1) + "%"} tone={yoy7 >= 0 ? "pos" : "neg"} />}
+          {plan7Attn != null && <Y2IKpi label="7d vs Plan" value={(plan7Attn * 100).toFixed(0) + "%"} tone={plan7Attn >= 1 ? "pos" : (plan7Attn < 0.9 ? "neg" : "neutral")} />}
           <Y2IKpi label="28d Sales" value={"$" + Math.round(ns28).toLocaleString()} />
-          {yoy28 != null && <Y2IKpi label="28d YoY" value={(yoy28 >= 0 ? "+" : "") + (yoy28 * 100).toFixed(1) + "%"} tone={yoy28 >= 0 ? "pos" : "neg"} />}
-          {planAttn != null && <Y2IKpi label="MTD Plan" value={(planAttn * 100).toFixed(0) + "%"} tone={planAttn >= 1 ? "pos" : (planAttn < 0.9 ? "neg" : "neutral")} />}
+          {yoy28 != null && <Y2IKpi label="28d vs LY" value={(yoy28 >= 0 ? "+" : "") + (yoy28 * 100).toFixed(1) + "%"} tone={yoy28 >= 0 ? "pos" : "neg"} />}
+          {mtdPlanAttn != null && <Y2IKpi label="MTD vs Plan" value={(mtdPlanAttn * 100).toFixed(0) + "%"} tone={mtdPlanAttn >= 1 ? "pos" : (mtdPlanAttn < 0.9 ? "neg" : "neutral")} />}
           <Y2IKpi label="ATV 28d" value={"$" + (Number(store.atv28) || 0).toFixed(2)} />
           <Y2IKpi label="UPT 28d" value={(Number(store.upt28) || 0).toFixed(2)} />
           {Number.isFinite(Number(store.spph4w)) && Number(store.spph4w) > 0 && <Y2IKpi label="SPPH 4w" value={"$" + Math.round(Number(store.spph4w)).toLocaleString() + "/hr"} />}
@@ -7157,10 +7300,10 @@ function Y2IStoreCard({ store }) {
       {store.weather && (Number(store.weather.precipNext7) > 0 || Number(store.weather.snowNext7) > 0 || Number(store.weather.tempAvgNext7) > 0) && (
         <div className="px-4 py-2 bg-sky-50 border-b border-sky-100 text-[11px] text-sky-900 flex items-center gap-4 flex-wrap">
           <span className="font-semibold uppercase tracking-wide text-sky-700">Next 7d forecast</span>
-          {Number(store.weather.tempAvgNext7) > 0 && <span>Avg {Math.round(Number(store.weather.tempAvgNext7))}&deg;F</span>}
-          {Number(store.weather.precipNext7) > 0 && <span>Precip {Number(store.weather.precipNext7).toFixed(1)}&Prime;</span>}
-          {Number(store.weather.snowNext7) > 0 && <span>Snow {Number(store.weather.snowNext7).toFixed(1)}&Prime;</span>}
-          {Number(store.weather.tempAvgLast7) > 0 && <span className="text-sky-600">(last 7d avg {Math.round(Number(store.weather.tempAvgLast7))}&deg;F)</span>}
+          {Number(store.weather.tempAvgNext7) > 0 && <span>Avg {Math.round(Number(store.weather.tempAvgNext7))}°F</span>}
+          {Number(store.weather.precipNext7) > 0 && <span>Precip {Number(store.weather.precipNext7).toFixed(1)}″</span>}
+          {Number(store.weather.snowNext7) > 0 && <span>Snow {Number(store.weather.snowNext7).toFixed(1)}″</span>}
+          {Number(store.weather.tempAvgLast7) > 0 && <span className="text-sky-600">(last 7d avg {Math.round(Number(store.weather.tempAvgLast7))}°F)</span>}
         </div>
       )}
 
@@ -7170,7 +7313,10 @@ function Y2IStoreCard({ store }) {
         </div>
       ) : (
         <ol className="divide-y divide-slate-100">
-          {store.insights.map(function (a, i) { return <Y2IActionRow key={i} rank={i + 1} action={a} />; })}
+          {store.insights.map(function (a, i) {
+            const fb = (feedbackMap || {})[a.id] || null;
+            return <Y2IActionRow key={a.id || i} rank={i + 1} action={a} store={store} feedback={fb} onFeedback={onFeedback} />;
+          })}
         </ol>
       )}
     </div>
@@ -7189,7 +7335,7 @@ function Y2IKpi({ label, value, tone }) {
   );
 }
 
-function Y2IActionRow({ rank, action }) {
+function Y2IActionRow({ rank, action, store, feedback, onFeedback }) {
   var priorityStyles = {
     Urgent: { bg: "#FEE2E2", color: "#991B1B" },
     High:   { bg: "#FEF3C7", color: "#92400E" },
@@ -7204,8 +7350,28 @@ function Y2IActionRow({ rank, action }) {
   var p = priorityStyles[action.priority] || priorityStyles.Medium;
   var c = catStyles[action.category] || catStyles.Sales;
 
+  // Compute delta since completion if we have a snapshot >= 5 days old
+  var delta = null;
+  if (feedback && feedback.status === "done" && feedback.snapshot && feedback.snapshot.netSales28d > 0 && store) {
+    var snap = feedback.snapshot;
+    var current28 = Number(store.netSales28) || 0;
+    var snap28 = Number(snap.netSales28d) || 0;
+    var t = feedback.statusAt;
+    if (t && t.toDate) t = t.toDate();
+    if (!(t instanceof Date)) t = new Date(t || 0);
+    var days = Math.floor((Date.now() - t.getTime()) / 86400000);
+    if (days >= 5 && snap28 > 0) {
+      var pct28 = (current28 - snap28) / snap28;
+      delta = { days: days, pct28: pct28 };
+    }
+  }
+
+  var status = feedback && feedback.status;
+  var rowStyle = {};
+  if (action._suppressed) rowStyle.opacity = 0.55;
+
   return (
-    <li className="px-4 py-3 flex gap-3">
+    <li className="px-4 py-3 flex gap-3" style={rowStyle}>
       <div className="flex-shrink-0 w-7 h-7 rounded-full bg-slate-100 text-slate-700 text-xs font-bold flex items-center justify-center mt-0.5">
         {rank}
       </div>
@@ -7214,6 +7380,9 @@ function Y2IActionRow({ rank, action }) {
           <div className="font-semibold text-slate-900 text-sm">{action.title}</div>
           <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wide" style={{ background: c.bg, color: c.color }}>{action.category}</span>
           <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wide" style={{ background: p.bg, color: p.color }}>{action.priority}</span>
+          {status === "good" && <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wide" style={{ background: "#DCFCE7", color: "#166534" }}>👍 Endorsed</span>}
+          {status === "done" && <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wide" style={{ background: "#D1FAE5", color: "#065F46" }}>✓ Completed</span>}
+          {status === "bad"  && <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wide" style={{ background: "#FEE2E2", color: "#991B1B" }}>👎 Dismissed</span>}
           {action.impact != null && action.impact > 0 && (
             <span className="text-[10px] font-semibold text-slate-500 ml-auto">~${Math.round(action.impact).toLocaleString()}/day opp</span>
           )}
@@ -7222,6 +7391,48 @@ function Y2IActionRow({ rank, action }) {
         {action.metric && (
           <div className="text-[11px] text-slate-500 mt-1 font-mono">{action.metric}</div>
         )}
+
+        {/* Feedback row */}
+        <div className="flex items-center gap-2 mt-2">
+          <button
+            onClick={function () { onFeedback(action, store, status === "good" ? null : "good"); }}
+            title="Mark as good suggestion"
+            className={"text-xs px-2 py-1 rounded border transition-colors " +
+              (status === "good"
+                ? "bg-emerald-600 text-white border-emerald-600"
+                : "bg-white text-slate-600 border-slate-200 hover:border-emerald-400 hover:text-emerald-700")}
+          >
+            👍 Good
+          </button>
+          <button
+            onClick={function () { onFeedback(action, store, status === "bad" ? null : "bad"); }}
+            title="Dismiss — hide for 14 days"
+            className={"text-xs px-2 py-1 rounded border transition-colors " +
+              (status === "bad"
+                ? "bg-rose-600 text-white border-rose-600"
+                : "bg-white text-slate-600 border-slate-200 hover:border-rose-400 hover:text-rose-700")}
+          >
+            👎 Not helpful
+          </button>
+          <button
+            onClick={function () { onFeedback(action, store, status === "done" ? null : "done"); }}
+            title="Mark done — hide for 14 days and snapshot current KPIs for outcome tracking"
+            className={"text-xs px-2 py-1 rounded border transition-colors " +
+              (status === "done"
+                ? "bg-sky-600 text-white border-sky-600"
+                : "bg-white text-slate-600 border-slate-200 hover:border-sky-400 hover:text-sky-700")}
+          >
+            ✓ Done
+          </button>
+          {delta && (
+            <span className="text-[11px] text-slate-500 ml-2">
+              Since you marked this done {delta.days}d ago: 28d sales{" "}
+              <span className={(delta.pct28 >= 0 ? "text-emerald-600" : "text-rose-600") + " font-semibold"}>
+                {(delta.pct28 >= 0 ? "+" : "") + (delta.pct28 * 100).toFixed(1) + "%"}
+              </span>
+            </span>
+          )}
+        </div>
       </div>
     </li>
   );
