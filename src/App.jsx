@@ -4957,6 +4957,13 @@ const YODA_REPORTS = [
     icon: Database,
     view: "live-sales-snowflake",
   },
+  {
+    id: "yoda-2",
+    label: "YODA 2.0 — Store Performance",
+    description: "Snowflake-native replacement for Power BI Store-Manager-Dashboard-v3 — KPI strip, sales drivers, product & customer drills",
+    icon: LayoutGrid,
+    view: "yoda-2",
+  },
 ];
 
 
@@ -6281,6 +6288,822 @@ function LiveSalesSnowflakeView({ goBack }) {
   );
 }
 
+/* ============================================================
+   YODA 2.0 — Store Performance Dashboard
+   Ports the Streamlit-in-Snowflake prototype into the workbench.
+   Data source: /api/yoda-2 (queries AUBUCHON_RETAIL_ANALYTICS semantic view).
+   Member Sales = Rewards+Military+Employee+Stock Holder (4-category, per project decision 2026-04-23).
+   Pages: Main Dashboard, Sales Drivers, Product Drill, Customer Drill, Online Sales (stub).
+   ============================================================ */
+function Yoda2View({ goBack }) {
+  // Sidebar filter state
+  var todayET = new Date().toLocaleDateString("en-CA", { timeZone: "America/New_York" });
+  var yesterdayET = (function () {
+    var d = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
+    d.setDate(d.getDate() - 1);
+    return d.toISOString().slice(0, 10);
+  })();
+
+  const [selectedStore, setSelectedStore] = useState("");
+  const [selectedDate, setSelectedDate] = useState(yesterdayET);
+  const [activePage, setActivePage] = useState("main");
+  const [storeSearch, setStoreSearch] = useState("");
+  const [storeOpen, setStoreOpen] = useState(false);
+  const storeBoxRef = useRef(null);
+
+  // Data state — "summary" drives Main Dashboard + Sales Drivers
+  const [summary, setSummary] = useState(null);
+  const [summaryLoading, setSummaryLoading] = useState(true);
+  const [summaryError, setSummaryError] = useState(null);
+
+  // Lazy data — products / customers only fetched when their tabs open
+  const [products, setProducts] = useState(null);
+  const [productsLoading, setProductsLoading] = useState(false);
+  const [productsError, setProductsError] = useState(null);
+  const [customers, setCustomers] = useState(null);
+  const [customersLoading, setCustomersLoading] = useState(false);
+  const [customersError, setCustomersError] = useState(null);
+
+  // Fetch summary on mount + whenever store/date changes
+  useEffect(function () {
+    var cancelled = false;
+    setSummaryLoading(true);
+    setSummaryError(null);
+    var url = "/api/yoda-2?page=summary&t=" + Date.now();
+    if (selectedStore) url += "&store=" + encodeURIComponent(selectedStore);
+    if (selectedDate) url += "&date=" + encodeURIComponent(selectedDate);
+    fetch(url, { cache: "no-store" })
+      .then(function (r) { if (!r.ok) throw new Error("API error " + r.status); return r.json(); })
+      .then(function (d) {
+        if (cancelled) return;
+        if (d.status !== "ok") throw new Error(d.error || "Unknown error");
+        setSummary(d);
+        setSummaryLoading(false);
+      })
+      .catch(function (e) { if (!cancelled) { setSummaryError(e.message); setSummaryLoading(false); } });
+    return function () { cancelled = true; };
+  }, [selectedStore, selectedDate]);
+
+  // Invalidate product/customer caches whenever filters change
+  useEffect(function () {
+    setProducts(null);
+    setCustomers(null);
+  }, [selectedStore, selectedDate]);
+
+  // Close store dropdown on outside click / ESC
+  useEffect(function () {
+    if (!storeOpen) return;
+    function onClick(e) {
+      if (storeBoxRef.current && !storeBoxRef.current.contains(e.target)) {
+        setStoreOpen(false); setStoreSearch("");
+      }
+    }
+    function onKey(e) { if (e.key === "Escape") { setStoreOpen(false); setStoreSearch(""); } }
+    document.addEventListener("mousedown", onClick);
+    document.addEventListener("keydown", onKey);
+    return function () {
+      document.removeEventListener("mousedown", onClick);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [storeOpen]);
+
+  // Lazy-fetch products/customers when the respective tabs open
+  useEffect(function () {
+    if (activePage !== "product" || products !== null || productsLoading) return;
+    var cancelled = false;
+    setProductsLoading(true); setProductsError(null);
+    var url = "/api/yoda-2?page=products&t=" + Date.now();
+    if (selectedStore) url += "&store=" + encodeURIComponent(selectedStore);
+    if (selectedDate) url += "&date=" + encodeURIComponent(selectedDate);
+    fetch(url, { cache: "no-store" })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (cancelled) return;
+        if (d.status !== "ok") throw new Error(d.error || "Unknown error");
+        setProducts(d.products || []); setProductsLoading(false);
+      })
+      .catch(function (e) { if (!cancelled) { setProductsError(e.message); setProductsLoading(false); } });
+    return function () { cancelled = true; };
+  }, [activePage, products, productsLoading, selectedStore, selectedDate]);
+
+  useEffect(function () {
+    if (activePage !== "customer" || customers !== null || customersLoading) return;
+    var cancelled = false;
+    setCustomersLoading(true); setCustomersError(null);
+    var url = "/api/yoda-2?page=customers&t=" + Date.now();
+    if (selectedStore) url += "&store=" + encodeURIComponent(selectedStore);
+    if (selectedDate) url += "&date=" + encodeURIComponent(selectedDate);
+    fetch(url, { cache: "no-store" })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (cancelled) return;
+        if (d.status !== "ok") throw new Error(d.error || "Unknown error");
+        setCustomers(d.segments || []); setCustomersLoading(false);
+      })
+      .catch(function (e) { if (!cancelled) { setCustomersError(e.message); setCustomersLoading(false); } });
+    return function () { cancelled = true; };
+  }, [activePage, customers, customersLoading, selectedStore, selectedDate]);
+
+  var stores = (summary && summary.stores) || [];
+  var storeLabel = (function () {
+    if (!selectedStore) return "All Stores" + (stores.length ? " (" + stores.length + ")" : "");
+    var s = stores.find(function (x) { return x.code === selectedStore; });
+    if (!s) return selectedStore;
+    return s.code + " — " + s.name + (s.city ? ", " + s.city : "") + (s.state ? " " + s.state : "");
+  })();
+
+  var filteredStores = (function () {
+    var q = String(storeSearch || "").trim().toLowerCase();
+    if (!q) return stores;
+    return stores.filter(function (s) {
+      return (
+        String(s.code || "").toLowerCase().indexOf(q) !== -1 ||
+        String(s.name || "").toLowerCase().indexOf(q) !== -1 ||
+        String(s.city || "").toLowerCase().indexOf(q) !== -1 ||
+        String(s.state || "").toLowerCase().indexOf(q) !== -1
+      );
+    });
+  })();
+
+  var dateLabel = (function () {
+    try {
+      var d = new Date(selectedDate + "T00:00:00");
+      return d.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+    } catch (_) { return selectedDate; }
+  })();
+
+  return (
+    <div className="min-h-screen" style={{ background: "linear-gradient(135deg, #F0F7FF 0%, #E8F2FC 100%)" }}>
+      {/* Top accent strip */}
+      <div style={{ height: 8, background: "linear-gradient(to bottom, #F58220 0%, #F58220 30%, #01683F 30%, #01683F 100%)" }} />
+
+      <div className="max-w-[1400px] mx-auto px-6 py-4">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-4">
+            <button onClick={goBack} className="flex items-center gap-1 text-sm text-slate-600 hover:text-slate-900 font-medium">
+              <ArrowLeft className="w-4 h-4" /> Back
+            </button>
+            <div className="h-8 w-px bg-slate-300"></div>
+            <div>
+              <div className="text-2xl font-bold tracking-tight" style={{ color: "#01683F", fontFamily: "Trebuchet MS, sans-serif" }}>
+                YODA <span style={{ color: "#F58220" }}>2.0</span>
+              </div>
+              <div className="text-xs text-slate-500">Store Performance Dashboard</div>
+            </div>
+          </div>
+          <div className="text-xs text-slate-500">
+            Snowflake · {summary && summary.asOf ? "refreshed " + new Date(summary.asOf).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }) : "loading…"}
+          </div>
+        </div>
+
+        <div className="flex gap-4">
+          {/* Sidebar */}
+          <aside className="w-64 flex-shrink-0 bg-white rounded-xl border border-slate-200 p-4 self-start sticky top-4">
+            <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Store</div>
+            <div ref={storeBoxRef} className="relative mb-4">
+              <button
+                onClick={function () { setStoreOpen(!storeOpen); }}
+                className="w-full text-left text-sm bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-lg px-3 py-2 flex items-center justify-between"
+              >
+                <span className="truncate">{selectedStore ? selectedStore + " — " + (stores.find(function(s){return s.code===selectedStore;}) || {}).name : "All Stores"}</span>
+                <ChevronDown className="w-4 h-4 text-slate-400 flex-shrink-0 ml-2" />
+              </button>
+              {storeOpen && (
+                <div className="absolute z-10 mt-1 left-0 right-0 bg-white border border-slate-200 rounded-lg shadow-lg max-h-80 overflow-y-auto">
+                  <div className="p-2 border-b border-slate-100 sticky top-0 bg-white">
+                    <input
+                      autoFocus
+                      value={storeSearch}
+                      onChange={function (e) { setStoreSearch(e.target.value); }}
+                      placeholder="Search…"
+                      className="w-full text-sm px-2 py-1 border border-slate-200 rounded"
+                    />
+                  </div>
+                  <button
+                    onClick={function () { setSelectedStore(""); setStoreOpen(false); setStoreSearch(""); }}
+                    className={"w-full text-left text-sm px-3 py-2 hover:bg-emerald-50 " + (selectedStore === "" ? "bg-emerald-50 font-semibold" : "")}
+                  >
+                    All Stores
+                  </button>
+                  {filteredStores.map(function (s) {
+                    return (
+                      <button
+                        key={s.code}
+                        onClick={function () { setSelectedStore(s.code); setStoreOpen(false); setStoreSearch(""); }}
+                        className={"w-full text-left text-xs px-3 py-2 hover:bg-emerald-50 border-t border-slate-100 " + (selectedStore === s.code ? "bg-emerald-50 font-semibold" : "")}
+                      >
+                        <div className="font-medium text-slate-800">{s.code} — {s.name}</div>
+                        <div className="text-slate-500">{s.city}{s.state ? ", " + s.state : ""}</div>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Report Date</div>
+            <input
+              type="date"
+              value={selectedDate}
+              max={todayET}
+              onChange={function (e) { setSelectedDate(e.target.value); }}
+              className="w-full text-sm bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 mb-4"
+            />
+
+            <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">Page</div>
+            <nav className="flex flex-col gap-1 mb-4">
+              <Y2NavBtn active={activePage === "main"}    onClick={function(){setActivePage("main");}}    emoji="📊" label="Main Dashboard" />
+              <Y2NavBtn active={activePage === "drivers"} onClick={function(){setActivePage("drivers");}} emoji="🔍" label="Sales Drivers" />
+              <Y2NavBtn active={activePage === "product"} onClick={function(){setActivePage("product");}} emoji="📦" label="Product Drill" />
+              <Y2NavBtn active={activePage === "customer"}onClick={function(){setActivePage("customer");}}emoji="👥" label="Customer Drill" />
+              <Y2NavBtn active={activePage === "online"}  onClick={function(){setActivePage("online");}}  emoji="🌐" label="Online Sales" />
+            </nav>
+
+            <div className="text-[10px] text-slate-400 leading-snug pt-3 border-t border-slate-100">
+              v2.0 prototype — built on <code>AUBUCHON_RETAIL_ANALYTICS</code> semantic view. Replaces Power BI Store-Manager-Dashboard-v3. KPI labels per aubuchon-snowflake-beta-v1 skill §7a.
+            </div>
+          </aside>
+
+          {/* Main content */}
+          <main className="flex-1 min-w-0">
+            {summaryError && (
+              <div className="bg-red-50 border border-red-200 text-red-800 rounded-lg p-4 mb-4 text-sm">
+                <div className="font-semibold mb-1">Couldn't load data</div>
+                <div>{summaryError}</div>
+              </div>
+            )}
+            {summaryLoading && !summary ? (
+              <div className="bg-white rounded-xl p-12 text-center text-slate-500">Loading…</div>
+            ) : (
+              <>
+                {activePage === "main"     && <Yoda2Main     summary={summary} storeLabel={storeLabel} dateLabel={dateLabel} />}
+                {activePage === "drivers"  && <Yoda2Drivers  summary={summary} storeLabel={storeLabel} dateLabel={dateLabel} />}
+                {activePage === "product"  && <Yoda2Product  products={products} loading={productsLoading} error={productsError} storeLabel={storeLabel} dateLabel={dateLabel} />}
+                {activePage === "customer" && <Yoda2Customer segments={customers} loading={customersLoading} error={customersError} storeLabel={storeLabel} dateLabel={dateLabel} />}
+                {activePage === "online"   && <Yoda2Online />}
+              </>
+            )}
+
+            <div className="text-center text-xs text-slate-400 mt-6 pb-4">
+              Data from Snowflake · <code className="bg-slate-100 px-1.5 py-0.5 rounded text-[11px]">PRD_EDW_DB.SI_AGENTS.AUBUCHON_RETAIL_ANALYTICS</code>
+            </div>
+          </main>
+        </div>
+
+        {/* Bottom accent strip */}
+        <div className="mt-4" style={{ height: 8, background: "linear-gradient(to bottom, #F58220 0%, #F58220 30%, #01683F 30%, #01683F 100%)" }} />
+      </div>
+    </div>
+  );
+}
+
+function Y2NavBtn({ active, onClick, emoji, label }) {
+  return (
+    <button
+      onClick={onClick}
+      className={"text-left text-sm px-3 py-2 rounded-lg transition-colors " + (active ? "bg-emerald-50 text-emerald-900 font-semibold border border-emerald-200" : "hover:bg-slate-50 text-slate-700 border border-transparent")}
+    >
+      <span className="mr-2">{emoji}</span>{label}
+    </button>
+  );
+}
+
+/* ───────── Main Dashboard ───────── */
+function Yoda2Main({ summary, storeLabel, dateLabel }) {
+  if (!summary || !summary.kpis) return null;
+  var k = summary.kpis;
+  var planVar = k.dailyPlan ? (k.netSales - k.dailyPlan) / k.dailyPlan : null;
+  var lyVar   = k.lyNetSales ? (k.netSales - k.lyNetSales) / k.lyNetSales : null;
+  var pctToPlan = k.dailyPlan ? Math.max(0, Math.min(1, k.netSales / k.dailyPlan)) : 0;
+  var heroState = planVar === null ? "neutral" : planVar >= 0.02 ? "win" : planVar <= -0.02 ? "miss" : "neutral";
+
+  var heroBg = heroState === "win"
+    ? "linear-gradient(180deg, #F0FAF5 0%, #F7FCF9 100%)"
+    : heroState === "miss"
+    ? "linear-gradient(180deg, #FFF5F5 0%, #FFFAFA 100%)"
+    : "white";
+  var heroBorder = heroState === "win" ? "rgba(1, 104, 63, 0.15)" : heroState === "miss" ? "rgba(236, 28, 36, 0.15)" : "rgba(0,0,0,0.04)";
+
+  return (
+    <Fragment>
+      {/* Hero */}
+      <div className="rounded-2xl p-7 mb-4 border shadow-sm" style={{ background: heroBg, borderColor: heroBorder }}>
+        <div className="flex items-start justify-between gap-4 flex-wrap">
+          <div>
+            <div className="text-[15px] font-bold text-slate-900">{storeLabel} — {dateLabel}</div>
+            <div className="text-xs text-slate-500 mt-0.5">Comparing to same day 364 days ago (trade-week alignment)</div>
+            <div className="text-4xl font-extrabold tracking-tight text-slate-900 mt-2 leading-none">{fmtDollar(k.netSales)}</div>
+            <div className="text-xs text-slate-600 mt-1">Net Sales (GL)</div>
+          </div>
+          <div className="text-right">
+            <HeroVar label="vs Plan" pct={planVar} />
+            <div className="mt-1">
+              <HeroVar label="vs LY" pct={lyVar} small />
+            </div>
+          </div>
+        </div>
+        <div className="mt-4">
+          <div className="h-2.5 rounded-full bg-slate-200/60 overflow-hidden">
+            <div
+              className="h-full rounded-full transition-all"
+              style={{
+                width: (pctToPlan * 100).toFixed(1) + "%",
+                background: planVar === null ? "#F58220" : planVar >= 0 ? "#01683F" : "#EC1C24",
+              }}
+            />
+          </div>
+          <div className="flex justify-between text-xs text-slate-500 mt-1.5">
+            <span>{fmtDollar(k.netSales)}</span>
+            <span>Plan: {fmtDollar(k.dailyPlan)}</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Sub-KPI grid */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-4">
+        <KpiTile label="Transactions (excl. returns/fees)" tip="COUNT(DISTINCT transaction_id) WHERE type NOT IN ('return','fee-expense'). Skill §5, verified query KPI_TRANSACTION_COUNT."
+                 value={fmtInt(k.txnCount)} compare={"LY: " + fmtInt(k.lyTxnCount)} variance={pct(k.txnCount, k.lyTxnCount)} />
+        <KpiTile label="Avg Ticket" tip="Net Sales (GL) / Transaction Count (excl. returns & fees). Skill §5, verified query KPI_AVERAGE_SALE."
+                 value={fmtDollar2(k.avgTicket)} compare={"LY: " + fmtDollar2(k.lyAvgTicket)} variance={pct(k.avgTicket, k.lyAvgTicket)} />
+        <KpiTile label="UPT (sale-type)" tip="SUM(upt_sale_qty)/COUNT(DISTINCT transaction_id WHERE type='sale'). Stricter denominator than Transaction Count. Skill §5, verified query KPI_UPT_AVG."
+                 value={(k.upt || 0).toFixed(2)} compare={"LY: " + (k.lyUpt || 0).toFixed(2)} variance={pct(k.upt, k.lyUpt)} />
+        <KpiTile label="Member Sales" tip="⚠ Generated — not verified. SUM(net_sale_gl_amt) WHERE customer_category IN ('Rewards','Military','Employee','Stock Holder')."
+                 unverified
+                 value={fmtDollar(k.memberSales)} compare={"LY: " + fmtDollar(k.lyMemberSales)} variance={pct(k.memberSales, k.lyMemberSales)} />
+        <KpiTile label="Pro Sales" tip="⚠ Generated — not verified. SUM(net_sale_gl_amt) WHERE customer_category='Professional'."
+                 unverified
+                 value={fmtDollar(k.proSales)} compare={"LY: " + fmtDollar(k.lyProSales)} variance={pct(k.proSales, k.lyProSales)} />
+      </div>
+
+      {/* Anomaly callout */}
+      <AnomalyCallout kpis={k} storeLabel={storeLabel} planVar={planVar} lyVar={lyVar} />
+
+      {/* 8-week trend */}
+      <div className="bg-white rounded-xl border border-slate-200 p-5 mt-4">
+        <div className="flex items-center justify-between mb-3">
+          <div className="font-semibold text-slate-900">📈 8-Week Net Sales Trend</div>
+          <div className="text-xs text-slate-500">Daily net sales, last 8 weeks</div>
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div className="lg:col-span-2">
+            <TrendChart data={(summary && summary.weeklyTrend) || []} />
+          </div>
+          <div>
+            <div className="text-xs font-semibold text-slate-600 mb-2">Last 7 Days</div>
+            <TrendTable data={(summary && summary.weeklyTrend) || []} />
+          </div>
+        </div>
+      </div>
+    </Fragment>
+  );
+}
+
+/* ───────── Sales Drivers ───────── */
+function Yoda2Drivers({ summary, storeLabel, dateLabel }) {
+  if (!summary || !summary.kpis) return null;
+  var k = summary.kpis;
+  const [compareAgainst, setCompareAgainst] = useState("ly"); // "ly" or "plan"
+  var lyVar = k.lyNetSales ? (k.netSales - k.lyNetSales) / k.lyNetSales : null;
+  var planVar = k.dailyPlan ? (k.netSales - k.dailyPlan) / k.dailyPlan : null;
+  var txnVar = pct(k.txnCount, k.lyTxnCount);
+  var avgVar = pct(k.avgTicket, k.lyAvgTicket);
+  var uptVar = pct(k.upt, k.lyUpt);
+  var rpuVar = (avgVar != null && uptVar != null && uptVar !== -1) ? ((1 + avgVar) / (1 + uptVar)) - 1 : null;
+  var topVar = compareAgainst === "ly" ? lyVar : planVar;
+
+  return (
+    <Fragment>
+      <div className="bg-white rounded-xl border border-slate-200 p-5">
+        <div className="flex items-start justify-between mb-1 flex-wrap gap-2">
+          <div>
+            <div className="font-semibold text-slate-900" style={{ color: "#F58220", fontFamily: "Trebuchet MS, sans-serif" }}>Sales Drivers — {storeLabel}</div>
+            <div className="text-xs text-slate-500">{dateLabel}</div>
+          </div>
+          <div className="inline-flex bg-slate-100 rounded-lg p-1 text-xs">
+            <button onClick={function(){setCompareAgainst("ly");}} className={"px-3 py-1 rounded " + (compareAgainst === "ly" ? "bg-white shadow-sm font-semibold" : "text-slate-600")}>Last Year</button>
+            <button onClick={function(){setCompareAgainst("plan");}} className={"px-3 py-1 rounded " + (compareAgainst === "plan" ? "bg-white shadow-sm font-semibold" : "text-slate-600")}>Sales Plan</button>
+          </div>
+        </div>
+        <div className="text-xs text-slate-500 mb-4">What's driving the variance? Decomposition with coaching.</div>
+
+        <DriverNode label={"NET SALES VS " + (compareAgainst === "ly" ? "LY" : "PLAN")} pct={topVar} big center />
+        <div className="text-center text-xs text-slate-400 my-2">↓ broken down into ↓</div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div>
+            <DriverNode label="TRANSACTION COUNT (EXCL. RETURNS & FEES)" pct={txnVar} goalLabel="Goal: 0%" goalMet={txnVar != null && txnVar >= 0} />
+            <CoachingBlock text={
+              txnVar == null ? "No traffic comparison available." :
+              txnVar > 0.02 ? "Strong traffic. Whatever marketing/promo is working, double down."
+              : txnVar > -0.02 ? "Traffic is flat to LY. Look at local events, marketing flight, weather."
+              : "Traffic is down. Diagnose: weather? promotions ended? competitor opening? Consider re-engagement — postcards, social, local events."
+            } />
+          </div>
+          <div>
+            <DriverNode label="AVERAGE TICKET" pct={avgVar} goalLabel="Goal: +3%" goalMet={avgVar != null && avgVar >= 0.03} />
+            <CoachingBlock text={
+              avgVar == null ? "No basket comparison available." :
+              avgVar > 0.03 ? "Avg Ticket up. Basket-builder coaching is landing — formalize what's working."
+              : avgVar > -0.02 ? "Avg Ticket flat. Push add-ons: paint/primer, fasteners, batteries. Upsell opportunities at register."
+              : "Avg Ticket down. Investigate: are higher-ticket items out of stock? Weak associate engagement? Try focused training on top 5 add-on categories."
+            } />
+          </div>
+        </div>
+        <div className="text-center text-xs text-slate-400 my-2">↓ Average Ticket further breaks down into ↓</div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <DriverNode label="UPT (SALE-TYPE ONLY)" pct={uptVar} goalLabel="Goal: +1%" goalMet={uptVar != null && uptVar >= 0.01} />
+          <DriverNode label="RETAIL PER UNIT (derived, approx)" pct={rpuVar} goalLabel="Goal: +2%" goalMet={rpuVar != null && rpuVar >= 0.02} />
+        </div>
+      </div>
+    </Fragment>
+  );
+}
+
+/* ───────── Product Drill ───────── */
+function Yoda2Product({ products, loading, error, storeLabel, dateLabel }) {
+  return (
+    <div className="bg-white rounded-xl border border-slate-200 p-5">
+      <div className="mb-1 font-semibold" style={{ color: "#F58220", fontFamily: "Trebuchet MS, sans-serif" }}>Product Drill — {storeLabel}</div>
+      <div className="text-xs text-slate-500 mb-4">{dateLabel} · Top 20 departments by net sales</div>
+      {loading && <div className="text-slate-500 text-center py-8">Loading product data…</div>}
+      {error && <div className="bg-red-50 border border-red-200 text-red-800 rounded p-3 text-sm">{error}</div>}
+      {!loading && !error && products && products.length === 0 && (
+        <div className="text-slate-500 text-center py-8">No product data for this filter.</div>
+      )}
+      {products && products.length > 0 && (
+        <Fragment>
+          <div className="space-y-2 mb-6">
+            {products.map(function (p, i) {
+              var maxVal = Math.max.apply(null, products.map(function(q){return q.netSales || 0;})) || 1;
+              var pctBar = ((p.netSales || 0) / maxVal) * 100;
+              return (
+                <div key={i} className="flex items-center gap-3">
+                  <div className="w-48 flex-shrink-0 text-sm text-slate-700 truncate" title={p.department}>{p.department}</div>
+                  <div className="flex-1 relative h-7 bg-slate-100 rounded overflow-hidden">
+                    <div className="absolute top-0 left-0 h-full rounded" style={{ width: pctBar + "%", background: "#01683F" }}></div>
+                    <div className="absolute inset-0 flex items-center justify-end pr-2 text-xs font-semibold text-slate-900">{fmtDollar(p.netSales)}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-slate-50 text-slate-600">
+                <tr>
+                  <th className="text-left px-3 py-2 font-semibold">Department</th>
+                  <th className="text-right px-3 py-2 font-semibold">Net Sales (GL)</th>
+                  <th className="text-right px-3 py-2 font-semibold">Gross Merchandise Profit</th>
+                  <th className="text-right px-3 py-2 font-semibold">Gross Margin % (merch-sales basis)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {products.map(function (p, i) {
+                  return (
+                    <tr key={i} className="border-t border-slate-100">
+                      <td className="px-3 py-2">{p.department}</td>
+                      <td className="px-3 py-2 text-right font-medium">{fmtDollar(p.netSales)}</td>
+                      <td className="px-3 py-2 text-right">{fmtDollar(p.grossProfit)}</td>
+                      <td className="px-3 py-2 text-right">{(p.grossMarginPct * 100).toFixed(1)}%</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </Fragment>
+      )}
+    </div>
+  );
+}
+
+/* ───────── Customer Drill ───────── */
+function Yoda2Customer({ segments, loading, error, storeLabel, dateLabel }) {
+  return (
+    <div className="bg-white rounded-xl border border-slate-200 p-5">
+      <div className="mb-1 font-semibold" style={{ color: "#F58220", fontFamily: "Trebuchet MS, sans-serif" }}>Customer Drill — {storeLabel}</div>
+      <div className="text-xs text-slate-500 mb-4">{dateLabel} · Sales and transactions by customer segment. ⚠ Segment-sliced figures are not verified in the skill.</div>
+      {loading && <div className="text-slate-500 text-center py-8">Loading customer data…</div>}
+      {error && <div className="bg-red-50 border border-red-200 text-red-800 rounded p-3 text-sm">{error}</div>}
+      {!loading && !error && segments && segments.length === 0 && (
+        <div className="text-slate-500 text-center py-8">No customer data for this filter.</div>
+      )}
+      {segments && segments.length > 0 && (
+        <Fragment>
+          {/* Grouped bar: TY vs LY by segment */}
+          <div className="space-y-3 mb-5">
+            {segments.map(function (s, i) {
+              var maxVal = Math.max.apply(null, segments.map(function(q){return Math.max(q.netSalesTy||0, q.netSalesLy||0);})) || 1;
+              return (
+                <div key={i}>
+                  <div className="text-sm font-medium text-slate-800 mb-1">{s.category}</div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="w-10 text-xs text-slate-500">TY</div>
+                    <div className="flex-1 relative h-5 bg-slate-100 rounded overflow-hidden">
+                      <div className="absolute top-0 left-0 h-full rounded" style={{ width: ((s.netSalesTy||0)/maxVal*100) + "%", background: "#01683F" }}></div>
+                    </div>
+                    <div className="w-24 text-right text-xs font-medium">{fmtDollar(s.netSalesTy)}</div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-10 text-xs text-slate-500">LY</div>
+                    <div className="flex-1 relative h-5 bg-slate-100 rounded overflow-hidden">
+                      <div className="absolute top-0 left-0 h-full rounded" style={{ width: ((s.netSalesLy||0)/maxVal*100) + "%", background: "#999999" }}></div>
+                    </div>
+                    <div className="w-24 text-right text-xs font-medium">{fmtDollar(s.netSalesLy)}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+          {/* Health flags */}
+          <div className="mb-5">
+            <div className="text-xs font-semibold uppercase tracking-wide text-slate-600 mb-2">Segment Health Flags</div>
+            {segments.filter(function(s){return s.salesVar != null && (s.salesVar <= -0.05 || s.salesVar >= 0.10);}).map(function (s, i) {
+              var critical = s.salesVar <= -0.10;
+              var warning = s.salesVar <= -0.05 && s.salesVar > -0.10;
+              var positive = s.salesVar >= 0.10;
+              var bg = critical ? "#FFF5F5" : warning ? "#FFF8E6" : "#F0FAF5";
+              var border = critical ? "#EC1C24" : warning ? "#F58220" : "#01683F";
+              var icon = critical ? "⚠" : warning ? "!" : "✓";
+              var tone = critical ? "Sales down " + fmtPct(s.salesVar) + " vs LY. Worth investigating."
+                       : warning ? "Sales down " + fmtPct(s.salesVar) + " vs LY. Monitor."
+                       : "Sales up " + fmtPct(s.salesVar) + " vs LY. What's working?";
+              return (
+                <div key={i} className="mb-2 p-3 rounded-lg text-sm" style={{ background: bg, borderLeft: "4px solid " + border }}>
+                  <strong>{icon} {s.category}:</strong> {tone}
+                </div>
+              );
+            })}
+          </div>
+          {/* Detail table */}
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="bg-slate-50 text-slate-600">
+                <tr>
+                  <th className="text-left px-3 py-2 font-semibold">Segment</th>
+                  <th className="text-right px-3 py-2 font-semibold">Net Sales (GL) TY</th>
+                  <th className="text-right px-3 py-2 font-semibold">Net Sales (GL) LY</th>
+                  <th className="text-right px-3 py-2 font-semibold">Sales Var</th>
+                  <th className="text-right px-3 py-2 font-semibold">Txn (excl. R/F) TY</th>
+                  <th className="text-right px-3 py-2 font-semibold">Txn (excl. R/F) LY</th>
+                  <th className="text-right px-3 py-2 font-semibold">Txn Var</th>
+                </tr>
+              </thead>
+              <tbody>
+                {segments.map(function (s, i) {
+                  return (
+                    <tr key={i} className="border-t border-slate-100">
+                      <td className="px-3 py-2">{s.category}</td>
+                      <td className="px-3 py-2 text-right font-medium">{fmtDollar(s.netSalesTy)}</td>
+                      <td className="px-3 py-2 text-right">{fmtDollar(s.netSalesLy)}</td>
+                      <td className="px-3 py-2 text-right" style={{ color: s.salesVar == null ? "#64748b" : s.salesVar >= 0 ? "#01683F" : "#EC1C24" }}>
+                        {s.salesVar == null ? "—" : fmtPct(s.salesVar)}
+                      </td>
+                      <td className="px-3 py-2 text-right">{fmtInt(s.txnCountTy)}</td>
+                      <td className="px-3 py-2 text-right">{fmtInt(s.txnCountLy)}</td>
+                      <td className="px-3 py-2 text-right" style={{ color: s.txnVar == null ? "#64748b" : s.txnVar >= 0 ? "#01683F" : "#EC1C24" }}>
+                        {s.txnVar == null ? "—" : fmtPct(s.txnVar)}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </Fragment>
+      )}
+    </div>
+  );
+}
+
+/* ───────── Online stub ───────── */
+function Yoda2Online() {
+  return (
+    <div className="bg-white rounded-xl border border-slate-200 p-8 text-center">
+      <div className="text-2xl mb-3">🚧</div>
+      <div className="text-lg font-semibold text-slate-900 mb-2">Online Sales — Coming in v1.1</div>
+      <div className="text-sm text-slate-600 max-w-lg mx-auto">
+        Will combine HardwareStore.com + Ace Online channels into one toggleable view, replacing two separate Power BI pages.
+        Backend queries are scoped; rendering deferred to keep the prototype focused.
+      </div>
+    </div>
+  );
+}
+
+/* ───────── Shared building blocks ───────── */
+function HeroVar({ label, pct, small }) {
+  if (pct === null || pct === undefined) return <span className="text-xs text-slate-400">{label}: —</span>;
+  var up = pct >= 0;
+  var color = up ? "#01683F" : "#EC1C24";
+  var size = small ? { fontSize: 15, fontWeight: 600 } : { fontSize: 30, fontWeight: 800, letterSpacing: "-0.02em", lineHeight: 1 };
+  return (
+    <Fragment>
+      <span style={Object.assign({ color: color }, size)}>
+        {up ? "▲" : "▼"} {fmtPct(Math.abs(pct))}
+      </span>
+      <span className="text-xs text-slate-500 ml-1">{label}</span>
+    </Fragment>
+  );
+}
+
+function KpiTile({ label, tip, value, compare, variance, unverified }) {
+  return (
+    <div className="bg-white rounded-lg border border-slate-200 p-3.5" title={tip}>
+      <div className="text-[11px] text-slate-500 font-medium mb-1 truncate">{label}</div>
+      <div className="text-xl font-bold text-slate-900 leading-tight flex items-baseline gap-1.5 flex-wrap">
+        <span>{value}</span>
+        {unverified && (
+          <span className="text-[10px] font-semibold bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded-full">⚠ Generated</span>
+        )}
+      </div>
+      <div className="text-[10px] text-slate-400 mt-0.5">{compare}</div>
+      {variance != null && (
+        <div className="text-xs font-semibold mt-1" style={{ color: variance >= 0 ? "#01683F" : "#EC1C24" }}>
+          {variance >= 0 ? "▲" : "▼"} {fmtPct(Math.abs(variance))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function AnomalyCallout({ kpis, storeLabel, planVar, lyVar }) {
+  var k = kpis;
+  var txnVar = pct(k.txnCount, k.lyTxnCount) || 0;
+  var avgVar = pct(k.avgTicket, k.lyAvgTicket) || 0;
+  var uptVar = pct(k.upt, k.lyUpt) || 0;
+  var pv = planVar == null ? 0 : planVar;
+  var lv = lyVar == null ? 0 : lyVar;
+  var severity = "positive", header = "Steady", msg = "", border = "#01683F", bg = "#F7F7F7";
+
+  if (planVar == null && lyVar == null) {
+    severity = "warning"; header = "Comparison unavailable"; msg = "No LY or Plan data available for this date.";
+  } else if (pv >= 0.05 && lv >= 0.05) {
+    var driver = uptVar > 0.02 ? "UPT (sale-type)" : txnVar > 0.02 ? "traffic" : "mix";
+    header = "Strong day — beating plan (" + fmtPct(pv) + ") and LY (" + fmtPct(lv) + ")";
+    msg = storeLabel + " is crushing it today. Primary driver looks like " + driver + " (UPT " + fmtPct(uptVar) + ", Txn " + fmtPct(txnVar) + "). Document what's working.";
+  } else if (pv >= 0.02 && lv <= -0.02) {
+    severity = "warning"; border = "#F58220"; bg = "#FFF8E6";
+    header = "Hit plan (" + fmtPct(pv) + ") but trailing LY (" + fmtPct(lv) + ")";
+    msg = "Plan may have been set conservatively given the YoY softening. Worth a plan review — celebrating the beat could mask a real trend.";
+  } else if (pv <= -0.02 && lv >= 0.02) {
+    header = "Missed plan (" + fmtPct(pv) + ") but ahead of LY (" + fmtPct(lv) + ")";
+    msg = "Behind today's plan but still growing vs last year. Plan may be set aggressively — comp growth of " + fmtPct(lv) + " is healthy. Don't over-correct.";
+  } else if (pv <= -0.05 || lv <= -0.05) {
+    severity = "warning"; border = "#F58220"; bg = "#FFF8E6";
+    if (txnVar < -0.05) {
+      header = "Soft day — traffic down";
+      msg = "Missed plan (" + fmtPct(pv) + "), trailed LY (" + fmtPct(lv) + "). Transactions fell " + fmtPct(txnVar) + " — it's a traffic problem, not a basket problem (Avg Ticket " + fmtPct(avgVar) + "). Check weather, local events, marketing flight.";
+    } else if (avgVar < -0.05) {
+      header = "Soft day — basket shrunk";
+      msg = "Missed plan (" + fmtPct(pv) + "). Transactions held (" + fmtPct(txnVar) + ") but Average Ticket dropped " + fmtPct(avgVar) + ". Focus add-on coaching (paint/primer, fasteners, batteries) at register.";
+    } else {
+      header = "Soft day (" + fmtPct(pv) + " vs plan, " + fmtPct(lv) + " vs LY)";
+      msg = "Behind both plan and LY. Worth a closer look at the day's mix and promotions.";
+    }
+  } else {
+    msg = storeLabel + " tracking plan (" + fmtPct(pv) + ") and LY (" + fmtPct(lv) + "). Normal variability.";
+  }
+
+  return (
+    <div className="rounded-lg px-5 py-3 mt-4 text-sm text-slate-800" style={{ background: bg, borderLeft: "4px solid " + border }}>
+      <div className="font-bold uppercase tracking-wide text-[12px] mb-0.5">{header}</div>
+      <div>{msg}</div>
+    </div>
+  );
+}
+
+function TrendChart({ data }) {
+  if (!data || data.length === 0) {
+    return <div className="h-64 flex items-center justify-center text-slate-400 text-sm">No trend data</div>;
+  }
+  var vals = data.map(function(d){return d.netSales || 0;});
+  var min = Math.min.apply(null, vals);
+  var max = Math.max.apply(null, vals);
+  var range = max - min || 1;
+  var w = 600, h = 240, padL = 56, padR = 16, padT = 16, padB = 28;
+  var innerW = w - padL - padR;
+  var innerH = h - padT - padB;
+  var stepX = data.length > 1 ? innerW / (data.length - 1) : 0;
+  var pts = data.map(function(d, i){
+    var x = padL + i * stepX;
+    var y = padT + innerH - ((d.netSales - min) / range) * innerH;
+    return { x: x, y: y, d: d };
+  });
+  var pathD = pts.map(function(p, i){ return (i === 0 ? "M" : "L") + p.x.toFixed(1) + "," + p.y.toFixed(1); }).join(" ");
+  var areaD = pathD + " L" + (padL + innerW).toFixed(1) + "," + (padT + innerH).toFixed(1) + " L" + padL.toFixed(1) + "," + (padT + innerH).toFixed(1) + " Z";
+  // Y ticks
+  var yTicks = [0, 0.25, 0.5, 0.75, 1].map(function(t){
+    var v = min + range * (1 - t);
+    var y = padT + innerH * t;
+    return { v: v, y: y };
+  });
+  return (
+    <svg viewBox={"0 0 " + w + " " + h} className="w-full h-auto" preserveAspectRatio="none" style={{ maxHeight: 280 }}>
+      {/* Gridlines + Y labels */}
+      {yTicks.map(function(t, i){ return (
+        <g key={i}>
+          <line x1={padL} y1={t.y} x2={padL + innerW} y2={t.y} stroke="rgba(0,0,0,0.04)" />
+          <text x={padL - 6} y={t.y + 4} fontSize="10" fill="#64748b" textAnchor="end">${Math.round(t.v / 1000)}K</text>
+        </g>
+      );})}
+      {/* X axis labels (first, middle, last) */}
+      {[0, Math.floor(data.length / 2), data.length - 1].filter(function(v, i, a){return a.indexOf(v)===i;}).map(function(i){
+        if (!pts[i]) return null;
+        return <text key={i} x={pts[i].x} y={padT + innerH + 16} fontSize="10" fill="#64748b" textAnchor="middle">{shortDate(data[i].date)}</text>;
+      })}
+      {/* Area + line */}
+      <path d={areaD} fill="rgba(1, 104, 63, 0.08)" />
+      <path d={pathD} fill="none" stroke="#01683F" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
+      {pts.map(function(p, i){
+        return <circle key={i} cx={p.x} cy={p.y} r="3" fill="#01683F"><title>{shortDate(p.d.date)}: {fmtDollar(p.d.netSales)}</title></circle>;
+      })}
+    </svg>
+  );
+}
+
+function TrendTable({ data }) {
+  var last7 = (data || []).slice(-7);
+  if (last7.length === 0) return <div className="text-xs text-slate-400">No data</div>;
+  return (
+    <table className="w-full text-xs">
+      <thead className="text-slate-500">
+        <tr><th className="text-left py-1">Day</th><th className="text-right py-1">Net Sales</th></tr>
+      </thead>
+      <tbody>
+        {last7.map(function(d, i){ return (
+          <tr key={i} className="border-t border-slate-100">
+            <td className="py-1">{shortDate(d.date)}</td>
+            <td className="py-1 text-right font-medium">{fmtDollar(d.netSales)}</td>
+          </tr>
+        );})}
+      </tbody>
+    </table>
+  );
+}
+
+function DriverNode({ label, pct, big, center, goalLabel, goalMet }) {
+  if (pct == null) {
+    return (
+      <div className={"border-2 rounded-xl p-4 bg-white " + (center ? "max-w-xs mx-auto text-center" : "")} style={{ borderColor: "rgba(0,0,0,0.08)" }}>
+        <div className="text-[11px] text-slate-500">{label}</div>
+        <div className="text-slate-400 mt-1" style={{ fontSize: big ? 24 : 20, fontWeight: 700 }}>—</div>
+      </div>
+    );
+  }
+  var positive = pct >= 0;
+  var bg = positive ? "#F0FAF5" : "#FFF5F5";
+  var border = positive ? "#01683F" : "#EC1C24";
+  return (
+    <div className={"border-2 rounded-xl p-4 " + (center ? "max-w-xs mx-auto text-center" : "")} style={{ background: bg, borderColor: border }}>
+      <div className="text-[10px] text-slate-500 uppercase tracking-wide">{label}</div>
+      <div className="text-slate-900" style={{ fontSize: big ? 24 : 20, fontWeight: 700 }}>{fmtPct(pct)}</div>
+      {goalLabel && (
+        <div className="text-[11px] text-slate-500 mt-1">
+          {goalLabel} &nbsp;|&nbsp; {goalMet ? "✓ Beat" : "✗ Miss"}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function CoachingBlock({ text }) {
+  return (
+    <div className="bg-slate-50 rounded px-3 py-2 text-[12px] text-slate-700 mt-2 leading-snug">
+      💡 <strong>Coaching:</strong> {text}
+    </div>
+  );
+}
+
+/* ───────── Formatting helpers ───────── */
+function fmtDollar(x) {
+  var v = Number(x) || 0;
+  return "$" + Math.round(v).toLocaleString("en-US");
+}
+function fmtDollar2(x) {
+  var v = Number(x) || 0;
+  return "$" + v.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function fmtInt(x) { return Math.round(Number(x) || 0).toLocaleString("en-US"); }
+function fmtPct(x) {
+  if (x == null) return "—";
+  var v = Number(x);
+  return (v >= 0 ? "+" : "") + (v * 100).toFixed(1) + "%";
+}
+function pct(a, b) {
+  if (b == null || b === 0 || !isFinite(b)) return null;
+  return ((Number(a) || 0) - Number(b)) / Number(b);
+}
+function shortDate(iso) {
+  if (!iso) return "";
+  var s = String(iso).slice(0, 10);
+  var parts = s.split("-");
+  if (parts.length !== 3) return s;
+  try {
+    var d = new Date(parts[0] + "-" + parts[1] + "-" + parts[2] + "T00:00:00");
+    return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  } catch (_) { return s; }
+}
+
 function YODAReports({ goHome }) {
   const [subView, setSubView] = useState(null);
 
@@ -6290,6 +7113,10 @@ function YODAReports({ goHome }) {
 
   if (subView === "live-sales-snowflake") {
     return <LiveSalesSnowflakeView goBack={function () { setSubView(null); }} />;
+  }
+
+  if (subView === "yoda-2") {
+    return <Yoda2View goBack={function () { setSubView(null); }} />;
   }
 
   return (
