@@ -3,16 +3,26 @@
   "storeFilter": null,
   "dateFilter": "2026-04-21",
   "companyTotal": {
-    "sales": 1038417.88,
+    "sales": 1102833.96,
     "plan": 1091990,
     "gp": 474011.25,
-    "gpPct": 45.64744686406979,
+    "gpPct": 42.981198185083095,
     "txns": 27360,
     "customers": 0,
-    "storeCount": 134,
-    "pctToPlan": 95.09408327915091
+    "storeCount": 136,
+    "pctToPlan": 100.99304572386194
   },
   "topStores": [
+    {
+      "store": "233",
+      "name": "ITHACA, NY - DOWNTOWN - (ACE)",
+      "city": "Ithaca",
+      "state": "NY",
+      "sales": 47258.44,
+      "plan": 29648.13,
+      "gp": 0,
+      "txns": 0
+    },
     {
       "store": "208",
       "name": "BURTONSVILLE, MD - ACE",
@@ -72,6 +82,16 @@
       "plan": 20411.21,
       "gp": 7872.89,
       "txns": 346
+    },
+    {
+      "store": "234",
+      "name": "ITHACA, NY - TRIPHAMMER - (ACE)",
+      "city": "Ithaca",
+      "state": "NY",
+      "sales": 17157.64,
+      "plan": 22985.07,
+      "gp": 0,
+      "txns": 0
     },
     {
       "store": "172",
@@ -192,108 +212,508 @@
       "plan": 8300.79,
       "gp": 5819.21,
       "txns": 307
-    },
-    {
-      "store": "220",
-      "name": "PENNSBURG, PA - ACE",
-      "city": "Pennsburg",
-      "state": "PA",
-      "sales": 11003.88,
-      "plan": 13154.11,
-      "gp": 5247.23,
-      "txns": 281
-    },
-    {
-      "store": "190",
-      "name": "IPSWICH, MA - ACE",
-      "city": "Ipswich",
-      "state": "MA",
-      "sales": 10902.41,
-      "plan": 10408.45,
-      "gp": 4929.01,
-      "txns": 274
     }
   ],
   "topProducts": [
     {
+      "sku": "25",
       "product": "MIDWEST NUTS & BOLTS",
       "sales": 18051.67
     },
     {
+      "sku": "215169",
       "product": "SPREADER BAG W/MSTR BARR 25LB",
       "sales": 16304
     },
     {
+      "sku": "500808",
       "product": "REGAL,SLCT.EGSHL,PSTL 1G#5491X",
       "sales": 10800.02
     },
     {
+      "sku": "138609",
       "product": "SR 200 BACKPACK SPRAYER",
       "sales": 6006
     },
     {
+      "sku": "15000",
       "product": "SCOTTS  4 STEP 15M",
       "sales": 5443.35
     },
     {
+      "sku": "871886",
       "product": "SF7007BE SPEEDQUEEN STACKED BL",
       "sales": 4599.95
     },
     {
+      "sku": "122413",
       "product": "BEN,INT.EGSHL,PASTEL,1G #N6261",
       "sales": 4579.66
     },
     {
+      "sku": "129991",
       "product": "PELLET,GREEN SUPREME,BLEND40LB",
       "sales": 3998.83
     },
     {
+      "sku": "963314",
       "product": "POKEMON - PERFECT ORDER BOOST",
       "sales": 3852.32
     },
     {
+      "sku": "105",
       "product": "PROPANE, TANK, EX 20LB",
       "sales": 3684.47
     },
     {
+      "sku": "102836",
       "product": "2CUFT/50QT MG POTTING MIX",
       "sales": 3461
     },
     {
+      "sku": "fee-50",
       "product": "Screen Repair (50)",
       "sales": 3421.69
     },
     {
+      "sku": "500816",
       "product": "REGAL,SLCT.MATTE,PSTL.1G#5481X",
       "sales": 3375.39
     },
     {
+      "sku": "fee-60",
       "product": "Equipment Rental (60)",
       "sales": 3346.7
     },
     {
+      "sku": "140831",
       "product": "ULTRSPC-500,FLAT,PSTL.5G#T5351",
       "sales": 3325.65
     },
     {
+      "sku": "122385",
       "product": "CEILING,WTRBORN,WHT.1G #N50809",
       "sales": 3171.71
     },
     {
+      "sku": "133666",
       "product": "BROWN SCOTTS MULCH",
       "sales": 2908.25
     },
     {
+      "sku": "114960",
       "product": "BLACK SCOTTS MULCH",
       "sales": 2892.86
     },
     {
+      "sku": "937707",
       "product": "GRILL GEN E-430LP STH BK",
       "sales": 2748.1
     },
     {
+      "sku": "705228",
+      "product": "TRUFUEL 50:1 2CYCLE 110 OZ",
+      "sales": 2587.17
+    },
+    {
+      "sku": "134239",
+      "product": "STEP 1 CRAB & FERT15000",
+      "sales": 2472.82
+    },
+    {
+      "sku": "825446",
+      "product": "SPIRIT E-210LP BLK",
+      "sales": 2394
+    },
+    {
+      "sku": "193991",
+      "product": "RAISED BED MIX, CASTINE 2CUFT",
+      "sales": 2264.13
+    },
+    {
+      "sku": "759542",
+      "product": "PFQ97HSPVDS GEP WASH/DRY COMBO",
+      "sales": 2249.95
+    },
+    {
+      "sku": "937435",
+      "product": ".75CU.FT MG GARDEN SOIL",
+      "sales": 2185
+    },
+    {
+      "sku": "792745",
+      "product": "WOODLUXE WB D/S STN SLD B4 GL",
+      "sales": 2170.39
+    },
+    {
+      "sku": "500833",
+      "product": "FRESHSTRT,SUPRIOR,WHT.1G#04600",
+      "sales": 2154.89
+    },
+    {
+      "sku": "128578",
+      "product": "REGAL,SLCT.PEARL,PSTL.1G#5501X",
+      "sales": 2125.07
+    },
+    {
+      "sku": "604998",
+      "product": "CRYSTALS,SOLAR SALT, 40LB",
+      "sales": 2093.87
+    },
+    {
+      "sku": "116766",
+      "product": "COMPOST,LBSTR,QUODDY 1CFT-",
+      "sales": 2063.37
+    },
+    {
+      "sku": "fee-938",
+      "product": "Power Equipment Labor 208 (938)",
+      "sales": 2027.36
+    },
+    {
+      "sku": "122478",
+      "product": "BEN,INT.EGSHL,PASTEL,5G #N6261",
+      "sales": 1987.93
+    },
+    {
+      "sku": "736741",
+      "product": "LM2135SP 21\" SELECT CUT SP LAW",
+      "sales": 1947
+    },
+    {
+      "sku": "385678",
+      "product": "RAPID GRASS, SUNSHADE 16LB",
+      "sales": 1869.83
+    },
+    {
+      "sku": "225006",
+      "product": "PREMIUM TOP SOIL .75CF",
+      "sales": 1840.45
+    },
+    {
+      "sku": "161927",
+      "product": "PROPANE,TANK, 20LB W/OPD VALVE",
+      "sales": 1807.14
+    },
+    {
+      "sku": "9039",
       "product": "NEW  PARTS / SUPPLIES",
-      "sales": 2690.25
+      "sales": 1804.58
+    },
+    {
+      "sku": "781035",
+      "product": "WILD BIRD FOOD 20# ACE",
+      "sales": 1799.03
+    },
+    {
+      "sku": "5000",
+      "product": "SCOTTS 4 STEP 5M",
+      "sales": 1780.44
+    },
+    {
+      "sku": "637557",
+      "product": "SUN/SHADE 12006 25LB",
+      "sales": 1653.18
+    },
+    {
+      "sku": "937436",
+      "product": "LWN MWR PWR+ MGNSM/PLYMR",
+      "sales": 1619.1
+    },
+    {
+      "sku": "846315",
+      "product": "LWN MWR GS STL 163CC 21\"",
+      "sales": 1596
+    },
+    {
+      "sku": "130744",
+      "product": "KM 131 R LOOP HNDL KOMBISYSTEM",
+      "sales": 1573.32
+    },
+    {
+      "sku": "122338",
+      "product": "AURA,INT.MATTE,PSTL,1G  #05221",
+      "sales": 1516.03
+    },
+    {
+      "sku": "140851",
+      "product": "ULTRSPC-500,EGSH.PSTL.1G#5381",
+      "sales": 1509.36
+    },
+    {
+      "sku": "688849",
+      "product": "GRS SED BLKBTY UTRA 25LB",
+      "sales": 1507.88
+    },
+    {
+      "sku": "589137",
+      "product": "BEN INT LATEX MATTE PASTE GL",
+      "sales": 1503.38
+    },
+    {
+      "sku": "342024",
+      "product": "WHEELBARROW 6CF POLY",
+      "sales": 1494.77
+    },
+    {
+      "sku": "500800",
+      "product": "REGAL,SLCT.S.GLS,PSTL.1G#5511X",
+      "sales": 1464.58
+    },
+    {
+      "sku": "122482",
+      "product": "AURA,BATH&SPA,MATTE,B1,G#05321",
+      "sales": 1452.17
+    },
+    {
+      "sku": "130750",
+      "product": "TS 420 14IN CUTQUIK SAW",
+      "sales": 1449.99
+    },
+    {
+      "sku": "765126",
+      "product": "1.5CF MG ORG BED/GARDEN SOIL",
+      "sales": 1438.5
+    },
+    {
+      "sku": "125580",
+      "product": "DETECTOR,SMOKE,CO,PE #SC7010BV",
+      "sales": 1409.81
+    },
+    {
+      "sku": "219022",
+      "product": "CONCRETE,MIX,80-LB.    #110180",
+      "sales": 1405.54
+    },
+    {
+      "sku": "134312",
+      "product": "STEP 1 LAWN FOOD SEED 5M",
+      "sales": 1361.77
+    },
+    {
+      "sku": "122422",
+      "product": "BEN,INT.S.GLS,WHITE,1G #N62701",
+      "sales": 1322.63
+    },
+    {
+      "sku": "188346",
+      "product": "FINAL TOUCH FLAT WH 5G",
+      "sales": 1314.22
+    },
+    {
+      "sku": "194586",
+      "product": "BR 800X BLOWER",
+      "sales": 1299.98
+    },
+    {
+      "sku": "762523",
+      "product": "PB900YVFS GEP ELEC RANGE CON",
+      "sales": 1299.95
+    },
+    {
+      "sku": "792743",
+      "product": "WOODLUXE WB D/S STN SLD B3 GL",
+      "sales": 1256.72
+    },
+    {
+      "sku": "962444",
+      "product": "TRD CRD 2025 DNR BLSR BX",
+      "sales": 1238.69
+    },
+    {
+      "sku": "122347",
+      "product": "AURA,INT.EGSHL,PSTL,1G  #05241",
+      "sales": 1234.47
+    },
+    {
+      "sku": "140852",
+      "product": "ULTRSPC-500,EGSH.PSTL.5G#5381",
+      "sales": 1227.72
+    },
+    {
+      "sku": "191182",
+      "product": "PELLET,OKANAGAN,SFTWD,40 LB",
+      "sales": 1215.78
+    },
+    {
+      "sku": "111071",
+      "product": "MURESCO,CEILING,WHT.5G  #25801",
+      "sales": 1203.71
+    },
+    {
+      "sku": "851139",
+      "product": "2BRNR BLACKSTONE GRIDDLE",
+      "sales": 1199.96
+    },
+    {
+      "sku": "702861",
+      "product": "BATTERY CDLSS STARTER KIT M18",
+      "sales": 1194
+    },
+    {
+      "sku": "120852",
+      "product": "SOIL,POTTING,BAR HARBOR 2CFT",
+      "sales": 1192.03
+    },
+    {
+      "sku": "193502",
+      "product": "GRASS SEED, THICK 'R LAWN 40LB",
+      "sales": 1190.65
+    },
+    {
+      "sku": "103080",
+      "product": "ANT BAITS, TERRO LIQUID, 6-PK",
+      "sales": 1183.12
+    },
+    {
+      "sku": "921664",
+      "product": "CORONADO DTC SG - PAST 5G",
+      "sales": 1178.8
+    },
+    {
+      "sku": "637554",
+      "product": "BLACK BEAUTY ORG  GRS SEED25#",
+      "sales": 1167.9
+    },
+    {
+      "sku": "848345",
+      "product": "WOODRIDGE PRO TRAEGER",
+      "sales": 1149
+    },
+    {
+      "sku": "901",
+      "product": "DUMP SKU 901",
+      "sales": 1135.28
+    },
+    {
+      "sku": "134221",
+      "product": "STEP 1 CRABGRSS PRVNTR 5M",
+      "sales": 1113.39
+    },
+    {
+      "sku": "189542",
+      "product": "5/8 X 100' ZERO-G LIGHTWEIGHT",
+      "sales": 1111.84
+    },
+    {
+      "sku": "110263",
+      "product": "MURESCO,CEILING,WHT.1G  #25801",
+      "sales": 1089.92
+    },
+    {
+      "sku": "408084",
+      "product": "PELLET, LOGIK-E, SFTWD, 40LB",
+      "sales": 1080.77
+    },
+    {
+      "sku": "128733",
+      "product": "REGAL,SLCT.EGSHL,PSTL.5G#5491X",
+      "sales": 1079.5
+    },
+    {
+      "sku": "104697",
+      "product": "SALT,F/SOFTENR,BRGHT SOFT,40LB",
+      "sales": 1066.2
+    },
+    {
+      "sku": "155259",
+      "product": "PRIMER, B-I-N, 5-GALLON  #0900",
+      "sales": 1065.99
+    },
+    {
+      "sku": "215756",
+      "product": "KEY BLANK,SCHLAGE SC1-AUB",
+      "sales": 1057.56
+    },
+    {
+      "sku": "168187",
+      "product": "GRUB CNTRL,GRUBEX 5000 #99605",
+      "sales": 1049.04
+    },
+    {
+      "sku": "779028",
+      "product": "PAPR YARD BAG ACE 30G PK5",
+      "sales": 1043.23
+    },
+    {
+      "sku": "191755",
+      "product": "SOIL,GARDEN,COBSCOOK 2CFT",
+      "sales": 1027.27
+    },
+    {
+      "sku": "140828",
+      "product": "ULTRSPC-500,FLAT,WHT.5G#T53501",
+      "sales": 1021.06
+    },
+    {
+      "sku": "536135",
+      "product": "GRASS SEED,  EZ-SEED 20LB",
+      "sales": 1020.92
+    },
+    {
+      "sku": "212779",
+      "product": "SAND,PLAY,PREMIUM,50-LB.BAG",
+      "sales": 1020.06
+    },
+    {
+      "sku": "410926",
+      "product": "BR600Z BLOWER, BACKPACK",
+      "sales": 999.98
+    },
+    {
+      "sku": "825448",
+      "product": "SPIRIT E-325LP BLK",
+      "sales": 998
+    },
+    {
+      "sku": "403966",
+      "product": "21465 22\" 6.25* B&S 150CC OHV,",
+      "sales": 998
+    },
+    {
+      "sku": "589149",
+      "product": "BEN INT LATEX SATN/ PRL PST GL",
+      "sales": 996.77
+    },
+    {
+      "sku": "500804",
+      "product": "REGAL,SLCT.EGSHL,DEEP.1G#5493X",
+      "sales": 995.04
+    },
+    {
+      "sku": "672406",
+      "product": "BLACK OIL SUNFLOWER 40#",
+      "sales": 994.58
+    },
+    {
+      "sku": "140840",
+      "product": "ULTRSPC-500,L/S.PSTL.1G #5371",
+      "sales": 977.31
+    },
+    {
+      "sku": "211292",
+      "product": "KEY BLANK,KWIKSET KW1-AUB",
+      "sales": 955.88
+    },
+    {
+      "sku": "126465",
+      "product": "3CF NATURAL CEDAR MULCH",
+      "sales": 953.82
+    },
+    {
+      "sku": "133211",
+      "product": "OF POTTING SOIL 1.5CF",
+      "sales": 950.18
+    },
+    {
+      "sku": "791940",
+      "product": "GEN SA-E-325 NG INDIGO",
+      "sales": 949
+    },
+    {
+      "sku": "792732",
+      "product": "WOODLUXE WB STAIN ST TINT GAL",
+      "sales": 937.33
     }
   ],
   "allStores": [
@@ -1120,53 +1540,11 @@
       "state": "RI"
     }
   ],
-  "notReporting": [
-    {
-      "store": "233",
-      "name": "ITHACA, NY - DOWNTOWN - (ACE)",
-      "city": "Ithaca",
-      "state": "NY",
-      "plan": 29648.13
-    },
-    {
-      "store": "234",
-      "name": "ITHACA, NY - TRIPHAMMER - (ACE)",
-      "city": "Ithaca",
-      "state": "NY",
-      "plan": 22985.07
-    }
-  ],
-  "estimatedMissing": {
-    "paceAtNow": 1,
-    "sampleWeeks": 8,
-    "stores": [
-      {
-        "store": "233",
-        "dowAvg": 29806.54285714,
-        "samples": 7,
-        "basis": "dowAvg",
-        "plan": 29648.13,
-        "estimatedCurrent": 29806.54285714,
-        "estimatedEOD": 29806.54285714
-      },
-      {
-        "store": "234",
-        "dowAvg": 13112.1375,
-        "samples": 8,
-        "basis": "dowAvg",
-        "plan": 22985.07,
-        "estimatedCurrent": 13112.1375,
-        "estimatedEOD": 13112.1375
-      }
-    ],
-    "totalEstimatedCurrent": 42918.68035714,
-    "totalEstimatedEOD": 42918.68035714,
-    "projectedCompanyEOD": 1081336.56035714,
-    "projectedCompanyCurrent": 1081336.56035714
-  },
+  "notReporting": [],
+  "estimatedMissing": null,
   "asOfET": "End of day · 2026-04-21",
   "cached": true,
-  "refreshedAt": "2026-04-22T15:11:08.692Z",
+  "refreshedAt": "2026-04-23T12:23:57.303Z",
   "source": "snowflake",
-  "cachedAt": "2026-04-22T15:11:08.693Z"
+  "cachedAt": "2026-04-23T12:23:57.303Z"
 }
