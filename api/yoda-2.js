@@ -507,6 +507,43 @@ GROUP BY store_cd
 `;
 }
 
+function sqlPerStoreYoY7(dt, ly) {
+  // Trailing 7-day TY vs trailing 7-day LY (trade-week aligned at -364 days).
+  // Smooths single-day weather / day-of-week noise that made daily YoY too volatile.
+  const tyStart = shiftDays(dt, -6);
+  const lyStart = shiftDays(ly, -6);
+  return `
+WITH ty AS (
+  SELECT * FROM SEMANTIC_VIEW(
+    PRD_EDW_DB.SI_AGENTS.AUBUCHON_RETAIL_ANALYTICS
+    METRICS total_net_sales_gl AS net_sales_7d
+    DIMENSIONS transaction_line.store_cd AS store_cd
+    WHERE transaction_date.transaction_dt BETWEEN '${tyStart}' AND '${dt}'
+  )
+),
+ly AS (
+  SELECT * FROM SEMANTIC_VIEW(
+    PRD_EDW_DB.SI_AGENTS.AUBUCHON_RETAIL_ANALYTICS
+    METRICS total_net_sales_gl AS ly_net_sales_7d
+    DIMENSIONS transaction_line.store_cd AS store_cd
+    WHERE transaction_date.transaction_dt BETWEEN '${lyStart}' AND '${ly}'
+  )
+),
+stores AS (
+  SELECT store_cd FROM ty
+  UNION
+  SELECT store_cd FROM ly
+)
+SELECT
+  s.store_cd         AS store_cd,
+  ty.net_sales_7d    AS net_sales_7d,
+  ly.ly_net_sales_7d AS ly_net_sales_7d
+FROM stores s
+LEFT JOIN ty ON ty.store_cd = s.store_cd
+LEFT JOIN ly ON ly.store_cd = s.store_cd
+`;
+}
+
 function sqlPerStoreDeptMix(dt) {
   return `
 SELECT * FROM SEMANTIC_VIEW(
@@ -556,20 +593,27 @@ function generateInsights(store, peers) {
   const memberPct   = netSales ? memberSales / netSales : 0;
   const proPct      = netSales ? proSales    / netSales : 0;
 
-  // Rule 1: YoY sales gap
-  if (lyNetSales > 0 && netSales > 0) {
-    const yoyVar = (netSales - lyNetSales) / lyNetSales;
-    if (yoyVar < -0.05) {
-      const gap = lyNetSales - netSales;
+  // Rule 1: Trailing-7-day YoY sales gap
+  // Single-day YoY was too volatile with weather / day-of-week swings.
+  // Rolling 7-day TY vs LY (trade-week aligned) smooths the noise without
+  // losing recency for a "what to do today" recommendation.
+  const netSales7d   = Number(store.netSales7d)   || 0;
+  const lyNetSales7d = Number(store.lyNetSales7d) || 0;
+  if (lyNetSales7d > 0 && netSales7d > 0) {
+    const yoyVar7 = (netSales7d - lyNetSales7d) / lyNetSales7d;
+    if (yoyVar7 < -0.05) {
+      const gap7     = lyNetSales7d - netSales7d;
+      const gapDaily = gap7 / 7;
       actions.push({
         category: "Sales",
-        priority: yoyVar < -0.12 ? "Urgent" : "High",
-        title: "Close the year-over-year gap",
+        priority: yoyVar7 < -0.12 ? "Urgent" : "High",
+        title: "Close the 7-day YoY gap",
         detail:
-          "Sales are " + pct(yoyVar) + " vs last year (short " + money(gap) + "). " +
-          "Identify the two biggest-drop departments first thing today and run a spotlight feature through close.",
-        metric: "TY " + money(netSales) + "  |  LY " + money(lyNetSales),
-        impact: gap,
+          "Last 7 days are " + pct(yoyVar7) + " vs same 7 days last year (short " + money(gap7) +
+          " total, about " + money(gapDaily) + "/day). " +
+          "Identify the biggest-drop departments week-to-date and run a spotlight feature through close.",
+        metric: "TY 7d " + money(netSales7d) + "  |  LY 7d " + money(lyNetSales7d),
+        impact: gapDaily,
       });
     }
   }
@@ -980,6 +1024,7 @@ export default async function handler(req, res) {
     if (page === "insights") {
       // Sequential to keep warehouse concurrency sane; each query has its own 22s guard.
       const kpiRows    = await exec(conn, sqlPerStoreKpis(dt, ly),      "insightsKpis");
+      const yoy7Rows   = await exec(conn, sqlPerStoreYoY7(dt, ly),      "insightsYoY7");
       const planRows   = await exec(conn, sqlPerStorePlan(dt),          "insightsPlan");
       const trendRows  = await exec(conn, sqlPerStoreRecencyTrend(dt),  "insightsTrend");
       const deptRows   = await exec(conn, sqlPerStoreDeptMix(dt),       "insightsDeptMix")
@@ -991,6 +1036,14 @@ export default async function handler(req, res) {
       for (const r of (planRows || [])) {
         const code = k(r, "STORE_CD");
         if (code) planByStore.set(code, n(k(r, "DAILY_PLAN")));
+      }
+      const yoy7ByStore = new Map();
+      for (const r of (yoy7Rows || [])) {
+        const code = k(r, "STORE_CD");
+        if (code) yoy7ByStore.set(code, {
+          netSales7d:   n(k(r, "NET_SALES_7D")),
+          lyNetSales7d: n(k(r, "LY_NET_SALES_7D")),
+        });
       }
       const trendByStore = new Map();
       for (const r of (trendRows || [])) {
@@ -1093,6 +1146,8 @@ export default async function handler(req, res) {
           dailyPlan:   planByStore.get(code) || 0,
           recent28:    t.recent28,
           prior28:     t.prior28,
+          netSales7d:   (yoy7ByStore.get(code) || {}).netSales7d   || 0,
+          lyNetSales7d: (yoy7ByStore.get(code) || {}).lyNetSales7d || 0,
           weakMarginDept,
           weakMixDept,
         };
