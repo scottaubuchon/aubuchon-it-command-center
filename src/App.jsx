@@ -6324,6 +6324,14 @@ function Yoda2View({ goBack }) {
   const [customersLoading, setCustomersLoading] = useState(false);
   const [customersError, setCustomersError] = useState(null);
 
+  // SKU drill — second-tier Product Drill
+  const [skuDrill, setSkuDrill] = useState(null);
+  const [skuLoading, setSkuLoading] = useState(false);
+  const [skuError, setSkuError] = useState(null);
+  const [skuDept, setSkuDept] = useState("");         // department to drill into
+  const [skuPaste, setSkuPaste] = useState("");       // user-pasted SKU codes (comma/space separated)
+  const [skuWindow, setSkuWindow] = useState("8w");   // sparkline window: 4w | 8w | 12w
+
   // Fetch summary on mount + whenever store/date changes
   useEffect(function () {
     var cancelled = false;
@@ -6344,10 +6352,13 @@ function Yoda2View({ goBack }) {
     return function () { cancelled = true; };
   }, [selectedStore, selectedDate]);
 
-  // Invalidate product/customer caches whenever filters change
+  // Invalidate product/customer/sku caches whenever filters change
   useEffect(function () {
     setProducts(null);
     setCustomers(null);
+    setSkuDrill(null);
+    setSkuDept("");
+    setSkuPaste("");
   }, [selectedStore, selectedDate]);
 
   // Close store dropdown on outside click / ESC
@@ -6409,6 +6420,33 @@ function Yoda2View({ goBack }) {
     // See Yoda2 products effect above — customersLoading excluded from deps for
     // the same cleanup-cancels-fetch reason.
   }, [activePage, customers, selectedStore, selectedDate]);
+
+  // Fetch SKU drill when a department is picked OR when paste-list is committed.
+  // The skuWindow (4w/8w/12w) is also a trigger since the sparkline grain changes.
+  // Paste list is debounced implicitly — we only refetch when skuPaste actually changes.
+  useEffect(function () {
+    if (activePage !== "product") return;
+    if (!skuDept && !skuPaste.trim()) { setSkuDrill(null); return; }
+    var cancelled = false;
+    setSkuLoading(true); setSkuError(null);
+    var url = "/api/yoda-2?page=sku-drill&window=" + encodeURIComponent(skuWindow) + "&t=" + Date.now();
+    if (selectedStore) url += "&store=" + encodeURIComponent(selectedStore);
+    if (selectedDate) url += "&date=" + encodeURIComponent(selectedDate);
+    if (skuDept) url += "&department=" + encodeURIComponent(skuDept);
+    if (skuPaste.trim()) url += "&skus=" + encodeURIComponent(skuPaste.trim());
+    fetch(url, { cache: "no-store" })
+      .then(function (r) { return r.json().catch(function () { return { status: "error", error: "API HTTP " + r.status + " (non-JSON response)" }; }); })
+      .then(function (d) {
+        if (cancelled) return;
+        if (d.status !== "ok") throw new Error(d.error || "API HTTP error (no body)");
+        setSkuDrill(d); setSkuLoading(false);
+      })
+      .catch(function (e) { if (!cancelled) { setSkuError(String(e.message || e)); setSkuLoading(false); } });
+    return function () { cancelled = true; };
+    // NOTE: skuLoading intentionally excluded from deps (same cleanup-cancels-fetch
+    // pattern as the products/customers effects above).
+  }, [activePage, skuDept, skuPaste, skuWindow, selectedStore, selectedDate]);
+
 
   var stores = (summary && summary.stores) || [];
   var storeLabel = (function () {
@@ -6551,7 +6589,7 @@ function Yoda2View({ goBack }) {
               <>
                 {activePage === "main"     && <Yoda2Main     summary={summary} storeLabel={storeLabel} dateLabel={dateLabel} />}
                 {activePage === "drivers"  && <Yoda2Drivers  summary={summary} storeLabel={storeLabel} dateLabel={dateLabel} />}
-                {activePage === "product"  && <Yoda2Product  products={products} loading={productsLoading} error={productsError} storeLabel={storeLabel} dateLabel={dateLabel} />}
+                {activePage === "product"  && <Yoda2Product  products={products} loading={productsLoading} error={productsError} storeLabel={storeLabel} dateLabel={dateLabel} skuDrill={skuDrill} skuLoading={skuLoading} skuError={skuError} skuDept={skuDept} setSkuDept={setSkuDept} skuPaste={skuPaste} setSkuPaste={setSkuPaste} skuWindow={skuWindow} setSkuWindow={setSkuWindow} />}
                 {activePage === "customer" && <Yoda2Customer segments={customers} loading={customersLoading} error={customersError} storeLabel={storeLabel} dateLabel={dateLabel} />}
                 {activePage === "online"   && <Yoda2Online />}
               </>
@@ -6732,11 +6770,19 @@ function Yoda2Drivers({ summary, storeLabel, dateLabel }) {
 }
 
 /* ───────── Product Drill ───────── */
-function Yoda2Product({ products, loading, error, storeLabel, dateLabel }) {
+function Yoda2Product({ products, loading, error, storeLabel, dateLabel,
+                        skuDrill, skuLoading, skuError,
+                        skuDept, setSkuDept, skuPaste, setSkuPaste,
+                        skuWindow, setSkuWindow }) {
+  // Local state for the paste-SKU textarea. We keep it uncontrolled until the
+  // user hits "Drill" so every keystroke doesn't retrigger the fetch.
+  const [pasteDraft, setPasteDraft] = useState(skuPaste || "");
+  const [pasteOpen, setPasteOpen] = useState(false);
+
   return (
     <div className="bg-white rounded-xl border border-slate-200 p-4 lg:p-5">
       <div className="mb-1 font-semibold" style={{ color: "#F58220", fontFamily: "Trebuchet MS, sans-serif" }}>Product Drill — {storeLabel}</div>
-      <div className="text-xs text-slate-500 mb-4">{dateLabel} · Top 20 departments by net sales</div>
+      <div className="text-xs text-slate-500 mb-4">{dateLabel} · Top 20 departments by net sales · click a department to drill into SKUs</div>
       {loading && <div className="text-slate-500 text-center py-8">Loading product data…</div>}
       {error && <div className="bg-red-50 border border-red-200 text-red-800 rounded p-3 text-sm">{error}</div>}
       {!loading && !error && products && products.length === 0 && (
@@ -6744,15 +6790,20 @@ function Yoda2Product({ products, loading, error, storeLabel, dateLabel }) {
       )}
       {products && products.length > 0 && (
         <Fragment>
+          {/* ───────── Tier 1: Top 20 Departments (bar chart + table, clickable to drill) ───────── */}
           <div className="space-y-2 mb-6">
             {products.map(function (p, i) {
               var maxVal = Math.max.apply(null, products.map(function(q){return q.netSales || 0;})) || 1;
               var pctBar = ((p.netSales || 0) / maxVal) * 100;
+              var isSelected = skuDept === p.department;
               return (
-                <div key={i} className="flex items-center gap-3">
-                  <div className="w-28 sm:w-40 lg:w-48 flex-shrink-0 text-xs sm:text-sm text-slate-700 truncate" title={p.department}>{p.department}</div>
+                <div key={i}
+                     onClick={function(){ setSkuDept(p.department); setSkuPaste(""); setPasteDraft(""); }}
+                     className={"flex items-center gap-3 cursor-pointer rounded transition-colors " + (isSelected ? "bg-emerald-50" : "hover:bg-slate-50")}
+                     title={"Click to drill into " + p.department + " SKUs"}>
+                  <div className="w-28 sm:w-40 lg:w-48 flex-shrink-0 text-xs sm:text-sm text-slate-700 truncate">{p.department}</div>
                   <div className="flex-1 relative h-7 bg-slate-100 rounded overflow-hidden">
-                    <div className="absolute top-0 left-0 h-full rounded" style={{ width: pctBar + "%", background: "#01683F" }}></div>
+                    <div className="absolute top-0 left-0 h-full rounded" style={{ width: pctBar + "%", background: isSelected ? "#F58220" : "#01683F" }}></div>
                     <div className="absolute inset-0 flex items-center justify-end pr-2 text-xs font-semibold text-slate-900">{fmtDollar(p.netSales)}</div>
                   </div>
                 </div>
@@ -6767,16 +6818,20 @@ function Yoda2Product({ products, loading, error, storeLabel, dateLabel }) {
                   <th className="text-right px-3 py-2 font-semibold">Net Sales (GL)</th>
                   <th className="text-right px-3 py-2 font-semibold">Gross Merchandise Profit</th>
                   <th className="text-right px-3 py-2 font-semibold">Gross Margin % (merch-sales basis)</th>
+                  <th className="text-right px-3 py-2 font-semibold"></th>
                 </tr>
               </thead>
               <tbody>
                 {products.map(function (p, i) {
+                  var isSelected = skuDept === p.department;
                   return (
-                    <tr key={i} className="border-t border-slate-100">
+                    <tr key={i} className={"border-t border-slate-100 cursor-pointer " + (isSelected ? "bg-emerald-50" : "hover:bg-slate-50")}
+                        onClick={function(){ setSkuDept(p.department); setSkuPaste(""); setPasteDraft(""); }}>
                       <td className="px-3 py-2">{p.department}</td>
                       <td className="px-3 py-2 text-right font-medium">{fmtDollar(p.netSales)}</td>
                       <td className="px-3 py-2 text-right">{fmtDollar(p.grossProfit)}</td>
                       <td className="px-3 py-2 text-right">{(p.grossMarginPct * 100).toFixed(1)}%</td>
+                      <td className="px-3 py-2 text-right text-xs text-emerald-700 font-semibold">Drill →</td>
                     </tr>
                   );
                 })}
@@ -6785,7 +6840,139 @@ function Yoda2Product({ products, loading, error, storeLabel, dateLabel }) {
           </div>
         </Fragment>
       )}
+
+      {/* ───────── Tier 2: SKU Drill ───────── */}
+      <div className="mt-8 pt-6 border-t border-slate-200">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+          <div>
+            <div className="font-semibold text-slate-900">SKU Drill</div>
+            <div className="text-xs text-slate-500">
+              {skuDept
+                ? ("Showing SKUs in " + skuDept)
+                : skuPaste
+                  ? "Showing pasted SKU list"
+                  : "Click a department above, or paste a SKU list below."}
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            {/* Window toggle */}
+            <div className="inline-flex bg-slate-100 rounded-lg p-1 text-xs">
+              {["4w","8w","12w"].map(function(w){
+                return (
+                  <button key={w} onClick={function(){ setSkuWindow(w); }}
+                    className={"px-3 py-1 rounded " + (skuWindow===w ? "bg-white shadow-sm font-semibold" : "text-slate-600")}>
+                    {w}
+                  </button>
+                );
+              })}
+            </div>
+            <button onClick={function(){ setPasteOpen(!pasteOpen); }}
+                    className="text-xs px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg font-medium">
+              Paste SKU list {pasteOpen ? "▴" : "▾"}
+            </button>
+            {(skuDept || skuPaste) && (
+              <button onClick={function(){ setSkuDept(""); setSkuPaste(""); setPasteDraft(""); }}
+                      className="text-xs px-3 py-1.5 bg-slate-100 hover:bg-slate-200 rounded-lg font-medium">
+                Clear
+              </button>
+            )}
+          </div>
+        </div>
+
+        {pasteOpen && (
+          <div className="bg-slate-50 border border-slate-200 rounded-lg p-3 mb-3">
+            <div className="text-xs text-slate-500 mb-1">Paste SKU codes (comma, space, or newline separated)</div>
+            <textarea
+              value={pasteDraft}
+              onChange={function(e){ setPasteDraft(e.target.value); }}
+              placeholder="e.g. 736743, 194586, 779421"
+              className="w-full text-sm px-3 py-2 border border-slate-200 rounded font-mono"
+              rows={3} />
+            <div className="flex justify-end gap-2 mt-2">
+              <button onClick={function(){ setPasteDraft(""); setSkuPaste(""); setSkuDept(""); }}
+                      className="text-xs px-3 py-1.5 bg-white border border-slate-200 hover:bg-slate-50 rounded font-medium">Reset</button>
+              <button onClick={function(){ setSkuPaste(pasteDraft); setSkuDept(""); }}
+                      className="text-xs px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded font-semibold">Drill</button>
+            </div>
+          </div>
+        )}
+
+        {skuLoading && <div className="text-slate-500 text-center py-8">Loading SKU data…</div>}
+        {skuError && <div className="bg-red-50 border border-red-200 text-red-800 rounded p-3 text-sm">{skuError}</div>}
+        {!skuLoading && !skuError && skuDrill && skuDrill.skus && skuDrill.skus.length === 0 && (
+          <div className="text-slate-500 text-center py-8">No SKU data for this filter.</div>
+        )}
+        {!skuLoading && !skuError && skuDrill && skuDrill.skus && skuDrill.skus.length > 0 && (
+          <Fragment>
+            <div className="text-xs text-slate-500 mb-2">
+              {skuDrill.skus.length.toLocaleString()} SKUs · Sparkline: last {skuDrill.window} ({skuDrill.grain} grain)
+              {skuDrill.skus.length > 500 && " · showing first 500 by net sales, use paste list to narrow"}
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-slate-50 text-slate-600 sticky top-0">
+                  <tr>
+                    <th className="text-left px-2 py-2 font-semibold">SKU</th>
+                    <th className="text-left px-2 py-2 font-semibold">Description</th>
+                    <th className="text-right px-2 py-2 font-semibold">Net Sales</th>
+                    <th className="text-right px-2 py-2 font-semibold">Units</th>
+                    <th className="text-right px-2 py-2 font-semibold">Margin %</th>
+                    <th className="text-right px-2 py-2 font-semibold">On-Hand</th>
+                    <th className="text-left px-2 py-2 font-semibold" style={{ minWidth: 90 }}>Trend ({skuDrill.window})</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {skuDrill.skus.slice(0, 500).map(function (s, i) {
+                    return (
+                      <tr key={s.sku + "_" + i} className="border-t border-slate-100 hover:bg-slate-50">
+                        <td className="px-2 py-1.5 font-mono text-xs">{s.sku}</td>
+                        <td className="px-2 py-1.5 text-xs truncate max-w-[240px]" title={s.description}>{s.description}</td>
+                        <td className="px-2 py-1.5 text-right font-medium">{fmtDollar(s.netSales)}</td>
+                        <td className="px-2 py-1.5 text-right">{fmtInt(s.unitsSold)}</td>
+                        <td className="px-2 py-1.5 text-right" style={{ color: (s.grossMarginPct || 0) >= 0 ? "#01683F" : "#EC1C24" }}>
+                          {(s.grossMarginPct * 100).toFixed(1)}%
+                        </td>
+                        <td className="px-2 py-1.5 text-right" style={{ color: s.onHand === 0 ? "#EC1C24" : "#0f172a" }}>
+                          {s.onHand === null || s.onHand === undefined ? "—" : fmtInt(s.onHand)}
+                        </td>
+                        <td className="px-2 py-1.5">
+                          <SkuSparkline data={s.sparkline || []} />
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </Fragment>
+        )}
+      </div>
     </div>
+  );
+}
+
+function SkuSparkline({ data }) {
+  if (!data || data.length === 0) {
+    return <span className="text-xs text-slate-300">—</span>;
+  }
+  const values = data.map(function(d){ return d.netSales || 0; });
+  const max = Math.max.apply(null, values);
+  const min = Math.min.apply(null, values);
+  const range = max - min || 1;
+  const W = 80, H = 20;
+  const step = data.length > 1 ? W / (data.length - 1) : W;
+  const points = values.map(function(v, i){
+    const x = i * step;
+    const y = H - ((v - min) / range) * (H - 2) - 1;
+    return x.toFixed(1) + "," + y.toFixed(1);
+  }).join(" ");
+  const last = values[values.length - 1];
+  const first = values[0];
+  const stroke = last >= first ? "#01683F" : "#EC1C24";
+  return (
+    <svg width={W} height={H} viewBox={"0 0 " + W + " " + H} style={{ display: "block" }}>
+      <polyline points={points} fill="none" stroke={stroke} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
   );
 }
 
