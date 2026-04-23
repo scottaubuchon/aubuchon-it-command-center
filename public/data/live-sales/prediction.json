@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-04-23T21:00:05.887Z",
+  "updatedAt": "2026-04-23T21:00:53.570Z",
   "updatedAtET": "Apr 23, 2026, 5:00 PM",
   "dateET": "2026-04-23",
   "dow": 4,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-04-23T21:00:05.887Z",
+    "ts": "2026-04-23T21:00:53.570Z",
     "tsET": "Apr 23, 2026, 5:00 PM",
     "dateET": "2026-04-23",
     "hourET": 17,
