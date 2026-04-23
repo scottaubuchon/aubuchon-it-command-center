@@ -541,14 +541,22 @@ LEFT JOIN pro28  ON pro28.store_cd  = s.store_cd
 `;
 }
 
-function sqlPerStorePlanMTD(dt) {
+function sqlPerStorePlan(dt) {
+  // Per-store plan across the same windows the sales engine uses:
+  //   trailing 7d, trailing 28d, MTD, and today.
+  // Sourced from REF_SALE_PLAN_BY_DAY; one pass, bucketed in SQL.
   const mtdStart = startOfMonthISO(dt);
+  const d7Start  = shiftDays(dt, -6);
+  const d28Start = shiftDays(dt, -27);
+  const rangeStart = d28Start < mtdStart ? d28Start : mtdStart;
   return `SELECT
             store_cd,
+            COALESCE(SUM(CASE WHEN plan_dt BETWEEN '${d7Start}'  AND '${dt}' THEN daily_sales_plan_amt END), 0) AS plan_7d,
+            COALESCE(SUM(CASE WHEN plan_dt BETWEEN '${d28Start}' AND '${dt}' THEN daily_sales_plan_amt END), 0) AS plan_28d,
             COALESCE(SUM(CASE WHEN plan_dt BETWEEN '${mtdStart}' AND '${dt}' THEN daily_sales_plan_amt END), 0) AS mtd_plan,
             COALESCE(SUM(CASE WHEN plan_dt = '${dt}' THEN daily_sales_plan_amt END), 0) AS daily_plan
           FROM PRD_EDW_DB.ANALYTICS_BASE.REF_SALE_PLAN_BY_DAY
-          WHERE plan_dt BETWEEN '${mtdStart}' AND '${dt}'
+          WHERE plan_dt BETWEEN '${rangeStart}' AND '${dt}'
           GROUP BY store_cd`;
 }
 
@@ -667,6 +675,10 @@ function pct(v, digits) {
   return (Number(v) * 100).toFixed(digits == null ? 1 : digits) + "%";
 }
 
+function slug(s) {
+  return String(s || "").toLowerCase().replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "").slice(0, 32);
+}
+
 function generateInsights(s, peers) {
   // s is the per-store object; peers carries company-wide medians.
   const actions = [];
@@ -699,6 +711,7 @@ function generateInsights(s, peers) {
         category: "Sales",
         priority: yoyVar7 < -0.12 ? "Urgent" : "High",
         title: "Close the 7-day YoY gap",
+        ruleKey: "yoy7",
         detail:
           "Trailing 7 days " + pct(yoyVar7) + " vs same 7 days LY (short " + money(gap7) +
           ", about " + money(gapDaily) + "/day). Identify biggest-drop departments week-to-date and run a spotlight feature through close.",
@@ -718,6 +731,7 @@ function generateInsights(s, peers) {
         category: "Sales",
         priority: yoyVar28 < -0.08 ? "High" : "Medium",
         title: "Structural 28-day YoY gap",
+        ruleKey: "yoy28",
         detail:
           "Rolling 28d " + pct(yoyVar28) + " vs same 28d LY (cumulative " + money(gap28) + ", about " + money(gapDaily) +
           "/day drag). This is a trend signal - diagnose whether it's traffic, conversion, ticket, or mix.",
@@ -736,10 +750,31 @@ function generateInsights(s, peers) {
         category: "Sales",
         priority: mtdVar < -0.08 ? "High" : "Medium",
         title: "MTD pacing behind LY",
+        ruleKey: "mtd_pace_ly",
         detail:
           "Month-to-date " + pct(mtdVar) + " vs same period LY (" + money(gap) + " short). Rebuild the month with 2 strong weekend drivers and end-cap refresh.",
         metric: "MTD " + money(mtd) + "  |  LY MTD " + money(lyMtd),
         impact: gap / 7, // per-day rebuild pace
+      });
+    }
+  }
+
+  // --- Rule 3b: Trailing-28d actual vs plan (decision-useful, smoothed)
+  const plan28 = Number(s.plan28d) || 0;
+  if (plan28 > 0 && ns28 > 0) {
+    const planAttn28 = ns28 / plan28;
+    if (planAttn28 < 0.95) {
+      const gap = plan28 - ns28;
+      actions.push({
+        category: "Sales",
+        priority: planAttn28 < 0.85 ? "Urgent" : "High",
+        title: "Trailing-28d vs plan - " + pct(planAttn28, 0) + " of plan",
+        ruleKey: "plan28_gap",
+        detail:
+          money(gap) + " short of plan over 28 days (" + pct(planAttn28) + " attainment). Compare against MTD gap - " +
+          "if both are negative, the plan is too high or demand softened structurally; if only 28d, recent weeks drove it.",
+        metric: "TY 28d " + money(ns28) + "  |  Plan 28d " + money(plan28),
+        impact: gap / 28,
       });
     }
   }
@@ -752,6 +787,7 @@ function generateInsights(s, peers) {
       category: "Sales",
       priority: gapPerTxn > 4 ? "High" : "Medium",
       title: "Coach add-ons to lift average ticket",
+        ruleKey: "atv_peers",
       detail:
         "Rolling 28d ATV of " + money(atv28) + " is " + money(gapPerTxn) + " below peer median (" + money(peers.atv28Median) +
         "). This is a persistent gap, not a daily blip. Run pre-shift attachment huddles; target +" + money(gapPerTxn / 2) + "/basket.",
@@ -769,6 +805,7 @@ function generateInsights(s, peers) {
       category: "Sales",
       priority: "High",
       title: "Basket-build with suggestive selling",
+        ruleKey: "upt_peers",
       detail:
         "28d UPT of " + upt28.toFixed(2) + " is " + uptGap.toFixed(2) + " units below peer " + peers.upt28Median.toFixed(2) +
         ". Daily 'one more item' goal per cashier; each +0.1 UPT is about " + money(perUnit * 0.1 * (txn28 / 28)) + "/day on current traffic.",
@@ -785,6 +822,7 @@ function generateInsights(s, peers) {
       category: "Ops",
       priority: gapP > 0.05 ? "High" : "Medium",
       title: "Scan every member - push rewards capture",
+        ruleKey: "member_scan",
       detail:
         "Only " + pct(memberPct) + " of 28d sales are to members vs peer " + pct(peers.memberPctMedian) +
         ". Daily cashier target: scan or enroll on every transaction. Gap worth about " + money(gapD / 28) + "/day.",
@@ -801,6 +839,7 @@ function generateInsights(s, peers) {
       category: "Sales",
       priority: gapP > 0.04 ? "High" : "Medium",
       title: "B2B outreach - call the dormant pros",
+        ruleKey: "pro_outreach",
       detail:
         "Pro share " + pct(proPct) + " of 28d mix vs peer " + pct(peers.proPctMedian) +
         ". Pull top 10 pro accounts that haven't purchased in 21+ days and have the B2B lead call them this week.",
@@ -818,6 +857,7 @@ function generateInsights(s, peers) {
         category: "Sales",
         priority: planAttn < 0.85 ? "Urgent" : "High",
         title: "MTD plan gap - " + pct(planAttn, 0) + " of plan",
+        ruleKey: "mtd_plan_gap",
         detail:
           money(gap) + " short of MTD plan. Rebuild the remainder of the month around high-margin end caps; brief crew on the dollar number at huddle.",
         metric: "MTD actual " + money(mtd) + "  |  Plan " + money(mtdPlan),
@@ -835,6 +875,7 @@ function generateInsights(s, peers) {
         category: "Sales",
         priority: trendVar < -0.08 ? "High" : "Medium",
         title: "Reverse the slowing recency trend",
+        ruleKey: "recency_trend",
         detail:
           "Last 4 weeks " + pct(trendVar) + " vs prior 4 (~" + money(weeklyDrag) + "/week drag). Pick one underperforming department and run a week-long spotlight promo.",
         metric: "Recent 4w " + money(recent28) + "  |  Prior 4w " + money(prior28),
@@ -850,6 +891,7 @@ function generateInsights(s, peers) {
       category: "Ops",
       priority: "Medium",
       title: "Margin drag: " + d.department,
+      ruleKey: "margin_drag_" + slug(d.department),
       detail:
         d.department + " ran " + pct(d.margin) + " GM over the last 28d vs peer median " + pct(d.peerMargin) +
         ". Walk the set: pricing, damaged/markdown cart, override activity in MDM.",
@@ -865,6 +907,7 @@ function generateInsights(s, peers) {
       category: "Sales",
       priority: "Medium",
       title: "Under-indexed: " + d.department,
+      ruleKey: "under_index_" + slug(d.department),
       detail:
         d.department + " is " + pct(d.ownShare) + " of 28d sales vs peer median " + pct(d.peerShare) +
         ". Check stock levels, end cap placement, signage - usually an execution miss shows here first.",
@@ -883,6 +926,7 @@ function generateInsights(s, peers) {
         category: "Payroll",
         priority: pctOver > 0.10 ? "High" : "Medium",
         title: "Payroll hours " + pct(pctOver, 0) + " over target (4w)",
+        ruleKey: "payroll_over",
         detail:
           "Running " + Math.round(excessHrs) + " hours above 4-week target (" + pct(pctOver) + " over). " +
           "Trim the slowest-traffic 2-hour blocks next week; preserve peak daypart coverage.",
@@ -896,6 +940,7 @@ function generateInsights(s, peers) {
         category: "Payroll",
         priority: "Medium",
         title: "Likely understaffed - add targeted hours",
+        ruleKey: "payroll_under",
         detail:
           "Hours " + pct(pctOver) + " below target with traffic holding. Likely hurting conversion at peak. " +
           "Add " + Math.round(shortHrs / 4) + " hrs/week on the highest-traffic daypart.",
@@ -912,6 +957,7 @@ function generateInsights(s, peers) {
       category: "Payroll",
       priority: "Medium",
       title: "SPPH below peer median",
+        ruleKey: "spph_peers",
       detail:
         "4-week Sales Per Payroll Hour of " + money(s.spph4w) + " vs peer median " + money(peers.spph4wMedian) +
         ". Shift hours toward selling daypart; reduce non-productive coverage.",
@@ -929,6 +975,7 @@ function generateInsights(s, peers) {
         category: "Ops",
         priority: "Medium",
         title: "Inventory is heavy - " + wosByValue.toFixed(1) + " weeks of supply",
+        ruleKey: "inv_heavy",
         detail:
           "On-hand value of " + money(s.invValue) + " against 28d sales run-rate implies ~" + wosByValue.toFixed(1) +
           " weeks of supply. Identify aged/discontinued SKUs; consider a targeted markdown and halt replenishment on slow movers.",
@@ -947,6 +994,7 @@ function generateInsights(s, peers) {
         category: "Payroll",
         priority: "Medium",
         title: "Weather: heavy precip forecast - trim hours",
+        ruleKey: "weather_precip",
         detail:
           "Next 7d forecast shows " + (w.precipNext7).toFixed(1) + " in of precipitation. Expect traffic softness mid-week; " +
           "cut 4-8 non-essential hours on the rainiest days; preserve paint/tool aisle coverage for the rebound.",
@@ -960,6 +1008,7 @@ function generateInsights(s, peers) {
         category: "Sales",
         priority: "High",
         title: "Weather tailwind - staff & stock L&G for the warm-up",
+        ruleKey: "weather_warmup",
         detail:
           "Forecast avg temp " + Math.round(w.tempAvgNext7) + "F next 7d vs " + Math.round(w.tempAvgLast7 || 0) +
           "F last 7d. Add coverage in lawn & garden dayparts; verify in-stock on fertilizer, mulch, seasonal.",
@@ -973,6 +1022,7 @@ function generateInsights(s, peers) {
         category: "Ops",
         priority: "High",
         title: "Snow forecast - stock & staff for the storm",
+        ruleKey: "weather_snow",
         detail:
           "Next 7d forecast: " + (w.snowNext7).toFixed(1) + " in of snow. Verify ice melt/shovels/snow blowers in-stock and front-merchandised; " +
           "add coverage ahead of storm, trim day-after if roads close.",
@@ -982,10 +1032,20 @@ function generateInsights(s, peers) {
     }
   }
 
-  // Dedup by title, sort by impact desc, cap at 5
+  // Dedup by ruleKey (fall back to title) so the same rule doesn't fire twice
   const seen = new Set();
-  const deduped = actions.filter(a => { if (seen.has(a.title)) return false; seen.add(a.title); return true; });
+  const deduped = actions.filter(a => {
+    const key = a.ruleKey || a.title;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
   deduped.sort((a, b) => (Number(b.impact) || 0) - (Number(a.impact) || 0));
+  // Attach stable id per action = "<store_cd>:<ruleKey>" so feedback can target it.
+  const storeCode = s && s.code ? s.code : "";
+  for (const a of deduped) {
+    a.id = storeCode + ":" + (a.ruleKey || slug(a.title));
+  }
   return deduped.slice(0, 5);
 }
 
@@ -1014,6 +1074,8 @@ function buildExecutiveSummary(stores, peers, dt, ly) {
     payrollUnder: 0,
   };
 
+  agg.plan7Sum = 0; agg.plan28Sum = 0; agg.mtdPlanSum = 0;
+
   for (const s of stores) {
     agg.ns7Sum     += Number(s.netSales)     || 0;
     agg.lns7Sum    += Number(s.lyNetSales)   || 0;
@@ -1023,6 +1085,9 @@ function buildExecutiveSummary(stores, peers, dt, ly) {
     agg.lyMtdSum   += Number(s.lyMtdNetSales)|| 0;
     agg.recent28Sum+= Number(s.recent28)     || 0;
     agg.prior28Sum += Number(s.prior28)      || 0;
+    agg.plan7Sum   += Number(s.plan7d)       || 0;
+    agg.plan28Sum  += Number(s.plan28d)      || 0;
+    agg.mtdPlanSum += Number(s.mtdPlan)      || 0;
 
     if (Number(s.netSales) < Number(s.lyNetSales) && Number(s.lyNetSales) > 0) agg.storesBelowLy7 += 1;
     if (Number(s.netSales28) < Number(s.lyNetSales28) && Number(s.lyNetSales28) > 0) agg.storesBelowLy28 += 1;
@@ -1063,9 +1128,12 @@ function buildExecutiveSummary(stores, peers, dt, ly) {
 
   return {
     windows: {
-      trailing7d:  { ty: agg.ns7Sum,  ly: agg.lns7Sum,   yoy: yoy7 },
-      trailing28d: { ty: agg.ns28Sum, ly: agg.lns28Sum,  yoy: yoy28 },
-      mtd:         { ty: agg.mtdSum,  ly: agg.lyMtdSum,  yoy: mtdVar },
+      trailing7d:  { ty: agg.ns7Sum,  ly: agg.lns7Sum,   yoy: yoy7,
+                     plan: agg.plan7Sum,  planAttn: agg.plan7Sum  > 0 ? agg.ns7Sum  / agg.plan7Sum  : null },
+      trailing28d: { ty: agg.ns28Sum, ly: agg.lns28Sum,  yoy: yoy28,
+                     plan: agg.plan28Sum, planAttn: agg.plan28Sum > 0 ? agg.ns28Sum / agg.plan28Sum : null },
+      mtd:         { ty: agg.mtdSum,  ly: agg.lyMtdSum,  yoy: mtdVar,
+                     plan: agg.mtdPlanSum, planAttn: agg.mtdPlanSum > 0 ? agg.mtdSum  / agg.mtdPlanSum : null },
       recencyTrend:{ recent: agg.recent28Sum, prior: agg.prior28Sum, var: trend },
     },
     counts: {
@@ -1329,7 +1397,7 @@ export default async function handler(req, res) {
       //          degrades gracefully if unavailable.
       const [kpiRows, planRows, trendRows, storeRows] = await Promise.all([
         exec(conn, sqlPerStoreKpisMultiWindow(dt, ly), "insightsKpisMW"),
-        exec(conn, sqlPerStorePlanMTD(dt),             "insightsPlanMTD").catch(e => [{ _error: e.message }]),
+        exec(conn, sqlPerStorePlan(dt),             "insightsPlanMTD").catch(e => [{ _error: e.message }]),
         exec(conn, sqlPerStoreRecencyTrend(dt),        "insightsTrend"  ).catch(e => [{ _error: e.message }]),
         exec(conn, sqlStoreList(),                     "insightsStores" ),
       ]);
@@ -1351,6 +1419,8 @@ export default async function handler(req, res) {
         if (r._error) continue;
         const code = k(r, "STORE_CD");
         if (code) planByStore.set(code, {
+          plan7d:    n(k(r, "PLAN_7D")),
+          plan28d:   n(k(r, "PLAN_28D")),
           mtdPlan:   n(k(r, "MTD_PLAN")),
           dailyPlan: n(k(r, "DAILY_PLAN")),
         });
@@ -1511,7 +1581,9 @@ export default async function handler(req, res) {
           mtdNetSales:   n(k(row, "MTD_NET_SALES")),
           lyMtdNetSales: n(k(row, "LY_MTD_NET_SALES")),
 
-          // Plan
+          // Plan (multiple windows)
+          plan7d:    plan.plan7d,
+          plan28d:   plan.plan28d,
           mtdPlan:   plan.mtdPlan,
           dailyPlan: plan.dailyPlan,
 
