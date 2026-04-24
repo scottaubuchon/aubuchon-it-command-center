@@ -5685,13 +5685,13 @@ function LiveSalesSnowflakeView({ goBack }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-sky-50 to-slate-100 p-3 sm:p-4 md:p-8">
+      <div className="min-h-screen bg-[#F2F2F2] p-3 sm:p-4 md:p-8">
         <div className="max-w-5xl mx-auto">
           <button onClick={goBack} className="flex items-center gap-2 px-3 py-2 bg-white rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium shadow-sm mb-6 text-sm">
             <ArrowLeft className="w-4 h-4" /> <span className="hidden sm:inline">Back to Reports</span><span className="sm:hidden">Back</span>
           </button>
           <div className="flex flex-col items-center justify-center py-24">
-            <div className="w-10 h-10 border-3 border-sky-200 border-t-sky-600 rounded-full animate-spin mb-4" />
+            <div className="w-10 h-10 border-3 border-[#A8C9B8] border-t-[#01683F] rounded-full animate-spin mb-4" />
             <p className="text-slate-600 font-medium">Querying Snowflake...</p>
             <p className="text-slate-400 text-sm mt-1">FCT_LIVE_SALE · may take a few seconds on first load</p>
           </div>
@@ -5781,19 +5781,19 @@ function LiveSalesSnowflakeView({ goBack }) {
   var visibleProducts = showAllProducts ? topProducts : topProducts.slice(0, 20);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-sky-50 to-slate-100 p-3 sm:p-4 md:p-8">
+    <div className="min-h-screen bg-[#F2F2F2] p-3 sm:p-4 md:p-8">
       <div className="max-w-5xl mx-auto">
-        {/* Header */}
-        <div className="flex items-center gap-3 sm:gap-4 mb-6">
-          <button onClick={goBack} className="flex items-center gap-1.5 px-3 py-2 bg-white rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 font-medium shadow-sm text-sm shrink-0">
+        {/* Header — Aubuchon brand: solid green icon tile, Trebuchet MS title */}
+        <div className="flex items-center gap-3 sm:gap-4 mb-3">
+          <button onClick={goBack} className="flex items-center gap-1.5 px-3 py-2 bg-white rounded-lg border border-slate-200 hover:bg-[#E6F0EA] hover:border-[#01683F] text-slate-700 font-medium shadow-sm text-sm shrink-0">
             <ArrowLeft className="w-4 h-4" /> <span className="hidden sm:inline">Back</span>
           </button>
           <div className="flex items-center gap-3 flex-1 min-w-0">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-sky-500 to-cyan-600 flex items-center justify-center shadow-lg shrink-0">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-[#01683F] flex items-center justify-center shadow-lg shrink-0">
               <Database className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
             </div>
             <div className="min-w-0">
-              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900">Live Sales <span className="text-sky-600">(Snowflake)</span></h1>
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-slate-900" style={{ fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif" }}>Live Sales <span className="text-[#01683F]">(Snowflake)</span></h1>
               <p className="text-slate-500 text-xs sm:text-sm truncate">{asOf}{cacheInfo ? " · " + cacheInfo : ""}</p>
             </div>
           </div>
@@ -5801,12 +5801,15 @@ function LiveSalesSnowflakeView({ goBack }) {
             onClick={handleRefresh}
             disabled={refreshing}
             title="Re-query Snowflake"
-            className={"flex items-center gap-1.5 px-3 py-2 rounded-lg font-medium shadow-sm border text-sm " + (refreshing ? "bg-slate-100 text-slate-400 border-slate-200 cursor-wait" : "bg-white text-slate-700 border-slate-200 hover:bg-sky-50 hover:border-sky-300")}
+            className={"flex items-center gap-1.5 px-3 py-2 rounded-lg font-medium shadow-sm border text-sm " + (refreshing ? "bg-slate-100 text-slate-400 border-slate-200 cursor-wait" : "bg-white text-slate-700 border-slate-200 hover:bg-[#E6F0EA] hover:border-[#01683F]")}
           >
             <RotateCcw className={"w-4 h-4 " + (refreshing ? "animate-spin" : "")} />
             <span className="hidden sm:inline">{refreshing ? "Refreshing\u2026" : "Refresh"}</span>
           </button>
         </div>
+        {/* Brand signature — orange over green double bar */}
+        <div className="h-[3px] bg-[#F58220]"></div>
+        <div className="h-[3px] bg-[#01683F] mb-5"></div>
 
         {/* Store filter dropdown — empty value means company-wide. Narrower
             than full width so a date selector can sit next to it later. Also
@@ -5863,7 +5866,7 @@ function LiveSalesSnowflakeView({ goBack }) {
                       disabled={refreshing}
                       aria-haspopup="listbox"
                       aria-expanded={storeOpen}
-                      className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg border border-slate-200 bg-white text-sm text-slate-800 text-left hover:border-sky-300 focus:outline-none focus:ring-2 focus:ring-sky-200 disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-wait"
+                      className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg border border-slate-200 bg-white text-sm text-slate-800 text-left hover:border-[#01683F] focus:outline-none focus:ring-2 focus:ring-[#A8C9B8] disabled:bg-slate-50 disabled:text-slate-400 disabled:cursor-wait"
                     >
                       <span className="truncate">{selectedLabel}</span>
                       <ChevronDown className={"w-4 h-4 text-slate-500 shrink-0 transition-transform duration-150 " + (storeOpen ? "rotate-180" : "")} />
@@ -5878,7 +5881,7 @@ function LiveSalesSnowflakeView({ goBack }) {
                             placeholder="Search stores…"
                             aria-label="Search stores"
                             autoFocus
-                            className="w-full px-2 py-1.5 rounded-md border border-slate-200 bg-white text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-400"
+                            className="w-full px-2 py-1.5 rounded-md border border-slate-200 bg-white text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#A8C9B8] focus:border-[#01683F]"
                           />
                         </div>
                         <div role="listbox" className="overflow-y-auto">
@@ -5889,7 +5892,7 @@ function LiveSalesSnowflakeView({ goBack }) {
                               setStoreSearch("");
                               setStoreOpen(false);
                             }}
-                            className={"w-full text-left px-3 py-2 text-sm border-b border-slate-100 hover:bg-sky-50 " + (!selectedStore ? "bg-sky-100 text-sky-900 font-semibold" : "text-slate-700")}
+                            className={"w-full text-left px-3 py-2 text-sm border-b border-slate-100 hover:bg-[#E6F0EA] " + (!selectedStore ? "bg-[#E6F0EA] text-[#01683F] font-semibold" : "text-slate-700")}
                           >
                             Entire Company
                           </button>
@@ -5907,7 +5910,7 @@ function LiveSalesSnowflakeView({ goBack }) {
                                   setStoreSearch("");
                                   setStoreOpen(false);
                                 }}
-                                className={"w-full text-left px-3 py-2 text-sm hover:bg-sky-50 " + (isSel ? "bg-sky-100 text-sky-900 font-semibold" : "text-slate-700")}
+                                className={"w-full text-left px-3 py-2 text-sm hover:bg-[#E6F0EA] " + (isSel ? "bg-[#E6F0EA] text-[#01683F] font-semibold" : "text-slate-700")}
                               >
                                 {label}
                               </button>
@@ -5936,7 +5939,7 @@ function LiveSalesSnowflakeView({ goBack }) {
                 disabled={refreshing}
                 aria-label="Date"
                 title={isToday ? "Today (live)" : "Historical end-of-day view"}
-                className={"px-2 py-2 rounded-lg border text-sm text-slate-800 bg-white hover:border-sky-300 focus:outline-none focus:ring-2 focus:ring-sky-200 focus:border-sky-400 disabled:bg-slate-50 disabled:text-slate-400 " + (isToday ? "border-slate-200" : "border-sky-400 bg-sky-50")}
+                className={"px-2 py-2 rounded-lg border text-sm text-slate-800 bg-white hover:border-[#01683F] focus:outline-none focus:ring-2 focus:ring-[#A8C9B8] focus:border-[#01683F] disabled:bg-slate-50 disabled:text-slate-400 " + (isToday ? "border-slate-200" : "border-[#01683F] bg-[#E6F0EA]")}
               />
               {(selectedStore || !isToday) && (
                 <button
@@ -5960,7 +5963,7 @@ function LiveSalesSnowflakeView({ goBack }) {
         <div className={"rounded-xl border-2 p-4 sm:p-5 md:p-6 mb-5 " + todayTone.card}>
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 sm:gap-2 mb-4">
             <div>
-              <h2 className="text-lg sm:text-xl font-bold text-slate-900">Today's Performance</h2>
+              <h2 className="text-lg sm:text-xl font-bold text-slate-900" style={{ fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif" }}>Today's Performance</h2>
               <div className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 mt-1">{fmtD(companyTotal.sales)}</div>
               {/* Projected-with-estimate line. Only shown when we have
                   estimates for non-reporting stores AND the user isn't viewing
@@ -5969,7 +5972,7 @@ function LiveSalesSnowflakeView({ goBack }) {
                   second line. */}
               {!selectedStore && estimatedMissing && estimatedMissing.totalEstimatedCurrent > 0 && (
                 <div className="text-xs sm:text-sm text-slate-600 mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
-                  <span className="text-[10px] uppercase tracking-wide font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-200">est.</span>
+                  <span className="text-[10px] uppercase tracking-wide font-bold px-1.5 py-0.5 rounded bg-[#FAEEDA] text-[#854F0B] border border-[#F58220]">est.</span>
                   <span>+{fmtD(estimatedMissing.totalEstimatedCurrent)}</span>
                   <span className="text-slate-400">from {notReporting.length} missing</span>
                   <span className="text-slate-300">&rarr;</span>
@@ -6064,10 +6067,10 @@ function LiveSalesSnowflakeView({ goBack }) {
           var fmt$ = function (n) { return "$" + Math.round(n || 0).toLocaleString(); };
           return (
             <div className="rounded-xl border border-slate-200 bg-white mb-5 overflow-hidden">
-              <div className="px-4 py-2 bg-slate-50 border-b border-slate-200 flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
-                <span className="text-sm font-semibold text-slate-700">Stores Not Reporting</span>
-                <span className="text-[10px] uppercase tracking-wide font-bold px-2 py-0.5 rounded-full bg-amber-200 text-amber-900 border border-amber-300">
+              <div className="px-4 py-2 bg-[#FAEEDA] border-b border-[#F58220] flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 text-[#F58220] shrink-0" />
+                <span className="text-sm font-semibold text-[#854F0B]">Stores Not Reporting</span>
+                <span className="text-[10px] uppercase tracking-wide font-bold px-2 py-0.5 rounded-full bg-[#F58220] text-white border border-[#854F0B]">
                   {notReporting.length}
                 </span>
               </div>
@@ -6100,7 +6103,7 @@ function LiveSalesSnowflakeView({ goBack }) {
                             {est ? (
                               <div className="flex flex-col items-end gap-0.5">
                                 <div className="flex items-center gap-1.5">
-                                  <span className="text-[9px] uppercase tracking-wide font-bold px-1 py-0.5 rounded bg-amber-100 text-amber-800 border border-amber-200">est.</span>
+                                  <span className="text-[9px] uppercase tracking-wide font-bold px-1 py-0.5 rounded bg-[#FAEEDA] text-[#854F0B] border border-[#F58220]">est.</span>
                                   <span className="font-semibold text-slate-800">{fmt$(estVal)}</span>
                                 </div>
                                 <div className="text-[10px] text-slate-400">{basisLabel}</div>
@@ -6152,9 +6155,9 @@ function LiveSalesSnowflakeView({ goBack }) {
           var conf = String(p.confidence || "low");
           var confStyles = {
             "very low": "bg-slate-100 text-slate-600 border-slate-200",
-            "low":      "bg-amber-100 text-amber-800 border-amber-200",
+            "low":      "bg-[#FAEEDA] text-[#854F0B] border-[#F58220]",
             "medium":   "bg-blue-100 text-blue-800 border-blue-200",
-            "high":     "bg-emerald-100 text-emerald-800 border-emerald-200",
+            "high":     "bg-[#E6F0EA] text-[#01683F] border-[#01683F]",
           };
           var confClass = confStyles[conf] || confStyles["low"];
           var hasBand = p.band && (p.band.low || p.band.high);
@@ -6166,8 +6169,8 @@ function LiveSalesSnowflakeView({ goBack }) {
                 className="w-full flex items-center justify-between gap-3 p-4 sm:p-5 text-left hover:bg-black/[0.02] transition-colors"
               >
                 <div className="flex items-center gap-2 flex-wrap">
-                  <TrendingUp className="w-5 h-5 text-slate-700 shrink-0" />
-                  <h2 className="font-bold text-slate-900">EOD Forecast</h2>
+                  <TrendingUp className="w-5 h-5 text-[#01683F] shrink-0" />
+                  <h2 className="font-bold text-slate-900" style={{ fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif" }}>EOD Forecast</h2>
                   <span className={"text-[10px] uppercase tracking-wide font-semibold px-2 py-0.5 rounded-full border " + confClass}>
                     {conf}
                   </span>
@@ -6223,8 +6226,8 @@ function LiveSalesSnowflakeView({ goBack }) {
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm mb-5 overflow-hidden">
           <div className="px-4 sm:px-5 py-3 sm:py-4 border-b border-slate-100 flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <BarChart3 className="w-5 h-5 text-sky-600" />
-              <h2 className="font-bold text-slate-900 text-sm sm:text-base">
+              <BarChart3 className="w-5 h-5 text-[#01683F]" />
+              <h2 className="font-bold text-slate-900 text-sm sm:text-base" style={{ fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif" }}>
                 {selectedStore ? "Store Detail" : "Top Stores by Sales"}
               </h2>
             </div>
@@ -6271,7 +6274,7 @@ function LiveSalesSnowflakeView({ goBack }) {
           {topStores.length > 5 && (
             <button
               onClick={function () { setShowAllStores(!showAllStores); }}
-              className="w-full py-3 text-sm font-medium text-sky-700 hover:bg-sky-50 border-t border-slate-100 flex items-center justify-center gap-1 transition-colors"
+              className="w-full py-3 text-sm font-medium text-[#01683F] hover:bg-[#E6F0EA] border-t border-slate-100 flex items-center justify-center gap-1 transition-colors"
             >
               {showAllStores ? "Show Top 5" : "Show All " + topStores.length + " Stores"}
               <ChevronDown className={"w-4 h-4 transition-transform duration-200 " + (showAllStores ? "rotate-180" : "")} />
@@ -6284,8 +6287,8 @@ function LiveSalesSnowflakeView({ goBack }) {
           <div className="bg-white rounded-xl border border-slate-200 shadow-sm mb-5 overflow-hidden">
             <div className="px-4 sm:px-5 py-3 sm:py-4 border-b border-slate-100 flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Tag className="w-5 h-5 text-sky-600" />
-                <h2 className="font-bold text-slate-900 text-sm sm:text-base">Top Products by Sales</h2>
+                <Tag className="w-5 h-5 text-[#01683F]" />
+                <h2 className="font-bold text-slate-900 text-sm sm:text-base" style={{ fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif" }}>Top Products by Sales</h2>
               </div>
               <span className="text-xs text-slate-400">{topProducts.length} products</span>
             </div>
@@ -6317,7 +6320,7 @@ function LiveSalesSnowflakeView({ goBack }) {
             {topProducts.length > 20 && (
               <button
                 onClick={function () { setShowAllProducts(!showAllProducts); }}
-                className="w-full py-3 text-sm font-medium text-sky-700 hover:bg-sky-50 border-t border-slate-100 flex items-center justify-center gap-1 transition-colors"
+                className="w-full py-3 text-sm font-medium text-[#01683F] hover:bg-[#E6F0EA] border-t border-slate-100 flex items-center justify-center gap-1 transition-colors"
               >
                 {showAllProducts ? "Show Top 20 Items" : "Show Top " + topProducts.length + " Items"}
                 <ChevronDown className={"w-4 h-4 transition-transform duration-200 " + (showAllProducts ? "rotate-180" : "")} />
