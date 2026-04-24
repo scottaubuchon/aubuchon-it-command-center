@@ -340,15 +340,25 @@ PLAN (daily sales plan / budget):
 
 PAYROLL (weekly grain):
   \`PRD_EDW_DB.ANALYTICS_BASE.RPT_PAYROLL_BUDGET_AND_ACTUALS\`
-  Columns: store_cd, week_ending_dt_key, actual_payroll_hrs, actual_sales_amt,
-  target_payroll_hrs / budget_payroll_hrs, target_sales_amt / budget_sales_amt
-  SPPH = SUM(actual_sales_amt)/NULLIF(SUM(actual_payroll_hrs),0) — weekly only.
-  There is no daily SPPH. If the user asks for daily, pull the containing week.
+  Key columns: store_cd, week_ending_dt (DATE), week_ending_dt_key (INTEGER YYYYMMDD),
+    location_nm, week_num, quarter_num
+  Actuals: actual_payroll_hrs, actual_sales_amt, actual_payroll_amt,
+    actual_sales_per_payroll_hr, non_exempt_payroll_hrs, total_overtime_hrs_worked_at_store
+  Targets: target_payroll_hrs, target_sales_amt, target_payroll_amt, target_sales_per_payroll_hr
+    (there is NO budget_payroll_hrs column on this table - only target_*)
+  Threshold scorecard: threshold_* / overachieve_* variants
+  Use \`week_ending_dt\` (quoted date string) for date filters. SPPH =
+    SUM(actual_sales_amt)/NULLIF(SUM(actual_payroll_hrs),0). The ready-made
+    column \`actual_sales_per_payroll_hr\` gives SPPH at the week grain already.
+  Weekly grain only — if the user asks for daily SPPH, pull the containing week.
 
 WEATHER (daily, per store):
   \`PRD_EDW_DB.ANALYTICS_BASE.FCT_STORE_WEATHER\`
-  Columns: store_cd, dt, temp_max, temp_min, temp_avg, precipitation_in,
+  Columns: store_key, date_key (INTEGER YYYYMMDD - NOT a date string!), store_cd,
+  store_latitude, store_longitude, temp_max, temp_min, temp_avg, precipitation_in,
   snow_fall_in, snow_depth_in, wind_speed_avg, dw_source_nm
+  To filter by date: convert 'YYYY-MM-DD' to integer YYYYMMDD and compare:
+    WHERE date_key BETWEEN 20260416 AND 20260430   -- NEVER use a column named dt; it does not exist
   Critical filter: \`dw_source_nm = 'historical'\` for actuals;
   \`dw_source_nm = 'forecast'\` for projections. Forecast rows look identical to
   actuals — always filter or the answer will be wrong.
