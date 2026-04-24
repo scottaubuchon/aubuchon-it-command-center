@@ -21,7 +21,7 @@ process.env.HOME = "/tmp";
 process.env.SF_OCSP_RESPONSE_CACHE_DIR = "/tmp";
 process.env.SNOWFLAKE_LOG_LEVEL = "ERROR";
 
-export const config = { maxDuration: 45 };
+export const config = { maxDuration: 90 };
 
 // ---------- Snowflake connection (mirrors api/yoda-2.js) ----------
 let sdk = null;
@@ -725,9 +725,14 @@ export default async function handler(req, res) {
   }
 
   let conn = null;
+  const stage = { gen: 0, connect: 0, exec: 0, summary: 0 };
+  const tStart = Date.now();
   try {
     // 1. Generate SQL
+    const tGen = Date.now();
     const gen = await generateSql({ question, store, date, history });
+    stage.gen = Date.now() - tGen;
+    console.log("[yoda-chat] SQL gen:", stage.gen, "ms", gen.nosql ? "(nosql)" : "");
     if (gen.nosql) {
       res.status(200).json({
         status: "ok",
@@ -756,15 +761,22 @@ export default async function handler(req, res) {
     }
 
     // 2. Run the SQL
+    const tConn = Date.now();
     conn = await Promise.race([
       connect(),
       new Promise((_, reject) =>
         setTimeout(() => reject(new Error("Snowflake connect timeout (15s) — warehouse may be resuming from suspend")), 15000)),
     ]);
+    stage.connect = Date.now() - tConn;
+    console.log("[yoda-chat] Snowflake connect:", stage.connect, "ms");
+    const tExec = Date.now();
     const rawRows = await exec(conn, sql, "chat-query");
+    stage.exec = Date.now() - tExec;
+    console.log("[yoda-chat] SQL exec:", stage.exec, "ms,", rawRows.length, "rows");
     const shaped = shapeRows(rawRows);
 
     // 3. Summarize
+    const tSum = Date.now();
     let answer;
     try {
       answer = await summarizeRows({ question, sql, shaped });
@@ -772,6 +784,8 @@ export default async function handler(req, res) {
       // Fall back to a deterministic summary rather than failing the whole request.
       answer = `Ran the query and got ${shaped.rows.length} row(s). (Summarization skipped: ${String(e.message || e)})`;
     }
+    stage.summary = Date.now() - tSum;
+    console.log("[yoda-chat] Summarize:", stage.summary, "ms");
 
     res.status(200).json({
       status: "ok",
@@ -782,6 +796,7 @@ export default async function handler(req, res) {
       rows: shaped.rows.slice(0, 500),
       row_count: shaped.rows.length,
       took_ms: Date.now() - t0,
+      timings: stage,
     });
   } catch (e) {
     res.status(500).json({
