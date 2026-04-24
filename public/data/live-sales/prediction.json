@@ -1,43 +1,43 @@
 {
-  "updatedAt": "2026-04-24T23:31:41.807Z",
-  "updatedAtET": "Apr 24, 2026, 7:31 PM",
+  "updatedAt": "2026-04-24T23:47:24.286Z",
+  "updatedAtET": "Apr 24, 2026, 7:47 PM",
   "dateET": "2026-04-24",
   "dow": 5,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-04-24T23:31:41.807Z",
-    "tsET": "Apr 24, 2026, 7:31 PM",
+    "ts": "2026-04-24T23:47:24.286Z",
+    "tsET": "Apr 24, 2026, 7:47 PM",
     "dateET": "2026-04-24",
     "hourET": 19,
-    "minuteET": 31,
+    "minuteET": 47,
     "dow": 5,
-    "sales": 1242738.1199999996,
+    "sales": 1244088.7699999993,
     "plan": 1289097.000000001,
-    "pctToPlan": 96.40377101180118,
-    "gp": 521045.8730999994,
-    "gpPct": 41.92724635339902,
-    "txns": 35492,
-    "customers": 32979,
+    "pctToPlan": 96.50854590461373,
+    "gp": 521245.1903999989,
+    "gpPct": 41.8977490167361,
+    "txns": 35523,
+    "customers": 32991,
     "storeCount": 134,
-    "asOf": "2026-04-24T23:15:08.457000",
-    "asOfET": "Apr 24, 2026, 7:15 PM"
+    "asOf": "2026-04-24T23:30:09.873000",
+    "asOfET": "Apr 24, 2026, 7:30 PM"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.98 shape + 0.02 level)",
     "confidence": "medium",
-    "projectedEOD": 1248163.95561341,
-    "projectedPctToPlan": 96.8246730551238,
-    "projectedVariance": -40933.04438659083,
+    "projectedEOD": 1247642.9588475574,
+    "projectedPctToPlan": 96.78425741798767,
+    "projectedVariance": -41454.041152443504,
     "band": {
-      "low": 1045238.3992038488,
-      "high": 1451089.5120229714
+      "low": 1044845.0272371777,
+      "high": 1450440.890457937
     },
-    "pctOfDayElapsed": 0.9972933333333334,
+    "pctOfDayElapsed": 0.9987866666666667,
     "level_EOD": 1342831.332618901,
-    "shape_EOD": 1246110.9269088327,
-    "blendWeight": 0.9787735722415032,
+    "shape_EOD": 1245600.0981190503,
+    "blendWeight": 0.9789896658309911,
     "factors": {
       "plan": 1289097.000000001,
       "recencyFactor": 0.9393,
@@ -49,23 +49,23 @@
       "weatherSummary": "concord-nh: 29F Partly Cloudy | worcester-ma: 33F Mostly Clear | burlington-vt: 31F Mostly Clear | portland-me: 32F Partly Cloudy | albany-ny: 37F Mostly Clear | scranton-pa: 44F Chance Rain Showers"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.9972933333333334,
+      "basePaceFromCurve": 0.9987866666666667,
       "observedPaceCount": 1,
-      "blendedPaceAtNow": 0.9972933333333334,
+      "blendedPaceAtNow": 0.9987866666666667,
       "historyDays": 1,
       "avgHistoricalEOD": 1211604.37
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 40366.44496,
+      "estimatedCurrent": 40426.88912,
       "estimatedEOD": 40476,
-      "paceUsed": 0.9972933333333334,
+      "paceUsed": 0.9987866666666667,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 24862,
-          "estimatedCurrent": 24794.706853333333,
+          "estimatedCurrent": 24831.83410666667,
           "estimatedEOD": 24862,
           "stdev": 0.3127
         },
@@ -73,16 +73,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 15614,
-          "estimatedCurrent": 15571.738106666668,
+          "estimatedCurrent": 15595.055013333335,
           "estimatedEOD": 15614,
           "stdev": 0.1906
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1288639.95561341,
-    "combinedCurrentSales": 1283104.5649599996,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $40,366 so far, +$40,476 to EOD."
+    "combinedProjectedEOD": 1288118.9588475574,
+    "combinedCurrentSales": 1284515.6591199993,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $40,427 so far, +$40,476 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 11,
@@ -110,7 +110,7 @@
         "temp": 33,
         "unit": "F",
         "short": "Mostly Clear",
-        "detailed": "Mostly clear, with a low around 33. Northeast wind 2 to 8 mph."
+        "detailed": "Mostly clear, with a low around 33. East wind 2 to 8 mph."
       },
       {
         "station": "burlington-vt",
@@ -134,7 +134,7 @@
         "temp": 37,
         "unit": "F",
         "short": "Mostly Clear",
-        "detailed": "Mostly clear, with a low around 37. North wind 2 to 8 mph."
+        "detailed": "Mostly clear, with a low around 37. North wind 2 to 7 mph."
       },
       {
         "station": "scranton-pa",
