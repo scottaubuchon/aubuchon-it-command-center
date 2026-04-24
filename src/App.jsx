@@ -5745,19 +5745,31 @@ function LiveSalesSnowflakeView({ goBack }) {
   var predictorSaysHit = forecast.proj >= forecast.plan;
   var onTrack = predictorSaysHit;
   var planMagnitude = Math.abs(forecast.varPct || 0);
-  // Tailwind class fragments scaled by absolute variance percentage so cards
-  // pop harder when the day swings hard either direction. Whole class strings
-  // are required (the JIT compiler doesn't see dynamically built names).
+  // Solid color whose darkness scales with absolute variance from plan, so a
+  // +8% beat reads as a deeper green than a +1% nudge. Five tiers each way.
+  // Whole class strings are required (the Tailwind JIT can't see names that
+  // are dynamically constructed at runtime).
   var planTone = function (above, mag) {
     var m = Math.abs(mag || 0);
+    var tier = m < 1 ? 0 : m < 3 ? 1 : m < 5 ? 2 : m < 8 ? 3 : 4;
     if (above) {
-      if (m >= 5) return { card: "bg-gradient-to-br from-emerald-200 via-emerald-50 to-white border-emerald-400", text: "text-emerald-800", bar: "bg-gradient-to-r from-emerald-500 to-emerald-700" };
-      if (m >= 2) return { card: "bg-gradient-to-br from-emerald-100 to-white border-emerald-300", text: "text-emerald-700", bar: "bg-gradient-to-r from-emerald-400 to-emerald-600" };
-      return        { card: "bg-gradient-to-br from-emerald-50 to-white border-emerald-200",  text: "text-emerald-700", bar: "bg-gradient-to-r from-emerald-300 to-emerald-500" };
+      var greens = [
+        { card: "bg-emerald-50 border-emerald-200",  text: "text-emerald-700", bar: "bg-emerald-400" },
+        { card: "bg-emerald-100 border-emerald-300", text: "text-emerald-700", bar: "bg-emerald-500" },
+        { card: "bg-emerald-200 border-emerald-400", text: "text-emerald-800", bar: "bg-emerald-600" },
+        { card: "bg-emerald-300 border-emerald-500", text: "text-emerald-900", bar: "bg-emerald-700" },
+        { card: "bg-emerald-400 border-emerald-600", text: "text-emerald-900", bar: "bg-emerald-800" },
+      ];
+      return greens[tier];
     }
-    if (m >= 5) return { card: "bg-gradient-to-br from-red-200 via-red-50 to-white border-red-400", text: "text-red-800", bar: "bg-gradient-to-r from-red-500 to-red-700" };
-    if (m >= 2) return { card: "bg-gradient-to-br from-red-100 to-white border-red-300",            text: "text-red-700", bar: "bg-gradient-to-r from-red-400 to-red-600" };
-    return        { card: "bg-gradient-to-br from-red-50 to-white border-red-200",                  text: "text-red-600", bar: "bg-gradient-to-r from-red-400 to-red-500" };
+    var reds = [
+      { card: "bg-red-50 border-red-200",   text: "text-red-600", bar: "bg-red-400" },
+      { card: "bg-red-100 border-red-300",  text: "text-red-700", bar: "bg-red-500" },
+      { card: "bg-red-200 border-red-400",  text: "text-red-700", bar: "bg-red-600" },
+      { card: "bg-red-300 border-red-500",  text: "text-red-800", bar: "bg-red-700" },
+      { card: "bg-red-400 border-red-600",  text: "text-red-900", bar: "bg-red-800" },
+    ];
+    return reds[tier];
   };
   var todayTone = planTone(predictorSaysHit, planMagnitude);
   var progressPct = Math.min(pctPlan, 100);
