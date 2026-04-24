@@ -1,43 +1,43 @@
 {
-  "updatedAt": "2026-04-24T11:51:40.752Z",
-  "updatedAtET": "Apr 24, 2026, 7:51 AM",
+  "updatedAt": "2026-04-24T12:00:46.425Z",
+  "updatedAtET": "Apr 24, 2026, 8:00 AM",
   "dateET": "2026-04-24",
   "dow": 5,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-04-24T11:51:40.752Z",
-    "tsET": "Apr 24, 2026, 7:51 AM",
+    "ts": "2026-04-24T12:00:46.425Z",
+    "tsET": "Apr 24, 2026, 8:00 AM",
     "dateET": "2026-04-24",
-    "hourET": 7,
-    "minuteET": 51,
+    "hourET": 8,
+    "minuteET": 0,
     "dow": 5,
-    "sales": 5780.9400000000005,
+    "sales": 19370.290000000005,
     "plan": 1289097.0000000012,
-    "pctToPlan": 0.44844879787944547,
-    "gp": 1809.4952000000012,
-    "gpPct": 31.301054845751747,
-    "txns": 243,
-    "customers": 100,
-    "storeCount": 39,
-    "asOf": "2026-04-24T11:30:06.370000",
-    "asOfET": "Apr 24, 2026, 7:30 AM"
+    "pctToPlan": 1.502624705510911,
+    "gp": 6846.337600000001,
+    "gpPct": 35.34452814077641,
+    "txns": 637,
+    "customers": 327,
+    "storeCount": 81,
+    "asOf": "2026-04-24T11:45:07.477000",
+    "asOfET": "Apr 24, 2026, 7:45 AM"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.05 shape + 0.95 level)",
     "confidence": "low",
-    "projectedEOD": 1281126.5741758193,
-    "projectedPctToPlan": 99.38170472631758,
-    "projectedVariance": -7970.425824181875,
+    "projectedEOD": 1294803.7903655553,
+    "projectedPctToPlan": 100.44269673775939,
+    "projectedVariance": 5706.7903655541595,
     "band": {
-      "low": 883865.279191073,
-      "high": 1678387.8691605655
+      "low": 893753.5347413381,
+      "high": 1695854.0459897728
     },
-    "pctOfDayElapsed": 0.03589,
+    "pctOfDayElapsed": 0.0421,
     "level_EOD": 1342831.3326189013,
-    "shape_EOD": 161073.8367233213,
-    "blendWeight": 0.05221439987255582,
+    "shape_EOD": 460101.90023752983,
+    "blendWeight": 0.054407999202859075,
     "factors": {
       "plan": 1289097.0000000012,
       "recencyFactor": 0.9393,
@@ -49,23 +49,23 @@
       "weatherSummary": "concord-nh: 54F Sunny | worcester-ma: 56F Mostly Sunny | burlington-vt: 51F Sunny | portland-me: 49F Mostly Sunny | albany-ny: 60F Sunny | scranton-pa: 69F Mostly Sunny"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.03589,
+      "basePaceFromCurve": 0.0421,
       "observedPaceCount": 1,
-      "blendedPaceAtNow": 0.03589,
+      "blendedPaceAtNow": 0.0421,
       "historyDays": 1,
       "avgHistoricalEOD": 1211604.37
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 1452.68364,
+      "estimatedCurrent": 1704.0395999999998,
       "estimatedEOD": 40476,
-      "paceUsed": 0.03589,
+      "paceUsed": 0.0421,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 24862,
-          "estimatedCurrent": 892.2971799999999,
+          "estimatedCurrent": 1046.6902,
           "estimatedEOD": 24862,
           "stdev": 0.3127
         },
@@ -73,16 +73,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 15614,
-          "estimatedCurrent": 560.3864599999999,
+          "estimatedCurrent": 657.3494,
           "estimatedEOD": 15614,
           "stdev": 0.1906
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1321602.5741758193,
-    "combinedCurrentSales": 7233.623640000001,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $1,453 so far, +$40,476 to EOD."
+    "combinedProjectedEOD": 1335279.7903655553,
+    "combinedCurrentSales": 21074.329600000005,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $1,704 so far, +$40,476 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 11,
