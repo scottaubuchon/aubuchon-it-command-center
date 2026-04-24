@@ -6782,53 +6782,7 @@ function Yoda2ChatPanel({ selectedStore, selectedDate }) {
                     {showDetails[i] ? "Hide" : "Show"} SQL{hasRows ? " & data (" + (m.row_count || m.rows.length) + " row" + ((m.row_count || m.rows.length) === 1 ? "" : "s") + ")" : ""}
                   </button>
                   {showDetails[i] && (
-                    <div className="mt-1 space-y-1">
-                      {m.sql && (
-                        <pre className={"bg-slate-900 text-emerald-200 rounded p-2 overflow-x-auto whitespace-pre-wrap break-words " +
-                          (isExpanded ? "text-xs leading-relaxed" : "text-[10px] leading-snug")}>
-                          {m.sql}
-                        </pre>
-                      )}
-                      {hasRows && (
-                        <div className="overflow-x-auto border border-slate-200 rounded bg-white">
-                          <table className={tableText + " w-full"}>
-                            <thead>
-                              <tr className="bg-slate-100">
-                                {m.columns.map(function (c) {
-                                  return <th key={c} className="text-left px-1.5 py-1 font-semibold text-slate-600 whitespace-nowrap">{c}</th>;
-                                })}
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {m.rows.slice(0, maxRows).map(function (r, ri) {
-                                return (
-                                  <tr key={ri} className="border-t border-slate-100">
-                                    {m.columns.map(function (c) {
-                                      var v = r[c];
-                                      var disp;
-                                      if (v === null || v === undefined) disp = "—";
-                                      else if (typeof v === "number") disp = Math.abs(v) >= 1000 ? v.toLocaleString() : String(v);
-                                      else disp = String(v);
-                                      return <td key={c} className="px-1.5 py-1 whitespace-nowrap text-slate-700">{disp}</td>;
-                                    })}
-                                  </tr>
-                                );
-                              })}
-                            </tbody>
-                          </table>
-                          {m.rows.length > maxRows && (
-                            <div className={(isExpanded ? "text-xs" : "text-[10px]") + " text-slate-400 px-1.5 py-1 border-t border-slate-100"}>
-                              Showing first {maxRows} of {m.rows.length} rows
-                            </div>
-                          )}
-                        </div>
-                      )}
-                      {m.timings && isExpanded && (
-                        <div className="text-[11px] text-slate-400 font-mono">
-                          timings(ms): gen {m.timings.gen || 0} · connect {m.timings.connect || 0} · exec {m.timings.exec || 0} · summary {m.timings.summary || 0} · total {m.took_ms || 0}
-                        </div>
-                      )}
-                    </div>
+                    <Y2CDataViewer message={m} isExpanded={isExpanded} maxRows={maxRows} tableText={tableText} />
                   )}
                 </div>
               )}
@@ -7001,6 +6955,270 @@ function Yoda2ChatPanel({ selectedStore, selectedDate }) {
    - - bullet lines  (and "* bullet")
    - Numbered lists (1. foo)
    - Blank-line paragraph breaks                                              */
+/* ============================================================
+   Y2C visual helpers — cell decorators + inline SVG bar charts
+   Used by Y2CRendered (markdown tables) and Y2CDataChart (SQL rows)
+   to make chat answers scannable at a glance.
+   ============================================================ */
+
+// Parse a cell string into a number. Handles "$1,234", "12.5%", "1.2K",
+// "1.2M", "-5%", "0.2–0.5" (range → midpoint), etc. Returns NaN if not numeric.
+function y2cParseNum(s) {
+  if (s === null || s === undefined) return NaN;
+  if (typeof s === "number") return s;
+  const raw = String(s).trim();
+  if (!raw) return NaN;
+
+  // Range like "0.2–0.5" or "0.2-0.5" — take midpoint
+  const range = raw.match(/^(-?[\d.]+)\s*[\u2013\u2014\-]\s*(-?[\d.]+)/);
+  if (range) return (parseFloat(range[1]) + parseFloat(range[2])) / 2;
+
+  let t = raw.replace(/[,\s$°F]/g, "");
+  let mult = 1;
+  if (/[kK]$/.test(t))  { mult = 1e3;  t = t.slice(0, -1); }
+  if (/[mM]$/.test(t))  { mult = 1e6;  t = t.slice(0, -1); }
+  if (/[bB]$/.test(t))  { mult = 1e9;  t = t.slice(0, -1); }
+  const hasPct = /%$/.test(t);
+  if (hasPct) t = t.slice(0, -1);
+  const n = parseFloat(t);
+  if (!Number.isFinite(n)) return NaN;
+  return (hasPct ? n / 100 : n) * mult;
+}
+
+// Column name classifier. Given a column header, infer what kind of cell it is.
+function y2cClassifyColumn(header, samples) {
+  const h = String(header || "").toLowerCase();
+  if (/temp|high\s*°|low\s*°|avg\s*°|temperature/.test(h)) return "temp";
+  if (/precip|rain|snow(\s|\b)/.test(h)) return "weather_amt";
+  if (/condition|weather/.test(h)) return "conditions";
+  if (/\bpct\b|percent|%|attn|attainment/.test(h)) return "pct";
+  if (/\bvar\b|variance|vs\s*ly|vs\.\s*ly|change/.test(h)) return "variance";
+  if (/store\s*cd|store_cd|\bcode\b/.test(h)) return "store_code";
+  if (/date|day|week|month|year|dt$/.test(h)) return "date";
+  if (/name|desc|department|class|city|state|location|store\s*nm/.test(h)) return "label";
+  // Infer from sample values: if most samples parse as numbers, call it "number"
+  if (samples && samples.length) {
+    let numCount = 0;
+    for (const s of samples) if (!Number.isNaN(y2cParseNum(s))) numCount++;
+    if (numCount / samples.length > 0.6) return "number";
+  }
+  return "text";
+}
+
+// Conditions string → emoji prefix.
+function y2cConditionIcon(text) {
+  const t = String(text || "").toLowerCase();
+  if (/snow|blizzard/.test(t)) return "\u2744\ufe0f";            // ❄️
+  if (/storm|thunder/.test(t)) return "\u26c8\ufe0f";            // ⛈️
+  if (/rain|shower|drizzle|precip/.test(t)) return "\ud83c\udf27\ufe0f"; // 🌧️
+  if (/cloud/.test(t)) return "\u2601\ufe0f";                    // ☁️
+  if (/wind/.test(t)) return "\ud83d\udca8";                     // 💨
+  if (/clear|sun|warm|hot|good/.test(t)) return "\u2600\ufe0f";  // ☀️
+  if (/cold|cool|freeze|frost/.test(t)) return "\ud83e\udd76";   // 🥶
+  return "";
+}
+
+// Temperature (°F) → background tint + text color (cool blue → warm orange).
+function y2cTempStyle(f) {
+  if (!Number.isFinite(f)) return null;
+  // Clamp to [10, 90]
+  const t = Math.max(10, Math.min(90, f));
+  // Interpolate across stops
+  const stops = [
+    { t: 10, bg: "#DBEAFE", fg: "#1E3A8A" }, // icy blue
+    { t: 32, bg: "#E0F2FE", fg: "#075985" }, // chilly
+    { t: 50, bg: "#F0FDF4", fg: "#166534" }, // mild green
+    { t: 70, bg: "#FEF9C3", fg: "#92400E" }, // warm yellow
+    { t: 90, bg: "#FED7AA", fg: "#9A3412" }, // hot orange
+  ];
+  let lo = stops[0], hi = stops[stops.length - 1];
+  for (let i = 0; i < stops.length - 1; i++) {
+    if (t >= stops[i].t && t <= stops[i + 1].t) { lo = stops[i]; hi = stops[i + 1]; break; }
+  }
+  const pct = (t - lo.t) / Math.max(1, hi.t - lo.t);
+  function lerp(a, b) {
+    const pa = parseInt(a.slice(1), 16), pb = parseInt(b.slice(1), 16);
+    const ra = (pa >> 16) & 255, ga = (pa >> 8) & 255, ba = pa & 255;
+    const rb = (pb >> 16) & 255, gb = (pb >> 8) & 255, bb = pb & 255;
+    const r = Math.round(ra + (rb - ra) * pct);
+    const g = Math.round(ga + (gb - ga) * pct);
+    const bB = Math.round(ba + (bb - ba) * pct);
+    return "#" + ((1 << 24) | (r << 16) | (g << 8) | bB).toString(16).slice(1);
+  }
+  return { bg: lerp(lo.bg, hi.bg), fg: lerp(lo.fg, hi.fg) };
+}
+
+// Variance value → color (green for positive, red for negative).
+function y2cVarianceCls(n) {
+  if (!Number.isFinite(n)) return "";
+  if (n > 0) return "text-emerald-700 font-semibold";
+  if (n < 0) return "text-rose-700 font-semibold";
+  return "text-slate-600";
+}
+
+// Weather precipitation amount → icon (no rain → · ; light → 🌦 ; heavy → 🌧 )
+function y2cPrecipIcon(inches) {
+  if (!Number.isFinite(inches) || inches <= 0) return "";
+  if (inches >= 1) return "\ud83c\udf27\ufe0f";  // 🌧️ heavy
+  if (inches >= 0.1) return "\ud83c\udf26\ufe0f"; // 🌦 light
+  return "\ud83d\udca7";                          // 💧 trace
+}
+
+// Snow → icon
+function y2cSnowIcon(inches) {
+  if (!Number.isFinite(inches) || inches <= 0) return "";
+  return "\u2744\ufe0f"; // ❄️
+}
+
+// Render a decorated cell. Returns a React node.
+function Y2CDecoratedCell({ value, kind, colMax, colMin }) {
+  const raw = value == null ? "" : String(value);
+  const num = y2cParseNum(raw);
+
+  if (kind === "temp" && Number.isFinite(num)) {
+    const s = y2cTempStyle(num);
+    if (s) {
+      return (
+        <span className="inline-block rounded px-1.5 py-0.5 font-semibold"
+              style={{ background: s.bg, color: s.fg, minWidth: 38, textAlign: "center" }}>
+          {Math.round(num)}°
+        </span>
+      );
+    }
+  }
+
+  if (kind === "conditions") {
+    const icon = y2cConditionIcon(raw);
+    return (
+      <span>
+        {icon ? <span className="mr-1">{icon}</span> : null}
+        {raw}
+      </span>
+    );
+  }
+
+  if (kind === "weather_amt" && raw) {
+    const h = String(raw).toLowerCase();
+    if (/^none$|^0(\.0+)?$|^\-$/.test(h.trim())) {
+      return <span className="text-slate-400">—</span>;
+    }
+    // Pick snow vs rain icon based on the column, fallback to precip
+    const isSnow = /snow/.test(h);
+    const icon = isSnow ? y2cSnowIcon(num) : y2cPrecipIcon(num);
+    return (
+      <span>
+        {icon ? <span className="mr-1">{icon}</span> : null}
+        {raw}
+      </span>
+    );
+  }
+
+  if (kind === "variance" || (kind === "pct" && /^[-+]/.test(raw.trim()))) {
+    if (Number.isFinite(num)) {
+      const cls = y2cVarianceCls(num);
+      const arrow = num > 0 ? "\u2191" : num < 0 ? "\u2193" : "\u2022";
+      return <span className={cls}>{arrow} {raw}</span>;
+    }
+  }
+
+  if ((kind === "number" || kind === "pct") && Number.isFinite(num) &&
+      Number.isFinite(colMax) && colMax > 0 && num >= 0) {
+    // Inline bar behind the number (proportional to column max)
+    const pct = Math.min(100, Math.round((num / colMax) * 100));
+    return (
+      <span className="relative inline-block" style={{ minWidth: 70 }}>
+        <span
+          className="absolute inset-y-0 left-0 rounded"
+          style={{ width: pct + "%", background: "rgba(1, 104, 63, 0.10)" }}
+        />
+        <span className="relative font-mono text-right block pr-1">{raw}</span>
+      </span>
+    );
+  }
+
+  return <span>{raw}</span>;
+}
+
+// Simple SVG horizontal bar chart. Takes a list of { label, value } pairs.
+function Y2CBarChart({ items, valueFormat, height, expanded }) {
+  if (!items || !items.length) return null;
+  const W = expanded ? 900 : 260;
+  const rowH = 22;
+  const H = items.length * rowH + 14;
+  const labelW = Math.min(expanded ? 220 : 110, W * 0.38);
+  const pad = 6;
+  const max = Math.max.apply(null, items.map(function (i) { return Math.abs(Number(i.value) || 0); }));
+  const safeMax = max > 0 ? max : 1;
+  function fmt(v) {
+    if (typeof valueFormat === "function") return valueFormat(v);
+    if (Math.abs(v) >= 1e6) return "$" + (v / 1e6).toFixed(1) + "M";
+    if (Math.abs(v) >= 1e3) return "$" + (v / 1e3).toFixed(1) + "K";
+    return "$" + Math.round(v).toLocaleString();
+  }
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{ maxHeight: H, display: "block" }}>
+      {items.map(function (it, i) {
+        const y = i * rowH + 4;
+        const v = Number(it.value) || 0;
+        const w = (Math.abs(v) / safeMax) * (W - labelW - pad - 90);
+        const barX = labelW + pad;
+        const color = v >= 0 ? "#01683F" : "#B91C1C";
+        return (
+          <g key={i}>
+            <text x={labelW - pad} y={y + rowH / 2 + 4} textAnchor="end"
+                  fill="#334155"
+                  style={{ fontSize: expanded ? 12 : 10 }}>
+              {String(it.label).slice(0, expanded ? 36 : 20)}
+            </text>
+            <rect x={barX} y={y + 3} width={Math.max(1, w)} height={rowH - 8}
+                  rx={3} fill={color} fillOpacity={0.85} />
+            <text x={barX + w + 4} y={y + rowH / 2 + 4}
+                  fill="#0F172A"
+                  style={{ fontSize: expanded ? 12 : 10, fontFamily: "ui-monospace, SFMono-Regular, monospace" }}>
+              {fmt(v)}
+            </text>
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
+// Pick the best "label" column + "value" column for a chart from rows/columns.
+// Returns { labelCol, valueCol } or null if nothing chartable.
+function y2cPickChartCols(columns, rows) {
+  if (!columns || columns.length < 2 || !rows || rows.length < 2) return null;
+  // Sample values per column
+  const samples = {};
+  for (const c of columns) samples[c] = rows.slice(0, 20).map(function (r) { return r[c]; });
+  // Prefer a numeric column for value
+  let valueCol = null;
+  for (const c of columns) {
+    const kind = y2cClassifyColumn(c, samples[c]);
+    if (kind === "number" || kind === "pct") { valueCol = c; break; }
+  }
+  if (!valueCol) {
+    // try anything that parses numerically
+    for (const c of columns) {
+      const parsed = samples[c].map(y2cParseNum).filter(Number.isFinite);
+      if (parsed.length >= rows.length * 0.5) { valueCol = c; break; }
+    }
+  }
+  if (!valueCol) return null;
+
+  // Pick a label column that isn't the value
+  let labelCol = null;
+  for (const c of columns) {
+    if (c === valueCol) continue;
+    const kind = y2cClassifyColumn(c, samples[c]);
+    if (kind === "label" || kind === "store_code" || kind === "date" || kind === "text") { labelCol = c; break; }
+  }
+  if (!labelCol) labelCol = columns.find(function (c) { return c !== valueCol; });
+  if (!labelCol) return null;
+  return { labelCol, valueCol };
+}
+
+
 function Y2CRendered({ text, expanded }) {
   const src = String(text || "");
   if (!src.trim()) return null;
@@ -7099,23 +7317,35 @@ function Y2CRendered({ text, expanded }) {
                     </tr>
                   </thead>
                   <tbody>
-                    {bodyRows.map(function (row, ri) {
-                      return (
-                        <tr key={ri} className={ri % 2 === 1 ? "bg-slate-50" : ""}>
-                          {row.map(function (cell, ci) {
-                            // Right-align numeric-looking cells for readability.
-                            const numeric = /^[\$\-\+]?[0-9][0-9,\.\/\-\%\s–—−KMkm]*$/.test(cell);
-                            return (
-                              <td key={ci}
-                                  className={"px-2 py-1 border-t border-slate-100 whitespace-nowrap text-slate-700 " +
-                                             (numeric ? "text-right font-mono" : "")}>
-                                {renderInline(cell)}
-                              </td>
-                            );
-                          })}
-                        </tr>
-                      );
-                    })}
+                    {(function () {
+                      // Pre-classify each column once and compute max absolute values
+                      const colMeta = headers.map(function (h, ci) {
+                        const samples = bodyRows.map(function (r) { return r[ci]; });
+                        const kind = y2cClassifyColumn(h, samples);
+                        const nums = samples.map(y2cParseNum).filter(Number.isFinite);
+                        const colMax = nums.length ? Math.max.apply(null, nums.map(Math.abs)) : 0;
+                        const colMin = nums.length ? Math.min.apply(null, nums) : 0;
+                        return { kind: kind, colMax: colMax, colMin: colMin };
+                      });
+                      return bodyRows.map(function (row, ri) {
+                        return (
+                          <tr key={ri} className={ri % 2 === 1 ? "bg-slate-50" : ""}>
+                            {row.map(function (cell, ci) {
+                              const meta = colMeta[ci] || {};
+                              const isText = meta.kind === "label" || meta.kind === "text" || meta.kind === "date" || meta.kind === "store_code";
+                              const alignRight = !isText && meta.kind !== "conditions";
+                              return (
+                                <td key={ci}
+                                    className={"px-2 py-1 border-t border-slate-100 whitespace-nowrap text-slate-700 " +
+                                               (alignRight ? "text-right" : "")}>
+                                  <Y2CDecoratedCell value={cell} kind={meta.kind} colMax={meta.colMax} colMin={meta.colMin} />
+                                </td>
+                              );
+                            })}
+                          </tr>
+                        );
+                      });
+                    })()}
                   </tbody>
                 </table>
               </div>
@@ -7165,6 +7395,141 @@ function Y2CRendered({ text, expanded }) {
     </div>
   );
 }
+
+
+/* Tabbed data viewer for Ask YODA messages — Chart / Table / SQL. */
+function Y2CDataViewer({ message, isExpanded, maxRows, tableText }) {
+  const m = message;
+  const hasRows = Array.isArray(m.rows) && m.rows.length > 0;
+  const chartable = hasRows ? y2cPickChartCols(m.columns, m.rows) : null;
+  const tabs = [];
+  if (chartable) tabs.push("chart");
+  if (hasRows) tabs.push("table");
+  if (m.sql) tabs.push("sql");
+  const [tab, setTab] = useState(tabs[0] || "table");
+  if (tabs.length === 0) return null;
+
+  const btnBase = (isExpanded ? "text-xs " : "text-[10px] ") + "px-2 py-0.5 rounded border font-medium transition-colors";
+
+  return (
+    <div className="mt-1 space-y-1">
+      <div className="flex items-center gap-1">
+        {tabs.indexOf("chart") >= 0 && (
+          <button onClick={function(){setTab("chart");}} className={btnBase + " " + (tab === "chart" ? "bg-emerald-600 text-white border-emerald-600" : "bg-white text-slate-600 border-slate-200 hover:border-emerald-400")}>Chart</button>
+        )}
+        {tabs.indexOf("table") >= 0 && (
+          <button onClick={function(){setTab("table");}} className={btnBase + " " + (tab === "table" ? "bg-emerald-600 text-white border-emerald-600" : "bg-white text-slate-600 border-slate-200 hover:border-emerald-400")}>Table</button>
+        )}
+        {tabs.indexOf("sql") >= 0 && (
+          <button onClick={function(){setTab("sql");}} className={btnBase + " " + (tab === "sql" ? "bg-emerald-600 text-white border-emerald-600" : "bg-white text-slate-600 border-slate-200 hover:border-emerald-400")}>SQL</button>
+        )}
+        <span className={(isExpanded ? "text-xs" : "text-[10px]") + " text-slate-400 ml-2"}>
+          {hasRows ? ((m.row_count || m.rows.length) + " row" + ((m.row_count || m.rows.length) === 1 ? "" : "s")) : ""}
+        </span>
+      </div>
+
+      {tab === "chart" && chartable && (
+        <Y2CDataChart columns={m.columns} rows={m.rows} pick={chartable} isExpanded={isExpanded} />
+      )}
+
+      {tab === "table" && hasRows && (
+        <div className="overflow-x-auto border border-slate-200 rounded bg-white">
+          <table className={tableText + " w-full"}>
+            <thead>
+              <tr className="bg-slate-100">
+                {m.columns.map(function (c) {
+                  return <th key={c} className="text-left px-1.5 py-1 font-semibold text-slate-600 whitespace-nowrap border-b border-slate-200">{c}</th>;
+                })}
+              </tr>
+            </thead>
+            <tbody>
+              {(function () {
+                const colMeta = m.columns.map(function (c) {
+                  const samples = m.rows.slice(0, 30).map(function (r) { return r[c]; });
+                  const kind = y2cClassifyColumn(c, samples);
+                  const nums = samples.map(y2cParseNum).filter(Number.isFinite);
+                  const colMax = nums.length ? Math.max.apply(null, nums.map(Math.abs)) : 0;
+                  const colMin = nums.length ? Math.min.apply(null, nums) : 0;
+                  return { kind: kind, colMax: colMax, colMin: colMin };
+                });
+                return m.rows.slice(0, maxRows).map(function (r, ri) {
+                  return (
+                    <tr key={ri} className={(ri % 2 === 1 ? "bg-slate-50 " : "") + "border-t border-slate-100"}>
+                      {m.columns.map(function (c, ci) {
+                        const meta = colMeta[ci] || {};
+                        const isText = meta.kind === "label" || meta.kind === "text" || meta.kind === "date" || meta.kind === "store_code";
+                        const alignRight = !isText && meta.kind !== "conditions";
+                        var v = r[c];
+                        var disp;
+                        if (v === null || v === undefined) disp = "—";
+                        else if (typeof v === "number") disp = Math.abs(v) >= 1000 ? v.toLocaleString() : String(v);
+                        else disp = String(v);
+                        return (
+                          <td key={c} className={"px-1.5 py-1 whitespace-nowrap " + (alignRight ? "text-right" : "")}>
+                            <Y2CDecoratedCell value={disp} kind={meta.kind} colMax={meta.colMax} colMin={meta.colMin} />
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                });
+              })()}
+            </tbody>
+          </table>
+          {m.rows.length > maxRows && (
+            <div className={(isExpanded ? "text-xs" : "text-[10px]") + " text-slate-400 px-1.5 py-1 border-t border-slate-100"}>
+              Showing first {maxRows} of {m.rows.length} rows
+            </div>
+          )}
+        </div>
+      )}
+
+      {tab === "sql" && m.sql && (
+        <pre className={"bg-slate-900 text-emerald-200 rounded p-2 overflow-x-auto whitespace-pre-wrap break-words " +
+          (isExpanded ? "text-xs leading-relaxed" : "text-[10px] leading-snug")}>
+          {m.sql}
+        </pre>
+      )}
+
+      {m.timings && isExpanded && (
+        <div className="text-[11px] text-slate-400 font-mono">
+          timings(ms): gen {m.timings.gen || 0} · connect {m.timings.connect || 0} · exec {m.timings.exec || 0} · summary {m.timings.summary || 0} · total {m.took_ms || 0}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* Horizontal bar chart for the picked label + value columns. */
+function Y2CDataChart({ columns, rows, pick, isExpanded }) {
+  const items = rows.slice(0, isExpanded ? 30 : 15)
+    .map(function (r) {
+      return { label: r[pick.labelCol], value: y2cParseNum(r[pick.valueCol]) };
+    })
+    .filter(function (x) { return Number.isFinite(x.value); })
+    .sort(function (a, b) { return (b.value || 0) - (a.value || 0); });
+  if (!items.length) {
+    return <div className="text-xs text-slate-500 italic">No chartable numeric data.</div>;
+  }
+  // Decide formatter from sample scale
+  const max = Math.max.apply(null, items.map(function (x) { return Math.abs(x.value); }));
+  function fmt(v) {
+    if (max < 10) return v.toFixed(2);
+    if (max < 1000) return Math.round(v).toLocaleString();
+    if (max < 1e6) return "$" + Math.round(v).toLocaleString();
+    if (max < 1e9) return "$" + (v / 1e6).toFixed(1) + "M";
+    return "$" + (v / 1e9).toFixed(1) + "B";
+  }
+  return (
+    <div className="border border-slate-200 rounded bg-white p-3">
+      <div className={(isExpanded ? "text-xs" : "text-[10px]") + " text-slate-500 mb-2"}>
+        {pick.valueCol} by {pick.labelCol} · top {items.length}
+      </div>
+      <Y2CBarChart items={items} valueFormat={fmt} expanded={isExpanded} />
+    </div>
+  );
+}
+
 
 function Yoda2Insights({ selectedStore, setSelectedStore, dateLabel, selectedDate }) {
   const [data, setData] = useState(null);
