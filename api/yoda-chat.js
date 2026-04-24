@@ -132,10 +132,19 @@ function validateSql(sql) {
   for (const re of banned) {
     if (re.test(upper)) return "DDL/DML statements are not allowed";
   }
-  // Must reference our semantic view. This prevents querying arbitrary tables
-  // the service account happens to have access to.
-  if (!/AUBUCHON_RETAIL_ANALYTICS/i.test(trimmed)) {
-    return "Query must reference PRD_EDW_DB.SI_AGENTS.AUBUCHON_RETAIL_ANALYTICS";
+  // Allow-list of tables/views this endpoint is allowed to query. A query must
+  // reference at least one of these; everything else is rejected. This prevents
+  // the model from wandering into arbitrary schemas the service account can read.
+  const ALLOWED = [
+    "AUBUCHON_RETAIL_ANALYTICS",          // the semantic view (sales, customer, product, inventory, weather)
+    "REF_SALE_PLAN_BY_DAY",               // daily sales plan
+    "RPT_PAYROLL_BUDGET_AND_ACTUALS",     // weekly payroll
+    "FCT_STORE_WEATHER",                  // daily weather (historical + forecast)
+    "DIM_STORE",                          // store directory
+  ];
+  const hits = ALLOWED.filter(t => new RegExp("\\b" + t + "\\b", "i").test(trimmed));
+  if (hits.length === 0) {
+    return "Query must reference one of: " + ALLOWED.join(", ");
   }
   return null;
 }
@@ -302,8 +311,36 @@ STORE:
   store_tier_num, active_flg, same_store_flg, ace_hardware_flg
 - Named filters: active_stores, same_store, ace_stores
 
-WEATHER:
+WEATHER (inside the semantic view):
 - Named filters: historical_only, forecast_only
+
+Base tables OUTSIDE the semantic view that are also allowed (join on store_cd):
+
+PLAN (daily sales plan / budget):
+  `PRD_EDW_DB.ANALYTICS_BASE.REF_SALE_PLAN_BY_DAY`
+  Columns: store_cd, plan_dt, daily_sales_plan_amt
+  Use this whenever the user asks about "plan", "budget", "vs plan", "beat plan",
+  "missed plan", "plan attainment", or "target".
+
+PAYROLL (weekly grain):
+  `PRD_EDW_DB.ANALYTICS_BASE.RPT_PAYROLL_BUDGET_AND_ACTUALS`
+  Columns: store_cd, week_ending_dt_key, actual_payroll_hrs, actual_sales_amt,
+  target_payroll_hrs / budget_payroll_hrs, target_sales_amt / budget_sales_amt
+  SPPH = SUM(actual_sales_amt)/NULLIF(SUM(actual_payroll_hrs),0) — weekly only.
+  There is no daily SPPH. If the user asks for daily, pull the containing week.
+
+WEATHER (daily, per store):
+  `PRD_EDW_DB.ANALYTICS_BASE.FCT_STORE_WEATHER`
+  Columns: store_cd, dt, temp_max, temp_min, temp_avg, precipitation_in,
+  snow_fall_in, snow_depth_in, wind_speed_avg, dw_source_nm
+  Critical filter: `dw_source_nm = 'historical'` for actuals;
+  `dw_source_nm = 'forecast'` for projections. Forecast rows look identical to
+  actuals — always filter or the answer will be wrong.
+
+STORE DIRECTORY:
+  `PRD_EDW_DB.ANALYTICS_BASE.DIM_STORE`
+  Columns: store_cd, store_nm, store_city_nm, store_state_cd, active_flg
+  Join when the user wants store names/cities rather than just codes.
 
 SEMANTIC_VIEW call syntax:
 
@@ -320,6 +357,55 @@ SELECT * FROM SEMANTIC_VIEW(
 )
 ORDER BY net_sales DESC NULLS LAST
 LIMIT 500
+
+Example: "which stores beat plan on 2026-04-22"
+  WITH sales AS (
+    SELECT * FROM SEMANTIC_VIEW(
+      PRD_EDW_DB.SI_AGENTS.AUBUCHON_RETAIL_ANALYTICS
+      METRICS total_net_sales_gl AS net_sales
+      DIMENSIONS transaction_line.store_cd AS store_cd
+      WHERE transaction_date.transaction_dt = '2026-04-22'
+    )
+  ),
+  plan AS (
+    SELECT store_cd, SUM(daily_sales_plan_amt) AS plan_amt
+    FROM PRD_EDW_DB.ANALYTICS_BASE.REF_SALE_PLAN_BY_DAY
+    WHERE plan_dt = '2026-04-22'
+    GROUP BY store_cd
+  )
+  SELECT s.store_cd, d.store_nm,
+         sales.net_sales, plan.plan_amt,
+         (sales.net_sales - plan.plan_amt) AS dollar_var,
+         sales.net_sales / NULLIF(plan.plan_amt, 0) AS pct_of_plan
+  FROM sales
+  JOIN plan USING (store_cd)
+  LEFT JOIN PRD_EDW_DB.ANALYTICS_BASE.DIM_STORE d ON d.store_cd = sales.store_cd
+  WHERE sales.net_sales > plan.plan_amt
+  ORDER BY dollar_var DESC
+  LIMIT 500
+
+Example: "stores with payroll hours over target last week"
+  SELECT store_cd,
+         SUM(actual_payroll_hrs) AS actual_hrs,
+         SUM(COALESCE(target_payroll_hrs, budget_payroll_hrs, 0)) AS target_hrs,
+         SUM(actual_payroll_hrs) - SUM(COALESCE(target_payroll_hrs, budget_payroll_hrs, 0)) AS over_hrs
+  FROM PRD_EDW_DB.ANALYTICS_BASE.RPT_PAYROLL_BUDGET_AND_ACTUALS
+  WHERE week_ending_dt_key = '2026-04-20'
+  GROUP BY store_cd
+  HAVING SUM(actual_payroll_hrs) > SUM(COALESCE(target_payroll_hrs, budget_payroll_hrs, 0))
+  ORDER BY over_hrs DESC
+  LIMIT 500
+
+Example: "what is the forecast precipitation for each store over the next 7 days"
+  SELECT store_cd,
+         SUM(precipitation_in) AS precip_next7,
+         AVG(temp_avg) AS temp_avg_next7
+  FROM PRD_EDW_DB.ANALYTICS_BASE.FCT_STORE_WEATHER
+  WHERE dw_source_nm = 'forecast'
+    AND dt BETWEEN '2026-04-23' AND '2026-04-29'
+  GROUP BY store_cd
+  ORDER BY precip_next7 DESC
+  LIMIT 500
 
 Rules:
 - Single statement. No semicolons inside. No comments.
