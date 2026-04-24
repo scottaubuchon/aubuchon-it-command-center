@@ -5720,20 +5720,46 @@ function LiveSalesSnowflakeView({ goBack }) {
 
   var pctPlan = companyTotal.plan > 0 ? (companyTotal.sales / companyTotal.plan) * 100 : 0;
   var vTotal = (companyTotal.sales || 0) - (companyTotal.plan || 0);
-  // Color the % to plan based on whether the EOD predictor thinks we will hit
-  // plan. The predictor is a company-wide, today-only model, so when a single
-  // store is selected we fall back to the simpler "are they already above plan"
-  // measure — otherwise a store that's beaten plan would still show red
-  // whenever the company as a whole is projected to miss.
-  var predictorSaysHit = (function () {
-    if (prediction && prediction.prediction && prediction.prediction.available) {
-      var proj = Number(prediction.prediction.projectedEOD || 0);
-      var plan = Number((prediction.current && prediction.current.plan) || companyTotal.plan || 0);
-      return proj >= plan;
+  // Forecast: the company's "best guess" EOD total. Combines the predictor's
+  // company-wide projection with the DOW-based estimate for any non-reporting
+  // stores so the number reflects the whole company instead of just stores
+  // currently reporting actuals. Falls back to the actual day total when no
+  // prediction is meaningful (per-store view, historical date, or predictor
+  // unavailable) — at which point "forecast" effectively means "final".
+  var forecast = (function () {
+    if (!isToday || selectedStore) {
+      return { proj: companyTotal.sales || 0, plan: companyTotal.plan || 0, varPct: pctPlan - 100, isProjection: false, missingEOD: 0 };
     }
-    return vTotal >= 0;
+    var hasPred = prediction && prediction.prediction && prediction.prediction.available;
+    if (!hasPred) {
+      return { proj: companyTotal.sales || 0, plan: companyTotal.plan || 0, varPct: pctPlan - 100, isProjection: false, missingEOD: 0 };
+    }
+    var p = prediction.prediction;
+    var rawProj = Number(p.projectedEOD || 0);
+    var missingEOD = (estimatedMissing && estimatedMissing.totalEstimatedEOD) ? Number(estimatedMissing.totalEstimatedEOD) : 0;
+    var proj = rawProj + missingEOD;
+    var plan = Number((prediction.current && prediction.current.plan) || companyTotal.plan || 0);
+    var varPct = plan > 0 ? ((proj - plan) / plan) * 100 : 0;
+    return { proj: proj, plan: plan, varPct: varPct, missingEOD: missingEOD, rawProj: rawProj, isProjection: true };
   })();
-  var onTrack = selectedStore ? (vTotal >= 0) : predictorSaysHit;
+  var predictorSaysHit = forecast.proj >= forecast.plan;
+  var onTrack = predictorSaysHit;
+  var planMagnitude = Math.abs(forecast.varPct || 0);
+  // Tailwind class fragments scaled by absolute variance percentage so cards
+  // pop harder when the day swings hard either direction. Whole class strings
+  // are required (the JIT compiler doesn't see dynamically built names).
+  var planTone = function (above, mag) {
+    var m = Math.abs(mag || 0);
+    if (above) {
+      if (m >= 5) return { card: "bg-gradient-to-br from-emerald-200 via-emerald-50 to-white border-emerald-400", text: "text-emerald-800", bar: "bg-gradient-to-r from-emerald-500 to-emerald-700" };
+      if (m >= 2) return { card: "bg-gradient-to-br from-emerald-100 to-white border-emerald-300", text: "text-emerald-700", bar: "bg-gradient-to-r from-emerald-400 to-emerald-600" };
+      return        { card: "bg-gradient-to-br from-emerald-50 to-white border-emerald-200",  text: "text-emerald-700", bar: "bg-gradient-to-r from-emerald-300 to-emerald-500" };
+    }
+    if (m >= 5) return { card: "bg-gradient-to-br from-red-200 via-red-50 to-white border-red-400", text: "text-red-800", bar: "bg-gradient-to-r from-red-500 to-red-700" };
+    if (m >= 2) return { card: "bg-gradient-to-br from-red-100 to-white border-red-300",            text: "text-red-700", bar: "bg-gradient-to-r from-red-400 to-red-600" };
+    return        { card: "bg-gradient-to-br from-red-50 to-white border-red-200",                  text: "text-red-600", bar: "bg-gradient-to-r from-red-400 to-red-500" };
+  };
+  var todayTone = planTone(predictorSaysHit, planMagnitude);
   var progressPct = Math.min(pctPlan, 100);
 
   var visibleStores = showAllStores ? topStores : topStores.slice(0, 5);
@@ -5916,7 +5942,7 @@ function LiveSalesSnowflakeView({ goBack }) {
         })()}
 
         {/* Today's Performance */}
-        <div className={"rounded-xl border-2 p-4 sm:p-5 md:p-6 mb-5 " + (onTrack ? "bg-emerald-50 border-emerald-200" : "bg-red-50 border-red-200")}>
+        <div className={"rounded-xl border-2 p-4 sm:p-5 md:p-6 mb-5 " + todayTone.card}>
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-1 sm:gap-2 mb-4">
             <div>
               <h2 className="text-lg sm:text-xl font-bold text-slate-900">Today's Performance</h2>
@@ -5932,11 +5958,11 @@ function LiveSalesSnowflakeView({ goBack }) {
                   <span>+{fmtD(estimatedMissing.totalEstimatedCurrent)}</span>
                   <span className="text-slate-400">from {notReporting.length} missing</span>
                   <span className="text-slate-300">&rarr;</span>
-                  <span className="font-semibold text-slate-700">{fmtD(isToday ? estimatedMissing.projectedCompanyCurrent : estimatedMissing.projectedCompanyEOD)} projected</span>
+                  <span className="font-semibold text-slate-700">{fmtD(isToday ? estimatedMissing.projectedCompanyCurrent : estimatedMissing.projectedCompanyEOD)} estimated</span>
                 </div>
               )}
             </div>
-            <div className={"text-2xl sm:text-3xl font-extrabold text-right " + (onTrack ? "text-emerald-700" : "text-red-600")}>
+            <div className={"text-2xl sm:text-3xl font-extrabold text-right " + todayTone.text}>
               {pctPlan.toFixed(1)}% <span className="text-sm font-semibold text-slate-500">to plan</span>
             </div>
           </div>
@@ -5948,7 +5974,7 @@ function LiveSalesSnowflakeView({ goBack }) {
             </div>
             <div className="w-full h-3 bg-white/70 rounded-full overflow-hidden border border-slate-200">
               <div
-                className={"h-full rounded-full transition-all duration-500 " + (onTrack ? "bg-gradient-to-r from-emerald-400 to-emerald-600" : "bg-gradient-to-r from-red-400 to-red-500")}
+                className={"h-full rounded-full transition-all duration-500 " + todayTone.bar}
                 style={{ width: progressPct + "%" }}
               />
             </div>
@@ -5957,7 +5983,7 @@ function LiveSalesSnowflakeView({ goBack }) {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3">
             <div className="bg-white/60 rounded-lg p-3 border border-slate-200/50">
               <div className="text-xs text-slate-500 mb-0.5">Variance</div>
-              <div className={"text-lg sm:text-xl font-bold " + (onTrack ? "text-emerald-700" : "text-red-600")}>{vTotal >= 0 ? "+" : ""}{fmtD(vTotal)}</div>
+              <div className={"text-lg sm:text-xl font-bold " + todayTone.text}>{vTotal >= 0 ? "+" : ""}{fmtD(vTotal)}</div>
             </div>
             <div className="bg-white/60 rounded-lg p-3 border border-slate-200/50">
               <div className="text-xs text-slate-500 mb-0.5">Transactions</div>
@@ -6090,18 +6116,24 @@ function LiveSalesSnowflakeView({ goBack }) {
         })()}
 
         {/* ── EOD Forecast (collapsed by default) — company-wide and
-              today only (the "forecast" is meaningless for past dates). ── */}
+              today only (the "forecast" is meaningless for past dates).
+              Augmented with the DOW-based estimate for non-reporting stores
+              so the projection covers the entire company. ── */}
         {!selectedStore && isToday && (function () {
           if (!prediction || !prediction.prediction) return null;
           var p = prediction.prediction;
           if (!p.available) return null;
-          var proj = Number(p.projectedEOD || 0);
+          var rawProj = Number(p.projectedEOD || 0);
+          var missingEOD = (estimatedMissing && estimatedMissing.totalEstimatedEOD) ? Number(estimatedMissing.totalEstimatedEOD) : 0;
+          var missingCount = (notReporting && notReporting.length) || 0;
+          var proj = rawProj + missingEOD;
           var plan = Number((prediction.current && prediction.current.plan) || 0);
           var projVar = plan > 0 ? proj - plan : 0;
           var projPct = plan > 0 ? (proj / plan) * 100 : 0;
           var above = projVar >= 0;
-          var pBg = above ? "bg-gradient-to-br from-emerald-50 to-white border-emerald-200" : "bg-gradient-to-br from-red-50 to-white border-red-200";
-          var pColor = above ? "text-emerald-700" : "text-red-600";
+          var fcTone = planTone(above, plan > 0 ? ((proj - plan) / plan) * 100 : 0);
+          var pBg = fcTone.card;
+          var pColor = fcTone.text;
           var conf = String(p.confidence || "low");
           var confStyles = {
             "very low": "bg-slate-100 text-slate-600 border-slate-200",
@@ -6136,9 +6168,14 @@ function LiveSalesSnowflakeView({ goBack }) {
                     <div>
                       <div className="text-xs text-slate-500">Projected EOD</div>
                       <div className={"text-xl sm:text-2xl md:text-3xl font-bold " + pColor}>{fmtD(proj)}</div>
+                      {missingEOD > 0 && (
+                        <div className="text-xs text-slate-400 mt-0.5">
+                          incl. {fmtD(missingEOD)} est. for {missingCount} missing
+                        </div>
+                      )}
                       {hasBand ? (
                         <div className="text-xs text-slate-400 mt-0.5">
-                          Range: {fmtD(p.band.low)} – {fmtD(p.band.high)}
+                          Range: {fmtD(p.band.low + missingEOD)} – {fmtD(p.band.high + missingEOD)}
                         </div>
                       ) : null}
                     </div>
