@@ -1,43 +1,43 @@
 {
-  "updatedAt": "2026-04-24T18:13:17.330Z",
-  "updatedAtET": "Apr 24, 2026, 2:13 PM",
+  "updatedAt": "2026-04-24T18:29:01.366Z",
+  "updatedAtET": "Apr 24, 2026, 2:29 PM",
   "dateET": "2026-04-24",
   "dow": 5,
   "season": "spring",
   "source": "snowflake",
   "current": {
-    "ts": "2026-04-24T18:13:17.330Z",
-    "tsET": "Apr 24, 2026, 2:13 PM",
+    "ts": "2026-04-24T18:29:01.366Z",
+    "tsET": "Apr 24, 2026, 2:29 PM",
     "dateET": "2026-04-24",
     "hourET": 14,
-    "minuteET": 13,
+    "minuteET": 29,
     "dow": 5,
-    "sales": 748064.4,
+    "sales": 792435.81,
     "plan": 1289097,
-    "pctToPlan": 58.03010944870712,
-    "gp": 315131.563,
-    "gpPct": 42.12626118820786,
-    "txns": 20554,
-    "customers": 19131,
+    "pctToPlan": 61.472163072290144,
+    "gp": 334286.3607,
+    "gpPct": 42.184661076838516,
+    "txns": 21798,
+    "customers": 20323,
     "storeCount": 134,
     "asOf": null,
-    "asOfET": "Apr 24, 2:00 PM ET"
+    "asOfET": "Apr 24, 2:15 PM ET"
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.82 shape + 0.18 level)",
+    "method": "blended (w=0.84 shape + 0.16 level)",
     "confidence": "medium",
-    "projectedEOD": 1168458.6222039114,
-    "projectedPctToPlan": 90.64163691358458,
-    "projectedVariance": -120638.37779608858,
+    "projectedEOD": 1181253.375255343,
+    "projectedPctToPlan": 91.63417301066895,
+    "projectedVariance": -107843.62474465696,
     "band": {
-      "low": 948166.4230061489,
-      "high": 1388750.8214016738
+      "low": 963405.6281351937,
+      "high": 1399101.1223754925
     },
-    "pctOfDayElapsed": 0.6625466666666666,
+    "pctOfDayElapsed": 0.6885733333333334,
     "level_EOD": 1342831.3326188999,
-    "shape_EOD": 1129074.2790444952,
-    "blendWeight": 0.8157518430347034,
+    "shape_EOD": 1150837.2044613985,
+    "blendWeight": 0.8415775988263934,
     "factors": {
       "plan": 1289097,
       "recencyFactor": 0.9393,
@@ -49,23 +49,23 @@
       "weatherSummary": "concord-nh: 54F Mostly Sunny | worcester-ma: 56F Sunny | burlington-vt: 51F Sunny | portland-me: 49F Mostly Cloudy | albany-ny: 60F Sunny | scranton-pa: 66F Mostly Sunny"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.6625466666666666,
+      "basePaceFromCurve": 0.6885733333333334,
       "observedPaceCount": 1,
-      "blendedPaceAtNow": 0.6625466666666666,
+      "blendedPaceAtNow": 0.6885733333333334,
       "historyDays": 1,
       "avgHistoricalEOD": 1211604.37
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 26817.238879999997,
+      "estimatedCurrent": 27870.69424,
       "estimatedEOD": 40476,
-      "paceUsed": 0.6625466666666666,
+      "paceUsed": 0.6885733333333334,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 24862,
-          "estimatedCurrent": 16472.235226666664,
+          "estimatedCurrent": 17119.310213333334,
           "estimatedEOD": 24862,
           "stdev": 0.3127
         },
@@ -73,16 +73,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 15614,
-          "estimatedCurrent": 10345.003653333333,
+          "estimatedCurrent": 10751.384026666667,
           "estimatedEOD": 15614,
           "stdev": 0.1906
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1208934.6222039114,
-    "combinedCurrentSales": 774881.63888,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $26,817 so far, +$40,476 to EOD."
+    "combinedProjectedEOD": 1221729.375255343,
+    "combinedCurrentSales": 820306.50424,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $27,871 so far, +$40,476 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 11,
