@@ -1,43 +1,43 @@
 {
-  "updatedAt": "2026-04-24T00:27:26.567Z",
-  "updatedAtET": "Apr 23, 2026, 8:27 PM",
+  "updatedAt": "2026-04-24T00:43:01.961Z",
+  "updatedAtET": "Apr 23, 2026, 8:43 PM",
   "dateET": "2026-04-23",
   "dow": 4,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-04-24T00:27:26.567Z",
-    "tsET": "Apr 23, 2026, 8:27 PM",
+    "ts": "2026-04-24T00:43:01.961Z",
+    "tsET": "Apr 23, 2026, 8:43 PM",
     "dateET": "2026-04-23",
     "hourET": 20,
-    "minuteET": 27,
+    "minuteET": 43,
     "dow": 4,
-    "sales": 1083366.2399999995,
+    "sales": 1083366.24,
     "plan": 1073381.2100000002,
-    "pctToPlan": 100.93024080419661,
-    "gp": 456308.16669999936,
-    "gpPct": 42.11947445399439,
+    "pctToPlan": 100.93024080419666,
+    "gp": 456308.1667000004,
+    "gpPct": 42.11947445399447,
     "txns": 31814,
     "customers": 29407,
     "storeCount": 134,
-    "asOf": "2026-04-24T00:15:07.663000",
-    "asOfET": "Apr 23, 2026, 8:15 PM"
+    "asOf": "2026-04-24T00:30:09.497000",
+    "asOfET": "Apr 23, 2026, 8:30 PM"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.98 shape + 0.02 level)",
     "confidence": "medium",
-    "projectedEOD": 1084352.017904703,
-    "projectedPctToPlan": 101.02207936961211,
-    "projectedVariance": 10970.807904702844,
+    "projectedEOD": 1083733.794204345,
+    "projectedPctToPlan": 100.96448345731194,
+    "projectedVariance": 10352.584204344777,
     "band": {
-      "low": 965443.9708929203,
-      "high": 1203260.064916486
+      "low": 964903.3041624508,
+      "high": 1202564.284246239
     },
-    "pctOfDayElapsed": 0.99868,
+    "pctOfDayElapsed": 0.9992633333333334,
     "level_EOD": 1063578.63123636,
-    "shape_EOD": 1084798.1735891371,
-    "blendWeight": 0.9789743022249583,
+    "shape_EOD": 1084164.908149003,
+    "blendWeight": 0.9790581878166938,
     "factors": {
       "plan": 1073381.2100000002,
       "recencyFactor": 0.9393,
@@ -49,23 +49,23 @@
       "weatherSummary": "concord-nh: 31F Mostly Clear | worcester-ma: 36F Mostly Clear | burlington-vt: 32F Mostly Clear | portland-me: 36F Mostly Clear | albany-ny: 39F Mostly Cloudy | scranton-pa: 45F Partly Cloudy"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.99868,
+      "basePaceFromCurve": 0.9992633333333334,
       "observedPaceCount": 1,
-      "blendedPaceAtNow": 0.99868,
+      "blendedPaceAtNow": 0.9992633333333334,
       "historyDays": 1,
       "avgHistoricalEOD": 1053994.8399999996
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 45898.33412,
+      "estimatedCurrent": 45925.14353666667,
       "estimatedEOD": 45959,
-      "paceUsed": 0.99868,
+      "paceUsed": 0.9992633333333334,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 30687,
-          "estimatedCurrent": 30646.49316,
+          "estimatedCurrent": 30664.393910000003,
           "estimatedEOD": 30687,
           "stdev": 0.3949
         },
@@ -73,16 +73,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 15272,
-          "estimatedCurrent": 15251.84096,
+          "estimatedCurrent": 15260.749626666668,
           "estimatedEOD": 15272,
           "stdev": 0.1435
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1130311.017904703,
-    "combinedCurrentSales": 1129264.5741199995,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $45,898 so far, +$45,959 to EOD."
+    "combinedProjectedEOD": 1129692.794204345,
+    "combinedCurrentSales": 1129291.3835366666,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $45,925 so far, +$45,959 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 10,
@@ -109,7 +109,7 @@
         "temp": 36,
         "unit": "F",
         "short": "Mostly Clear",
-        "detailed": "Mostly clear, with a low around 36. North wind 3 to 9 mph, with gusts as high as 23 mph."
+        "detailed": "Mostly clear, with a low around 36. North wind 3 to 7 mph."
       },
       {
         "station": "burlington-vt",
