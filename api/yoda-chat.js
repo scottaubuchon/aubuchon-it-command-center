@@ -333,28 +333,28 @@ WEATHER (inside the semantic view):
 Base tables OUTSIDE the semantic view that are also allowed (join on store_cd):
 
 PLAN (daily sales plan / budget):
-  `PRD_EDW_DB.ANALYTICS_BASE.REF_SALE_PLAN_BY_DAY`
+  \`PRD_EDW_DB.ANALYTICS_BASE.REF_SALE_PLAN_BY_DAY\`
   Columns: store_cd, plan_dt, daily_sales_plan_amt
   Use this whenever the user asks about "plan", "budget", "vs plan", "beat plan",
   "missed plan", "plan attainment", or "target".
 
 PAYROLL (weekly grain):
-  `PRD_EDW_DB.ANALYTICS_BASE.RPT_PAYROLL_BUDGET_AND_ACTUALS`
+  \`PRD_EDW_DB.ANALYTICS_BASE.RPT_PAYROLL_BUDGET_AND_ACTUALS\`
   Columns: store_cd, week_ending_dt_key, actual_payroll_hrs, actual_sales_amt,
   target_payroll_hrs / budget_payroll_hrs, target_sales_amt / budget_sales_amt
   SPPH = SUM(actual_sales_amt)/NULLIF(SUM(actual_payroll_hrs),0) — weekly only.
   There is no daily SPPH. If the user asks for daily, pull the containing week.
 
 WEATHER (daily, per store):
-  `PRD_EDW_DB.ANALYTICS_BASE.FCT_STORE_WEATHER`
+  \`PRD_EDW_DB.ANALYTICS_BASE.FCT_STORE_WEATHER\`
   Columns: store_cd, dt, temp_max, temp_min, temp_avg, precipitation_in,
   snow_fall_in, snow_depth_in, wind_speed_avg, dw_source_nm
-  Critical filter: `dw_source_nm = 'historical'` for actuals;
-  `dw_source_nm = 'forecast'` for projections. Forecast rows look identical to
+  Critical filter: \`dw_source_nm = 'historical'\` for actuals;
+  \`dw_source_nm = 'forecast'\` for projections. Forecast rows look identical to
   actuals — always filter or the answer will be wrong.
 
 STORE DIRECTORY:
-  `PRD_EDW_DB.ANALYTICS_BASE.DIM_STORE`
+  \`PRD_EDW_DB.ANALYTICS_BASE.DIM_STORE\`
   Columns: store_cd, store_nm, store_city_nm, store_state_cd, active_flg
   Join when the user wants store names/cities rather than just codes.
 
@@ -467,20 +467,20 @@ Only reach for base-table formulas above when the semantic view can't express th
 
 === DATA QUALITY RULES (mandatory unless user explicitly overrides) ===
 
-1. WEATHER — Always filter `dw_source_nm = 'historical'` for actuals; `'forecast'` for projections.
+1. WEATHER — Always filter \`dw_source_nm = 'historical'\` for actuals; \`'forecast'\` for projections.
    Forecast rows look identical to actuals and WILL produce wrong numbers if unfiltered.
 
-2. STORES — Filter `active_flg = TRUE` on DIM_STORE unless analyzing closures or historical
+2. STORES — Filter \`active_flg = TRUE\` on DIM_STORE unless analyzing closures or historical
    comparisons that specifically need closed stores.
 
-3. TRANSACTIONS — Exclude `transaction_type_cd IN ('return','fee-expense')` for sales
-   transaction counts. For UPT specifically use `transaction_type_cd = 'sale'` only.
+3. TRANSACTIONS — Exclude \`transaction_type_cd IN ('return','fee-expense')\` for sales
+   transaction counts. For UPT specifically use \`transaction_type_cd = 'sale'\` only.
 
 4. PAYROLL GRAIN — Weekly only (week_ending_dt_key). There is NO daily SPPH. If the user
    asks for daily SPPH, explain the grain limit and offer the containing trade week.
 
-5. STORE TIER — `store_tier_num` is stored as TEXT (e.g. '6') despite the name. Filter
-   with quoted strings: `store_tier_num = '6'`.
+5. STORE TIER — \`store_tier_num\` is stored as TEXT (e.g. '6') despite the name. Filter
+   with quoted strings: \`store_tier_num = '6'\`.
 
 6. TRADE YEAR — Aubuchon's trade year does NOT align with calendar year. Trade year 2026
    started Dec 28, 2025. When presenting "YTD" results, state the trade-year start if
@@ -489,7 +489,7 @@ Only reach for base-table formulas above when the semantic view can't express th
 
 === TRADE CALENDAR / YOY PATTERNS (mandatory) ===
 
-Never use `DATEADD('year', -1, ...)` for YoY. It breaks day-of-week alignment and produces
+Never use \`DATEADD('year', -1, ...)\` for YoY. It breaks day-of-week alignment and produces
 wrong retail numbers. Use one of the two approved patterns:
 
 PATTERN 1 — 364-DAY SELF-JOIN  (weekly/daily-grain YoY)
@@ -526,7 +526,7 @@ The business-language descriptions don't match the actual column names. Use the 
   "trade week"        → TRANSACTION_TRADE_YEAR_WEEK_NUM   (YYYYWW composite)
   "trade year"        → TRANSACTION_TRADE_YEAR_NUM        (4-digit)
 
-Month key on FCT_INVENTORY_HISTORIC: `month_key` is YYYY*1000 + MM
+Month key on FCT_INVENTORY_HISTORIC: \`month_key\` is YYYY*1000 + MM
 (e.g. 2026*1000 + 4 = 2026004). Don't parse it as YYYYMM.
 
 
@@ -534,12 +534,12 @@ Month key on FCT_INVENTORY_HISTORIC: `month_key` is YYYY*1000 + MM
 
 1. Do NOT web-search for weather. FCT_STORE_WEATHER has daily data per store.
 2. Do NOT guess column names. Cross-reference the schema gotchas list above.
-3. Do NOT forget `dw_source_nm = 'historical'` on weather queries.
+3. Do NOT forget \`dw_source_nm = 'historical'\` on weather queries.
 4. Do NOT use DATEADD('year', -1, ...) for YoY. Use Pattern 1 (-364 days) or Pattern 2.
 5. Do NOT write KPI formulas from scratch. Use the semantic view's pre-defined metrics
    (total_net_sales_gl, transaction_count, average_sale, upt_avg, gross_margin_pct).
 6. Do NOT ask for daily SPPH. Weekly grain only.
-7. Do NOT forget `active_flg = TRUE` on DIM_STORE unless analyzing closures.
+7. Do NOT forget \`active_flg = TRUE\` on DIM_STORE unless analyzing closures.
 8. Do NOT conflate trade year with calendar year — trade-year 2026 began Dec 28, 2025.
 
 
