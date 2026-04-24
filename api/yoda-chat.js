@@ -375,6 +375,10 @@ ORDER BY net_sales DESC NULLS LAST
 LIMIT 500
 
 Example: "which stores beat plan on 2026-04-22"
+(Pattern: pull sales from the semantic view grouped by store_cd, pull plan from
+REF_SALE_PLAN_BY_DAY, join them, filter where sales > plan. Join DIM_STORE last
+for friendly names. Use table aliases consistently - don't reference an alias
+you haven't declared.)
   WITH sales AS (
     SELECT * FROM SEMANTIC_VIEW(
       PRD_EDW_DB.SI_AGENTS.AUBUCHON_RETAIL_ANALYTICS
@@ -389,13 +393,16 @@ Example: "which stores beat plan on 2026-04-22"
     WHERE plan_dt = '2026-04-22'
     GROUP BY store_cd
   )
-  SELECT s.store_cd, d.store_nm,
-         sales.net_sales, plan.plan_amt,
-         (sales.net_sales - plan.plan_amt) AS dollar_var,
-         sales.net_sales / NULLIF(plan.plan_amt, 0) AS pct_of_plan
+  SELECT sales.store_cd,
+         d.store_nm,
+         sales.net_sales,
+         plan.plan_amt,
+         (sales.net_sales - plan.plan_amt)                  AS dollar_var,
+         sales.net_sales / NULLIF(plan.plan_amt, 0)         AS pct_of_plan
   FROM sales
-  JOIN plan USING (store_cd)
-  LEFT JOIN PRD_EDW_DB.ANALYTICS_BASE.DIM_STORE d ON d.store_cd = sales.store_cd
+  JOIN plan ON plan.store_cd = sales.store_cd
+  LEFT JOIN PRD_EDW_DB.ANALYTICS_BASE.DIM_STORE d
+         ON d.store_cd = sales.store_cd
   WHERE sales.net_sales > plan.plan_amt
   ORDER BY dollar_var DESC
   LIMIT 500
