@@ -409,25 +409,46 @@ you haven't declared.)
 
 Example: "stores with payroll hours over target last week"
   SELECT store_cd,
+         location_nm,
          SUM(actual_payroll_hrs) AS actual_hrs,
-         SUM(COALESCE(target_payroll_hrs, budget_payroll_hrs, 0)) AS target_hrs,
-         SUM(actual_payroll_hrs) - SUM(COALESCE(target_payroll_hrs, budget_payroll_hrs, 0)) AS over_hrs
+         SUM(target_payroll_hrs) AS target_hrs,
+         SUM(actual_payroll_hrs) - SUM(target_payroll_hrs) AS over_hrs
   FROM PRD_EDW_DB.ANALYTICS_BASE.RPT_PAYROLL_BUDGET_AND_ACTUALS
-  WHERE week_ending_dt_key = '2026-04-20'
-  GROUP BY store_cd
-  HAVING SUM(actual_payroll_hrs) > SUM(COALESCE(target_payroll_hrs, budget_payroll_hrs, 0))
+  WHERE week_ending_dt = '2026-04-20'
+  GROUP BY store_cd, location_nm
+  HAVING SUM(actual_payroll_hrs) > SUM(target_payroll_hrs)
   ORDER BY over_hrs DESC
   LIMIT 500
 
 Example: "what is the forecast precipitation for each store over the next 7 days"
+  (DATE_KEY is an integer YYYYMMDD - 2026-04-23 becomes 20260423.)
   SELECT store_cd,
          SUM(precipitation_in) AS precip_next7,
-         AVG(temp_avg) AS temp_avg_next7
+         AVG(temp_avg)         AS temp_avg_next7,
+         SUM(snow_fall_in)     AS snow_next7
   FROM PRD_EDW_DB.ANALYTICS_BASE.FCT_STORE_WEATHER
   WHERE dw_source_nm = 'forecast'
-    AND dt BETWEEN '2026-04-23' AND '2026-04-29'
+    AND date_key BETWEEN 20260423 AND 20260429
   GROUP BY store_cd
-  ORDER BY precip_next7 DESC
+  ORDER BY precip_next7 DESC NULLS LAST
+  LIMIT 500
+
+Example: "next 7-day weather forecast for stores in Massachusetts"
+  (Join DIM_STORE to filter by state. DIM_STORE uses store_state_cd - 2-letter code.)
+  SELECT w.store_cd,
+         d.store_nm,
+         d.store_city_nm,
+         SUM(w.precipitation_in) AS precip_next7,
+         AVG(w.temp_avg)         AS temp_avg_next7
+  FROM PRD_EDW_DB.ANALYTICS_BASE.FCT_STORE_WEATHER w
+  JOIN PRD_EDW_DB.ANALYTICS_BASE.DIM_STORE d
+    ON d.store_cd = w.store_cd
+  WHERE w.dw_source_nm = 'forecast'
+    AND w.date_key BETWEEN 20260423 AND 20260429
+    AND d.store_state_cd = 'MA'
+    AND d.active_flg = TRUE
+  GROUP BY w.store_cd, d.store_nm, d.store_city_nm
+  ORDER BY precip_next7 DESC NULLS LAST
   LIMIT 500
 
 === KPI CANONICAL DEFINITIONS AND LABELS (mandatory) ===
