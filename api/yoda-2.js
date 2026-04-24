@@ -114,6 +114,11 @@ function yesterdayET() {
   return et.toISOString().slice(0, 10);
 }
 
+function isoToDateKey(iso) {
+  // Convert 'YYYY-MM-DD' to an integer YYYYMMDD (FCT_STORE_WEATHER.DATE_KEY grain).
+  return Number(String(iso || "").replace(/-/g, "")) || 0;
+}
+
 function shiftDays(iso, delta) {
   const [y, m, d] = iso.split("-").map(Number);
   const dt = new Date(Date.UTC(y, m - 1, d));
@@ -604,19 +609,20 @@ SELECT * FROM SEMANTIC_VIEW(
 
 function sqlPayrollLast4Weeks(dt) {
   // Payroll grain is weekly. Pull the 4 most recent complete weeks ending on
-  // or before the report date. Tolerate column-name variations by selecting
-  // with aliases the handler can read.
+  // or before the report date. RPT_PAYROLL_BUDGET_AND_ACTUALS.WEEK_ENDING_DT
+  // is a DATE column - filter with quoted ISO strings. Target columns are
+  // TARGET_* (no BUDGET_* variants exist on this table).
   const end = dt;
   const start = shiftDays(dt, -27);
   return `
 SELECT
   store_cd,
-  SUM(actual_payroll_hrs)                        AS actual_hrs_4w,
-  SUM(actual_sales_amt)                          AS actual_sales_4w,
-  SUM(COALESCE(target_payroll_hrs, budget_payroll_hrs, 0))  AS target_hrs_4w,
-  SUM(COALESCE(target_sales_amt,   budget_sales_amt,   0))  AS target_sales_4w
+  SUM(actual_payroll_hrs)  AS actual_hrs_4w,
+  SUM(actual_sales_amt)    AS actual_sales_4w,
+  SUM(target_payroll_hrs)  AS target_hrs_4w,
+  SUM(target_sales_amt)    AS target_sales_4w
 FROM PRD_EDW_DB.ANALYTICS_BASE.RPT_PAYROLL_BUDGET_AND_ACTUALS
-WHERE week_ending_dt_key BETWEEN '${start}' AND '${end}'
+WHERE week_ending_dt BETWEEN '${start}' AND '${end}'
 GROUP BY store_cd
 `;
 }
@@ -637,23 +643,25 @@ SELECT * FROM SEMANTIC_VIEW(
 
 function sqlWeatherWindow(dt) {
   // Last 7 days actual weather + next 7 days forecast per store.
-  // Flags precipitation, snow, and temperature extremes that typically move
-  // traffic in paint, lawn & garden, snow, and heating/cooling departments.
+  // FCT_STORE_WEATHER.DATE_KEY is an integer YYYYMMDD; filter with integers.
   const pastStart   = shiftDays(dt, -6);
   const futureEnd   = shiftDays(dt,  7);
+  const dtKey       = isoToDateKey(dt);
+  const pastKey     = isoToDateKey(pastStart);
+  const futureKey   = isoToDateKey(futureEnd);
   return `
 SELECT
   store_cd,
-  AVG(CASE WHEN dw_source_nm = 'historical' THEN temp_avg        END) AS temp_avg_last7,
+  AVG(CASE WHEN dw_source_nm = 'historical' THEN temp_avg         END) AS temp_avg_last7,
   SUM(CASE WHEN dw_source_nm = 'historical' THEN precipitation_in END) AS precip_last7,
-  SUM(CASE WHEN dw_source_nm = 'historical' THEN snow_fall_in    END) AS snow_last7,
-  AVG(CASE WHEN dw_source_nm = 'forecast'   AND dt > '${dt}' THEN temp_avg        END) AS temp_avg_next7,
-  SUM(CASE WHEN dw_source_nm = 'forecast'   AND dt > '${dt}' THEN precipitation_in END) AS precip_next7,
-  SUM(CASE WHEN dw_source_nm = 'forecast'   AND dt > '${dt}' THEN snow_fall_in    END) AS snow_next7,
-  MAX(CASE WHEN dw_source_nm = 'forecast'   AND dt > '${dt}' THEN temp_max        END) AS temp_max_next7,
-  MIN(CASE WHEN dw_source_nm = 'forecast'   AND dt > '${dt}' THEN temp_min        END) AS temp_min_next7
+  SUM(CASE WHEN dw_source_nm = 'historical' THEN snow_fall_in     END) AS snow_last7,
+  AVG(CASE WHEN dw_source_nm = 'forecast'   AND date_key > ${dtKey} THEN temp_avg         END) AS temp_avg_next7,
+  SUM(CASE WHEN dw_source_nm = 'forecast'   AND date_key > ${dtKey} THEN precipitation_in END) AS precip_next7,
+  SUM(CASE WHEN dw_source_nm = 'forecast'   AND date_key > ${dtKey} THEN snow_fall_in     END) AS snow_next7,
+  MAX(CASE WHEN dw_source_nm = 'forecast'   AND date_key > ${dtKey} THEN temp_max         END) AS temp_max_next7,
+  MIN(CASE WHEN dw_source_nm = 'forecast'   AND date_key > ${dtKey} THEN temp_min         END) AS temp_min_next7
 FROM PRD_EDW_DB.ANALYTICS_BASE.FCT_STORE_WEATHER
-WHERE dt BETWEEN '${pastStart}' AND '${futureEnd}'
+WHERE date_key BETWEEN ${pastKey} AND ${futureKey}
 GROUP BY store_cd
 `;
 }
