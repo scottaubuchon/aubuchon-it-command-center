@@ -1,43 +1,43 @@
 {
-  "updatedAt": "2026-04-24T20:36:12.365Z",
-  "updatedAtET": "Apr 24, 2026, 4:36 PM",
+  "updatedAt": "2026-04-24T20:51:51.867Z",
+  "updatedAtET": "Apr 24, 2026, 4:51 PM",
   "dateET": "2026-04-24",
   "dow": 5,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-04-24T20:36:12.365Z",
-    "tsET": "Apr 24, 2026, 4:36 PM",
+    "ts": "2026-04-24T20:51:51.867Z",
+    "tsET": "Apr 24, 2026, 4:51 PM",
     "dateET": "2026-04-24",
     "hourET": 16,
-    "minuteET": 36,
+    "minuteET": 51,
     "dow": 5,
-    "sales": 1038989.1,
+    "sales": 1089915.2500000002,
     "plan": 1289097.000000001,
-    "pctToPlan": 80.59820944428536,
-    "gp": 435408.35269999993,
-    "gpPct": 41.90692209379289,
-    "txns": 29031,
-    "customers": 27176,
+    "pctToPlan": 84.54873838043216,
+    "gp": 457287.66200000036,
+    "gpPct": 41.95625870910607,
+    "txns": 30542,
+    "customers": 28646,
     "storeCount": 134,
-    "asOf": "2026-04-24T20:15:10.003000",
-    "asOfET": "Apr 24, 2026, 4:15 PM"
+    "asOf": "2026-04-24T20:45:26.353000",
+    "asOfET": "Apr 24, 2026, 4:45 PM"
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.95 shape + 0.05 level)",
+    "method": "blended (w=0.96 shape + 0.04 level)",
     "confidence": "medium",
-    "projectedEOD": 1192607.167173175,
-    "projectedPctToPlan": 92.51492844783395,
-    "projectedVariance": -96489.83282682602,
+    "projectedEOD": 1232645.1545781961,
+    "projectedPctToPlan": 95.62082252756737,
+    "projectedVariance": -56451.845421804814,
     "band": {
-      "low": 993630.2972724948,
-      "high": 1391584.037073855
+      "low": 1027664.009713141,
+      "high": 1437626.2994432512
     },
-    "pctOfDayElapsed": 0.87676,
+    "pctOfDayElapsed": 0.88791,
     "level_EOD": 1342831.332618901,
-    "shape_EOD": 1185032.5060449839,
-    "blendWeight": 0.9519979882445896,
+    "shape_EOD": 1227506.447725558,
+    "blendWeight": 0.9554414742543148,
     "factors": {
       "plan": 1289097.000000001,
       "recencyFactor": 0.9393,
@@ -49,23 +49,23 @@
       "weatherSummary": "concord-nh: 57F Mostly Sunny | worcester-ma: 56F Sunny | burlington-vt: 51F Sunny | portland-me: 47F Mostly Cloudy | albany-ny: 59F Sunny | scranton-pa: 71F Mostly Sunny"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.87676,
+      "basePaceFromCurve": 0.88791,
       "observedPaceCount": 1,
-      "blendedPaceAtNow": 0.87676,
+      "blendedPaceAtNow": 0.88791,
       "historyDays": 1,
       "avgHistoricalEOD": 1211604.37
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 35487.737759999996,
+      "estimatedCurrent": 35939.04516,
       "estimatedEOD": 40476,
-      "paceUsed": 0.87676,
+      "paceUsed": 0.88791,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 24862,
-          "estimatedCurrent": 21798.00712,
+          "estimatedCurrent": 22075.21842,
           "estimatedEOD": 24862,
           "stdev": 0.3127
         },
@@ -73,16 +73,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 15614,
-          "estimatedCurrent": 13689.73064,
+          "estimatedCurrent": 13863.82674,
           "estimatedEOD": 15614,
           "stdev": 0.1906
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1233083.167173175,
-    "combinedCurrentSales": 1074476.83776,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $35,488 so far, +$40,476 to EOD."
+    "combinedProjectedEOD": 1273121.1545781961,
+    "combinedCurrentSales": 1125854.2951600002,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $35,939 so far, +$40,476 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 11,
