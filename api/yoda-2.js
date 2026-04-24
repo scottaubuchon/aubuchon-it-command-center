@@ -1653,6 +1653,34 @@ export default async function handler(req, res) {
       return;
     }
 
+    // --- schema-probe: introspect column names on an allow-listed table ---
+    if (page === "schema-probe") {
+      const table = String((req.query && req.query.table) || "").toUpperCase().replace(/[^A-Z0-9_]/g, "").slice(0, 80);
+      const SAFE = {
+        FCT_STORE_WEATHER:               "PRD_EDW_DB.ANALYTICS_BASE.FCT_STORE_WEATHER",
+        RPT_PAYROLL_BUDGET_AND_ACTUALS:  "PRD_EDW_DB.ANALYTICS_BASE.RPT_PAYROLL_BUDGET_AND_ACTUALS",
+        REF_SALE_PLAN_BY_DAY:            "PRD_EDW_DB.ANALYTICS_BASE.REF_SALE_PLAN_BY_DAY",
+        DIM_STORE:                       "PRD_EDW_DB.ANALYTICS_BASE.DIM_STORE",
+      };
+      if (!SAFE[table]) {
+        res.status(400).json({ status: "error", error: "Unknown or unsafe table: " + table });
+        return;
+      }
+      const probe = `SELECT * FROM ${SAFE[table]} LIMIT 1`;
+      const rows = await exec(conn, probe, "schema-probe-" + table);
+      const columns = rows && rows[0] ? Object.keys(rows[0]) : [];
+      const sample = rows && rows[0] ? rows[0] : null;
+      res.status(200).json({
+        status: "ok",
+        page: "schema-probe",
+        table,
+        columns,
+        sample,
+        row_count: rows ? rows.length : 0,
+      });
+      return;
+    }
+
     res.status(400).json({ status: "error", error: "Unknown page: " + page });
   } catch (err) {
     res.status(500).json({
