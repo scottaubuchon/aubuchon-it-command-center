@@ -1,43 +1,43 @@
 {
-  "updatedAt": "2026-04-24T13:36:38.741Z",
-  "updatedAtET": "Apr 24, 2026, 9:36 AM",
+  "updatedAt": "2026-04-24T13:52:32.090Z",
+  "updatedAtET": "Apr 24, 2026, 9:52 AM",
   "dateET": "2026-04-24",
   "dow": 5,
   "season": "spring",
   "source": "snowflake",
   "current": {
-    "ts": "2026-04-24T13:36:38.741Z",
-    "tsET": "Apr 24, 2026, 9:36 AM",
+    "ts": "2026-04-24T13:52:32.090Z",
+    "tsET": "Apr 24, 2026, 9:52 AM",
     "dateET": "2026-04-24",
     "hourET": 9,
-    "minuteET": 36,
+    "minuteET": 52,
     "dow": 5,
-    "sales": 152295.22,
+    "sales": 190427.5,
     "plan": 1289097,
-    "pctToPlan": 11.814100878366794,
-    "gp": 61122.9996,
-    "gpPct": 40.13454893725489,
-    "txns": 4101,
-    "customers": 3468,
+    "pctToPlan": 14.772162218979643,
+    "gp": 77161.7877,
+    "gpPct": 40.52029654330388,
+    "txns": 5058,
+    "customers": 4377,
     "storeCount": 134,
     "asOf": null,
-    "asOfET": "Apr 24, 9:30 AM ET"
+    "asOfET": "Apr 24, 9:45 AM ET"
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.12 shape + 0.88 level)",
+    "method": "blended (w=0.14 shape + 0.86 level)",
     "confidence": "low",
-    "projectedEOD": 1291251.4067112398,
-    "projectedPctToPlan": 100.16712525987104,
-    "projectedVariance": 2154.4067112398334,
+    "projectedEOD": 1290222.412672023,
+    "projectedPctToPlan": 100.08730240408774,
+    "projectedVariance": 1125.412672023056,
     "band": {
-      "low": 904933.243047752,
-      "high": 1677569.5703747277
+      "low": 908925.8235775311,
+      "high": 1671519.001766515
     },
-    "pctOfDayElapsed": 0.16634,
+    "pctOfDayElapsed": 0.19498000000000001,
     "level_EOD": 1342831.3326188999,
-    "shape_EOD": 915565.8290248888,
-    "blendWeight": 0.12072101649627062,
+    "shape_EOD": 976651.451430916,
+    "blendWeight": 0.1436696078883409,
     "factors": {
       "plan": 1289097,
       "recencyFactor": 0.9393,
@@ -49,23 +49,23 @@
       "weatherSummary": "concord-nh: 54F Sunny | worcester-ma: 56F Mostly Sunny | burlington-vt: 51F Sunny | portland-me: 49F Mostly Sunny | albany-ny: 60F Sunny | scranton-pa: 69F Mostly Sunny"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.16634,
-      "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.16634,
-      "historyDays": 0,
-      "avgHistoricalEOD": null
+      "basePaceFromCurve": 0.19498000000000001,
+      "observedPaceCount": 1,
+      "blendedPaceAtNow": 0.19498000000000001,
+      "historyDays": 1,
+      "avgHistoricalEOD": 1211604.37
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 6732.77784,
+      "estimatedCurrent": 7892.010480000001,
       "estimatedEOD": 40476,
-      "paceUsed": 0.16634,
+      "paceUsed": 0.19498000000000001,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 24862,
-          "estimatedCurrent": 4135.54508,
+          "estimatedCurrent": 4847.59276,
           "estimatedEOD": 24862,
           "stdev": 0.3127
         },
@@ -73,16 +73,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 15614,
-          "estimatedCurrent": 2597.23276,
+          "estimatedCurrent": 3044.4177200000004,
           "estimatedEOD": 15614,
           "stdev": 0.1906
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1331727.4067112398,
-    "combinedCurrentSales": 159027.99784,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $6,733 so far, +$40,476 to EOD."
+    "combinedProjectedEOD": 1330698.412672023,
+    "combinedCurrentSales": 198319.51048,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $7,892 so far, +$40,476 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 11,
