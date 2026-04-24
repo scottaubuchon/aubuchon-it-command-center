@@ -6640,13 +6640,23 @@ function Yoda2ChatPanel({ selectedStore, selectedDate }) {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState(null);
   const [showDetails, setShowDetails] = useState({});
-  const listRef = useRef(null);
+  const [expanded, setExpanded] = useState(false);
+  const listRefSidebar = useRef(null);
+  const listRefExpanded = useRef(null);
 
   useEffect(function () {
-    if (listRef.current) {
-      listRef.current.scrollTop = listRef.current.scrollHeight;
-    }
-  }, [messages, sending]);
+    [listRefSidebar, listRefExpanded].forEach(function (ref) {
+      if (ref.current) ref.current.scrollTop = ref.current.scrollHeight;
+    });
+  }, [messages, sending, expanded]);
+
+  // Close expanded mode on Esc
+  useEffect(function () {
+    if (!expanded) return;
+    function onKey(e) { if (e.key === "Escape") setExpanded(false); }
+    document.addEventListener("keydown", onKey);
+    return function () { document.removeEventListener("keydown", onKey); };
+  }, [expanded]);
 
   function toggleDetails(idx) {
     setShowDetails(function (s) {
@@ -6656,8 +6666,8 @@ function Yoda2ChatPanel({ selectedStore, selectedDate }) {
     });
   }
 
-  async function send() {
-    var q = String(input || "").trim();
+  async function send(forceQuestion) {
+    var q = String((forceQuestion != null ? forceQuestion : input) || "").trim();
     if (!q || sending) return;
     setError(null);
     setInput("");
@@ -6695,6 +6705,7 @@ function Yoda2ChatPanel({ selectedStore, selectedDate }) {
         row_count: Number(data.row_count || 0),
         kind: data.kind || "answer",
         took_ms: Number(data.took_ms || 0),
+        timings: data.timings || null,
       }]));
     } catch (e) {
       setError(String(e.message || e));
@@ -6720,38 +6731,31 @@ function Yoda2ChatPanel({ selectedStore, selectedDate }) {
     "Member sales vs last year",
     "How many transactions yesterday?",
     "Which stores beat plan yesterday?",
+    "Which stores are running payroll over target?",
+    "What's the next 7 days of weather for stores in MA?",
   ];
 
-  return (
-    <div className="mt-4 pt-4 border-t border-slate-100">
-      <div className="flex items-center justify-between mb-2">
-        <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Ask YODA</div>
-        {messages.length > 0 && (
-          <button
-            onClick={function () { setMessages([]); setShowDetails({}); setError(null); }}
-            className="text-[10px] text-slate-400 hover:text-slate-600"
-            title="Clear conversation"
-          >
-            Clear
-          </button>
-        )}
-      </div>
+  // Shared message list renderer. `mode` is "sidebar" or "expanded".
+  function renderMessages(mode) {
+    var isExpanded = mode === "expanded";
+    var baseText   = isExpanded ? "text-sm"   : "text-[12px]";
+    var btnText    = isExpanded ? "text-xs"   : "text-[10px]";
+    var tableText  = isExpanded ? "text-xs"   : "text-[10px]";
+    var maxRows    = isExpanded ? 100         : 25;
 
-      <div
-        ref={listRef}
-        className="bg-slate-50 border border-slate-200 rounded-lg p-2 mb-2 overflow-y-auto text-[12px]"
-        style={{ maxHeight: 280, minHeight: 60 }}
-      >
+    return (
+      <>
         {messages.length === 0 && !sending && (
-          <div className="text-slate-400 text-[11px] leading-snug">
-            Ask a question about stores, products, members, margins, or inventory. Answers come from the same semantic view as the rest of YODA 2.0.
+          <div className={(isExpanded ? "text-slate-500 text-sm" : "text-slate-400 text-[11px]") + " leading-relaxed"}>
+            Ask about stores, products, members, margins, inventory, plan, payroll, or weather. Answers come from the same semantic view as the rest of YODA 2.0. Use the expand button for a bigger reading space.
           </div>
         )}
         {messages.map(function (m, i) {
           if (m.role === "user") {
             return (
-              <div key={i} className="mb-2 flex justify-end">
-                <div className="bg-emerald-600 text-white rounded-lg px-2 py-1 max-w-[95%] whitespace-pre-wrap break-words">
+              <div key={i} className={(isExpanded ? "mb-4" : "mb-2") + " flex justify-end"}>
+                <div className={"bg-emerald-600 text-white rounded-lg whitespace-pre-wrap break-words " +
+                  (isExpanded ? "px-4 py-2 max-w-[80%] text-sm" : "px-2 py-1 max-w-[95%] " + baseText)}>
                   {m.content}
                 </div>
               </div>
@@ -6760,28 +6764,34 @@ function Yoda2ChatPanel({ selectedStore, selectedDate }) {
           var isErr = m.kind === "error" || m.kind === "blocked";
           var hasRows = Array.isArray(m.rows) && m.rows.length > 0;
           return (
-            <div key={i} className="mb-2">
-              <div className={"rounded-lg px-2 py-1 max-w-full whitespace-pre-wrap break-words " + (isErr ? "bg-red-50 text-red-800 border border-red-200" : "bg-white text-slate-800 border border-slate-200")}>
-                {m.content}
+            <div key={i} className={isExpanded ? "mb-5" : "mb-2"}>
+              <div className={"rounded-lg break-words " +
+                (isExpanded ? "px-4 py-3 " : "px-2 py-1 ") +
+                (isErr ? "bg-red-50 text-red-800 border border-red-200" : "bg-white text-slate-800 border border-slate-200") +
+                " " + (isExpanded ? "" : baseText)}>
+                {isErr
+                  ? <div className={isExpanded ? "text-sm" : ""}>{m.content}</div>
+                  : <Y2CRendered text={m.content} expanded={isExpanded} />}
               </div>
               {(m.sql || hasRows) && (
                 <div className="mt-1">
                   <button
                     onClick={function () { toggleDetails(i); }}
-                    className="text-[10px] text-emerald-700 hover:text-emerald-900 underline"
+                    className={btnText + " text-emerald-700 hover:text-emerald-900 underline"}
                   >
                     {showDetails[i] ? "Hide" : "Show"} SQL{hasRows ? " & data (" + (m.row_count || m.rows.length) + " row" + ((m.row_count || m.rows.length) === 1 ? "" : "s") + ")" : ""}
                   </button>
                   {showDetails[i] && (
                     <div className="mt-1 space-y-1">
                       {m.sql && (
-                        <pre className="bg-slate-900 text-emerald-200 text-[10px] leading-snug rounded p-2 overflow-x-auto whitespace-pre-wrap break-words">
+                        <pre className={"bg-slate-900 text-emerald-200 rounded p-2 overflow-x-auto whitespace-pre-wrap break-words " +
+                          (isExpanded ? "text-xs leading-relaxed" : "text-[10px] leading-snug")}>
                           {m.sql}
                         </pre>
                       )}
                       {hasRows && (
                         <div className="overflow-x-auto border border-slate-200 rounded bg-white">
-                          <table className="text-[10px] w-full">
+                          <table className={tableText + " w-full"}>
                             <thead>
                               <tr className="bg-slate-100">
                                 {m.columns.map(function (c) {
@@ -6790,7 +6800,7 @@ function Yoda2ChatPanel({ selectedStore, selectedDate }) {
                               </tr>
                             </thead>
                             <tbody>
-                              {m.rows.slice(0, 25).map(function (r, ri) {
+                              {m.rows.slice(0, maxRows).map(function (r, ri) {
                                 return (
                                   <tr key={ri} className="border-t border-slate-100">
                                     {m.columns.map(function (c) {
@@ -6806,11 +6816,16 @@ function Yoda2ChatPanel({ selectedStore, selectedDate }) {
                               })}
                             </tbody>
                           </table>
-                          {m.rows.length > 25 && (
-                            <div className="text-[10px] text-slate-400 px-1.5 py-1 border-t border-slate-100">
-                              Showing first 25 of {m.rows.length} rows
+                          {m.rows.length > maxRows && (
+                            <div className={(isExpanded ? "text-xs" : "text-[10px]") + " text-slate-400 px-1.5 py-1 border-t border-slate-100"}>
+                              Showing first {maxRows} of {m.rows.length} rows
                             </div>
                           )}
+                        </div>
+                      )}
+                      {m.timings && isExpanded && (
+                        <div className="text-[11px] text-slate-400 font-mono">
+                          timings(ms): gen {m.timings.gen || 0} · connect {m.timings.connect || 0} · exec {m.timings.exec || 0} · summary {m.timings.summary || 0} · total {m.took_ms || 0}
                         </div>
                       )}
                     </div>
@@ -6821,61 +6836,273 @@ function Yoda2ChatPanel({ selectedStore, selectedDate }) {
           );
         })}
         {sending && (
-          <div className="text-slate-500 italic text-[11px]">YODA is thinking…</div>
+          <div className={isExpanded ? "text-slate-500 italic text-sm" : "text-slate-500 italic text-[11px]"}>
+            YODA is thinking…
+          </div>
         )}
+      </>
+    );
+  }
+
+  // ==== SIDEBAR MODE ====
+  const sidebarBody = (
+    <div
+      ref={listRefSidebar}
+      className="bg-slate-50 border border-slate-200 rounded-lg p-2 mb-2 overflow-y-auto"
+      style={{ maxHeight: 360, minHeight: 80 }}
+    >
+      {renderMessages("sidebar")}
+    </div>
+  );
+
+  // ==== SHARED INPUT FOOTER ====
+  function footer(isExpanded) {
+    return (
+      <>
+        <textarea
+          value={input}
+          onChange={function (e) { setInput(e.target.value); }}
+          onKeyDown={onKey}
+          rows={isExpanded ? 3 : 2}
+          placeholder="Ask about sales, SKUs, members, plan, payroll, weather…"
+          disabled={sending}
+          className={"w-full bg-white border border-slate-200 rounded-lg px-3 py-2 resize-none focus:outline-none focus:ring-1 focus:ring-emerald-500 " +
+            (isExpanded ? "text-sm" : "text-xs")}
+        />
+        <div className="flex items-center justify-between mt-1.5 gap-2 flex-wrap">
+          <div className={(isExpanded ? "text-xs" : "text-[10px]") + " text-slate-400 leading-tight"}>
+            {selectedStore ? ("Scoped to " + selectedStore) : "All stores"} · {selectedDate || "(latest)"}
+          </div>
+          <button
+            onClick={function () { send(); }}
+            disabled={sending || !input.trim()}
+            className={"font-medium rounded " +
+              (isExpanded ? "text-sm px-4 py-1.5" : "text-xs px-3 py-1") + " " +
+              (sending || !input.trim() ? "bg-slate-200 text-slate-400 cursor-not-allowed" : "bg-emerald-600 text-white hover:bg-emerald-700")}
+          >
+            {sending ? "…" : "Ask"}
+          </button>
+        </div>
+
+        {messages.length === 0 && !sending && (
+          <div className={"mt-2 flex flex-wrap gap-1 " + (isExpanded ? "gap-2" : "")}>
+            {suggestions.map(function (s) {
+              return (
+                <button
+                  key={s}
+                  onClick={function () { setInput(s); }}
+                  className={"bg-white hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 text-slate-600 rounded-full " +
+                    (isExpanded ? "text-xs px-3 py-1" : "text-[10px] px-2 py-0.5")}
+                >
+                  {s}
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {error && (
+          <div className={(isExpanded ? "text-xs" : "text-[10px]") + " mt-1 text-red-600 leading-snug"}>{error}</div>
+        )}
+      </>
+    );
+  }
+
+  return (
+    <div className="mt-4 pt-4 border-t border-slate-100">
+      <div className="flex items-center justify-between mb-2">
+        <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Ask YODA</div>
+        <div className="flex items-center gap-2">
+          {messages.length > 0 && (
+            <button
+              onClick={function () { setMessages([]); setShowDetails({}); setError(null); }}
+              className="text-[10px] text-slate-400 hover:text-slate-600"
+              title="Clear conversation"
+            >
+              Clear
+            </button>
+          )}
+          <button
+            onClick={function () { setExpanded(true); }}
+            className="text-[11px] text-emerald-700 hover:text-emerald-900 font-semibold flex items-center gap-1"
+            title="Expand to full screen"
+          >
+            <span style={{ display: "inline-block", transform: "rotate(0deg)" }}>⤢</span> Expand
+          </button>
+        </div>
       </div>
 
-      <textarea
-        value={input}
-        onChange={function (e) { setInput(e.target.value); }}
-        onKeyDown={onKey}
-        rows={2}
-        placeholder="Ask about sales, SKUs, members…"
-        disabled={sending}
-        className="w-full text-xs bg-white border border-slate-200 rounded-lg px-2 py-1.5 resize-none focus:outline-none focus:ring-1 focus:ring-emerald-500"
-      />
-      <div className="flex items-center justify-between mt-1">
-        <div className="text-[10px] text-slate-400 leading-tight">
-          {selectedStore ? ("Scoped to " + selectedStore) : "All stores"} · {selectedDate}
-        </div>
-        <button
-          onClick={send}
-          disabled={sending || !input.trim()}
-          className={"text-xs font-medium px-3 py-1 rounded " + (sending || !input.trim() ? "bg-slate-200 text-slate-400 cursor-not-allowed" : "bg-emerald-600 text-white hover:bg-emerald-700")}
+      {sidebarBody}
+      {footer(false)}
+
+      {expanded && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ background: "rgba(15, 23, 42, 0.55)" }}
+          onClick={function () { setExpanded(false); }}
         >
-          {sending ? "…" : "Ask"}
-        </button>
-      </div>
+          <div
+            className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl flex flex-col overflow-hidden"
+            style={{ height: "90vh" }}
+            onClick={function (e) { e.stopPropagation(); }}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-3 border-b border-slate-200 bg-slate-50 flex-shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="text-lg font-bold" style={{ color: "#01683F", fontFamily: "Trebuchet MS, sans-serif" }}>
+                  Ask <span style={{ color: "#F58220" }}>YODA</span>
+                </div>
+                <div className="text-xs text-slate-500">
+                  {selectedStore ? ("Scoped to " + selectedStore) : "All stores"} · {selectedDate || "(latest)"}
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                {messages.length > 0 && (
+                  <button
+                    onClick={function () { setMessages([]); setShowDetails({}); setError(null); }}
+                    className="text-xs text-slate-500 hover:text-slate-800"
+                  >
+                    Clear
+                  </button>
+                )}
+                <button
+                  onClick={function () { setExpanded(false); }}
+                  className="text-sm text-slate-500 hover:text-slate-900 px-2"
+                  title="Close (Esc)"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
 
-      {messages.length === 0 && !sending && (
-        <div className="mt-2 flex flex-wrap gap-1">
-          {suggestions.map(function (s) {
-            return (
-              <button
-                key={s}
-                onClick={function () { setInput(s); }}
-                className="text-[10px] bg-white hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 text-slate-600 rounded-full px-2 py-0.5"
-              >
-                {s}
-              </button>
-            );
-          })}
+            {/* Message list */}
+            <div
+              ref={listRefExpanded}
+              className="flex-1 overflow-y-auto px-5 py-4"
+              style={{ background: "#F8FAFC" }}
+            >
+              {renderMessages("expanded")}
+            </div>
+
+            {/* Footer */}
+            <div className="px-5 py-3 border-t border-slate-200 bg-white flex-shrink-0">
+              {footer(true)}
+            </div>
+          </div>
         </div>
-      )}
-
-      {error && (
-        <div className="mt-1 text-[10px] text-red-600 leading-snug">{error}</div>
       )}
     </div>
   );
 }
 
-/* ============================================================
-   YODA 2.0 - AI Insights
-   Per-store Top 5 actionable recommendations from
-   /api/yoda-2?page=insights. Backend runs a rule-based retail-
-   analyst over the AUBUCHON_RETAIL_ANALYTICS semantic view.
-   ============================================================ */
+/* Simple inline renderer for the subset of Markdown the advisor prompt produces:
+   - ### Headers (three hashes = section header)
+   - **bold**
+   - - bullet lines  (and "* bullet")
+   - Numbered lists (1. foo)
+   - Blank-line paragraph breaks                                              */
+function Y2CRendered({ text, expanded }) {
+  const src = String(text || "");
+  if (!src.trim()) return null;
+
+  // Split into blocks separated by blank lines
+  const blocks = src.split(/\n{2,}/);
+
+  function renderInline(s) {
+    // Handle **bold**
+    const parts = [];
+    const re = /\*\*([^*]+)\*\*/g;
+    let last = 0, m;
+    let k = 0;
+    while ((m = re.exec(s)) !== null) {
+      if (m.index > last) parts.push(s.slice(last, m.index));
+      parts.push(<strong key={"b" + (k++)}>{m[1]}</strong>);
+      last = m.index + m[0].length;
+    }
+    if (last < s.length) parts.push(s.slice(last));
+    return parts;
+  }
+
+  const bodyCls  = expanded ? "text-sm leading-relaxed" : "text-[12px] leading-snug";
+  const h1Cls    = expanded ? "text-base font-bold text-slate-900 mt-3 mb-1" : "text-[13px] font-bold text-slate-900 mt-2 mb-1";
+  const h2Cls    = expanded ? "text-sm font-bold text-slate-900 mt-3 mb-1" : "text-[12px] font-bold text-slate-900 mt-2 mb-1";
+  const listCls  = expanded ? "list-disc pl-5 space-y-1 text-sm" : "list-disc pl-4 space-y-0.5 text-[12px]";
+  const olCls    = expanded ? "list-decimal pl-5 space-y-1 text-sm" : "list-decimal pl-4 space-y-0.5 text-[12px]";
+
+  return (
+    <div>
+      {blocks.map(function (block, bi) {
+        const b = block.trim();
+        if (!b) return null;
+
+        // Header: ### or ## or #
+        let m;
+        if ((m = b.match(/^###\s+(.+)$/m)) && b.split("\n")[0].startsWith("###")) {
+          // whole block may start with a header; render header + rest
+          const lines = b.split("\n");
+          const head = lines[0].replace(/^###\s+/, "");
+          const rest = lines.slice(1).join("\n").trim();
+          return (
+            <div key={bi}>
+              <div className={h1Cls}>{renderInline(head)}</div>
+              {rest && <Y2CRendered text={rest} expanded={expanded} />}
+            </div>
+          );
+        }
+        if ((m = b.match(/^##\s+(.+)$/m)) && b.split("\n")[0].startsWith("##")) {
+          const lines = b.split("\n");
+          const head = lines[0].replace(/^##\s+/, "");
+          const rest = lines.slice(1).join("\n").trim();
+          return (
+            <div key={bi}>
+              <div className={h2Cls}>{renderInline(head)}</div>
+              {rest && <Y2CRendered text={rest} expanded={expanded} />}
+            </div>
+          );
+        }
+
+        // Bulleted list block (every line starts with "- " or "* ")
+        const lines = b.split("\n");
+        const allBullets = lines.every(function (l) { return /^\s*[-*]\s+/.test(l); });
+        if (allBullets && lines.length > 0) {
+          return (
+            <ul key={bi} className={listCls}>
+              {lines.map(function (l, li) {
+                return <li key={li} className="text-slate-700">{renderInline(l.replace(/^\s*[-*]\s+/, ""))}</li>;
+              })}
+            </ul>
+          );
+        }
+
+        // Numbered list block
+        const allNumbered = lines.every(function (l) { return /^\s*\d+\.\s+/.test(l); });
+        if (allNumbered && lines.length > 0) {
+          return (
+            <ol key={bi} className={olCls}>
+              {lines.map(function (l, li) {
+                return <li key={li} className="text-slate-700">{renderInline(l.replace(/^\s*\d+\.\s+/, ""))}</li>;
+              })}
+            </ol>
+          );
+        }
+
+        // Plain paragraph. Preserve single newlines within as <br/>.
+        return (
+          <p key={bi} className={bodyCls + " text-slate-800 mb-2"}>
+            {lines.map(function (l, li) {
+              return (
+                <span key={li}>
+                  {renderInline(l)}
+                  {li < lines.length - 1 ? <br /> : null}
+                </span>
+              );
+            })}
+          </p>
+        );
+      })}
+    </div>
+  );
+}
 
 function Yoda2Insights({ selectedStore, setSelectedStore, dateLabel, selectedDate }) {
   const [data, setData] = useState(null);
