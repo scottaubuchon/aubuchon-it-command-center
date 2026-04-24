@@ -5745,29 +5745,32 @@ function LiveSalesSnowflakeView({ goBack }) {
   var predictorSaysHit = forecast.proj >= forecast.plan;
   var onTrack = predictorSaysHit;
   var planMagnitude = Math.abs(forecast.varPct || 0);
-  // Solid color whose darkness scales with absolute variance from plan, so a
-  // +8% beat reads as a deeper green than a +1% nudge. Five tiers each way.
-  // Whole class strings are required (the Tailwind JIT can't see names that
-  // are dynamically constructed at runtime).
+  // Aubuchon brand colors — Dark Green #01683F (above plan), Bright Red
+  // #EC1C24 (below plan). Three intensity tiers: 0-2%, 2-5%, 5%+. The card
+  // tint progresses from a barely-there hint to a clear branded wash, but
+  // never goes so dark that the existing slate text labels lose contrast.
+  // Whole class strings (Tailwind JIT can't see runtime-built names).
   var planTone = function (above, mag) {
     var m = Math.abs(mag || 0);
-    var tier = m < 1 ? 0 : m < 3 ? 1 : m < 5 ? 2 : m < 8 ? 3 : 4;
+    var tier = m < 2 ? 0 : m < 5 ? 1 : 2;
     if (above) {
       var greens = [
-        { card: "bg-emerald-50 border-emerald-200",  text: "text-emerald-700", bar: "bg-emerald-400" },
-        { card: "bg-emerald-100 border-emerald-300", text: "text-emerald-700", bar: "bg-emerald-500" },
-        { card: "bg-emerald-200 border-emerald-400", text: "text-emerald-800", bar: "bg-emerald-600" },
-        { card: "bg-emerald-300 border-emerald-500", text: "text-emerald-900", bar: "bg-emerald-700" },
-        { card: "bg-emerald-400 border-emerald-600", text: "text-emerald-900", bar: "bg-emerald-800" },
+        // 0-2% beat — pale green wash, brand-green accent
+        { card: "bg-[#E6F0EA] border-[#A8C9B8]", text: "text-[#01683F]", bar: "bg-[#A8C9B8]" },
+        // 2-5% beat — clear green tint, full brand-green bar
+        { card: "bg-[#B3D5C2] border-[#01683F]", text: "text-[#01683F]", bar: "bg-[#01683F]" },
+        // 5%+ beat — strongest tint, deep brand-green bar
+        { card: "bg-[#7FB39F] border-[#01683F]", text: "text-[#01683F]", bar: "bg-[#01683F]" },
       ];
       return greens[tier];
     }
     var reds = [
-      { card: "bg-red-50 border-red-200",   text: "text-red-600", bar: "bg-red-400" },
-      { card: "bg-red-100 border-red-300",  text: "text-red-700", bar: "bg-red-500" },
-      { card: "bg-red-200 border-red-400",  text: "text-red-700", bar: "bg-red-600" },
-      { card: "bg-red-300 border-red-500",  text: "text-red-800", bar: "bg-red-700" },
-      { card: "bg-red-400 border-red-600",  text: "text-red-900", bar: "bg-red-800" },
+      // 0-2% miss — pale red wash, brand-red accent
+      { card: "bg-[#FDEAEB] border-[#F4A8AC]", text: "text-[#EC1C24]", bar: "bg-[#F4A8AC]" },
+      // 2-5% miss — clear red tint, full brand-red bar
+      { card: "bg-[#F8B5B8] border-[#EC1C24]", text: "text-[#EC1C24]", bar: "bg-[#EC1C24]" },
+      // 5%+ miss — strongest tint, brand-red bar
+      { card: "bg-[#EC8A8E] border-[#EC1C24]", text: "text-[#7B0E13]", bar: "bg-[#EC1C24]" },
     ];
     return reds[tier];
   };
