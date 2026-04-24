@@ -1,43 +1,43 @@
 {
-  "updatedAt": "2026-04-23T23:55:26.532Z",
-  "updatedAtET": "Apr 23, 2026, 7:55 PM",
+  "updatedAt": "2026-04-24T00:11:09.048Z",
+  "updatedAtET": "Apr 23, 2026, 8:11 PM",
   "dateET": "2026-04-23",
   "dow": 4,
   "season": "spring",
   "source": "snowflake",
   "current": {
-    "ts": "2026-04-23T23:55:26.532Z",
-    "tsET": "Apr 23, 2026, 7:55 PM",
+    "ts": "2026-04-24T00:11:09.048Z",
+    "tsET": "Apr 23, 2026, 8:11 PM",
     "dateET": "2026-04-23",
-    "hourET": 19,
-    "minuteET": 55,
+    "hourET": 20,
+    "minuteET": 11,
     "dow": 4,
-    "sales": 1082736.6,
+    "sales": 1083178.18,
     "plan": 1073381.21,
-    "pctToPlan": 100.87158130893685,
-    "gp": 456038.5372,
-    "gpPct": 42.119065449528534,
-    "txns": 31789,
-    "customers": 29389,
+    "pctToPlan": 100.9127204676892,
+    "gp": 456211.7039,
+    "gpPct": 42.11788164898226,
+    "txns": 31800,
+    "customers": 29399,
     "storeCount": 134,
     "asOf": null,
-    "asOfET": "Apr 23, 7:45 PM ET"
+    "asOfET": "Apr 23, 8:00 PM ET"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.98 shape + 0.02 level)",
     "confidence": "medium",
-    "projectedEOD": 1084332.112292009,
-    "projectedPctToPlan": 101.0202248921433,
-    "projectedVariance": 10950.902292008977,
+    "projectedEOD": 1084280.7645622035,
+    "projectedPctToPlan": 101.01544115554282,
+    "projectedVariance": 10899.554562203586,
     "band": {
-      "low": 965416.7776066159,
-      "high": 1203247.446977402
+      "low": 965378.740661819,
+      "high": 1203182.788462588
     },
-    "pctOfDayElapsed": 0.9981166666666668,
+    "pctOfDayElapsed": 0.9985733333333334,
     "level_EOD": 1063578.6312363597,
-    "shape_EOD": 1084779.6015829812,
-    "blendWeight": 0.9788929806675882,
+    "shape_EOD": 1084725.7220300962,
+    "blendWeight": 0.9789589276258943,
     "factors": {
       "plan": 1073381.21,
       "recencyFactor": 0.9393,
@@ -49,23 +49,23 @@
       "weatherSummary": "concord-nh: 31F Mostly Clear | worcester-ma: 36F Mostly Clear | burlington-vt: 32F Mostly Clear | portland-me: 36F Mostly Clear | albany-ny: 39F Mostly Cloudy | scranton-pa: 45F Partly Cloudy"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.9981166666666668,
+      "basePaceFromCurve": 0.9985733333333334,
       "observedPaceCount": 1,
-      "blendedPaceAtNow": 0.9981166666666668,
+      "blendedPaceAtNow": 0.9985733333333334,
       "historyDays": 1,
       "avgHistoricalEOD": 1053994.8399999996
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 45872.44388333334,
+      "estimatedCurrent": 45893.431826666674,
       "estimatedEOD": 45959,
-      "paceUsed": 0.9981166666666668,
+      "paceUsed": 0.9985733333333334,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 30687,
-          "estimatedCurrent": 30629.20615,
+          "estimatedCurrent": 30643.219880000004,
           "estimatedEOD": 30687,
           "stdev": 0.3949
         },
@@ -73,16 +73,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 15272,
-          "estimatedCurrent": 15243.237733333335,
+          "estimatedCurrent": 15250.211946666668,
           "estimatedEOD": 15272,
           "stdev": 0.1435
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1130291.112292009,
-    "combinedCurrentSales": 1128609.0438833334,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $45,872 so far, +$45,959 to EOD."
+    "combinedProjectedEOD": 1130239.7645622035,
+    "combinedCurrentSales": 1129071.6118266666,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $45,893 so far, +$45,959 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 10,
@@ -141,7 +141,7 @@
         "temp": 45,
         "unit": "F",
         "short": "Partly Cloudy",
-        "detailed": "Partly cloudy, with a low around 45. Northeast wind 1 to 8 mph."
+        "detailed": "Partly cloudy, with a low around 45. Northeast wind 1 to 6 mph."
       }
     ]
   }
