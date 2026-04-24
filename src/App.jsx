@@ -7061,6 +7061,68 @@ function Y2CRendered({ text, expanded }) {
           );
         }
 
+        // Pipe table block (GitHub Flavored Markdown).
+        //   | H1 | H2 |
+        //   |----|----|
+        //   | v1 | v2 |
+        const linesAll = b.split("\n");
+        if (linesAll.length >= 2) {
+          const first = linesAll[0].trim();
+          const sep   = (linesAll[1] || "").trim();
+          const looksRow = first.startsWith("|") && first.endsWith("|") && first.split("|").length >= 3;
+          const looksSep = /^\|?\s*:?-{2,}:?\s*(\|\s*:?-{2,}:?\s*)+\|?$/.test(sep);
+          if (looksRow && looksSep) {
+            function splitCells(line) {
+              return line
+                .replace(/^\|/, "")
+                .replace(/\|\s*$/, "")
+                .split("|")
+                .map(function (c) { return c.trim(); });
+            }
+            const headers = splitCells(first);
+            const bodyRows = linesAll.slice(2)
+              .filter(function (l) { return l.trim().length > 0; })
+              .map(splitCells);
+            const tableTextCls = expanded ? "text-xs" : "text-[11px]";
+            return (
+              <div key={bi} className="my-2 overflow-x-auto border border-slate-200 rounded-lg bg-white">
+                <table className={tableTextCls + " w-full"}>
+                  <thead>
+                    <tr className="bg-slate-100">
+                      {headers.map(function (h, hi) {
+                        return (
+                          <th key={hi} className="text-left px-2 py-1 font-semibold text-slate-700 whitespace-nowrap border-b border-slate-200">
+                            {renderInline(h)}
+                          </th>
+                        );
+                      })}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {bodyRows.map(function (row, ri) {
+                      return (
+                        <tr key={ri} className={ri % 2 === 1 ? "bg-slate-50" : ""}>
+                          {row.map(function (cell, ci) {
+                            // Right-align numeric-looking cells for readability.
+                            const numeric = /^[\$\-\+]?[0-9][0-9,\.\/\-\%\s–—−KMkm]*$/.test(cell);
+                            return (
+                              <td key={ci}
+                                  className={"px-2 py-1 border-t border-slate-100 whitespace-nowrap text-slate-700 " +
+                                             (numeric ? "text-right font-mono" : "")}>
+                                {renderInline(cell)}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            );
+          }
+        }
+
         // Bulleted list block (every line starts with "- " or "* ")
         const lines = b.split("\n");
         const allBullets = lines.every(function (l) { return /^\s*[-*]\s+/.test(l); });
