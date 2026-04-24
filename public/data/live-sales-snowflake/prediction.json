@@ -1,16 +1,16 @@
 {
-  "updatedAt": "2026-04-24T00:27:30.553Z",
-  "updatedAtET": "Apr 23, 2026, 8:27 PM",
+  "updatedAt": "2026-04-24T00:43:05.258Z",
+  "updatedAtET": "Apr 23, 2026, 8:43 PM",
   "dateET": "2026-04-23",
   "dow": 4,
   "season": "spring",
   "source": "snowflake",
   "current": {
-    "ts": "2026-04-24T00:27:30.553Z",
-    "tsET": "Apr 23, 2026, 8:27 PM",
+    "ts": "2026-04-24T00:43:05.258Z",
+    "tsET": "Apr 23, 2026, 8:43 PM",
     "dateET": "2026-04-23",
     "hourET": 20,
-    "minuteET": 27,
+    "minuteET": 43,
     "dow": 4,
     "sales": 1083366.24,
     "plan": 1073381.21,
@@ -21,23 +21,23 @@
     "customers": 29407,
     "storeCount": 134,
     "asOf": null,
-    "asOfET": "Apr 23, 8:15 PM ET"
+    "asOfET": "Apr 23, 8:30 PM ET"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.98 shape + 0.02 level)",
     "confidence": "medium",
-    "projectedEOD": 1084352.0179047033,
-    "projectedPctToPlan": 101.02207936961216,
-    "projectedVariance": 10970.80790470331,
+    "projectedEOD": 1083733.794204345,
+    "projectedPctToPlan": 100.96448345731197,
+    "projectedVariance": 10352.58420434501,
     "band": {
-      "low": 965443.9708929205,
-      "high": 1203260.0649164862
+      "low": 964903.3041624508,
+      "high": 1202564.284246239
     },
-    "pctOfDayElapsed": 0.99868,
+    "pctOfDayElapsed": 0.9992633333333334,
     "level_EOD": 1063578.6312363597,
-    "shape_EOD": 1084798.1735891376,
-    "blendWeight": 0.9789743022249583,
+    "shape_EOD": 1084164.908149003,
+    "blendWeight": 0.9790581878166938,
     "factors": {
       "plan": 1073381.21,
       "recencyFactor": 0.9393,
@@ -49,23 +49,23 @@
       "weatherSummary": "concord-nh: 31F Mostly Clear | worcester-ma: 36F Mostly Clear | burlington-vt: 32F Mostly Clear | portland-me: 36F Mostly Clear | albany-ny: 39F Mostly Cloudy | scranton-pa: 45F Partly Cloudy"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.99868,
+      "basePaceFromCurve": 0.9992633333333334,
       "observedPaceCount": 1,
-      "blendedPaceAtNow": 0.99868,
+      "blendedPaceAtNow": 0.9992633333333334,
       "historyDays": 1,
       "avgHistoricalEOD": 1053994.8399999996
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 45898.33412,
+      "estimatedCurrent": 45925.14353666667,
       "estimatedEOD": 45959,
-      "paceUsed": 0.99868,
+      "paceUsed": 0.9992633333333334,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 30687,
-          "estimatedCurrent": 30646.49316,
+          "estimatedCurrent": 30664.393910000003,
           "estimatedEOD": 30687,
           "stdev": 0.3949
         },
@@ -73,16 +73,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 15272,
-          "estimatedCurrent": 15251.84096,
+          "estimatedCurrent": 15260.749626666668,
           "estimatedEOD": 15272,
           "stdev": 0.1435
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1130311.0179047033,
-    "combinedCurrentSales": 1129264.57412,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $45,898 so far, +$45,959 to EOD."
+    "combinedProjectedEOD": 1129692.794204345,
+    "combinedCurrentSales": 1129291.3835366666,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $45,925 so far, +$45,959 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 10,
@@ -109,7 +109,7 @@
         "temp": 36,
         "unit": "F",
         "short": "Mostly Clear",
-        "detailed": "Mostly clear, with a low around 36. North wind 3 to 9 mph, with gusts as high as 23 mph."
+        "detailed": "Mostly clear, with a low around 36. North wind 3 to 7 mph."
       },
       {
         "station": "burlington-vt",
