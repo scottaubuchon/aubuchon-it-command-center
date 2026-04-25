@@ -1,16 +1,16 @@
 {
-  "updatedAt": "2026-04-25T13:04:39.731Z",
-  "updatedAtET": "Apr 25, 2026, 9:04 AM",
+  "updatedAt": "2026-04-25T13:20:20.832Z",
+  "updatedAtET": "Apr 25, 2026, 9:20 AM",
   "dateET": "2026-04-25",
   "dow": 6,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-04-25T13:04:39.731Z",
-    "tsET": "Apr 25, 2026, 9:04 AM",
+    "ts": "2026-04-25T13:20:20.832Z",
+    "tsET": "Apr 25, 2026, 9:20 AM",
     "dateET": "2026-04-25",
     "hourET": 9,
-    "minuteET": 4,
+    "minuteET": 20,
     "dow": 6,
     "sales": 99799.40000000002,
     "plan": 1827013.1600000008,
@@ -25,19 +25,19 @@
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.10 shape + 0.90 level)",
+    "method": "blended (w=0.12 shape + 0.88 level)",
     "confidence": "low",
-    "projectedEOD": 1652049.9019525817,
-    "projectedPctToPlan": 90.42353597237258,
-    "projectedVariance": -174963.25804741913,
+    "projectedEOD": 1617347.1621089808,
+    "projectedPctToPlan": 88.52411123896776,
+    "projectedVariance": -209665.99789102003,
     "band": {
-      "low": 1177867.2774691335,
-      "high": 2126232.52643603
+      "low": 1157798.7588105965,
+      "high": 2076895.565407365
     },
-    "pctOfDayElapsed": 0.13274666666666665,
+    "pctOfDayElapsed": 0.16133333333333333,
     "level_EOD": 1749749.2850272858,
-    "shape_EOD": 751803.4351145041,
-    "blendWeight": 0.09790048536525575,
+    "shape_EOD": 618591.3223140497,
+    "blendWeight": 0.11705007371447984,
     "factors": {
       "plan": 1827013.1600000008,
       "recencyFactor": 0.9393,
@@ -49,23 +49,23 @@
       "weatherSummary": "concord-nh: 58F Partly Sunny | worcester-ma: 52F Mostly Cloudy | burlington-vt: 57F Mostly Sunny | portland-me: 52F Mostly Sunny | albany-ny: 56F Mostly Cloudy then Chance Rain Showers | scranton-pa: 48F Rain Showers"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.13274666666666665,
+      "basePaceFromCurve": 0.16133333333333333,
       "observedPaceCount": 1,
-      "blendedPaceAtNow": 0.13274666666666665,
+      "blendedPaceAtNow": 0.16133333333333333,
       "historyDays": 1,
       "avgHistoricalEOD": 1782361.5800000003
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 5679.035146666666,
+      "estimatedCurrent": 6902.001333333333,
       "estimatedEOD": 42781,
-      "paceUsed": 0.13274666666666665,
+      "paceUsed": 0.16133333333333333,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 24716,
-          "estimatedCurrent": 3280.966613333333,
+          "estimatedCurrent": 3987.5146666666665,
           "estimatedEOD": 24716,
           "stdev": 0.3879
         },
@@ -73,16 +73,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 18065,
-          "estimatedCurrent": 2398.068533333333,
+          "estimatedCurrent": 2914.4866666666667,
           "estimatedEOD": 18065,
           "stdev": 0.1722
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1694830.9019525817,
-    "combinedCurrentSales": 105478.43514666668,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $5,679 so far, +$42,781 to EOD."
+    "combinedProjectedEOD": 1660128.1621089808,
+    "combinedCurrentSales": 106701.40133333336,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $6,902 so far, +$42,781 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 12,
@@ -135,7 +135,7 @@
         "temp": 56,
         "unit": "F",
         "short": "Mostly Cloudy then Chance Rain Showers",
-        "detailed": "A chance of rain showers after 4pm. Mostly cloudy, with a high near 56. Southeast wind 2 to 6 mph. Chance of precipitation is 30%. New rainfall amounts less than a tenth of an inch possible."
+        "detailed": "A chance of rain showers after 4pm. Mostly cloudy, with a high near 56. South wind around 6 mph. Chance of precipitation is 30%. New rainfall amounts less than a tenth of an inch possible."
       },
       {
         "station": "scranton-pa",
