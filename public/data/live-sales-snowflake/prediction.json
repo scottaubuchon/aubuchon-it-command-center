@@ -1,16 +1,16 @@
 {
-  "updatedAt": "2026-04-25T00:20:21.986Z",
-  "updatedAtET": "Apr 24, 2026, 8:20 PM",
+  "updatedAt": "2026-04-25T00:36:00.779Z",
+  "updatedAtET": "Apr 24, 2026, 8:36 PM",
   "dateET": "2026-04-24",
   "dow": 5,
   "season": "spring",
   "source": "snowflake",
   "current": {
-    "ts": "2026-04-25T00:20:21.986Z",
-    "tsET": "Apr 24, 2026, 8:20 PM",
+    "ts": "2026-04-25T00:36:00.779Z",
+    "tsET": "Apr 24, 2026, 8:36 PM",
     "dateET": "2026-04-24",
     "hourET": 20,
-    "minuteET": 20,
+    "minuteET": 36,
     "dow": 5,
     "sales": 1245465.11,
     "plan": 1289097,
@@ -21,7 +21,7 @@
     "customers": 33032,
     "storeCount": 134,
     "asOf": null,
-    "asOfET": "Apr 24, 8:15 PM ET"
+    "asOfET": "Apr 24, 8:30 PM ET"
   },
   "prediction": {
     "available": true,
@@ -110,7 +110,7 @@
         "temp": 33,
         "unit": "F",
         "short": "Mostly Clear",
-        "detailed": "Mostly clear, with a low around 33. East wind 2 to 8 mph."
+        "detailed": "Mostly clear, with a low around 33. Northeast wind 2 to 8 mph."
       },
       {
         "station": "burlington-vt",
@@ -134,7 +134,7 @@
         "temp": 37,
         "unit": "F",
         "short": "Mostly Clear",
-        "detailed": "Mostly clear, with a low around 37. North wind 2 to 7 mph."
+        "detailed": "Mostly clear, with a low around 37. North wind 2 to 8 mph."
       },
       {
         "station": "scranton-pa",
