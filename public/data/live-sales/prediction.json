@@ -1,16 +1,16 @@
 {
-  "updatedAt": "2026-04-25T15:40:18.431Z",
-  "updatedAtET": "Apr 25, 2026, 11:40 AM",
+  "updatedAt": "2026-04-25T15:41:03.000Z",
+  "updatedAtET": "Apr 25, 2026, 11:41 AM",
   "dateET": "2026-04-25",
   "dow": 6,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-04-25T15:40:18.431Z",
-    "tsET": "Apr 25, 2026, 11:40 AM",
+    "ts": "2026-04-25T15:41:03.000Z",
+    "tsET": "Apr 25, 2026, 11:41 AM",
     "dateET": "2026-04-25",
     "hourET": 11,
-    "minuteET": 40,
+    "minuteET": 41,
     "dow": 6,
     "sales": 535959.1,
     "plan": 1827013.1600000004,
@@ -27,17 +27,17 @@
     "available": true,
     "method": "blended (w=0.52 shape + 0.48 level)",
     "confidence": "medium",
-    "projectedEOD": 1442541.2768633137,
-    "projectedPctToPlan": 78.95626087681347,
-    "projectedVariance": -384471.88313668664,
+    "projectedEOD": 1437648.1781063355,
+    "projectedPctToPlan": 78.68844130856371,
+    "projectedVariance": -389364.9818936649,
     "band": {
-      "low": 1120590.6418865856,
-      "high": 1764491.9118400419
+      "low": 1117581.4062440363,
+      "high": 1757714.9499686346
     },
-    "pctOfDayElapsed": 0.462,
+    "pctOfDayElapsed": 0.46409,
     "level_EOD": 1749749.2850272853,
-    "shape_EOD": 1160084.632034632,
-    "blendWeight": 0.5209876607065324,
+    "shape_EOD": 1154860.2641728974,
+    "blendWeight": 0.5246375306653095,
     "factors": {
       "plan": 1827013.1600000004,
       "recencyFactor": 0.9393,
@@ -49,23 +49,23 @@
       "weatherSummary": "concord-nh: 58F Partly Sunny | worcester-ma: 52F Cloudy | burlington-vt: 57F Mostly Sunny | portland-me: 52F Mostly Sunny | albany-ny: 56F Mostly Cloudy then Chance Rain Showers | scranton-pa: 48F Rain Showers"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.462,
+      "basePaceFromCurve": 0.46409,
       "observedPaceCount": 1,
-      "blendedPaceAtNow": 0.462,
+      "blendedPaceAtNow": 0.46409,
       "historyDays": 1,
       "avgHistoricalEOD": 1782361.5800000003
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 19764.822,
+      "estimatedCurrent": 19854.23429,
       "estimatedEOD": 42781,
-      "paceUsed": 0.462,
+      "paceUsed": 0.46409,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 24716,
-          "estimatedCurrent": 11418.792000000001,
+          "estimatedCurrent": 11470.44844,
           "estimatedEOD": 24716,
           "stdev": 0.3879
         },
@@ -73,16 +73,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 18065,
-          "estimatedCurrent": 8346.03,
+          "estimatedCurrent": 8383.78585,
           "estimatedEOD": 18065,
           "stdev": 0.1722
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1485322.2768633137,
-    "combinedCurrentSales": 555723.922,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $19,765 so far, +$42,781 to EOD."
+    "combinedProjectedEOD": 1480429.1781063355,
+    "combinedCurrentSales": 555813.33429,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $19,854 so far, +$42,781 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 12,
@@ -103,7 +103,7 @@
         "temp": 58,
         "unit": "F",
         "short": "Partly Sunny",
-        "detailed": "Partly sunny, with a high near 58. Northeast wind around 0 mph."
+        "detailed": "Partly sunny, with a high near 58. East wind around 0 mph."
       },
       {
         "station": "worcester-ma",
@@ -119,7 +119,7 @@
         "temp": 57,
         "unit": "F",
         "short": "Mostly Sunny",
-        "detailed": "Mostly sunny, with a high near 57. North wind around 3 mph."
+        "detailed": "Mostly sunny, with a high near 57. Northwest wind around 3 mph."
       },
       {
         "station": "portland-me",
@@ -127,7 +127,7 @@
         "temp": 52,
         "unit": "F",
         "short": "Mostly Sunny",
-        "detailed": "Mostly sunny, with a high near 52. East wind 0 to 10 mph."
+        "detailed": "Mostly sunny, with a high near 52. Southeast wind 0 to 10 mph."
       },
       {
         "station": "albany-ny",
