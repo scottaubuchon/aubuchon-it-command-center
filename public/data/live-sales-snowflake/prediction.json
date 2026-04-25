@@ -1,16 +1,16 @@
 {
-  "updatedAt": "2026-04-25T00:03:22.676Z",
-  "updatedAtET": "Apr 24, 2026, 8:03 PM",
+  "updatedAt": "2026-04-25T00:04:40.060Z",
+  "updatedAtET": "Apr 24, 2026, 8:04 PM",
   "dateET": "2026-04-24",
   "dow": 5,
   "season": "spring",
   "source": "snowflake",
   "current": {
-    "ts": "2026-04-25T00:03:22.676Z",
-    "tsET": "Apr 24, 2026, 8:03 PM",
+    "ts": "2026-04-25T00:04:40.060Z",
+    "tsET": "Apr 24, 2026, 8:04 PM",
     "dateET": "2026-04-24",
     "hourET": 20,
-    "minuteET": 3,
+    "minuteET": 4,
     "dow": 5,
     "sales": 1245456.35,
     "plan": 1289097,
@@ -110,7 +110,7 @@
         "temp": 33,
         "unit": "F",
         "short": "Mostly Clear",
-        "detailed": "Mostly clear, with a low around 33. East wind 2 to 8 mph."
+        "detailed": "Mostly clear, with a low around 33. Northeast wind 2 to 8 mph."
       },
       {
         "station": "burlington-vt",
@@ -134,7 +134,7 @@
         "temp": 37,
         "unit": "F",
         "short": "Mostly Clear",
-        "detailed": "Mostly clear, with a low around 37. North wind 2 to 7 mph."
+        "detailed": "Mostly clear, with a low around 37. North wind 2 to 8 mph."
       },
       {
         "station": "scranton-pa",
