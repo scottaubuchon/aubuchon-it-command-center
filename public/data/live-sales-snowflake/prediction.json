@@ -1,43 +1,43 @@
 {
-  "updatedAt": "2026-04-25T20:41:51.747Z",
-  "updatedAtET": "Apr 25, 2026, 4:41 PM",
+  "updatedAt": "2026-04-25T20:57:30.199Z",
+  "updatedAtET": "Apr 25, 2026, 4:57 PM",
   "dateET": "2026-04-25",
   "dow": 6,
   "season": "spring",
   "source": "snowflake",
   "current": {
-    "ts": "2026-04-25T20:41:51.747Z",
-    "tsET": "Apr 25, 2026, 4:41 PM",
+    "ts": "2026-04-25T20:57:30.199Z",
+    "tsET": "Apr 25, 2026, 4:57 PM",
     "dateET": "2026-04-25",
     "hourET": 16,
-    "minuteET": 41,
+    "minuteET": 57,
     "dow": 6,
-    "sales": 1482334.91,
+    "sales": 1523161.87,
     "plan": 1827013.16,
-    "pctToPlan": 81.13433129293935,
-    "gp": 629408.4341,
-    "gpPct": 42.460609262720524,
-    "txns": 38339,
-    "customers": 36414,
+    "pctToPlan": 83.36895996961512,
+    "gp": 647033.0896,
+    "gpPct": 42.47960130462036,
+    "txns": 39479,
+    "customers": 37501,
     "storeCount": 133,
     "asOf": null,
-    "asOfET": "Apr 25, 4:30 PM ET"
+    "asOfET": "Apr 25, 4:45 PM ET"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.97 shape + 0.03 level)",
     "confidence": "medium",
-    "projectedEOD": 1557495.0313275126,
-    "projectedPctToPlan": 85.2481561395821,
-    "projectedVariance": -269518.12867248734,
+    "projectedEOD": 1577003.3786344714,
+    "projectedPctToPlan": 86.31592881544825,
+    "projectedVariance": -250009.78136552847,
     "band": {
-      "low": 1315818.1272028852,
-      "high": 1799171.93545214
+      "low": 1332890.6444329303,
+      "high": 1821116.1128360126
     },
-    "pctOfDayElapsed": 0.9551766666666667,
+    "pctOfDayElapsed": 0.9686699999999999,
     "level_EOD": 1749749.2850272849,
-    "shape_EOD": 1551896.0646023597,
-    "blendWeight": 0.9717014122230193,
+    "shape_EOD": 1572425.9758225197,
+    "blendWeight": 0.9741861189457841,
     "factors": {
       "plan": 1827013.16,
       "recencyFactor": 0.9393,
@@ -49,23 +49,23 @@
       "weatherSummary": "concord-nh: 58F Partly Sunny | worcester-ma: 53F Cloudy | burlington-vt: 58F Partly Sunny | portland-me: 53F Mostly Sunny | albany-ny: 55F Chance Light Rain | scranton-pa: 50F Rain Showers"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.9551766666666667,
+      "basePaceFromCurve": 0.9686699999999999,
       "observedPaceCount": 1,
-      "blendedPaceAtNow": 0.9551766666666667,
+      "blendedPaceAtNow": 0.9686699999999999,
       "historyDays": 1,
       "avgHistoricalEOD": 1782361.5800000003
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 40863.41297666667,
+      "estimatedCurrent": 41440.67127,
       "estimatedEOD": 42781,
-      "paceUsed": 0.9551766666666667,
+      "paceUsed": 0.9686699999999999,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 24716,
-          "estimatedCurrent": 23608.146493333334,
+          "estimatedCurrent": 23941.647719999997,
           "estimatedEOD": 24716,
           "stdev": 0.3879
         },
@@ -73,16 +73,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 18065,
-          "estimatedCurrent": 17255.266483333333,
+          "estimatedCurrent": 17499.023549999998,
           "estimatedEOD": 18065,
           "stdev": 0.1722
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1600276.0313275126,
-    "combinedCurrentSales": 1523198.3229766665,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $40,863 so far, +$42,781 to EOD."
+    "combinedProjectedEOD": 1619784.3786344714,
+    "combinedCurrentSales": 1564602.5412700002,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $41,441 so far, +$42,781 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 12,
