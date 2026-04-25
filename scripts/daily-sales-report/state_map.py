@@ -74,27 +74,23 @@ STATE_NAME_TO_CODE = {s["name"]: s["code"] for s in STATES}
 STATE_NAME_TO_CODE["Virginia"] = "VA"
 
 
-# ColorBrewer RdYlGn diverging palette (reversed so red=low, green=high).
+# Aubuchon brand-aligned diverging palette: brand red (-35%) → light red →
+# warm-neutral pale orange (0%) → light green → brand green (+25%). Tints
+# match the variance card palette used elsewhere in the dashboard.
 _COLOR_STOPS = (
-    (-35.0, (0xa5, 0x00, 0x26)),   # deep red
-    (-25.0, (0xd7, 0x30, 0x27)),   # red
-    (-15.0, (0xf4, 0x6d, 0x43)),   # red-orange
-    ( -7.0, (0xfd, 0xae, 0x61)),   # orange
-    (  0.0, (0xff, 0xff, 0xbf)),   # pale yellow (neutral)
-    (  7.0, (0xd9, 0xef, 0x8b)),   # yellow-green
-    ( 15.0, (0xa6, 0xd9, 0x6a)),   # light green
-    ( 25.0, (0x1a, 0x98, 0x50)),   # deep green
+    (-35.0, (0xEC, 0x1C, 0x24)),   # brand red — deepest miss
+    (-15.0, (0xF8, 0xB5, 0xB8)),   # light brand red
+    (  0.0, (0xFA, 0xEE, 0xDA)),   # pale brand orange — warm neutral at plan
+    ( 15.0, (0xB3, 0xD5, 0xC2)),   # light brand green
+    ( 25.0, (0x01, 0x68, 0x3F)),   # brand green — best beat
 )
 
 LEGEND_STOPS = [
-    (0.00,    "#a50026"),   # -35%
-    (0.1667,  "#d73027"),   # -25%
-    (0.3333,  "#f46d43"),   # -15%
-    (0.4667,  "#fdae61"),   #  -7%
-    (0.5833,  "#ffffbf"),   #   0%
-    (0.7000,  "#d9ef8b"),   #  +7%
-    (0.8333,  "#a6d96a"),   # +15%
-    (1.00,    "#1a9850"),   # +25%
+    (0.00,    "#EC1C24"),   # -35%
+    (0.3333,  "#F8B5B8"),   # -15%
+    (0.5833,  "#FAEEDA"),   #   0%
+    (0.8333,  "#B3D5C2"),   # +15%
+    (1.00,    "#01683F"),   # +25%
 ]
 LEGEND_MIN = -35.0
 LEGEND_MAX = 25.0
@@ -127,7 +123,7 @@ def text_fill_for_pct(pct_vs_plan):
     greens at the ends of the scale.
     """
     if pct_vs_plan is None:
-        return "#1f2937"
+        return "#1E1E1E"
     if pct_vs_plan <= -22 or pct_vs_plan >= 20:
         return "#ffffff"
-    return "#1f2937"
+    return "#1E1E1E"
