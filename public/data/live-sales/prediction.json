@@ -1,96 +1,96 @@
 {
-  "updatedAt": "2026-04-25T00:51:40.653Z",
-  "updatedAtET": "Apr 24, 2026, 8:51 PM",
-  "dateET": "2026-04-24",
-  "dow": 5,
+  "updatedAt": "2026-04-25T06:07:57.738Z",
+  "updatedAtET": "Apr 25, 2026, 2:07 AM",
+  "dateET": "2026-04-25",
+  "dow": 6,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-04-25T00:51:40.653Z",
-    "tsET": "Apr 24, 2026, 8:51 PM",
-    "dateET": "2026-04-24",
-    "hourET": 20,
-    "minuteET": 51,
-    "dow": 5,
-    "sales": 1245465.1099999994,
-    "plan": 1289097.000000001,
-    "pctToPlan": 96.61531366530203,
-    "gp": 521846.6545999992,
-    "gpPct": 41.89974094095654,
-    "txns": 35586,
-    "customers": 33032,
+    "ts": "2026-04-25T06:07:57.738Z",
+    "tsET": "Apr 25, 2026, 2:07 AM",
+    "dateET": "2026-04-25",
+    "hourET": 2,
+    "minuteET": 7,
+    "dow": 6,
+    "sales": 1245499.6299999992,
+    "plan": 1827013.1600000008,
+    "pctToPlan": 68.17135515323812,
+    "gp": 521858.21049999946,
+    "gpPct": 41.89950746914311,
+    "txns": 35603,
+    "customers": 33034,
     "storeCount": 134,
-    "asOf": "2026-04-25T00:30:06.680000",
-    "asOfET": "Apr 24, 2026, 8:30 PM"
+    "asOf": "2026-04-25T01:30:07.300000",
+    "asOfET": "Apr 24, 2026, 9:30 PM"
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.98 shape + 0.02 level)",
-    "confidence": "medium",
-    "projectedEOD": 1247493.8661589695,
-    "projectedPctToPlan": 96.77269174926082,
-    "projectedVariance": -41603.133841031464,
+    "method": "blended (w=0.04 shape + 0.96 level)",
+    "confidence": "low",
+    "projectedEOD": 27667162.975655682,
+    "projectedPctToPlan": 1514.338461341771,
+    "projectedVariance": 25840149.815655682,
     "band": {
-      "low": 1044754.7233192092,
-      "high": 1450233.00899873
+      "low": 19491081.178680588,
+      "high": 35843244.77263078
     },
-    "pctOfDayElapsed": 1,
-    "level_EOD": 1342831.332618901,
-    "shape_EOD": 1245465.1099999994,
-    "blendWeight": 0.9791636554813196,
+    "pctOfDayElapsed": 0.0019957142857142856,
+    "level_EOD": 1749749.2850272858,
+    "shape_EOD": 624087144.5955615,
+    "blendWeight": 0.04164527776399506,
     "factors": {
-      "plan": 1289097.000000001,
+      "plan": 1827013.1600000008,
       "recencyFactor": 0.9393,
-      "dowPlanRatio": 1.109,
+      "dowPlanRatio": 1.0196,
       "holidayKey": null,
       "holidayMult": 1,
       "weatherKey": "normal",
       "weatherMult": 1,
-      "weatherSummary": "concord-nh: 29F Partly Cloudy | worcester-ma: 33F Mostly Clear | burlington-vt: 31F Mostly Clear | portland-me: 32F Partly Cloudy | albany-ny: 37F Mostly Clear | scranton-pa: 44F Chance Rain Showers"
+      "weatherSummary": "concord-nh: 29F Partly Cloudy | worcester-ma: 35F Partly Cloudy | burlington-vt: 31F Mostly Clear | portland-me: 32F Mostly Clear | albany-ny: 37F Mostly Clear | scranton-pa: 46F Mostly Cloudy"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 1,
+      "basePaceFromCurve": 0.0019957142857142856,
       "observedPaceCount": 1,
-      "blendedPaceAtNow": 1,
+      "blendedPaceAtNow": 0.0019957142857142856,
       "historyDays": 1,
-      "avgHistoricalEOD": 1211604.37
+      "avgHistoricalEOD": 1782361.5800000003
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 40476,
-      "estimatedEOD": 40476,
-      "paceUsed": 1,
+      "estimatedCurrent": 85.37865285714285,
+      "estimatedEOD": 42781,
+      "paceUsed": 0.0019957142857142856,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
-          "dowEOD": 24862,
-          "estimatedCurrent": 24862,
-          "estimatedEOD": 24862,
-          "stdev": 0.3127
+          "dowEOD": 24716,
+          "estimatedCurrent": 49.326074285714284,
+          "estimatedEOD": 24716,
+          "stdev": 0.3879
         },
         {
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
-          "dowEOD": 15614,
-          "estimatedCurrent": 15614,
-          "estimatedEOD": 15614,
-          "stdev": 0.1906
+          "dowEOD": 18065,
+          "estimatedCurrent": 36.05257857142857,
+          "estimatedEOD": 18065,
+          "stdev": 0.1722
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1287969.8661589695,
-    "combinedCurrentSales": 1285941.1099999994,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $40,476 so far, +$40,476 to EOD."
+    "combinedProjectedEOD": 27709943.975655682,
+    "combinedCurrentSales": 1245585.0086528563,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $85 so far, +$42,781 to EOD."
   },
   "offlineStoresVersion": 2,
-  "baselineVersion": 11,
+  "baselineVersion": 12,
   "weatherRaw": {
     "mult": 1,
     "key": "normal",
     "season": "spring",
-    "summary": "concord-nh: 29F Partly Cloudy | worcester-ma: 33F Mostly Clear | burlington-vt: 31F Mostly Clear | portland-me: 32F Partly Cloudy | albany-ny: 37F Mostly Clear | scranton-pa: 44F Chance Rain Showers",
+    "summary": "concord-nh: 29F Partly Cloudy | worcester-ma: 35F Partly Cloudy | burlington-vt: 31F Mostly Clear | portland-me: 32F Mostly Clear | albany-ny: 37F Mostly Clear | scranton-pa: 46F Mostly Cloudy",
     "tagWeights": {
       "normal": 0.912,
       "coldRain_lt_50F": 0.088
@@ -102,15 +102,15 @@
         "temp": 29,
         "unit": "F",
         "short": "Partly Cloudy",
-        "detailed": "Partly cloudy, with a low around 29. North wind 0 to 10 mph."
+        "detailed": "Partly cloudy, with a low around 29. North wind 0 to 5 mph."
       },
       {
         "station": "worcester-ma",
         "weight": 0.272,
-        "temp": 33,
+        "temp": 35,
         "unit": "F",
-        "short": "Mostly Clear",
-        "detailed": "Mostly clear, with a low around 33. Northeast wind 2 to 8 mph."
+        "short": "Partly Cloudy",
+        "detailed": "Partly cloudy, with a low around 35. Northeast wind around 3 mph."
       },
       {
         "station": "burlington-vt",
@@ -125,8 +125,8 @@
         "weight": 0.152,
         "temp": 32,
         "unit": "F",
-        "short": "Partly Cloudy",
-        "detailed": "Partly cloudy, with a low around 32. Northeast wind 5 to 10 mph."
+        "short": "Mostly Clear",
+        "detailed": "Mostly clear, with a low around 32. North wind 5 to 10 mph."
       },
       {
         "station": "albany-ny",
@@ -139,10 +139,10 @@
       {
         "station": "scranton-pa",
         "weight": 0.088,
-        "temp": 44,
+        "temp": 46,
         "unit": "F",
-        "short": "Chance Rain Showers",
-        "detailed": "A chance of rain showers after 8pm. Mostly cloudy, with a low around 44. Northeast wind 2 to 6 mph. Chance of precipitation is 30%. New rainfall amounts between a tenth and quarter of an inch possible."
+        "short": "Mostly Cloudy",
+        "detailed": "Mostly cloudy, with a low around 46. East wind around 6 mph. New rainfall amounts less than a tenth of an inch possible."
       }
     ]
   }
