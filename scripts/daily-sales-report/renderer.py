@@ -50,35 +50,41 @@ def _pct(part, whole):
 
 # ---------- CSS (lifted verbatim from mockup) ----------
 CSS = r"""
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 * { margin: 0; padding: 0; box-sizing: border-box; }
 :root {
-  --red: #d63b31; --red-light: #fde8e7;
-  --green: #16a34a; --green-light: #dcfce7;
-  --amber: #d97706; --amber-light: #fef3c7;
-  --blue: #2563eb; --blue-light: #dbeafe;
-  --gray-50: #f9fafb; --gray-100: #f3f4f6; --gray-200: #e5e7eb;
-  --gray-300: #d1d5db; --gray-500: #6b7280; --gray-700: #374151; --gray-900: #111827;
+  /* Aubuchon brand palette */
+  --aub-green: #01683F;       --aub-green-light: #E6F0EA;
+  --aub-orange: #F58220;      --aub-orange-light: #FAEEDA;
+  --aub-red: #EC1C24;         --aub-red-light: #FDEAEB;
+  --aub-near-black: #1E1E1E;  --aub-mid-gray: #5A5A5A;
+  --aub-gray: #999999;        --aub-light-gray: #D3D1C7;
+  --aub-off-white: #F2F2F2;
+  /* Semantic aliases */
+  --red: var(--aub-red); --red-light: var(--aub-red-light);
+  --green: var(--aub-green); --green-light: var(--aub-green-light);
+  --amber: #854F0B; --amber-light: var(--aub-orange-light);
+  --gray-50: #F7F7F7; --gray-100: #EBEBEB; --gray-200: var(--aub-light-gray);
+  --gray-300: #B4B2A9; --gray-500: var(--aub-mid-gray); --gray-700: #444441; --gray-900: var(--aub-near-black);
 }
-body { font-family: 'Inter', -apple-system, sans-serif; background: #f0f2f5; color: var(--gray-900); min-width: 800px; padding: 28px; }
+body { font-family: 'Calibri', 'Helvetica Neue', Arial, sans-serif; background: var(--aub-off-white); color: var(--aub-mid-gray); min-width: 800px; padding: 28px; }
 .header { background: white; border-radius: 16px; padding: 24px 28px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04); }
 .header-left { display: flex; align-items: center; gap: 16px; }
-.logo { background: var(--red); color: white; width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 900; box-shadow: 0 4px 12px rgba(214,59,49,0.3); }
-.title h1 { font-size: 20px; font-weight: 800; color: var(--gray-900); }
+.logo { background: var(--aub-green); color: white; width: 50px; height: 50px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; font-weight: 900; box-shadow: 0 4px 12px rgba(1,104,63,0.25); font-family: 'Trebuchet MS', 'Arial Black', sans-serif; }
+.title h1 { font-size: 20px; font-weight: 800; color: var(--aub-near-black); font-family: 'Trebuchet MS', 'Arial Black', sans-serif; }
 .title p { font-size: 12px; color: var(--gray-500); margin-top: 2px; }
 .header-right { text-align: right; }
-.date-big { font-size: 24px; font-weight: 800; color: var(--gray-900); }
+.date-big { font-size: 24px; font-weight: 800; color: var(--aub-near-black); font-family: 'Trebuchet MS', sans-serif; }
 .date-sub { font-size: 12px; color: var(--gray-500); margin-top: 3px; }
 .status-pill { display: inline-flex; align-items: center; gap: 5px; background: var(--green-light); color: var(--green); font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 100px; margin-top: 6px; }
 .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
 .scorecard { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
 .sc-card { background: white; border-radius: 14px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); border-top: 4px solid transparent; position: relative; }
-.sc-card.day { border-top-color: #2563eb; }
-.sc-card.week { border-top-color: #7c3aed; }
-.sc-card.month { border-top-color: #d97706; }
-.sc-card.year { border-top-color: #16a34a; }
+.sc-card.day { border-top-color: var(--aub-orange); }
+.sc-card.week { border-top-color: var(--aub-mid-gray); }
+.sc-card.month { border-top-color: var(--aub-near-black); }
+.sc-card.year { border-top-color: var(--aub-green); }
 .sc-period { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--gray-500); margin-bottom: 10px; }
-.sc-sales { font-size: 32px; font-weight: 900; color: var(--gray-900); letter-spacing: -1.5px; line-height: 1; }
+.sc-sales { font-size: 32px; font-weight: 900; color: var(--aub-near-black); letter-spacing: -1.5px; line-height: 1; font-family: 'Trebuchet MS', sans-serif; }
 .sc-plan { font-size: 12px; color: var(--gray-500); margin-top: 6px; }
 .sc-plan strong { color: var(--gray-700); }
 .sc-badges { display: flex; gap: 6px; margin-top: 14px; flex-wrap: wrap; }
@@ -88,20 +94,20 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: #f0f2f5; col
 .sc-badge small { font-size: 10px; font-weight: 500; opacity: 0.75; margin-left: 2px; }
 .sc-progress { margin-top: 12px; height: 4px; background: var(--gray-100); border-radius: 4px; overflow: visible; position: relative; }
 .sc-progress-fill { height: 100%; border-radius: 4px; }
-.day .sc-progress-fill { background: #2563eb; }
-.week .sc-progress-fill { background: #7c3aed; }
-.month .sc-progress-fill { background: #d97706; }
-.year .sc-progress-fill { background: #16a34a; }
+.day .sc-progress-fill { background: var(--aub-orange); }
+.week .sc-progress-fill { background: var(--aub-mid-gray); }
+.month .sc-progress-fill { background: var(--aub-near-black); }
+.year .sc-progress-fill { background: var(--aub-green); }
 .cohort-panel { background: white; border-radius: 14px; padding: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.06); overflow: hidden; margin-bottom: 20px; }
 .panel-header { padding: 16px 20px; border-bottom: 1px solid var(--gray-100); display: flex; align-items: center; justify-content: space-between; }
-.panel-title { font-size: 13px; font-weight: 700; color: var(--gray-700); text-transform: uppercase; letter-spacing: 0.5px; }
+.panel-title { font-size: 13px; font-weight: 700; color: var(--aub-near-black); text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Trebuchet MS', sans-serif; }
 .panel-hint { font-size: 11px; color: var(--gray-500); }
 .cohort-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
 .cohort-col { padding: 20px; border-right: 1px solid var(--gray-100); }
 .cohort-col:last-child { border-right: none; }
 .cohort-header { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; }
 .cohort-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
-.total-icon { background: #dbeafe; } .same-icon { background: #dcfce7; } .acq-icon { background: #fef3c7; }
+.total-icon { background: var(--aub-off-white); } .same-icon { background: var(--aub-green-light); } .acq-icon { background: var(--aub-orange-light); }
 .cohort-col-title { font-size: 13px; font-weight: 700; color: var(--gray-900); }
 .cohort-col-sub { font-size: 11px; color: var(--gray-500); }
 .period-rows { display: flex; flex-direction: column; gap: 10px; }
@@ -119,7 +125,7 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: #f0f2f5; col
 .metric-trend-pill { font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 100px; }
 .metric-trend-pill.pos { background: var(--green-light); color: var(--green); }
 .metric-trend-pill.neg { background: var(--red-light); color: var(--red); }
-.metric-val { font-size: 28px; font-weight: 900; color: var(--gray-900); letter-spacing: -1px; }
+.metric-val { font-size: 28px; font-weight: 900; color: var(--aub-near-black); letter-spacing: -1px; font-family: 'Trebuchet MS', sans-serif; }
 .metric-lbl { font-size: 11px; color: var(--gray-500); margin-top: 3px; }
 .metric-vs { display: flex; gap: 12px; margin-top: 10px; border-top: 1px solid var(--gray-100); padding-top: 8px; }
 .mv-item { font-size: 11px; }
@@ -140,14 +146,14 @@ body { font-family: 'Inter', -apple-system, sans-serif; background: #f0f2f5; col
 .rank-num { font-size: 11px; font-weight: 700; color: var(--gray-300); width: 24px; display: inline-block; }
 .store-name-link { font-weight: 700; color: var(--gray-900); font-size: 13px; }
 .store-cohort-tag { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 4px; margin-left: 6px; }
-.tag-same { background: #dcfce7; color: #16a34a; }
-.tag-acq { background: #fef3c7; color: #d97706; }
+.tag-same { background: var(--aub-green-light); color: var(--aub-green); }
+.tag-acq { background: var(--aub-orange-light); color: #854F0B; }
 .sales-num { font-weight: 700; color: var(--gray-900); }
 .var-pill { font-size: 12px; font-weight: 700; padding: 3px 9px; border-radius: 6px; display: inline-block; }
 .var-pill.pos { background: var(--green-light); color: var(--green); }
 .var-pill.neg { background: var(--red-light); color: var(--red); }
 .footer { text-align: center; font-size: 11px; color: var(--gray-500); padding: 16px; background: white; border-radius: 14px; }
-.footer a { color: var(--red); text-decoration: none; font-weight: 600; }
+.footer a { color: var(--aub-green); text-decoration: none; font-weight: 600; }
 """
 
 
@@ -166,8 +172,8 @@ def _render_header(d: date) -> str:
 <div style="margin-bottom:16px">
   <a href="https://aubuchon-it-command-center.vercel.app/?section=yoda"
      onclick="if(document.referrer.indexOf('aubuchon-it-command-center')!==-1){{history.back();return false;}}"
-     style="display:inline-flex;align-items:center;gap:8px;padding:8px 16px;background:white;border:1px solid #e2e8f0;border-radius:8px;color:#334155;font-family:Inter,system-ui,sans-serif;font-size:14px;font-weight:500;text-decoration:none;box-shadow:0 1px 2px rgba(0,0,0,0.05);cursor:pointer;transition:background 0.15s;"
-     onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='white'">
+     style="display:inline-flex;align-items:center;gap:8px;padding:8px 16px;background:white;border:1px solid #D3D1C7;border-radius:8px;color:#1E1E1E;font-family:Calibri,'Helvetica Neue',Arial,sans-serif;font-size:14px;font-weight:500;text-decoration:none;box-shadow:0 1px 2px rgba(0,0,0,0.05);cursor:pointer;transition:background 0.15s;"
+     onmouseover="this.style.background='#F2F2F2'" onmouseout="this.style.background='white'">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
     Back to Reports
   </a>
@@ -185,6 +191,10 @@ def _render_header(d: date) -> str:
     <div class="date-sub">{weekday} · Week {wk} · Q{q} · Day {doy} of 365</div>
     <div class="status-pill"><div class="status-dot"></div> Live Data · YODA</div>
   </div>
+</div>
+<div style="display:flex;flex-direction:column;margin-bottom:16px">
+  <div style="height:3px;background:#F58220"></div>
+  <div style="height:3px;background:#01683F"></div>
 </div>
 """
 
@@ -296,7 +306,7 @@ def _render_metrics(m, plan_txn):
 <div class="metrics-strip">
   <div class="metric-card">
     <div class="metric-icon-row">
-      <div class="metric-icon" style="background:#dbeafe">🛒</div>
+      <div class="metric-icon" style="background:#E6F0EA">🛒</div>
       <div class="metric-trend-pill {_badge_class(txn_vs_ly)}">{_arrow(txn_vs_ly)} {_fmt_pct(abs(txn_vs_ly) if txn_vs_ly is not None else None, 1, plus=False)} LY</div>
     </div>
     <div class="metric-val">{int(txn_ty):,}</div>
@@ -308,7 +318,7 @@ def _render_metrics(m, plan_txn):
   </div>
   <div class="metric-card">
     <div class="metric-icon-row">
-      <div class="metric-icon" style="background:#f3e8ff">💰</div>
+      <div class="metric-icon" style="background:#F2F2F2">💰</div>
       <div class="metric-trend-pill {_badge_class(avg_vs_ly)}">{_arrow(avg_vs_ly)} {_fmt_pct(abs(avg_vs_ly) if avg_vs_ly is not None else None, 1, plus=False)} LY</div>
     </div>
     <div class="metric-val">${avg_ty:.2f}</div>
@@ -319,7 +329,7 @@ def _render_metrics(m, plan_txn):
   </div>
   <div class="metric-card">
     <div class="metric-icon-row">
-      <div class="metric-icon" style="background:#fef9c3">📦</div>
+      <div class="metric-icon" style="background:#FAEEDA">📦</div>
       <div class="metric-trend-pill {_badge_class(upt_vs_ly)}">{_arrow(upt_vs_ly)} {_fmt_pct(abs(upt_vs_ly) if upt_vs_ly is not None else None, 1, plus=False)} LY</div>
     </div>
     <div class="metric-val">{upt_ty:.2f}</div>
@@ -330,7 +340,7 @@ def _render_metrics(m, plan_txn):
   </div>
   <div class="metric-card">
     <div class="metric-icon-row">
-      <div class="metric-icon" style="background:#dcfce7">🎯</div>
+      <div class="metric-icon" style="background:#E6F0EA">🎯</div>
       <div class="metric-trend-pill pos">Live</div>
     </div>
     <div class="metric-val">{int(txn_ty):,}</div>
@@ -354,27 +364,27 @@ def _render_state_map(state_data):
     by_code = {r["code"]: r for r in rows}
 
     svg_paths = []
-    svg_paths.append('<rect width="520" height="310" fill="#f8fafc" rx="6"/>')
+    svg_paths.append('<rect width="520" height="310" fill="#F2F2F2" rx="6"/>')
     for s in STATES:
         d = by_code.get(s["code"])
         vsP = d["vsP"] if d else 0
-        fill = color_for_pct(vsP) if d else "#e5e7eb"
+        fill = color_for_pct(vsP) if d else "#D3D1C7"
         sales = d["sales"] if d else 0
         stores = d["stores"] if d else 0
         title = f'{s["name"]}: {_fmt_pct(vsP,1)} vs Plan | {_fmt_money(sales,True)} sales | {stores} stores'
-        svg_paths.append(f'<path d="{s["d"]}" fill="{fill}" stroke="#334155" stroke-width="0.75"><title>{escape(title)}</title></path>')
+        svg_paths.append(f'<path d="{s["d"]}" fill="{fill}" stroke="#5A5A5A" stroke-width="0.75"><title>{escape(title)}</title></path>')
         if s.get("no_label"):
             continue
-        txt_color = text_fill_for_pct(vsP) if d else "#1f2937"
+        txt_color = text_fill_for_pct(vsP) if d else "#1E1E1E"
         if s.get("external_label"):
             # Leader line + external label — coordinates come from the state dict
             # so we can place labels for tiny states (RI, northern VA sliver) cleanly.
             conn = s.get("connector")
             if conn:
                 (csx, csy), (cex, cey) = conn
-                svg_paths.append(f'<line x1="{csx}" y1="{csy}" x2="{cex}" y2="{cey}" stroke="#334155" stroke-width="0.75"/>')
+                svg_paths.append(f'<line x1="{csx}" y1="{csy}" x2="{cex}" y2="{cey}" stroke="#5A5A5A" stroke-width="0.75"/>')
             lx, ly = s["label_xy"]
-            svg_paths.append(f'<text x="{lx}" y="{ly}" text-anchor="middle" font-size="8" font-weight="700" fill="#1f2937" font-family="Arial,sans-serif">{s["code"]} {_fmt_pct(vsP,1)}</text>')
+            svg_paths.append(f'<text x="{lx}" y="{ly}" text-anchor="middle" font-size="8" font-weight="700" fill="#1E1E1E" font-family="Arial,sans-serif">{s["code"]} {_fmt_pct(vsP,1)}</text>')
             continue
         if s.get("combined_label"):
             x, y = s["label_xy"]
@@ -388,16 +398,16 @@ def _render_state_map(state_data):
     leg_x, leg_y, leg_w, leg_h = 12, 282, 160, 10
     grad_stops = "".join(f'<stop offset="{off*100:.2f}%" stop-color="{c}"/>' for off, c in LEGEND_STOPS)
     svg_paths.append(f'<defs><linearGradient id="legGrad" x1="0" x2="1" y1="0" y2="0">{grad_stops}</linearGradient></defs>')
-    svg_paths.append(f'<rect x="{leg_x}" y="{leg_y}" width="{leg_w}" height="{leg_h}" rx="2" fill="url(#legGrad)" stroke="#334155" stroke-width="0.5"/>')
+    svg_paths.append(f'<rect x="{leg_x}" y="{leg_y}" width="{leg_w}" height="{leg_h}" rx="2" fill="url(#legGrad)" stroke="#5A5A5A" stroke-width="0.5"/>')
     # Tick marks + labels at every anchor stop so reader can calibrate the gradient
     tick_vals = [-35, -25, -15, -7, 0, 7, 15, 25]
     zero_range = LEGEND_MAX - LEGEND_MIN
     for v in tick_vals:
         x_pos = leg_x + (v - LEGEND_MIN) / zero_range * leg_w
-        svg_paths.append(f'<line x1="{x_pos:.1f}" y1="{leg_y + leg_h}" x2="{x_pos:.1f}" y2="{leg_y + leg_h + 3}" stroke="#334155" stroke-width="0.5"/>')
+        svg_paths.append(f'<line x1="{x_pos:.1f}" y1="{leg_y + leg_h}" x2="{x_pos:.1f}" y2="{leg_y + leg_h + 3}" stroke="#5A5A5A" stroke-width="0.5"/>')
         lbl = f'{"+" if v > 0 else ""}{v}%'
-        svg_paths.append(f'<text x="{x_pos:.1f}" y="{leg_y + leg_h + 10}" text-anchor="middle" font-size="7" fill="#6b7280" font-family="Arial,sans-serif">{lbl}</text>')
-    svg_paths.append(f'<text x="{leg_x + leg_w/2:.1f}" y="{leg_y - 4}" text-anchor="middle" font-size="8" font-weight="600" fill="#374151" font-family="Arial,sans-serif">% vs Plan</text>')
+        svg_paths.append(f'<text x="{x_pos:.1f}" y="{leg_y + leg_h + 10}" text-anchor="middle" font-size="7" fill="#5A5A5A" font-family="Arial,sans-serif">{lbl}</text>')
+    svg_paths.append(f'<text x="{leg_x + leg_w/2:.1f}" y="{leg_y - 4}" text-anchor="middle" font-size="8" font-weight="600" fill="#1E1E1E" font-family="Arial,sans-serif">% vs Plan</text>')
 
     svg_inner = "\n".join(svg_paths)
     svg = (
@@ -413,7 +423,7 @@ def _render_state_map(state_data):
         'z-index:9999;align-items:center;justify-content:center;cursor:zoom-out;padding:24px">'
         '<svg viewBox="0 0 520 310" xmlns="http://www.w3.org/2000/svg" '
         'style="width:min(1400px,95vw);max-height:95vh;height:auto;display:block;'
-        'background:#f8fafc;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,0.5)">'
+        'background:#F7F7F7;border-radius:10px;box-shadow:0 20px 60px rgba(0,0,0,0.5)">'
         + svg_inner + '</svg></div>'
     )
 
@@ -422,8 +432,8 @@ def _render_state_map(state_data):
     name_map["VA"] = "Virginia"
     table_rows = []
     for r in rows:
-        color = "#16a34a" if r["vsP"] > 0 else ("#6b7280" if r["vsP"] == 0 else "#dc2626")
-        table_rows.append(f'''<tr style="border-bottom:1px solid #f3f4f6"><td style="padding:5px 8px 5px 0;font-weight:600">{name_map.get(r["code"], r["code"])}</td><td style="text-align:right;padding:5px 4px">{_fmt_money(r["sales"])}</td><td style="text-align:right;padding:5px 4px;font-weight:700;color:{color}">{_fmt_pct(r["vsP"],1)}</td><td style="text-align:right;padding:5px 0 5px 4px;color:#6b7280">{r["stores"]}</td></tr>''')
+        color = "#01683F" if r["vsP"] > 0 else ("#5A5A5A" if r["vsP"] == 0 else "#EC1C24")
+        table_rows.append(f'''<tr style="border-bottom:1px solid #EBEBEB"><td style="padding:5px 8px 5px 0;font-weight:600">{name_map.get(r["code"], r["code"])}</td><td style="text-align:right;padding:5px 4px">{_fmt_money(r["sales"])}</td><td style="text-align:right;padding:5px 4px;font-weight:700;color:{color}">{_fmt_pct(r["vsP"],1)}</td><td style="text-align:right;padding:5px 0 5px 4px;color:#5A5A5A">{r["stores"]}</td></tr>''')
 
     return f"""
     <div class="stores-panel" style="margin-bottom:20px">
@@ -434,13 +444,13 @@ def _render_state_map(state_data):
         <div style="display:flex;gap:24px;align-items:flex-start;padding:16px 20px 12px;flex-wrap:wrap">
             <div style="position:relative;flex:0 0 auto">{svg}{svg_modal}</div>
             <div style="flex:1;min-width:190px;padding-top:4px">
-                <div style="font-size:11px;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">State Summary</div>
+                <div style="font-size:11px;font-weight:700;color:#5A5A5A;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px;font-family:'Trebuchet MS',sans-serif">State Summary</div>
                 <table style="width:100%;border-collapse:collapse;font-size:12px;">
-                    <thead><tr style="border-bottom:2px solid #e5e7eb">
-                        <th style="text-align:left;padding:4px 8px 4px 0;color:#6b7280;font-weight:600;font-size:11px">State</th>
-                        <th style="text-align:right;padding:4px 4px;color:#6b7280;font-weight:600;font-size:11px">Sales</th>
-                        <th style="text-align:right;padding:4px 4px;color:#6b7280;font-weight:600;font-size:11px">vs Plan</th>
-                        <th style="text-align:right;padding:4px 0 4px 4px;color:#6b7280;font-weight:600;font-size:11px">Stores</th>
+                    <thead><tr style="border-bottom:2px solid #D3D1C7">
+                        <th style="text-align:left;padding:4px 8px 4px 0;color:#5A5A5A;font-weight:600;font-size:11px">State</th>
+                        <th style="text-align:right;padding:4px 4px;color:#5A5A5A;font-weight:600;font-size:11px">Sales</th>
+                        <th style="text-align:right;padding:4px 4px;color:#5A5A5A;font-weight:600;font-size:11px">vs Plan</th>
+                        <th style="text-align:right;padding:4px 0 4px 4px;color:#5A5A5A;font-weight:600;font-size:11px">Stores</th>
                     </tr></thead>
                     <tbody>{''.join(table_rows)}</tbody>
                 </table>
@@ -455,7 +465,7 @@ def _store_row(rank_sym, r, bg=""):
     vsLY_html = (
         f'<span class="var-pill {_badge_class(r["vsLY"])}">{_fmt_pct(r["vsLY"], 1)}</span>'
         if r["vsLY"] is not None
-        else '<span class="var-pill" style="background:#f3f4f6;color:#6b7280">N/A</span>'
+        else '<span class="var-pill" style="background:#EBEBEB;color:#5A5A5A">N/A</span>'
     )
     style = f' style="background:{bg}"' if bg else ""
     return f"""
@@ -464,7 +474,7 @@ def _store_row(rank_sym, r, bg=""):
     <span class="rank-num">{rank_sym}</span>
     <span class="store-name-link">{escape(r["name"])}</span>
     <span class="store-cohort-tag {cohort_tag}">{cohort_label}</span>
-    <div style="font-size:11px; color:#6b7280; margin-left:24px; margin-top:2px">{r["state"]}</div>
+    <div style="font-size:11px; color:#5A5A5A; margin-left:24px; margin-top:2px">{r["state"]}</div>
   </td>
   <td><span class="sales-num">{_fmt_money(r["sales"])}</span></td>
   <td><span class="var-pill {_badge_class(r["vsP"])}">{_fmt_pct(r["vsP"], 1)}</span></td>
@@ -483,7 +493,7 @@ def _render_stores(ranked):
     top_rows = []
     for i, r in enumerate(top):
         sym = "🏆" if i == 0 else f"#{i+1}"
-        top_rows.append(_store_row(sym, r, bg="#f0fdf4"))
+        top_rows.append(_store_row(sym, r, bg="#E6F0EA"))
     bot_rows = [_store_row("↓", r) for r in bottom]
 
     return f"""
@@ -499,7 +509,7 @@ def _render_stores(ranked):
     </tr></thead>
     <tbody>
       {''.join(top_rows)}
-      <tr style="background:#f9fafb"><td colspan="6" style="text-align:center; padding:6px; font-size:10px; color:#9ca3af; letter-spacing:1px; text-transform:uppercase">— · · · — Bottom Performers — · · · —</td></tr>
+      <tr style="background:#F7F7F7"><td colspan="6" style="text-align:center; padding:6px; font-size:10px; color:#999999; letter-spacing:1px; text-transform:uppercase">— · · · — Bottom Performers — · · · —</td></tr>
       {''.join(bot_rows)}
     </tbody>
   </table>
