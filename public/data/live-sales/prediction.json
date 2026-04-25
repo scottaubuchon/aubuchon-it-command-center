@@ -1,42 +1,42 @@
 {
-  "updatedAt": "2026-04-25T00:20:17.425Z",
-  "updatedAtET": "Apr 24, 2026, 8:20 PM",
+  "updatedAt": "2026-04-25T00:35:57.880Z",
+  "updatedAtET": "Apr 24, 2026, 8:35 PM",
   "dateET": "2026-04-24",
   "dow": 5,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-04-25T00:20:17.425Z",
-    "tsET": "Apr 24, 2026, 8:20 PM",
+    "ts": "2026-04-25T00:35:57.880Z",
+    "tsET": "Apr 24, 2026, 8:35 PM",
     "dateET": "2026-04-24",
     "hourET": 20,
-    "minuteET": 20,
+    "minuteET": 35,
     "dow": 5,
-    "sales": 1245456.3499999999,
+    "sales": 1245465.1099999994,
     "plan": 1289097.000000001,
-    "pctToPlan": 96.61463411985281,
-    "gp": 521856.7427999999,
-    "gpPct": 41.90084564585503,
-    "txns": 35573,
-    "customers": 33026,
+    "pctToPlan": 96.61531366530203,
+    "gp": 521846.6545999992,
+    "gpPct": 41.89974094095654,
+    "txns": 35586,
+    "customers": 33032,
     "storeCount": 134,
-    "asOf": "2026-04-25T00:00:08.720000",
-    "asOfET": "Apr 24, 2026, 8:00 PM"
+    "asOf": "2026-04-25T00:30:06.680000",
+    "asOfET": "Apr 24, 2026, 8:30 PM"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.98 shape + 0.02 level)",
     "confidence": "medium",
-    "projectedEOD": 1247485.288685348,
-    "projectedPctToPlan": 96.77202636305468,
-    "projectedVariance": -41611.71131465305,
+    "projectedEOD": 1247493.8661589695,
+    "projectedPctToPlan": 96.77269174926082,
+    "projectedVariance": -41603.133841031464,
     "band": {
-      "low": 1044747.5398321209,
-      "high": 1450223.037538575
+      "low": 1044754.7233192092,
+      "high": 1450233.00899873
     },
     "pctOfDayElapsed": 1,
     "level_EOD": 1342831.332618901,
-    "shape_EOD": 1245456.3499999999,
+    "shape_EOD": 1245465.1099999994,
     "blendWeight": 0.9791636554813196,
     "factors": {
       "plan": 1289097.000000001,
@@ -80,8 +80,8 @@
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1287961.288685348,
-    "combinedCurrentSales": 1285932.3499999999,
+    "combinedProjectedEOD": 1287969.8661589695,
+    "combinedCurrentSales": 1285941.1099999994,
     "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $40,476 so far, +$40,476 to EOD."
   },
   "offlineStoresVersion": 2,
@@ -110,7 +110,7 @@
         "temp": 33,
         "unit": "F",
         "short": "Mostly Clear",
-        "detailed": "Mostly clear, with a low around 33. East wind 2 to 8 mph."
+        "detailed": "Mostly clear, with a low around 33. Northeast wind 2 to 8 mph."
       },
       {
         "station": "burlington-vt",
@@ -134,7 +134,7 @@
         "temp": 37,
         "unit": "F",
         "short": "Mostly Clear",
-        "detailed": "Mostly clear, with a low around 37. North wind 2 to 7 mph."
+        "detailed": "Mostly clear, with a low around 37. North wind 2 to 8 mph."
       },
       {
         "station": "scranton-pa",
