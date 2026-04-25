@@ -1,43 +1,43 @@
 {
-  "updatedAt": "2026-04-25T23:20:31.732Z",
-  "updatedAtET": "Apr 25, 2026, 7:20 PM",
+  "updatedAt": "2026-04-25T23:36:10.287Z",
+  "updatedAtET": "Apr 25, 2026, 7:36 PM",
   "dateET": "2026-04-25",
   "dow": 6,
   "season": "spring",
   "source": "snowflake",
   "current": {
-    "ts": "2026-04-25T23:20:31.732Z",
-    "tsET": "Apr 25, 2026, 7:20 PM",
+    "ts": "2026-04-25T23:36:10.287Z",
+    "tsET": "Apr 25, 2026, 7:36 PM",
     "dateET": "2026-04-25",
     "hourET": 19,
-    "minuteET": 20,
+    "minuteET": 36,
     "dow": 6,
-    "sales": 1650764.74,
+    "sales": 1651206.78,
     "plan": 1827013.16,
-    "pctToPlan": 90.35319373397398,
-    "gp": 700187.7794,
-    "gpPct": 42.41596409431425,
-    "txns": 43449,
-    "customers": 40898,
+    "pctToPlan": 90.3773884146516,
+    "gp": 700364.5686,
+    "gpPct": 42.41531570019353,
+    "txns": 43461,
+    "customers": 40906,
     "storeCount": 133,
     "asOf": null,
-    "asOfET": "Apr 25, 7:15 PM ET"
+    "asOfET": "Apr 25, 7:30 PM ET"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.98 shape + 0.02 level)",
     "confidence": "medium",
-    "projectedEOD": 1653370.8765606587,
-    "projectedPctToPlan": 90.49583838578693,
-    "projectedVariance": -173642.28343934123,
+    "projectedEOD": 1653651.537869167,
+    "projectedPctToPlan": 90.51120014204864,
+    "projectedVariance": -173361.62213083287,
     "band": {
-      "low": 1398666.7848599625,
-      "high": 1908074.9682613548
+      "low": 1398907.5424776676,
+      "high": 1908395.5332606665
     },
-    "pctOfDayElapsed": 0.9996666666666667,
+    "pctOfDayElapsed": 0.99976,
     "level_EOD": 1749749.2850272849,
-    "shape_EOD": 1651315.1783927975,
-    "blendWeight": 0.979115997105612,
+    "shape_EOD": 1651603.1647595423,
+    "blendWeight": 0.9791293521940886,
     "factors": {
       "plan": 1827013.16,
       "recencyFactor": 0.9393,
@@ -46,26 +46,26 @@
       "holidayMult": 1,
       "weatherKey": "normal",
       "weatherMult": 1,
-      "weatherSummary": "concord-nh: 33F Mostly Cloudy | worcester-ma: 37F Chance Rain Showers | burlington-vt: 38F Mostly Cloudy | portland-me: 38F Mostly Cloudy | albany-ny: 40F Chance Rain | scranton-pa: 39F Rain Showers"
+      "weatherSummary": "concord-nh: 35F Mostly Cloudy | worcester-ma: 37F Chance Rain Showers | burlington-vt: 38F Mostly Cloudy | portland-me: 38F Mostly Cloudy | albany-ny: 40F Chance Rain | scranton-pa: 39F Rain Showers"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.9996666666666667,
+      "basePaceFromCurve": 0.99976,
       "observedPaceCount": 1,
-      "blendedPaceAtNow": 0.9996666666666667,
+      "blendedPaceAtNow": 0.99976,
       "historyDays": 1,
       "avgHistoricalEOD": 1782361.5800000003
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 42766.73966666667,
+      "estimatedCurrent": 42770.73256,
       "estimatedEOD": 42781,
-      "paceUsed": 0.9996666666666667,
+      "paceUsed": 0.99976,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 24716,
-          "estimatedCurrent": 24707.761333333336,
+          "estimatedCurrent": 24710.06816,
           "estimatedEOD": 24716,
           "stdev": 0.3879
         },
@@ -73,16 +73,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 18065,
-          "estimatedCurrent": 18058.978333333333,
+          "estimatedCurrent": 18060.6644,
           "estimatedEOD": 18065,
           "stdev": 0.1722
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1696151.8765606587,
-    "combinedCurrentSales": 1693531.4796666666,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $42,767 so far, +$42,781 to EOD."
+    "combinedProjectedEOD": 1696432.537869167,
+    "combinedCurrentSales": 1693977.51256,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $42,771 so far, +$42,781 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 12,
@@ -90,7 +90,7 @@
     "mult": 1,
     "key": "normal",
     "season": "spring",
-    "summary": "concord-nh: 33F Mostly Cloudy | worcester-ma: 37F Chance Rain Showers | burlington-vt: 38F Mostly Cloudy | portland-me: 38F Mostly Cloudy | albany-ny: 40F Chance Rain | scranton-pa: 39F Rain Showers",
+    "summary": "concord-nh: 35F Mostly Cloudy | worcester-ma: 37F Chance Rain Showers | burlington-vt: 38F Mostly Cloudy | portland-me: 38F Mostly Cloudy | albany-ny: 40F Chance Rain | scranton-pa: 39F Rain Showers",
     "tagWeights": {
       "normal": 0.52,
       "coldRain_lt_50F": 0.48
@@ -99,10 +99,10 @@
       {
         "station": "concord-nh",
         "weight": 0.144,
-        "temp": 33,
+        "temp": 35,
         "unit": "F",
         "short": "Mostly Cloudy",
-        "detailed": "Mostly cloudy, with a low around 33. East wind around 0 mph."
+        "detailed": "Mostly cloudy, with a low around 35. Northeast wind 0 to 5 mph."
       },
       {
         "station": "worcester-ma",
@@ -126,7 +126,7 @@
         "temp": 38,
         "unit": "F",
         "short": "Mostly Cloudy",
-        "detailed": "Mostly cloudy, with a low around 38. West wind 0 to 10 mph."
+        "detailed": "Mostly cloudy, with a low around 38. Southwest wind 0 to 10 mph."
       },
       {
         "station": "albany-ny",
@@ -142,7 +142,7 @@
         "temp": 39,
         "unit": "F",
         "short": "Rain Showers",
-        "detailed": "Rain showers before 3am. Cloudy, with a low around 39. East wind 5 to 8 mph. Chance of precipitation is 100%. New rainfall amounts between a half and three quarters of an inch possible."
+        "detailed": "Rain showers before 3am. Cloudy, with a low around 39. East wind around 7 mph. Chance of precipitation is 100%. New rainfall amounts between a half and three quarters of an inch possible."
       }
     ]
   }
