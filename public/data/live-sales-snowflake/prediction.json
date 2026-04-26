@@ -1,27 +1,27 @@
 {
-  "updatedAt": "2026-04-26T22:46:50.302Z",
-  "updatedAtET": "Apr 26, 2026, 6:46 PM",
+  "updatedAt": "2026-04-26T23:02:26.430Z",
+  "updatedAtET": "Apr 26, 2026, 7:02 PM",
   "dateET": "2026-04-26",
   "dow": 0,
   "season": "spring",
   "source": "snowflake",
   "current": {
-    "ts": "2026-04-26T22:46:50.302Z",
-    "tsET": "Apr 26, 2026, 6:46 PM",
+    "ts": "2026-04-26T23:02:26.430Z",
+    "tsET": "Apr 26, 2026, 7:02 PM",
     "dateET": "2026-04-26",
-    "hourET": 18,
-    "minuteET": 46,
+    "hourET": 19,
+    "minuteET": 2,
     "dow": 0,
     "sales": 1426121.22,
     "plan": 1493876.58,
     "pctToPlan": 95.4644606584568,
     "gp": 611618.8961,
     "gpPct": 42.88687998766332,
-    "txns": 38701,
+    "txns": 38702,
     "customers": 36437,
     "storeCount": 134,
     "asOf": null,
-    "asOfET": "Apr 26, 6:30 PM ET"
+    "asOfET": "Apr 26, 6:45 PM ET"
   },
   "prediction": {
     "available": true,
@@ -46,7 +46,7 @@
       "holidayMult": 1,
       "weatherKey": "normal",
       "weatherMult": 1,
-      "weatherSummary": "concord-nh: 63F Partly Sunny | worcester-ma: 62F Mostly Sunny | burlington-vt: 63F Mostly Sunny | portland-me: 41F Partly Cloudy | albany-ny: 39F Mostly Clear | scranton-pa: 41F Mostly Clear"
+      "weatherSummary": "concord-nh: 37F Mostly Clear | worcester-ma: 40F Mostly Clear | burlington-vt: 44F Mostly Clear | portland-me: 41F Partly Cloudy | albany-ny: 39F Mostly Clear | scranton-pa: 41F Mostly Clear"
     },
     "shapeDetail": {
       "basePaceFromCurve": 0.9996,
@@ -90,7 +90,7 @@
     "mult": 1,
     "key": "normal",
     "season": "spring",
-    "summary": "concord-nh: 63F Partly Sunny | worcester-ma: 62F Mostly Sunny | burlington-vt: 63F Mostly Sunny | portland-me: 41F Partly Cloudy | albany-ny: 39F Mostly Clear | scranton-pa: 41F Mostly Clear",
+    "summary": "concord-nh: 37F Mostly Clear | worcester-ma: 40F Mostly Clear | burlington-vt: 44F Mostly Clear | portland-me: 41F Partly Cloudy | albany-ny: 39F Mostly Clear | scranton-pa: 41F Mostly Clear",
     "tagWeights": {
       "normal": 1
     },
@@ -98,26 +98,26 @@
       {
         "station": "concord-nh",
         "weight": 0.144,
-        "temp": 63,
+        "temp": 37,
         "unit": "F",
-        "short": "Partly Sunny",
-        "detailed": "Partly sunny, with a high near 63. East wind around 0 mph."
+        "short": "Mostly Clear",
+        "detailed": "Mostly clear, with a low around 37. Northeast wind around 0 mph."
       },
       {
         "station": "worcester-ma",
         "weight": 0.272,
-        "temp": 62,
+        "temp": 40,
         "unit": "F",
-        "short": "Mostly Sunny",
-        "detailed": "Mostly sunny, with a high near 62. East wind around 8 mph."
+        "short": "Mostly Clear",
+        "detailed": "Mostly clear, with a low around 40. Northeast wind 1 to 6 mph."
       },
       {
         "station": "burlington-vt",
         "weight": 0.224,
-        "temp": 63,
+        "temp": 44,
         "unit": "F",
-        "short": "Mostly Sunny",
-        "detailed": "Mostly sunny, with a high near 63. North wind around 9 mph."
+        "short": "Mostly Clear",
+        "detailed": "Mostly clear, with a low around 44. North wind 1 to 7 mph."
       },
       {
         "station": "portland-me",
