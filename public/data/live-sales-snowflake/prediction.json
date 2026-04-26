@@ -1,16 +1,16 @@
 {
-  "updatedAt": "2026-04-26T23:34:08.675Z",
-  "updatedAtET": "Apr 26, 2026, 7:34 PM",
+  "updatedAt": "2026-04-26T23:49:41.470Z",
+  "updatedAtET": "Apr 26, 2026, 7:49 PM",
   "dateET": "2026-04-26",
   "dow": 0,
   "season": "spring",
   "source": "snowflake",
   "current": {
-    "ts": "2026-04-26T23:34:08.675Z",
-    "tsET": "Apr 26, 2026, 7:34 PM",
+    "ts": "2026-04-26T23:49:41.470Z",
+    "tsET": "Apr 26, 2026, 7:49 PM",
     "dateET": "2026-04-26",
     "hourET": 19,
-    "minuteET": 34,
+    "minuteET": 49,
     "dow": 0,
     "sales": 1426121.22,
     "plan": 1493876.58,
@@ -101,7 +101,7 @@
         "temp": 37,
         "unit": "F",
         "short": "Mostly Clear",
-        "detailed": "Mostly clear, with a low around 37. Northeast wind around 0 mph."
+        "detailed": "Mostly clear, with a low around 37. North wind 0 to 5 mph."
       },
       {
         "station": "worcester-ma",
@@ -125,7 +125,7 @@
         "temp": 41,
         "unit": "F",
         "short": "Partly Cloudy",
-        "detailed": "Partly cloudy, with a low around 41. Northeast wind 0 to 5 mph."
+        "detailed": "Partly cloudy, with a low around 41. East wind 0 to 5 mph."
       },
       {
         "station": "albany-ny",
