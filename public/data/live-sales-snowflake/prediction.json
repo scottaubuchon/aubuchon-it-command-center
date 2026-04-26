@@ -1,16 +1,16 @@
 {
-  "updatedAt": "2026-04-26T23:02:26.430Z",
-  "updatedAtET": "Apr 26, 2026, 7:02 PM",
+  "updatedAt": "2026-04-26T23:17:59.090Z",
+  "updatedAtET": "Apr 26, 2026, 7:17 PM",
   "dateET": "2026-04-26",
   "dow": 0,
   "season": "spring",
   "source": "snowflake",
   "current": {
-    "ts": "2026-04-26T23:02:26.430Z",
-    "tsET": "Apr 26, 2026, 7:02 PM",
+    "ts": "2026-04-26T23:17:59.090Z",
+    "tsET": "Apr 26, 2026, 7:17 PM",
     "dateET": "2026-04-26",
     "hourET": 19,
-    "minuteET": 2,
+    "minuteET": 17,
     "dow": 0,
     "sales": 1426121.22,
     "plan": 1493876.58,
@@ -133,7 +133,7 @@
         "temp": 39,
         "unit": "F",
         "short": "Mostly Clear",
-        "detailed": "Mostly clear, with a low around 39. Northeast wind around 2 mph."
+        "detailed": "Mostly clear, with a low around 39. East wind around 2 mph."
       },
       {
         "station": "scranton-pa",
