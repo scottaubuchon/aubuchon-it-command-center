@@ -1,16 +1,16 @@
 {
-  "updatedAt": "2026-04-26T00:24:50.834Z",
-  "updatedAtET": "Apr 25, 2026, 8:24 PM",
+  "updatedAt": "2026-04-26T00:25:39.453Z",
+  "updatedAtET": "Apr 25, 2026, 8:25 PM",
   "dateET": "2026-04-25",
   "dow": 6,
   "season": "spring",
   "source": "snowflake",
   "current": {
-    "ts": "2026-04-26T00:24:50.834Z",
-    "tsET": "Apr 25, 2026, 8:24 PM",
+    "ts": "2026-04-26T00:25:39.453Z",
+    "tsET": "Apr 25, 2026, 8:25 PM",
     "dateET": "2026-04-25",
     "hourET": 20,
-    "minuteET": 24,
+    "minuteET": 25,
     "dow": 6,
     "sales": 1651786.29,
     "plan": 1827013.16,
@@ -110,7 +110,7 @@
         "temp": 37,
         "unit": "F",
         "short": "Chance Rain Showers",
-        "detailed": "A chance of rain showers between 7pm and 3am. Cloudy, with a low around 37. Southwest wind 2 to 6 mph. Chance of precipitation is 30%."
+        "detailed": "A chance of rain showers before 3am. Cloudy, with a low around 37. Southwest wind 2 to 6 mph. Chance of precipitation is 30%."
       },
       {
         "station": "burlington-vt",
@@ -134,7 +134,7 @@
         "temp": 40,
         "unit": "F",
         "short": "Chance Rain",
-        "detailed": "A chance of rain before 3am. Mostly cloudy, with a low around 40. Southeast wind 1 to 6 mph. Chance of precipitation is 50%. New rainfall amounts between a tenth and quarter of an inch possible."
+        "detailed": "A chance of rain before 3am. Mostly cloudy, with a low around 40. South wind 1 to 8 mph. Chance of precipitation is 50%. New rainfall amounts between a tenth and quarter of an inch possible."
       },
       {
         "station": "scranton-pa",
@@ -142,7 +142,7 @@
         "temp": 39,
         "unit": "F",
         "short": "Rain Showers",
-        "detailed": "Rain showers before 3am. Cloudy, with a low around 39. East wind around 7 mph. Chance of precipitation is 100%. New rainfall amounts between a half and three quarters of an inch possible."
+        "detailed": "Rain showers before 3am. Cloudy, with a low around 39. East wind around 6 mph. Chance of precipitation is 100%. New rainfall amounts between a quarter and half of an inch possible."
       }
     ]
   }
