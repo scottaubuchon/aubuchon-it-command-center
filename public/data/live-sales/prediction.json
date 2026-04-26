@@ -1,42 +1,42 @@
 {
-  "updatedAt": "2026-04-26T00:09:05.347Z",
-  "updatedAtET": "Apr 25, 2026, 8:09 PM",
+  "updatedAt": "2026-04-26T00:24:46.460Z",
+  "updatedAtET": "Apr 25, 2026, 8:24 PM",
   "dateET": "2026-04-25",
   "dow": 6,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-04-26T00:09:05.347Z",
-    "tsET": "Apr 25, 2026, 8:09 PM",
+    "ts": "2026-04-26T00:24:46.460Z",
+    "tsET": "Apr 25, 2026, 8:24 PM",
     "dateET": "2026-04-25",
     "hourET": 20,
-    "minuteET": 9,
+    "minuteET": 24,
     "dow": 6,
-    "sales": 1651575.1999999993,
+    "sales": 1651786.2899999993,
     "plan": 1827013.1600000004,
-    "pctToPlan": 90.39755356770385,
-    "gp": 700522.7820999988,
-    "gpPct": 42.415433587280745,
-    "txns": 43489,
-    "customers": 40925,
+    "pctToPlan": 90.4091073980003,
+    "gp": 700646.7819999993,
+    "gpPct": 42.41752012604485,
+    "txns": 43501,
+    "customers": 40930,
     "storeCount": 133,
-    "asOf": "2026-04-26T00:00:06.367000",
-    "asOfET": "Apr 25, 2026, 8:00 PM"
+    "asOf": "2026-04-26T00:15:05.547000",
+    "asOfET": "Apr 25, 2026, 8:15 PM"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.98 shape + 0.02 level)",
     "confidence": "medium",
-    "projectedEOD": 1653620.789058434,
-    "projectedPctToPlan": 90.5095171322375,
-    "projectedVariance": -173392.3709415663,
+    "projectedEOD": 1653827.4807144697,
+    "projectedPctToPlan": 90.52083022294536,
+    "projectedVariance": -173185.6792855307,
     "band": {
-      "low": 1398890.0902486877,
-      "high": 1908351.4878681805
+      "low": 1399064.9422530155,
+      "high": 1908590.019175924
     },
     "pctOfDayElapsed": 1,
     "level_EOD": 1749749.2850272853,
-    "shape_EOD": 1651575.1999999993,
+    "shape_EOD": 1651786.2899999993,
     "blendWeight": 0.9791636554813196,
     "factors": {
       "plan": 1827013.1600000004,
@@ -80,8 +80,8 @@
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1696401.789058434,
-    "combinedCurrentSales": 1694356.1999999993,
+    "combinedProjectedEOD": 1696608.4807144697,
+    "combinedCurrentSales": 1694567.2899999993,
     "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $42,781 so far, +$42,781 to EOD."
   },
   "offlineStoresVersion": 2,
@@ -134,7 +134,7 @@
         "temp": 40,
         "unit": "F",
         "short": "Chance Rain",
-        "detailed": "A chance of rain before 3am. Mostly cloudy, with a low around 40. South wind 1 to 8 mph. Chance of precipitation is 50%. New rainfall amounts between a tenth and quarter of an inch possible."
+        "detailed": "A chance of rain before 3am. Mostly cloudy, with a low around 40. Southeast wind 1 to 6 mph. Chance of precipitation is 50%. New rainfall amounts between a tenth and quarter of an inch possible."
       },
       {
         "station": "scranton-pa",
