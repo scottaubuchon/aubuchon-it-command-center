@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-04-26T18:49:00.316Z",
+  "updatedAt": "2026-04-26T18:49:37.184Z",
   "updatedAtET": "Apr 26, 2026, 2:49 PM",
   "dateET": "2026-04-26",
   "dow": 0,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-04-26T18:49:00.316Z",
+    "ts": "2026-04-26T18:49:37.184Z",
     "tsET": "Apr 26, 2026, 2:49 PM",
     "dateET": "2026-04-26",
     "hourET": 14,
@@ -46,7 +46,7 @@
       "holidayMult": 1,
       "weatherKey": "normal",
       "weatherMult": 1,
-      "weatherSummary": "concord-nh: 62F Partly Sunny | worcester-ma: 62F Mostly Sunny | burlington-vt: 62F Mostly Sunny | portland-me: 54F Mostly Cloudy | albany-ny: 65F Sunny | scranton-pa: 64F Mostly Sunny"
+      "weatherSummary": "concord-nh: 63F Partly Sunny | worcester-ma: 62F Mostly Sunny | burlington-vt: 62F Mostly Sunny | portland-me: 54F Mostly Cloudy | albany-ny: 65F Sunny | scranton-pa: 64F Mostly Sunny"
     },
     "shapeDetail": {
       "basePaceFromCurve": 0.8259366666666667,
@@ -90,7 +90,7 @@
     "mult": 1,
     "key": "normal",
     "season": "spring",
-    "summary": "concord-nh: 62F Partly Sunny | worcester-ma: 62F Mostly Sunny | burlington-vt: 62F Mostly Sunny | portland-me: 54F Mostly Cloudy | albany-ny: 65F Sunny | scranton-pa: 64F Mostly Sunny",
+    "summary": "concord-nh: 63F Partly Sunny | worcester-ma: 62F Mostly Sunny | burlington-vt: 62F Mostly Sunny | portland-me: 54F Mostly Cloudy | albany-ny: 65F Sunny | scranton-pa: 64F Mostly Sunny",
     "tagWeights": {
       "normal": 0.88,
       "perfect_65_80F_dry": 0.12
@@ -99,10 +99,10 @@
       {
         "station": "concord-nh",
         "weight": 0.144,
-        "temp": 62,
+        "temp": 63,
         "unit": "F",
         "short": "Partly Sunny",
-        "detailed": "Partly sunny, with a high near 62. Northeast wind 0 to 5 mph."
+        "detailed": "Partly sunny, with a high near 63. East wind around 0 mph."
       },
       {
         "station": "worcester-ma",
