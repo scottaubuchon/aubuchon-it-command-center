@@ -1,16 +1,16 @@
 {
-  "updatedAt": "2026-04-26T00:25:35.993Z",
-  "updatedAtET": "Apr 25, 2026, 8:25 PM",
+  "updatedAt": "2026-04-26T00:41:14.084Z",
+  "updatedAtET": "Apr 25, 2026, 8:41 PM",
   "dateET": "2026-04-25",
   "dow": 6,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-04-26T00:25:35.993Z",
-    "tsET": "Apr 25, 2026, 8:25 PM",
+    "ts": "2026-04-26T00:41:14.084Z",
+    "tsET": "Apr 25, 2026, 8:41 PM",
     "dateET": "2026-04-25",
     "hourET": 20,
-    "minuteET": 25,
+    "minuteET": 41,
     "dow": 6,
     "sales": 1651786.2899999993,
     "plan": 1827013.1600000004,
@@ -20,8 +20,8 @@
     "txns": 43501,
     "customers": 40930,
     "storeCount": 133,
-    "asOf": "2026-04-26T00:15:05.547000",
-    "asOfET": "Apr 25, 2026, 8:15 PM"
+    "asOf": "2026-04-26T00:30:05.837000",
+    "asOfET": "Apr 25, 2026, 8:30 PM"
   },
   "prediction": {
     "available": true,
@@ -110,7 +110,7 @@
         "temp": 37,
         "unit": "F",
         "short": "Chance Rain Showers",
-        "detailed": "A chance of rain showers before 3am. Cloudy, with a low around 37. Southwest wind 2 to 6 mph. Chance of precipitation is 30%."
+        "detailed": "A chance of rain showers between 7pm and 3am. Cloudy, with a low around 37. Southwest wind 2 to 6 mph. Chance of precipitation is 30%."
       },
       {
         "station": "burlington-vt",
@@ -142,7 +142,7 @@
         "temp": 39,
         "unit": "F",
         "short": "Rain Showers",
-        "detailed": "Rain showers before 3am. Cloudy, with a low around 39. East wind around 6 mph. Chance of precipitation is 100%. New rainfall amounts between a quarter and half of an inch possible."
+        "detailed": "Rain showers before 3am. Cloudy, with a low around 39. East wind around 7 mph. Chance of precipitation is 100%. New rainfall amounts between a half and three quarters of an inch possible."
       }
     ]
   }
