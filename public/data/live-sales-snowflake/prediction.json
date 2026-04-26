@@ -1,16 +1,16 @@
 {
-  "updatedAt": "2026-04-26T22:30:30.933Z",
-  "updatedAtET": "Apr 26, 2026, 6:30 PM",
+  "updatedAt": "2026-04-26T22:46:11.000Z",
+  "updatedAtET": "Apr 26, 2026, 6:46 PM",
   "dateET": "2026-04-26",
   "dow": 0,
   "season": "spring",
   "source": "snowflake",
   "current": {
-    "ts": "2026-04-26T22:30:30.933Z",
-    "tsET": "Apr 26, 2026, 6:30 PM",
+    "ts": "2026-04-26T22:46:11.000Z",
+    "tsET": "Apr 26, 2026, 6:46 PM",
     "dateET": "2026-04-26",
     "hourET": 18,
-    "minuteET": 30,
+    "minuteET": 46,
     "dow": 0,
     "sales": 1426121.22,
     "plan": 1493876.58,
@@ -21,7 +21,7 @@
     "customers": 36437,
     "storeCount": 134,
     "asOf": null,
-    "asOfET": "Apr 26, 6:15 PM ET"
+    "asOfET": "Apr 26, 6:30 PM ET"
   },
   "prediction": {
     "available": true,
@@ -46,7 +46,7 @@
       "holidayMult": 1,
       "weatherKey": "normal",
       "weatherMult": 1,
-      "weatherSummary": "concord-nh: 63F Partly Sunny | worcester-ma: 62F Mostly Sunny | burlington-vt: 63F Mostly Sunny | portland-me: 54F Mostly Cloudy | albany-ny: 39F Mostly Clear | scranton-pa: 64F Mostly Sunny"
+      "weatherSummary": "concord-nh: 63F Partly Sunny | worcester-ma: 62F Mostly Sunny | burlington-vt: 63F Mostly Sunny | portland-me: 41F Partly Cloudy | albany-ny: 39F Mostly Clear | scranton-pa: 41F Mostly Clear"
     },
     "shapeDetail": {
       "basePaceFromCurve": 0.9996,
@@ -90,7 +90,7 @@
     "mult": 1,
     "key": "normal",
     "season": "spring",
-    "summary": "concord-nh: 63F Partly Sunny | worcester-ma: 62F Mostly Sunny | burlington-vt: 63F Mostly Sunny | portland-me: 54F Mostly Cloudy | albany-ny: 39F Mostly Clear | scranton-pa: 64F Mostly Sunny",
+    "summary": "concord-nh: 63F Partly Sunny | worcester-ma: 62F Mostly Sunny | burlington-vt: 63F Mostly Sunny | portland-me: 41F Partly Cloudy | albany-ny: 39F Mostly Clear | scranton-pa: 41F Mostly Clear",
     "tagWeights": {
       "normal": 1
     },
@@ -122,10 +122,10 @@
       {
         "station": "portland-me",
         "weight": 0.152,
-        "temp": 54,
+        "temp": 41,
         "unit": "F",
-        "short": "Mostly Cloudy",
-        "detailed": "Mostly cloudy, with a high near 54. Southeast wind around 5 mph."
+        "short": "Partly Cloudy",
+        "detailed": "Partly cloudy, with a low around 41. Northeast wind 0 to 5 mph."
       },
       {
         "station": "albany-ny",
@@ -138,10 +138,10 @@
       {
         "station": "scranton-pa",
         "weight": 0.088,
-        "temp": 64,
+        "temp": 41,
         "unit": "F",
-        "short": "Mostly Sunny",
-        "detailed": "Mostly sunny, with a high near 64. Northeast wind around 3 mph."
+        "short": "Mostly Clear",
+        "detailed": "Mostly clear, with a low around 41. East wind around 2 mph."
       }
     ]
   }
