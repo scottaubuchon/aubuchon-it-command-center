@@ -1,16 +1,16 @@
 {
-  "updatedAt": "2026-04-26T23:34:06.118Z",
-  "updatedAtET": "Apr 26, 2026, 7:34 PM",
+  "updatedAt": "2026-04-26T23:49:38.457Z",
+  "updatedAtET": "Apr 26, 2026, 7:49 PM",
   "dateET": "2026-04-26",
   "dow": 0,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-04-26T23:34:06.118Z",
-    "tsET": "Apr 26, 2026, 7:34 PM",
+    "ts": "2026-04-26T23:49:38.457Z",
+    "tsET": "Apr 26, 2026, 7:49 PM",
     "dateET": "2026-04-26",
     "hourET": 19,
-    "minuteET": 34,
+    "minuteET": 49,
     "dow": 0,
     "sales": 1426121.2200000002,
     "plan": 1493876.5799999996,
@@ -125,7 +125,7 @@
         "temp": 41,
         "unit": "F",
         "short": "Partly Cloudy",
-        "detailed": "Partly cloudy, with a low around 41. Northeast wind 0 to 5 mph."
+        "detailed": "Partly cloudy, with a low around 41. East wind 0 to 5 mph."
       },
       {
         "station": "albany-ny",
