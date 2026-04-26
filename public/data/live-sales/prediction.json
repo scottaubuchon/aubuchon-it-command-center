@@ -1,42 +1,42 @@
 {
-  "updatedAt": "2026-04-26T22:46:47.721Z",
-  "updatedAtET": "Apr 26, 2026, 6:46 PM",
+  "updatedAt": "2026-04-26T23:02:23.096Z",
+  "updatedAtET": "Apr 26, 2026, 7:02 PM",
   "dateET": "2026-04-26",
   "dow": 0,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-04-26T22:46:47.721Z",
-    "tsET": "Apr 26, 2026, 6:46 PM",
+    "ts": "2026-04-26T23:02:23.096Z",
+    "tsET": "Apr 26, 2026, 7:02 PM",
     "dateET": "2026-04-26",
-    "hourET": 18,
-    "minuteET": 46,
+    "hourET": 19,
+    "minuteET": 2,
     "dow": 0,
-    "sales": 1426121.22,
+    "sales": 1426121.2200000002,
     "plan": 1493876.5799999996,
-    "pctToPlan": 95.46446065845683,
-    "gp": 611618.8960999997,
-    "gpPct": 42.88687998766329,
-    "txns": 38701,
+    "pctToPlan": 95.46446065845684,
+    "gp": 611618.8960999998,
+    "gpPct": 42.8868799876633,
+    "txns": 38702,
     "customers": 36437,
     "storeCount": 134,
-    "asOf": "2026-04-26T22:30:05.840000",
-    "asOfET": "Apr 26, 2026, 6:30 PM"
+    "asOf": "2026-04-26T22:45:06.543000",
+    "asOfET": "Apr 26, 2026, 6:45 PM"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.98 shape + 0.02 level)",
     "confidence": "medium",
-    "projectedEOD": 1427743.1473188063,
-    "projectedPctToPlan": 95.57303236648951,
-    "projectedVariance": -66133.43268119334,
+    "projectedEOD": 1427743.1473188065,
+    "projectedPctToPlan": 95.57303236648953,
+    "projectedVariance": -66133.43268119311,
     "band": {
-      "low": 1244453.246195232,
-      "high": 1611033.0484423805
+      "low": 1244453.2461952323,
+      "high": 1611033.0484423807
     },
     "pctOfDayElapsed": 0.9996,
     "level_EOD": 1477006.5006798438,
-    "shape_EOD": 1426691.8967587033,
+    "shape_EOD": 1426691.8967587035,
     "blendWeight": 0.97910645263648,
     "factors": {
       "plan": 1493876.5799999996,
@@ -46,7 +46,7 @@
       "holidayMult": 1,
       "weatherKey": "normal",
       "weatherMult": 1,
-      "weatherSummary": "concord-nh: 63F Partly Sunny | worcester-ma: 62F Mostly Sunny | burlington-vt: 63F Mostly Sunny | portland-me: 41F Partly Cloudy | albany-ny: 39F Mostly Clear | scranton-pa: 41F Mostly Clear"
+      "weatherSummary": "concord-nh: 37F Mostly Clear | worcester-ma: 40F Mostly Clear | burlington-vt: 44F Mostly Clear | portland-me: 41F Partly Cloudy | albany-ny: 39F Mostly Clear | scranton-pa: 41F Mostly Clear"
     },
     "shapeDetail": {
       "basePaceFromCurve": 0.9996,
@@ -80,8 +80,8 @@
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1456223.1473188063,
-    "combinedCurrentSales": 1454589.828,
+    "combinedProjectedEOD": 1456223.1473188065,
+    "combinedCurrentSales": 1454589.8280000002,
     "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $28,469 so far, +$28,480 to EOD."
   },
   "offlineStoresVersion": 2,
@@ -90,7 +90,7 @@
     "mult": 1,
     "key": "normal",
     "season": "spring",
-    "summary": "concord-nh: 63F Partly Sunny | worcester-ma: 62F Mostly Sunny | burlington-vt: 63F Mostly Sunny | portland-me: 41F Partly Cloudy | albany-ny: 39F Mostly Clear | scranton-pa: 41F Mostly Clear",
+    "summary": "concord-nh: 37F Mostly Clear | worcester-ma: 40F Mostly Clear | burlington-vt: 44F Mostly Clear | portland-me: 41F Partly Cloudy | albany-ny: 39F Mostly Clear | scranton-pa: 41F Mostly Clear",
     "tagWeights": {
       "normal": 1
     },
@@ -98,26 +98,26 @@
       {
         "station": "concord-nh",
         "weight": 0.144,
-        "temp": 63,
+        "temp": 37,
         "unit": "F",
-        "short": "Partly Sunny",
-        "detailed": "Partly sunny, with a high near 63. East wind around 0 mph."
+        "short": "Mostly Clear",
+        "detailed": "Mostly clear, with a low around 37. Northeast wind around 0 mph."
       },
       {
         "station": "worcester-ma",
         "weight": 0.272,
-        "temp": 62,
+        "temp": 40,
         "unit": "F",
-        "short": "Mostly Sunny",
-        "detailed": "Mostly sunny, with a high near 62. East wind around 8 mph."
+        "short": "Mostly Clear",
+        "detailed": "Mostly clear, with a low around 40. Northeast wind 1 to 6 mph."
       },
       {
         "station": "burlington-vt",
         "weight": 0.224,
-        "temp": 63,
+        "temp": 44,
         "unit": "F",
-        "short": "Mostly Sunny",
-        "detailed": "Mostly sunny, with a high near 63. North wind around 9 mph."
+        "short": "Mostly Clear",
+        "detailed": "Mostly clear, with a low around 44. North wind 1 to 7 mph."
       },
       {
         "station": "portland-me",
