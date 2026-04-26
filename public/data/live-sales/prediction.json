@@ -1,16 +1,16 @@
 {
-  "updatedAt": "2026-04-26T07:02:20.418Z",
-  "updatedAtET": "Apr 26, 2026, 3:02 AM",
+  "updatedAt": "2026-04-26T07:17:52.584Z",
+  "updatedAtET": "Apr 26, 2026, 3:17 AM",
   "dateET": "2026-04-26",
   "dow": 0,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-04-26T07:02:20.418Z",
-    "tsET": "Apr 26, 2026, 3:02 AM",
+    "ts": "2026-04-26T07:17:52.584Z",
+    "tsET": "Apr 26, 2026, 3:17 AM",
     "dateET": "2026-04-26",
     "hourET": 3,
-    "minuteET": 2,
+    "minuteET": 17,
     "dow": 0,
     "sales": 1651841.2199999995,
     "plan": 1493876.5799999994,
@@ -46,7 +46,7 @@
       "holidayMult": 1,
       "weatherKey": "normal",
       "weatherMult": 1,
-      "weatherSummary": "concord-nh: 35F Mostly Cloudy | worcester-ma: 39F Cloudy | burlington-vt: 38F Mostly Cloudy | portland-me: 38F Mostly Cloudy | albany-ny: 40F Chance Light Rain | scranton-pa: 39F Slight Chance Rain Showers"
+      "weatherSummary": "concord-nh: 35F Mostly Cloudy | worcester-ma: 39F Cloudy | burlington-vt: 38F Mostly Cloudy | portland-me: 37F Mostly Cloudy | albany-ny: 40F Chance Light Rain | scranton-pa: 39F Slight Chance Rain Showers"
     },
     "shapeDetail": {
       "basePaceFromCurve": 0,
@@ -90,7 +90,7 @@
     "mult": 1,
     "key": "normal",
     "season": "spring",
-    "summary": "concord-nh: 35F Mostly Cloudy | worcester-ma: 39F Cloudy | burlington-vt: 38F Mostly Cloudy | portland-me: 38F Mostly Cloudy | albany-ny: 40F Chance Light Rain | scranton-pa: 39F Slight Chance Rain Showers",
+    "summary": "concord-nh: 35F Mostly Cloudy | worcester-ma: 39F Cloudy | burlington-vt: 38F Mostly Cloudy | portland-me: 37F Mostly Cloudy | albany-ny: 40F Chance Light Rain | scranton-pa: 39F Slight Chance Rain Showers",
     "tagWeights": {
       "normal": 0.792,
       "coldRain_lt_50F": 0.208
@@ -123,10 +123,10 @@
       {
         "station": "portland-me",
         "weight": 0.152,
-        "temp": 38,
+        "temp": 37,
         "unit": "F",
         "short": "Mostly Cloudy",
-        "detailed": "Mostly cloudy, with a low around 38. Southwest wind 0 to 10 mph."
+        "detailed": "Mostly cloudy, with a low around 37. Northwest wind around 0 mph."
       },
       {
         "station": "albany-ny",
