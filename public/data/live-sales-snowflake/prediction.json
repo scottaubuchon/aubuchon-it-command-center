@@ -1,43 +1,43 @@
 {
-  "updatedAt": "2026-04-27T16:04:40.279Z",
-  "updatedAtET": "Apr 27, 2026, 12:04 PM",
+  "updatedAt": "2026-04-27T16:20:23.932Z",
+  "updatedAtET": "Apr 27, 2026, 12:20 PM",
   "dateET": "2026-04-27",
   "dow": 1,
   "season": "spring",
   "source": "snowflake",
   "current": {
-    "ts": "2026-04-27T16:04:40.279Z",
-    "tsET": "Apr 27, 2026, 12:04 PM",
+    "ts": "2026-04-27T16:20:23.932Z",
+    "tsET": "Apr 27, 2026, 12:20 PM",
     "dateET": "2026-04-27",
     "hourET": 12,
-    "minuteET": 4,
+    "minuteET": 20,
     "dow": 1,
-    "sales": 467844.38,
+    "sales": 511542.54,
     "plan": 1300987.3,
-    "pctToPlan": 35.96071844821237,
-    "gp": 196400.0156,
-    "gpPct": 41.97977447116069,
-    "txns": 12819,
-    "customers": 11764,
+    "pctToPlan": 39.31956445693205,
+    "gp": 216151.3385,
+    "gpPct": 42.25481198494264,
+    "txns": 14105,
+    "customers": 12996,
     "storeCount": 134,
     "asOf": null,
-    "asOfET": "Apr 27, 12:00 PM ET"
+    "asOfET": "Apr 27, 12:15 PM ET"
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.49 shape + 0.51 level)",
+    "method": "blended (w=0.53 shape + 0.47 level)",
     "confidence": "medium",
-    "projectedEOD": 1147031.0463058827,
-    "projectedPctToPlan": 88.16619857133753,
-    "projectedVariance": -153956.2536941173,
+    "projectedEOD": 1155993.3289924252,
+    "projectedPctToPlan": 88.85508175156093,
+    "projectedVariance": -144993.97100757482,
     "band": {
-      "low": 1001802.9176841773,
-      "high": 1292259.1749275883
+      "low": 1014194.3930718856,
+      "high": 1297792.2649129648
     },
-    "pctOfDayElapsed": 0.4427466666666667,
+    "pctOfDayElapsed": 0.46973333333333334,
     "level_EOD": 1232903.1016298884,
-    "shape_EOD": 1056686.39703668,
-    "blendWeight": 0.4873093928424035,
+    "shape_EOD": 1089006.258870281,
+    "blendWeight": 0.5344785275514894,
     "factors": {
       "plan": 1300987.3,
       "recencyFactor": 0.9393,
@@ -49,23 +49,23 @@
       "weatherSummary": "concord-nh: 71F Sunny | worcester-ma: 68F Sunny | burlington-vt: 70F Sunny | portland-me: 58F Sunny | albany-ny: 72F Sunny | scranton-pa: 72F Patchy Fog then Sunny"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.4427466666666667,
+      "basePaceFromCurve": 0.46973333333333334,
       "observedPaceCount": 1,
-      "blendedPaceAtNow": 0.4427466666666667,
+      "blendedPaceAtNow": 0.46973333333333334,
       "historyDays": 1,
       "avgHistoricalEOD": 1015170.4800000007
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 18952.65656,
+      "estimatedCurrent": 20107.8748,
       "estimatedEOD": 42807,
-      "paceUsed": 0.4427466666666667,
+      "paceUsed": 0.46973333333333334,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 28199,
-          "estimatedCurrent": 12485.013253333334,
+          "estimatedCurrent": 13246.010266666666,
           "estimatedEOD": 28199,
           "stdev": 0.2923
         },
@@ -73,16 +73,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 14608,
-          "estimatedCurrent": 6467.643306666667,
+          "estimatedCurrent": 6861.864533333333,
           "estimatedEOD": 14608,
           "stdev": 0.1658
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1189838.0463058827,
-    "combinedCurrentSales": 486797.03656,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $18,953 so far, +$42,807 to EOD."
+    "combinedProjectedEOD": 1198800.3289924252,
+    "combinedCurrentSales": 531650.4148,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $20,108 so far, +$42,807 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 15,
