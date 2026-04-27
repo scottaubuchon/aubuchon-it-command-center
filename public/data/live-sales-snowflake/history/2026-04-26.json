@@ -3,16 +3,26 @@
   "storeFilter": null,
   "dateFilter": "2026-04-26",
   "companyTotal": {
-    "sales": 1444052.58,
+    "sales": 1497961.46,
     "plan": 1493876.58,
     "gp": 661656.01,
-    "gpPct": 45.81938491464071,
+    "gpPct": 44.170429458178454,
     "txns": 36143,
     "customers": 0,
-    "storeCount": 134,
-    "pctToPlan": 96.66478471735597
+    "storeCount": 136,
+    "pctToPlan": 100.27344159850206
   },
   "topStores": [
+    {
+      "store": "233",
+      "name": "ITHACA, NY - DOWNTOWN - (ACE)",
+      "city": "Ithaca",
+      "state": "NY",
+      "sales": 34075.46,
+      "plan": 37990.73,
+      "gp": 0,
+      "txns": 0
+    },
     {
       "store": "192",
       "name": "BEVERLY, MA - ACE",
@@ -92,6 +102,16 @@
       "plan": 17614.02,
       "gp": 9268.1,
       "txns": 427
+    },
+    {
+      "store": "234",
+      "name": "ITHACA, NY - TRIPHAMMER - (ACE)",
+      "city": "Ithaca",
+      "state": "NY",
+      "sales": 19833.42,
+      "plan": 12224.94,
+      "gp": 0,
+      "txns": 0
     },
     {
       "store": "209",
@@ -192,26 +212,6 @@
       "plan": 15223.73,
       "gp": 6481.35,
       "txns": 317
-    },
-    {
-      "store": "172",
-      "name": "FALMOUTH, MA - (IND)",
-      "city": "Teaticket",
-      "state": "MA",
-      "sales": 16515.86,
-      "plan": 19445.56,
-      "gp": 6939.55,
-      "txns": 408
-    },
-    {
-      "store": "215",
-      "name": "COLCHESTER, VT - ACE",
-      "city": "Colchester",
-      "state": "VT",
-      "sales": 16425.95,
-      "plan": 13810.23,
-      "gp": 6642.62,
-      "txns": 371
     }
   ],
   "topProducts": [
@@ -1540,53 +1540,11 @@
       "state": "RI"
     }
   ],
-  "notReporting": [
-    {
-      "store": "233",
-      "name": "ITHACA, NY - DOWNTOWN - (ACE)",
-      "city": "Ithaca",
-      "state": "NY",
-      "plan": 37990.73
-    },
-    {
-      "store": "234",
-      "name": "ITHACA, NY - TRIPHAMMER - (ACE)",
-      "city": "Ithaca",
-      "state": "NY",
-      "plan": 12224.94
-    }
-  ],
-  "estimatedMissing": {
-    "paceAtNow": 1,
-    "sampleWeeks": 8,
-    "stores": [
-      {
-        "store": "233",
-        "dowAvg": 15489.03125,
-        "samples": 8,
-        "basis": "dowAvg",
-        "plan": 37990.73,
-        "estimatedCurrent": 15489.03125,
-        "estimatedEOD": 15489.03125
-      },
-      {
-        "store": "234",
-        "dowAvg": 11525.9225,
-        "samples": 8,
-        "basis": "dowAvg",
-        "plan": 12224.94,
-        "estimatedCurrent": 11525.9225,
-        "estimatedEOD": 11525.9225
-      }
-    ],
-    "totalEstimatedCurrent": 27014.95375,
-    "totalEstimatedEOD": 27014.95375,
-    "projectedCompanyEOD": 1471067.5337500002,
-    "projectedCompanyCurrent": 1471067.5337500002
-  },
+  "notReporting": [],
+  "estimatedMissing": null,
   "asOfET": "End of day · 2026-04-26",
   "cached": true,
-  "refreshedAt": "2026-04-27T14:05:45.896Z",
+  "refreshedAt": "2026-04-27T15:22:07.128Z",
   "source": "snowflake",
-  "cachedAt": "2026-04-27T14:05:45.896Z"
+  "cachedAt": "2026-04-27T15:22:07.128Z"
 }
