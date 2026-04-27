@@ -557,15 +557,18 @@ export default async function handler(req, res) {
   if (cacheable) {
     const cached = await readHistoryCache(dateFilter);
     if (cached) {
-      // Cache "provisional" window: snapshots 1-2 days old with still-missing
-      // stores are re-checked in case those stores have since posted late
-      // data. After day+2 (or when no stores are missing) the cache is
-      // treated as final and served as-is. This matches the spirit of the
-      // logger's once-a-day cadence while giving late-reporters a chance to
-      // roll in without a manual cache bust.
+      // Cache "provisional" window: snapshots up to 14 days old that still
+      // have missing stores are re-checked in case those stores have since
+      // posted late data. The Ithaca stores (233, 234) in particular are not
+      // on the live feed and their actuals typically land the next day, but
+      // can be delayed by several days — so a tight 1-2 day window misses
+      // late-arriving Ithaca actuals. After day+14 (or when no stores are
+      // missing) the cache is treated as final and served as-is. This gives
+      // late-reporters a comfortable window to roll in without a manual cache
+      // bust, while still capping Snowflake hits for very old dates.
       const daysOld = daysBetweenIsoDates(etToday, dateFilter);
       const missingCount = Array.isArray(cached.notReporting) ? cached.notReporting.length : 0;
-      const provisional = daysOld >= 1 && daysOld <= 2 && missingCount > 0;
+      const provisional = daysOld >= 1 && daysOld <= 14 && missingCount > 0;
 
       if (!provisional) {
         res.status(200).json({
