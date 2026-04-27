@@ -267,6 +267,7 @@ details.collapse .body { padding: 0 18px 18px; border-top: 1px solid var(--borde
   text-align: right; padding: 8px 10px;
   background: var(--paper-50);
   border-bottom: 1px solid var(--border-1);
+  white-space: nowrap;
 }
 .state-table th:first-child { text-align: left; }
 .state-table td {
@@ -275,8 +276,11 @@ details.collapse .body { padding: 0 18px 18px; border-top: 1px solid var(--borde
   font-variant-numeric: tabular-nums;
   color: var(--fg-1);
 }
+.state-table td.tabular { white-space: nowrap; }
 .state-table td:first-child { text-align: left; font-weight: 500; }
 .state-table tr:last-child td { border-bottom: none; }
+/* Belt-and-suspenders: keep arrow + percent on one line in any tabular cell */
+.tabular .delta-inline { white-space: nowrap; display: inline-block; }
 
 /* ---------- Ranked list (stores + products) ---------- */
 .ranked-table { width: 100%; border-collapse: collapse; }
@@ -689,7 +693,7 @@ details.expand-more .extra-rows { margin-top: 0; }
             <th>vs Plan</th>
             <th>Stores</th>
           </tr></thead>
-          <tbody><tr><td>New York</td><td class="tabular">$167,811</td><td class="tabular tone-pos">▲&thinsp;+8.8%</td><td class="tabular">15</td></tr><tr><td>Connecticut</td><td class="tabular">$44,027</td><td class="tabular tone-pos">▲&thinsp;+8.2%</td><td class="tabular">5</td></tr><tr><td>Maine</td><td class="tabular">$221,733</td><td class="tabular tone-pos">▲&thinsp;+4.2%</td><td class="tabular">19</td></tr><tr><td>Vermont</td><td class="tabular">$330,361</td><td class="tabular tone-pos">▲&thinsp;+3.4%</td><td class="tabular">28</td></tr><tr><td>Maryland</td><td class="tabular">$25,318</td><td class="tabular tone-pos">▲&thinsp;+2.4%</td><td class="tabular">2</td></tr><tr><td>Rhode Island</td><td class="tabular">$17,865</td><td class="tabular tone-neg">▼&thinsp;−2.3%</td><td class="tabular">2</td></tr><tr><td>Massachusetts</td><td class="tabular">$380,901</td><td class="tabular tone-neg">▼&thinsp;−4.1%</td><td class="tabular">34</td></tr><tr><td>Pennsylvania</td><td class="tabular">$108,398</td><td class="tabular tone-neg">▼&thinsp;−4.3%</td><td class="tabular">11</td></tr><tr><td>New Hampshire</td><td class="tabular">$167,568</td><td class="tabular tone-neg">▼&thinsp;−12.3%</td><td class="tabular">18</td></tr><tr><td>Virginia</td><td class="tabular">$7,618</td><td class="tabular tone-neg">▼&thinsp;−24.4%</td><td class="tabular">1</td></tr><tr><td>New Jersey</td><td class="tabular">$7,153</td><td class="tabular tone-neg">▼&thinsp;−41.3%</td><td class="tabular">1</td></tr></tbody>
+          <tbody><tr><td>New York</td><td class="tabular">$167,811</td><td class="tabular tone-pos"><span class="delta-inline">▲&nbsp;+8.8%</span></td><td class="tabular">15</td></tr><tr><td>Connecticut</td><td class="tabular">$44,027</td><td class="tabular tone-pos"><span class="delta-inline">▲&nbsp;+8.2%</span></td><td class="tabular">5</td></tr><tr><td>Maine</td><td class="tabular">$221,733</td><td class="tabular tone-pos"><span class="delta-inline">▲&nbsp;+4.2%</span></td><td class="tabular">19</td></tr><tr><td>Vermont</td><td class="tabular">$330,361</td><td class="tabular tone-pos"><span class="delta-inline">▲&nbsp;+3.4%</span></td><td class="tabular">28</td></tr><tr><td>Maryland</td><td class="tabular">$25,318</td><td class="tabular tone-pos"><span class="delta-inline">▲&nbsp;+2.4%</span></td><td class="tabular">2</td></tr><tr><td>Rhode Island</td><td class="tabular">$17,865</td><td class="tabular tone-neg"><span class="delta-inline">▼&nbsp;−2.3%</span></td><td class="tabular">2</td></tr><tr><td>Massachusetts</td><td class="tabular">$380,901</td><td class="tabular tone-neg"><span class="delta-inline">▼&nbsp;−4.1%</span></td><td class="tabular">34</td></tr><tr><td>Pennsylvania</td><td class="tabular">$108,398</td><td class="tabular tone-neg"><span class="delta-inline">▼&nbsp;−4.3%</span></td><td class="tabular">11</td></tr><tr><td>New Hampshire</td><td class="tabular">$167,568</td><td class="tabular tone-neg"><span class="delta-inline">▼&nbsp;−12.3%</span></td><td class="tabular">18</td></tr><tr><td>Virginia</td><td class="tabular">$7,618</td><td class="tabular tone-neg"><span class="delta-inline">▼&nbsp;−24.4%</span></td><td class="tabular">1</td></tr><tr><td>New Jersey</td><td class="tabular">$7,153</td><td class="tabular tone-neg"><span class="delta-inline">▼&nbsp;−41.3%</span></td><td class="tabular">1</td></tr></tbody>
         </table>
       </div>
     </div>
@@ -724,8 +728,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$17,238</td>
   <td class="tabular">$7,869</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+119.1%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+355.2%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+119.1%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+355.2%</span></td>
   <td class="tabular">477</td>
 </tr>
 
@@ -737,7 +741,7 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$19,214</td>
   <td class="tabular">$9,630</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+99.5%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+99.5%</span></td>
   <td class="tabular tone-flat">—</td>
   <td class="tabular">402</td>
 </tr>
@@ -750,7 +754,7 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$11,795</td>
   <td class="tabular">$7,052</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+67.3%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+67.3%</span></td>
   <td class="tabular tone-flat">—</td>
   <td class="tabular">240</td>
 </tr>
@@ -763,7 +767,7 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$19,833</td>
   <td class="tabular">$12,225</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+62.2%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+62.2%</span></td>
   <td class="tabular tone-flat">—</td>
   <td class="tabular">0</td>
 </tr>
@@ -776,8 +780,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$14,133</td>
   <td class="tabular">$9,858</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+43.4%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+111.9%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+43.4%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+111.9%</span></td>
   <td class="tabular">437</td>
 </tr>
 
@@ -789,8 +793,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$18,822</td>
   <td class="tabular">$13,308</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+41.4%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+45.9%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+41.4%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+45.9%</span></td>
   <td class="tabular">388</td>
 </tr>
 
@@ -802,8 +806,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$6,878</td>
   <td class="tabular">$5,001</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+37.5%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+25.4%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+37.5%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+25.4%</span></td>
   <td class="tabular">212</td>
 </tr>
 
@@ -815,8 +819,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$4,245</td>
   <td class="tabular">$3,157</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+34.5%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+79.2%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+34.5%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+79.2%</span></td>
   <td class="tabular">127</td>
 </tr>
 
@@ -828,8 +832,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$11,102</td>
   <td class="tabular">$8,269</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+34.3%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+47.2%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+34.3%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+47.2%</span></td>
   <td class="tabular">283</td>
 </tr>
 
@@ -841,8 +845,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$8,313</td>
   <td class="tabular">$6,205</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+34.0%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+270.9%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+34.0%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+270.9%</span></td>
   <td class="tabular">203</td>
 </tr></tbody>
     </table>
@@ -863,8 +867,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$11,749</td>
   <td class="tabular">$8,914</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+31.8%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+92.7%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+31.8%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+92.7%</span></td>
   <td class="tabular">286</td>
 </tr>
 
@@ -876,8 +880,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$11,712</td>
   <td class="tabular">$9,177</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+27.6%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+46.8%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+27.6%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+46.8%</span></td>
   <td class="tabular">252</td>
 </tr>
 
@@ -889,8 +893,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$17,050</td>
   <td class="tabular">$13,364</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+27.6%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+93.2%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+27.6%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+93.2%</span></td>
   <td class="tabular">336</td>
 </tr>
 
@@ -902,8 +906,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$7,379</td>
   <td class="tabular">$5,860</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+25.9%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+81.1%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+25.9%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+81.1%</span></td>
   <td class="tabular">202</td>
 </tr>
 
@@ -915,8 +919,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$12,848</td>
   <td class="tabular">$10,209</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+25.8%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+107.3%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+25.8%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+107.3%</span></td>
   <td class="tabular">308</td>
 </tr>
 
@@ -928,8 +932,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$11,127</td>
   <td class="tabular">$8,857</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+25.6%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+28.6%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+25.6%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+28.6%</span></td>
   <td class="tabular">276</td>
 </tr>
 
@@ -941,8 +945,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$6,434</td>
   <td class="tabular">$5,227</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+23.1%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+74.6%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+23.1%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+74.6%</span></td>
   <td class="tabular">195</td>
 </tr>
 
@@ -954,8 +958,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$6,225</td>
   <td class="tabular">$5,111</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+21.8%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+49.1%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+21.8%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+49.1%</span></td>
   <td class="tabular">173</td>
 </tr>
 
@@ -967,8 +971,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$9,713</td>
   <td class="tabular">$7,995</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+21.5%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+129.4%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+21.5%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+129.4%</span></td>
   <td class="tabular">282</td>
 </tr>
 
@@ -980,8 +984,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$18,434</td>
   <td class="tabular">$15,319</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+20.3%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+115.2%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+20.3%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+115.2%</span></td>
   <td class="tabular">366</td>
 </tr>
 
@@ -993,8 +997,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$9,355</td>
   <td class="tabular">$7,848</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+19.2%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+125.1%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+19.2%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+125.1%</span></td>
   <td class="tabular">223</td>
 </tr>
 
@@ -1006,7 +1010,7 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$14,956</td>
   <td class="tabular">$12,654</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+18.2%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+18.2%</span></td>
   <td class="tabular tone-flat">—</td>
   <td class="tabular">421</td>
 </tr>
@@ -1019,8 +1023,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$16,152</td>
   <td class="tabular">$13,810</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+17.0%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+115.2%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+17.0%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+115.2%</span></td>
   <td class="tabular">371</td>
 </tr>
 
@@ -1032,8 +1036,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$5,792</td>
   <td class="tabular">$4,998</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+15.9%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+99.8%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+15.9%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+99.8%</span></td>
   <td class="tabular">139</td>
 </tr>
 
@@ -1045,8 +1049,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$12,900</td>
   <td class="tabular">$11,156</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+15.6%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+75.2%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+15.6%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+75.2%</span></td>
   <td class="tabular">305</td>
 </tr>
 
@@ -1058,8 +1062,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$20,122</td>
   <td class="tabular">$17,614</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+14.2%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+162.2%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+14.2%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+162.2%</span></td>
   <td class="tabular">427</td>
 </tr>
 
@@ -1071,8 +1075,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$16,762</td>
   <td class="tabular">$14,770</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+13.5%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+19.4%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+13.5%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+19.4%</span></td>
   <td class="tabular">410</td>
 </tr>
 
@@ -1084,8 +1088,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$9,379</td>
   <td class="tabular">$8,295</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+13.1%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+237.7%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+13.1%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+237.7%</span></td>
   <td class="tabular">253</td>
 </tr>
 
@@ -1097,8 +1101,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$14,764</td>
   <td class="tabular">$13,090</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+12.8%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+14.1%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+12.8%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+14.1%</span></td>
   <td class="tabular">327</td>
 </tr>
 
@@ -1110,7 +1114,7 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$14,556</td>
   <td class="tabular">$13,010</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+11.9%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+11.9%</span></td>
   <td class="tabular tone-flat">—</td>
   <td class="tabular">340</td>
 </tr>
@@ -1123,8 +1127,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$14,918</td>
   <td class="tabular">$13,337</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+11.9%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+75.3%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+11.9%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+75.3%</span></td>
   <td class="tabular">376</td>
 </tr>
 
@@ -1136,8 +1140,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$10,493</td>
   <td class="tabular">$9,382</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+11.8%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+145.4%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+11.8%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+145.4%</span></td>
   <td class="tabular">257</td>
 </tr>
 
@@ -1149,8 +1153,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$11,865</td>
   <td class="tabular">$10,667</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+11.2%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+34.8%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+11.2%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+34.8%</span></td>
   <td class="tabular">217</td>
 </tr>
 
@@ -1162,8 +1166,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$12,188</td>
   <td class="tabular">$10,976</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+11.0%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+66.3%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+11.0%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+66.3%</span></td>
   <td class="tabular">302</td>
 </tr>
 
@@ -1175,8 +1179,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$16,863</td>
   <td class="tabular">$15,224</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+10.8%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+14.0%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+10.8%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+14.0%</span></td>
   <td class="tabular">317</td>
 </tr>
 
@@ -1188,8 +1192,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$7,502</td>
   <td class="tabular">$6,843</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+9.6%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+43.3%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+9.6%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+43.3%</span></td>
   <td class="tabular">207</td>
 </tr>
 
@@ -1201,8 +1205,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$11,427</td>
   <td class="tabular">$10,456</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+9.3%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+34.2%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+9.3%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+34.2%</span></td>
   <td class="tabular">309</td>
 </tr>
 
@@ -1214,8 +1218,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$13,665</td>
   <td class="tabular">$12,516</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+9.2%</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−34.4%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+9.2%</span></td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−34.4%</span></td>
   <td class="tabular">371</td>
 </tr>
 
@@ -1227,8 +1231,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$9,610</td>
   <td class="tabular">$8,862</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+8.4%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+65.0%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+8.4%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+65.0%</span></td>
   <td class="tabular">284</td>
 </tr>
 
@@ -1240,8 +1244,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$8,981</td>
   <td class="tabular">$8,289</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+8.4%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+56.5%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+8.4%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+56.5%</span></td>
   <td class="tabular">296</td>
 </tr>
 
@@ -1253,8 +1257,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$6,182</td>
   <td class="tabular">$5,716</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+8.2%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+95.4%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+8.2%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+95.4%</span></td>
   <td class="tabular">141</td>
 </tr>
 
@@ -1266,8 +1270,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$11,403</td>
   <td class="tabular">$10,561</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+8.0%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+45.0%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+8.0%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+45.0%</span></td>
   <td class="tabular">299</td>
 </tr>
 
@@ -1279,8 +1283,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$5,097</td>
   <td class="tabular">$4,743</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+7.4%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+71.2%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+7.4%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+71.2%</span></td>
   <td class="tabular">191</td>
 </tr>
 
@@ -1292,8 +1296,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$12,865</td>
   <td class="tabular">$11,982</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+7.4%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+25.4%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+7.4%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+25.4%</span></td>
   <td class="tabular">257</td>
 </tr>
 
@@ -1305,8 +1309,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$6,348</td>
   <td class="tabular">$5,923</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+7.2%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+215.3%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+7.2%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+215.3%</span></td>
   <td class="tabular">168</td>
 </tr>
 
@@ -1318,8 +1322,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$10,025</td>
   <td class="tabular">$9,387</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+6.8%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+48.8%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+6.8%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+48.8%</span></td>
   <td class="tabular">284</td>
 </tr>
 
@@ -1331,8 +1335,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$16,077</td>
   <td class="tabular">$15,102</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+6.5%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+53.6%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+6.5%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+53.6%</span></td>
   <td class="tabular">412</td>
 </tr>
 
@@ -1344,8 +1348,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$11,764</td>
   <td class="tabular">$11,142</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+5.6%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+5.0%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+5.6%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+5.0%</span></td>
   <td class="tabular">276</td>
 </tr>
 
@@ -1357,8 +1361,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$25,747</td>
   <td class="tabular">$24,435</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+5.4%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+89.0%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+5.4%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+89.0%</span></td>
   <td class="tabular">475</td>
 </tr>
 
@@ -1370,8 +1374,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$8,909</td>
   <td class="tabular">$8,467</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+5.2%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+20.7%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+5.2%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+20.7%</span></td>
   <td class="tabular">277</td>
 </tr>
 
@@ -1383,8 +1387,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$8,275</td>
   <td class="tabular">$7,865</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+5.2%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+29.4%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+5.2%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+29.4%</span></td>
   <td class="tabular">222</td>
 </tr>
 
@@ -1396,8 +1400,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$6,884</td>
   <td class="tabular">$6,561</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+4.9%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+111.1%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+4.9%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+111.1%</span></td>
   <td class="tabular">222</td>
 </tr>
 
@@ -1409,8 +1413,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$11,633</td>
   <td class="tabular">$11,190</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+4.0%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+91.8%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+4.0%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+91.8%</span></td>
   <td class="tabular">282</td>
 </tr>
 
@@ -1422,8 +1426,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$20,257</td>
   <td class="tabular">$19,494</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+3.9%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+71.2%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+3.9%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+71.2%</span></td>
   <td class="tabular">445</td>
 </tr>
 
@@ -1435,8 +1439,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$11,409</td>
   <td class="tabular">$11,001</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+3.7%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+37.5%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+3.7%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+37.5%</span></td>
   <td class="tabular">254</td>
 </tr>
 
@@ -1448,8 +1452,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$12,842</td>
   <td class="tabular">$12,394</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+3.6%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+0.2%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+3.6%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+0.2%</span></td>
   <td class="tabular">256</td>
 </tr>
 
@@ -1461,8 +1465,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$6,414</td>
   <td class="tabular">$6,210</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+3.3%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+152.1%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+3.3%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+152.1%</span></td>
   <td class="tabular">175</td>
 </tr>
 
@@ -1474,7 +1478,7 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$7,931</td>
   <td class="tabular">$7,685</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+3.2%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+3.2%</span></td>
   <td class="tabular tone-flat">—</td>
   <td class="tabular">235</td>
 </tr>
@@ -1487,8 +1491,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$5,969</td>
   <td class="tabular">$5,793</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+3.0%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+87.4%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+3.0%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+87.4%</span></td>
   <td class="tabular">139</td>
 </tr>
 
@@ -1500,8 +1504,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$3,717</td>
   <td class="tabular">$3,652</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+1.8%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+54.4%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+1.8%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+54.4%</span></td>
   <td class="tabular">148</td>
 </tr>
 
@@ -1513,8 +1517,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$13,079</td>
   <td class="tabular">$12,907</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+1.3%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+117.4%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+1.3%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+117.4%</span></td>
   <td class="tabular">328</td>
 </tr>
 
@@ -1526,8 +1530,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$12,476</td>
   <td class="tabular">$12,340</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+1.1%</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−21.5%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+1.1%</span></td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−21.5%</span></td>
   <td class="tabular">313</td>
 </tr>
 
@@ -1539,8 +1543,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$6,845</td>
   <td class="tabular">$6,773</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+1.1%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+6.1%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+1.1%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+6.1%</span></td>
   <td class="tabular">187</td>
 </tr>
 
@@ -1552,8 +1556,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$14,713</td>
   <td class="tabular">$14,683</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+0.2%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+102.4%</td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+0.2%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+102.4%</span></td>
   <td class="tabular">314</td>
 </tr>
 
@@ -1565,8 +1569,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$12,125</td>
   <td class="tabular">$12,129</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−0.0%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+87.0%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−0.0%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+87.0%</span></td>
   <td class="tabular">333</td>
 </tr>
 
@@ -1578,8 +1582,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$13,640</td>
   <td class="tabular">$13,669</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−0.2%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+103.3%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−0.2%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+103.3%</span></td>
   <td class="tabular">278</td>
 </tr>
 
@@ -1591,8 +1595,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$4,204</td>
   <td class="tabular">$4,219</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−0.3%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+71.9%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−0.3%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+71.9%</span></td>
   <td class="tabular">144</td>
 </tr>
 
@@ -1604,8 +1608,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$20,432</td>
   <td class="tabular">$20,688</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−1.2%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+42.7%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−1.2%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+42.7%</span></td>
   <td class="tabular">481</td>
 </tr>
 
@@ -1617,8 +1621,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$13,499</td>
   <td class="tabular">$13,868</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−2.7%</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−23.8%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−2.7%</span></td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−23.8%</span></td>
   <td class="tabular">335</td>
 </tr>
 
@@ -1630,8 +1634,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$32,249</td>
   <td class="tabular">$33,181</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−2.8%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+17.8%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−2.8%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+17.8%</span></td>
   <td class="tabular">755</td>
 </tr>
 
@@ -1643,8 +1647,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$9,705</td>
   <td class="tabular">$10,061</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−3.5%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+51.8%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−3.5%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+51.8%</span></td>
   <td class="tabular">283</td>
 </tr>
 
@@ -1656,8 +1660,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$6,619</td>
   <td class="tabular">$6,883</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−3.8%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+46.3%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−3.8%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+46.3%</span></td>
   <td class="tabular">203</td>
 </tr>
 
@@ -1669,8 +1673,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$12,343</td>
   <td class="tabular">$12,891</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−4.2%</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−44.3%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−4.2%</span></td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−44.3%</span></td>
   <td class="tabular">281</td>
 </tr>
 
@@ -1682,8 +1686,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$16,840</td>
   <td class="tabular">$17,591</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−4.3%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+69.6%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−4.3%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+69.6%</span></td>
   <td class="tabular">383</td>
 </tr>
 
@@ -1695,8 +1699,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$5,884</td>
   <td class="tabular">$6,212</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−5.3%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+48.8%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−5.3%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+48.8%</span></td>
   <td class="tabular">161</td>
 </tr>
 
@@ -1708,8 +1712,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$10,387</td>
   <td class="tabular">$10,970</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−5.3%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+65.0%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−5.3%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+65.0%</span></td>
   <td class="tabular">282</td>
 </tr>
 
@@ -1721,8 +1725,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$10,101</td>
   <td class="tabular">$10,740</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−5.9%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+41.2%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−5.9%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+41.2%</span></td>
   <td class="tabular">235</td>
 </tr>
 
@@ -1734,8 +1738,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$13,093</td>
   <td class="tabular">$13,943</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−6.1%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+17.1%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−6.1%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+17.1%</span></td>
   <td class="tabular">308</td>
 </tr>
 
@@ -1747,8 +1751,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$8,080</td>
   <td class="tabular">$8,607</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−6.1%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+4.2%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−6.1%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+4.2%</span></td>
   <td class="tabular">207</td>
 </tr>
 
@@ -1760,7 +1764,7 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$9,934</td>
   <td class="tabular">$10,594</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−6.2%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−6.2%</span></td>
   <td class="tabular tone-flat">—</td>
   <td class="tabular">219</td>
 </tr>
@@ -1773,8 +1777,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$20,587</td>
   <td class="tabular">$22,009</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−6.5%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+36.3%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−6.5%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+36.3%</span></td>
   <td class="tabular">469</td>
 </tr>
 
@@ -1786,8 +1790,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$9,824</td>
   <td class="tabular">$10,515</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−6.6%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+24.7%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−6.6%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+24.7%</span></td>
   <td class="tabular">293</td>
 </tr>
 
@@ -1799,8 +1803,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$6,078</td>
   <td class="tabular">$6,513</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−6.7%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+73.1%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−6.7%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+73.1%</span></td>
   <td class="tabular">168</td>
 </tr>
 
@@ -1812,8 +1816,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$21,867</td>
   <td class="tabular">$23,752</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−7.9%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+81.4%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−7.9%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+81.4%</span></td>
   <td class="tabular">440</td>
 </tr>
 
@@ -1825,8 +1829,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$9,561</td>
   <td class="tabular">$10,398</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−8.0%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+58.6%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−8.0%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+58.6%</span></td>
   <td class="tabular">269</td>
 </tr>
 
@@ -1838,8 +1842,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$5,049</td>
   <td class="tabular">$5,501</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−8.2%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+76.1%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−8.2%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+76.1%</span></td>
   <td class="tabular">180</td>
 </tr>
 
@@ -1851,8 +1855,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$6,041</td>
   <td class="tabular">$6,617</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−8.7%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+28.8%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−8.7%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+28.8%</span></td>
   <td class="tabular">170</td>
 </tr>
 
@@ -1864,8 +1868,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$14,626</td>
   <td class="tabular">$16,070</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−9.0%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+95.4%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−9.0%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+95.4%</span></td>
   <td class="tabular">328</td>
 </tr>
 
@@ -1877,8 +1881,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$16,881</td>
   <td class="tabular">$18,576</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−9.1%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+57.4%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−9.1%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+57.4%</span></td>
   <td class="tabular">431</td>
 </tr>
 
@@ -1890,8 +1894,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$7,731</td>
   <td class="tabular">$8,515</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−9.2%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+33.3%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−9.2%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+33.3%</span></td>
   <td class="tabular">221</td>
 </tr>
 
@@ -1903,8 +1907,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$19,046</td>
   <td class="tabular">$21,051</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−9.5%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+130.5%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−9.5%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+130.5%</span></td>
   <td class="tabular">412</td>
 </tr>
 
@@ -1916,7 +1920,7 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$6,896</td>
   <td class="tabular">$7,636</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−9.7%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−9.7%</span></td>
   <td class="tabular tone-flat">—</td>
   <td class="tabular">157</td>
 </tr>
@@ -1929,7 +1933,7 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$34,075</td>
   <td class="tabular">$37,991</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−10.3%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−10.3%</span></td>
   <td class="tabular tone-flat">—</td>
   <td class="tabular">0</td>
 </tr>
@@ -1942,8 +1946,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$11,891</td>
   <td class="tabular">$13,309</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−10.7%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+13.1%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−10.7%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+13.1%</span></td>
   <td class="tabular">306</td>
 </tr>
 
@@ -1955,8 +1959,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$5,466</td>
   <td class="tabular">$6,129</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−10.8%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+17.2%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−10.8%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+17.2%</span></td>
   <td class="tabular">220</td>
 </tr>
 
@@ -1968,8 +1972,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$7,078</td>
   <td class="tabular">$7,994</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−11.5%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+75.0%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−11.5%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+75.0%</span></td>
   <td class="tabular">213</td>
 </tr>
 
@@ -1981,8 +1985,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$23,160</td>
   <td class="tabular">$26,270</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−11.8%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+15.0%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−11.8%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+15.0%</span></td>
   <td class="tabular">541</td>
 </tr>
 
@@ -1994,8 +1998,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$16,048</td>
   <td class="tabular">$18,400</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−12.8%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+59.5%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−12.8%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+59.5%</span></td>
   <td class="tabular">348</td>
 </tr>
 
@@ -2007,8 +2011,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$9,292</td>
   <td class="tabular">$10,712</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−13.3%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+43.0%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−13.3%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+43.0%</span></td>
   <td class="tabular">260</td>
 </tr>
 
@@ -2020,8 +2024,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$4,025</td>
   <td class="tabular">$4,655</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−13.5%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+63.2%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−13.5%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+63.2%</span></td>
   <td class="tabular">145</td>
 </tr>
 
@@ -2033,8 +2037,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$5,927</td>
   <td class="tabular">$6,865</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−13.7%</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−18.7%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−13.7%</span></td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−18.7%</span></td>
   <td class="tabular">195</td>
 </tr>
 
@@ -2046,8 +2050,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$5,046</td>
   <td class="tabular">$5,863</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−13.9%</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−5.2%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−13.9%</span></td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−5.2%</span></td>
   <td class="tabular">143</td>
 </tr>
 
@@ -2059,8 +2063,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$10,146</td>
   <td class="tabular">$11,943</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−15.1%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+49.5%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−15.1%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+49.5%</span></td>
   <td class="tabular">272</td>
 </tr>
 
@@ -2072,8 +2076,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$16,336</td>
   <td class="tabular">$19,446</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−16.0%</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−20.8%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−16.0%</span></td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−20.8%</span></td>
   <td class="tabular">408</td>
 </tr>
 
@@ -2085,8 +2089,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$9,645</td>
   <td class="tabular">$11,506</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−16.2%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+73.9%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−16.2%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+73.9%</span></td>
   <td class="tabular">217</td>
 </tr>
 
@@ -2098,8 +2102,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$11,282</td>
   <td class="tabular">$13,652</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−17.4%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+2.4%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−17.4%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+2.4%</span></td>
   <td class="tabular">287</td>
 </tr>
 
@@ -2111,8 +2115,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$5,192</td>
   <td class="tabular">$6,304</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−17.6%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+9.2%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−17.6%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+9.2%</span></td>
   <td class="tabular">141</td>
 </tr>
 
@@ -2124,8 +2128,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$4,695</td>
   <td class="tabular">$5,725</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−18.0%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+24.2%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−18.0%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+24.2%</span></td>
   <td class="tabular">167</td>
 </tr>
 
@@ -2137,8 +2141,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$11,453</td>
   <td class="tabular">$14,134</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−19.0%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+55.0%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−19.0%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+55.0%</span></td>
   <td class="tabular">275</td>
 </tr>
 
@@ -2150,8 +2154,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$9,077</td>
   <td class="tabular">$11,258</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−19.4%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+10.3%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−19.4%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+10.3%</span></td>
   <td class="tabular">242</td>
 </tr>
 
@@ -2163,8 +2167,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$6,285</td>
   <td class="tabular">$7,812</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−19.6%</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−0.9%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−19.6%</span></td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−0.9%</span></td>
   <td class="tabular">194</td>
 </tr>
 
@@ -2176,8 +2180,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$6,642</td>
   <td class="tabular">$8,329</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−20.3%</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−1.8%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−20.3%</span></td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−1.8%</span></td>
   <td class="tabular">223</td>
 </tr>
 
@@ -2189,8 +2193,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$7,323</td>
   <td class="tabular">$9,191</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−20.3%</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−8.6%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−20.3%</span></td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−8.6%</span></td>
   <td class="tabular">220</td>
 </tr>
 
@@ -2202,8 +2206,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$7,075</td>
   <td class="tabular">$8,983</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−21.2%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+60.9%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−21.2%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+60.9%</span></td>
   <td class="tabular">222</td>
 </tr>
 
@@ -2215,8 +2219,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$7,154</td>
   <td class="tabular">$9,147</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−21.8%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+71.0%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−21.8%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+71.0%</span></td>
   <td class="tabular">155</td>
 </tr>
 
@@ -2228,8 +2232,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$7,856</td>
   <td class="tabular">$10,072</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−22.0%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+79.8%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−22.0%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+79.8%</span></td>
   <td class="tabular">209</td>
 </tr>
 
@@ -2241,8 +2245,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$10,149</td>
   <td class="tabular">$13,115</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−22.6%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+91.5%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−22.6%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+91.5%</span></td>
   <td class="tabular">281</td>
 </tr>
 
@@ -2254,8 +2258,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$5,814</td>
   <td class="tabular">$7,614</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−23.6%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+83.7%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−23.6%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+83.7%</span></td>
   <td class="tabular">198</td>
 </tr>
 
@@ -2267,8 +2271,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$7,618</td>
   <td class="tabular">$10,078</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−24.4%</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−43.4%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−24.4%</span></td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−43.4%</span></td>
   <td class="tabular">233</td>
 </tr>
 
@@ -2280,8 +2284,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$4,909</td>
   <td class="tabular">$6,574</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−25.3%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+33.1%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−25.3%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+33.1%</span></td>
   <td class="tabular">164</td>
 </tr>
 
@@ -2293,8 +2297,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$7,563</td>
   <td class="tabular">$10,256</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−26.3%</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−3.4%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−26.3%</span></td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−3.4%</span></td>
   <td class="tabular">258</td>
 </tr>
 
@@ -2306,8 +2310,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$7,816</td>
   <td class="tabular">$10,609</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−26.3%</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−7.1%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−26.3%</span></td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−7.1%</span></td>
   <td class="tabular">226</td>
 </tr>
 
@@ -2319,8 +2323,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$5,709</td>
   <td class="tabular">$7,845</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−27.2%</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−38.7%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−27.2%</span></td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−38.7%</span></td>
   <td class="tabular">158</td>
 </tr>
 
@@ -2332,8 +2336,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$7,338</td>
   <td class="tabular">$10,152</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−27.7%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+100.3%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−27.7%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+100.3%</span></td>
   <td class="tabular">145</td>
 </tr>
 
@@ -2345,8 +2349,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$4,765</td>
   <td class="tabular">$6,651</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−28.4%</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−9.1%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−28.4%</span></td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−9.1%</span></td>
   <td class="tabular">151</td>
 </tr>
 
@@ -2358,8 +2362,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$7,249</td>
   <td class="tabular">$10,133</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−28.5%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+56.4%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−28.5%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+56.4%</span></td>
   <td class="tabular">209</td>
 </tr>
 
@@ -2371,8 +2375,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$15,242</td>
   <td class="tabular">$21,397</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−28.8%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+35.3%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−28.8%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+35.3%</span></td>
   <td class="tabular">331</td>
 </tr>
 
@@ -2384,8 +2388,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$3,243</td>
   <td class="tabular">$4,573</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−29.1%</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−24.3%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−29.1%</span></td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−24.3%</span></td>
   <td class="tabular">139</td>
 </tr>
 
@@ -2397,8 +2401,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$11,256</td>
   <td class="tabular">$16,489</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−31.7%</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−37.0%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−31.7%</span></td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−37.0%</span></td>
   <td class="tabular">305</td>
 </tr>
 
@@ -2410,8 +2414,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$2,807</td>
   <td class="tabular">$4,247</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−33.9%</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−12.6%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−33.9%</span></td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−12.6%</span></td>
   <td class="tabular">118</td>
 </tr>
 
@@ -2423,8 +2427,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$4,090</td>
   <td class="tabular">$6,259</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−34.7%</td>
-  <td class="tabular tone-pos"><span aria-hidden="true">▲</span>&thinsp;+21.9%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−34.7%</span></td>
+  <td class="tabular tone-pos"><span class="delta-inline"><span aria-hidden="true">▲</span>&nbsp;+21.9%</span></td>
   <td class="tabular">135</td>
 </tr>
 
@@ -2436,8 +2440,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$3,157</td>
   <td class="tabular">$4,922</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−35.8%</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−10.3%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−35.8%</span></td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−10.3%</span></td>
   <td class="tabular">120</td>
 </tr>
 
@@ -2449,8 +2453,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$10,514</td>
   <td class="tabular">$17,039</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−38.3%</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−31.9%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−38.3%</span></td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−31.9%</span></td>
   <td class="tabular">321</td>
 </tr>
 
@@ -2462,7 +2466,7 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$7,305</td>
   <td class="tabular">$11,952</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−38.9%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−38.9%</span></td>
   <td class="tabular tone-flat">—</td>
   <td class="tabular">238</td>
 </tr>
@@ -2475,8 +2479,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$6,209</td>
   <td class="tabular">$10,278</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−39.6%</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−24.9%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−39.6%</span></td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−24.9%</span></td>
   <td class="tabular">233</td>
 </tr>
 
@@ -2488,8 +2492,8 @@ details.expand-more .extra-rows { margin-top: 0; }
   </td>
   <td class="tabular">$7,153</td>
   <td class="tabular">$12,191</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−41.3%</td>
-  <td class="tabular tone-neg"><span aria-hidden="true">▼</span>&thinsp;−29.0%</td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−41.3%</span></td>
+  <td class="tabular tone-neg"><span class="delta-inline"><span aria-hidden="true">▼</span>&nbsp;−29.0%</span></td>
   <td class="tabular">254</td>
 </tr></tbody>
         </table>
@@ -2512,7 +2516,7 @@ details.expand-more .extra-rows { margin-top: 0; }
 
 <div class="footer">
   <div>Powered by YODA &middot; Aubuchon Hardware &middot; Questions? <a href="mailto:scott@aubuchon.com">scott@aubuchon.com</a></div>
-  <div class="stamp">Data from Snowflake &middot; PRD_EDW_DB.ANALYTICS_BASE &middot; 2026-04-27T16:16:31</div>
+  <div class="stamp">Data from Snowflake &middot; PRD_EDW_DB.ANALYTICS_BASE &middot; 2026-04-27T18:50:04</div>
 </div>
 
 </body>
