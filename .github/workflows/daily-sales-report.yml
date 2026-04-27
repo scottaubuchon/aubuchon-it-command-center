@@ -83,11 +83,19 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add public/reports/
+          # Bump .vercel-deploy-trigger so Vercel always redeploys with the
+          # fresh report. Public-only changes (and [skip ci]-tagged commits)
+          # don't reliably trigger Vercel — touching this file does.
+          # See feedback_vercel_deploy_trigger memory note.
+          REPORT_DATE=$(TZ=America/New_York date -d "yesterday" +%Y-%m-%d)
+          STAMP=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          echo "daily-sales-report $REPORT_DATE $STAMP" > .vercel-deploy-trigger
+          git add public/reports/ .vercel-deploy-trigger
           if git diff --cached --quiet; then
             echo "No changes to commit."
           else
-            REPORT_DATE=$(TZ=America/New_York date -d "yesterday" +%Y-%m-%d)
-            git commit -m "report: daily sales $REPORT_DATE [skip ci]"
+            # No [skip ci] tag: Vercel needs to see the commit to deploy.
+            # The repo has no other CI workflows that would loop on this push.
+            git commit -m "report: daily sales $REPORT_DATE"
             git push
           fi
