@@ -817,12 +817,20 @@ def _render_state_map(state_data) -> str:
         if s.get("no_label"):
             continue
         if s.get("external_label"):
-            svg_paths.append(
-                '<line x1="347" y1="197" x2="375" y2="190" stroke="#807c70" stroke-width="0.8"/>'
-            )
+            # Use the per-state connector + label_xy so VA and RI don't stack
+            # at the same hard-coded position. Each external state owns its
+            # own leader line endpoints and label position in state_map.py.
+            connector = s.get("connector")
+            if connector:
+                (cx1, cy1), (cx2, cy2) = connector
+                svg_paths.append(
+                    f'<line x1="{cx1}" y1="{cy1}" x2="{cx2}" y2="{cy2}" '
+                    f'stroke="#807c70" stroke-width="0.8"/>'
+                )
+            label_x, label_y = s.get("label_xy", (390, 188))
             color = "#0e6651" if vsP >= 0 else "#97142a"
             svg_paths.append(
-                f'<text x="390" y="188" text-anchor="middle" font-size="8" '
+                f'<text x="{label_x}" y="{label_y}" text-anchor="middle" font-size="8" '
                 f'font-weight="700" fill="{color}" font-family="Inter,Arial,sans-serif">'
                 f'{s["code"]} {fmt_pct_from_pct(vsP)}</text>'
             )
@@ -891,15 +899,17 @@ def _render_state_map(state_data) -> str:
       </div>
     </div>
     <div>
-      <table class="state-table">
-        <thead><tr>
-          <th>State</th>
-          <th>Sales</th>
-          <th>vs Plan</th>
-          <th>Stores</th>
-        </tr></thead>
-        <tbody>{''.join(table_rows)}</tbody>
-      </table>
+      <div class="table-scroll">
+        <table class="state-table">
+          <thead><tr>
+            <th>State</th>
+            <th>Sales</th>
+            <th>vs Plan</th>
+            <th>Stores</th>
+          </tr></thead>
+          <tbody>{''.join(table_rows)}</tbody>
+        </table>
+      </div>
     </div>
   </div>
 </div>
@@ -909,18 +919,26 @@ def _render_state_map(state_data) -> str:
 # ---------- Stores ranked ----------
 
 def _store_row(rank: int, r) -> str:
-    p_tone = class_for_tone(tone_for_delta(r.get("vsP")))
-    l_tone = class_for_tone(tone_for_delta(r.get("vsLY")))
-    p_arrow = arrow_for_delta(r.get("vsP"))
-    l_arrow = arrow_for_delta(r.get("vsLY"))
+    # vsP and vsLY come from build_store_ranks already multiplied by 100
+    # (e.g. 16.6 means +16.6%). Convert to fractions before passing to the
+    # delta helpers, which all expect fractions. fmt_pct(0.166) = "+16.6%".
+    vsP_raw  = r.get("vsP")
+    vsLY_raw = r.get("vsLY")
+    vsP_frac  = (vsP_raw  / 100.0) if vsP_raw  is not None else None
+    vsLY_frac = (vsLY_raw / 100.0) if vsLY_raw is not None else None
+
+    p_tone = class_for_tone(tone_for_delta(vsP_frac))
+    l_tone = class_for_tone(tone_for_delta(vsLY_frac))
+    p_arrow = arrow_for_delta(vsP_frac)
+    l_arrow = arrow_for_delta(vsLY_frac)
     name = escape(r.get("name", ""))
     code = escape(str(r.get("code", "")))
     state = escape(r.get("state", ""))
     cohort = escape(r.get("cohort", ""))
     meta = f"{cohort} &middot; #{code} &middot; {state}"
     vsLY_html = (
-        f'<span aria-hidden="true">{l_arrow}</span>&thinsp;{fmt_pct(r.get("vsLY"))}'
-        if r.get("vsLY") is not None else EM_DASH
+        f'<span aria-hidden="true">{l_arrow}</span>&thinsp;{fmt_pct(vsLY_frac)}'
+        if vsLY_frac is not None else EM_DASH
     )
     return f"""
 <tr>
@@ -931,7 +949,7 @@ def _store_row(rank: int, r) -> str:
   </td>
   <td class="tabular">{fmt_dollars(r.get("sales"))}</td>
   <td class="tabular">{fmt_dollars(r.get("plan"))}</td>
-  <td class="tabular tone-{p_tone}"><span aria-hidden="true">{p_arrow}</span>&thinsp;{fmt_pct(r.get("vsP"))}</td>
+  <td class="tabular tone-{p_tone}"><span aria-hidden="true">{p_arrow}</span>&thinsp;{fmt_pct(vsP_frac)}</td>
   <td class="tabular tone-{l_tone}">{vsLY_html}</td>
   <td class="tabular">{fmt_int(r.get("txns"))}</td>
 </tr>"""
@@ -952,9 +970,11 @@ def _render_stores(ranked) -> str:
   <details class="expand-more">
     <summary data-show="Show all {total} stores" data-hide="Hide extra stores"></summary>
     <div class="extra-rows">
-      <table class="ranked-table">
-        <tbody>{rest_rows_html}</tbody>
-      </table>
+      <div class="table-scroll">
+        <table class="ranked-table">
+          <tbody>{rest_rows_html}</tbody>
+        </table>
+      </div>
     </div>
   </details>
 </div>
@@ -969,18 +989,20 @@ def _render_stores(ranked) -> str:
     </div>
     <div class="card-hint">Sorted by vs plan, descending</div>
   </div>
-  <table class="ranked-table">
-    <thead><tr>
-      <th class="left" style="width:48px">#</th>
-      <th class="left">Store</th>
-      <th>Sales</th>
-      <th>Plan</th>
-      <th>vs Plan</th>
-      <th>vs LY</th>
-      <th>Txns</th>
-    </tr></thead>
-    <tbody>{top_rows}</tbody>
-  </table>
+  <div class="table-scroll">
+    <table class="ranked-table">
+      <thead><tr>
+        <th class="left" style="width:48px">#</th>
+        <th class="left">Store</th>
+        <th>Sales</th>
+        <th>Plan</th>
+        <th>vs Plan</th>
+        <th>vs LY</th>
+        <th>Txns</th>
+      </tr></thead>
+      <tbody>{top_rows}</tbody>
+    </table>
+  </div>
   {rest_section}
 </div>
 """
@@ -1032,9 +1054,11 @@ def _render_products(products) -> str:
   <details class="expand-more">
     <summary data-show="Show all {total} products" data-hide="Hide extra products"></summary>
     <div class="extra-rows">
-      <table class="ranked-table">
-        <tbody>{rest_rows_html}</tbody>
-      </table>
+      <div class="table-scroll">
+        <table class="ranked-table">
+          <tbody>{rest_rows_html}</tbody>
+        </table>
+      </div>
     </div>
   </details>
 </div>
@@ -1049,18 +1073,20 @@ def _render_products(products) -> str:
     </div>
     <div class="card-hint">All stores combined</div>
   </div>
-  <table class="ranked-table">
-    <thead><tr>
-      <th class="left" style="width:48px">#</th>
-      <th class="left">Product</th>
-      <th class="left">Dept</th>
-      <th>Revenue</th>
-      <th>Units</th>
-      <th>Avg price</th>
-      <th>Stores</th>
-    </tr></thead>
-    <tbody>{top_rows}</tbody>
-  </table>
+  <div class="table-scroll">
+    <table class="ranked-table">
+      <thead><tr>
+        <th class="left" style="width:48px">#</th>
+        <th class="left">Product</th>
+        <th class="left">Dept</th>
+        <th>Revenue</th>
+        <th>Units</th>
+        <th>Avg price</th>
+        <th>Stores</th>
+      </tr></thead>
+      <tbody>{top_rows}</tbody>
+    </table>
+  </div>
   {rest_section}
 </div>
 """
