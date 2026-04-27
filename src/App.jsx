@@ -6581,6 +6581,8 @@ function LiveSalesYodaView({ goBack }) {
     + "#yoda-live-sales .pill-state-bad{background:var(--bad-soft);color:var(--bad-ink);padding:2px 9px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;}"
     + "#yoda-live-sales .show-all{padding:14px;text-align:center;color:var(--accent-retail);font-weight:600;cursor:pointer;border-top:1px solid var(--border-1);background:transparent;width:100%;border-left:none;border-right:none;border-bottom:none;font-family:inherit;font-size:13px;}"
     + "#yoda-live-sales .show-all:hover{background:var(--paper-50);}"
+    + "@media (max-width: 720px){#yoda-live-sales{padding:14px 12px 24px !important;}#yoda-live-sales .paper{overflow-x:auto;-webkit-overflow-scrolling:touch;}#yoda-live-sales .hero-bad,#yoda-live-sales .hero-good,#yoda-live-sales .hero-warn{padding:16px 14px !important;border-radius:10px !important;}#yoda-live-sales .kpi-display{font-size:32px !important;}#yoda-live-sales .kpi-display-pct{font-size:22px !important;}#yoda-live-sales .y-btn{padding:8px 10px !important;font-size:12px !important;gap:6px !important;}#yoda-live-sales table{min-width:520px;}}"
+    + "@media (max-width: 480px){#yoda-live-sales{padding:12px 8px 20px !important;}#yoda-live-sales .kpi-display{font-size:28px !important;}#yoda-live-sales .kpi-display-pct{font-size:20px !important;}#yoda-live-sales .eyebrow{font-size:10px !important;}}"
   ;
 
   // ---- helpers --------------------------------------------------
@@ -7401,6 +7403,9 @@ function Yoda2YodaView({ goBack }) {
     + "#yoda-2-yoda .ranked-row:hover{background:rgba(11,61,46,0.04);}"
     + "#yoda-2-yoda .show-all{padding:14px;text-align:center;color:var(--accent-retail);font-weight:600;cursor:pointer;border-top:1px solid var(--border-1);background:transparent;width:100%;border-left:none;border-right:none;border-bottom:none;font-family:inherit;font-size:13px;}"
     + "#yoda-2-yoda .show-all:hover{background:var(--paper-50);}"
+    + "@media (max-width: 900px){#yoda-2-yoda .y2-body{flex-direction:column !important;flex-wrap:nowrap !important;}#yoda-2-yoda .y2-sidebar{width:100% !important;max-width:100% !important;position:static !important;top:auto !important;}#yoda-2-yoda .y2-main{width:100% !important;flex:1 1 100% !important;}}"
+    + "@media (max-width: 720px){#yoda-2-yoda{padding:14px 12px 24px !important;}#yoda-2-yoda .paper{overflow-x:auto;-webkit-overflow-scrolling:touch;}#yoda-2-yoda .hero-bad,#yoda-2-yoda .hero-good,#yoda-2-yoda .hero-warn{padding:16px 14px !important;border-radius:10px !important;}#yoda-2-yoda .kpi-display{font-size:32px !important;}#yoda-2-yoda .kpi-display-pct{font-size:22px !important;}#yoda-2-yoda .y-btn{padding:8px 10px !important;font-size:12px !important;gap:6px !important;}#yoda-2-yoda table{min-width:520px;}}"
+    + "@media (max-width: 480px){#yoda-2-yoda{padding:12px 8px 20px !important;}#yoda-2-yoda .kpi-display{font-size:28px !important;}#yoda-2-yoda .kpi-display-pct{font-size:20px !important;}#yoda-2-yoda .eyebrow{font-size:10px !important;}}"
     + "#yoda-2-yoda .nav-item{width:100%;text-align:left;padding:9px 11px;border:1px solid transparent;background:transparent;border-radius:6px;font-family:inherit;font-size:13px;font-weight:500;color:var(--fg-2);cursor:pointer;display:flex;align-items:center;gap:8px;transition:background 80ms;}"
     + "#yoda-2-yoda .nav-item:hover{background:var(--paper-50);}"
     + "#yoda-2-yoda .nav-item.active{background:var(--good-soft);color:var(--good-ink);font-weight:700;border-color:#aed8c2;}"
@@ -7463,9 +7468,9 @@ function Yoda2YodaView({ goBack }) {
           </div>
 
           {/* ============ Body: sidebar + main ============ */}
-          <div style={{ display: "flex", flexDirection: "row", gap: 16, alignItems: "flex-start", flexWrap: "wrap" }}>
+          <div className="y2-body" style={{ display: "flex", flexDirection: "row", gap: 16, alignItems: "flex-start", flexWrap: "wrap" }}>
             {/* ============ Sidebar ============ */}
-            <aside className="paper" style={{ width: 256, flexShrink: 0, padding: 16, position: "sticky", top: 16 }}>
+            <aside className="paper y2-sidebar" style={{ width: 256, flexShrink: 0, padding: 16, position: "sticky", top: 16 }}>
               {/* Store selector */}
               <div className="eyebrow" style={{ marginBottom: 6 }}>Store</div>
               <div ref={storeBoxRef} style={{ position: "relative", marginBottom: 14 }}>
@@ -7572,7 +7577,7 @@ function Yoda2YodaView({ goBack }) {
             </aside>
 
             {/* ============ Main pane ============ */}
-            <main style={{ flex: 1, minWidth: 0 }}>
+            <main className="y2-main" style={{ flex: 1, minWidth: 0 }}>
               {summaryError && (
                 <div className="hero-bad" style={{ marginBottom: 14 }}>
                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
