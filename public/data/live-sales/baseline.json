@@ -1,5 +1,5 @@
 {
-  "version": 14,
+  "version": 15,
   "generatedAt": "2026-04-26",
   "sourceDates": "2026-04-15..2026-04-26",
   "description": "Plan-anchored Aubuchon EOD forecast baseline. forecast = plan * recencyFactor * holidayMult * weatherMult. See log-live-sales.js for the blending logic with the pace-curve shape projection.",
@@ -361,7 +361,7 @@
     ]
   ],
   "learningLog": {
-    "updatedAt": "2026-04-26T21:37:03.197866-04:00",
+    "updatedAt": "2026-04-27T11:50:56.630593-04:00",
     "daysOfData": 12,
     "dowsUpdated": [
       0,
@@ -371,6 +371,125 @@
       6
     ],
     "holidayUpdated": null,
-    "recencyMessage": "unchanged (insufficient data <20 days, have 12)"
+    "recencyMessage": "unchanged (insufficient data <20 days, have 12); Snowflake-authoritative ratios computed and identical decision",
+    "lookbackApplied": true,
+    "lookbackMethod": "Snowflake AUBUCHON_RETAIL_ANALYTICS.total_net_sales_gl per transaction_dt",
+    "lookbackFindings": {
+      "datesWithMissingStoresInYoda": [
+        "2026-04-19"
+      ],
+      "maxAbsDeltaUsd": 10777.32,
+      "maxAbsDeltaPct": 1.03
+    }
+  },
+  "lookbackDelta": {
+    "2026-04-15": {
+      "yodaEOD": 1053994.84,
+      "snowflakeEOD": 1054969.71,
+      "delta": 974.87,
+      "deltaPct": 0.092,
+      "yodaStores": 134,
+      "snowflakeStores": 134,
+      "missingStoresInYoda": 0
+    },
+    "2026-04-16": {
+      "yodaEOD": 1035694.45,
+      "snowflakeEOD": 1046471.77,
+      "delta": 10777.32,
+      "deltaPct": 1.03,
+      "yodaStores": 134,
+      "snowflakeStores": 134,
+      "missingStoresInYoda": 0
+    },
+    "2026-04-17": {
+      "yodaEOD": 1211604.37,
+      "snowflakeEOD": 1215075.08,
+      "delta": 3470.71,
+      "deltaPct": 0.286,
+      "yodaStores": 134,
+      "snowflakeStores": 134,
+      "missingStoresInYoda": 0
+    },
+    "2026-04-18": {
+      "yodaEOD": 1782361.58,
+      "snowflakeEOD": 1776905.45,
+      "delta": -5456.13,
+      "deltaPct": -0.307,
+      "yodaStores": 134,
+      "snowflakeStores": 134,
+      "missingStoresInYoda": 0
+    },
+    "2026-04-19": {
+      "yodaEOD": 811882.41,
+      "snowflakeEOD": 818439.87,
+      "delta": 6557.46,
+      "deltaPct": 0.801,
+      "yodaStores": 133,
+      "snowflakeStores": 134,
+      "missingStoresInYoda": 1
+    },
+    "2026-04-20": {
+      "yodaEOD": 1015170.48,
+      "snowflakeEOD": 1016619.04,
+      "delta": 1448.56,
+      "deltaPct": 0.142,
+      "yodaStores": 134,
+      "snowflakeStores": 134,
+      "missingStoresInYoda": 0
+    },
+    "2026-04-21": {
+      "yodaEOD": 1023405.71,
+      "snowflakeEOD": 1023251.03,
+      "delta": -154.68,
+      "deltaPct": -0.015,
+      "yodaStores": 134,
+      "snowflakeStores": 134,
+      "missingStoresInYoda": 0
+    },
+    "2026-04-22": {
+      "yodaEOD": 935325.9,
+      "snowflakeEOD": 936970.56,
+      "delta": 1644.66,
+      "deltaPct": 0.176,
+      "yodaStores": 134,
+      "snowflakeStores": 134,
+      "missingStoresInYoda": 0
+    },
+    "2026-04-23": {
+      "yodaEOD": 1083366.24,
+      "snowflakeEOD": 1089987.68,
+      "delta": 6621.44,
+      "deltaPct": 0.607,
+      "yodaStores": 134,
+      "snowflakeStores": 134,
+      "missingStoresInYoda": 0
+    },
+    "2026-04-24": {
+      "yodaEOD": 1245465.11,
+      "snowflakeEOD": 1242737.96,
+      "delta": -2727.15,
+      "deltaPct": -0.219,
+      "yodaStores": 134,
+      "snowflakeStores": 134,
+      "missingStoresInYoda": 0
+    },
+    "2026-04-25": {
+      "yodaEOD": 1651786.29,
+      "snowflakeEOD": 1644539.61,
+      "delta": -7246.68,
+      "deltaPct": -0.441,
+      "yodaStores": 133,
+      "snowflakeStores": 133,
+      "missingStoresInYoda": 0
+    },
+    "2026-04-26": {
+      "yodaEOD": 1426121.22,
+      "snowflakeEOD": 1424844.61,
+      "delta": -1276.61,
+      "deltaPct": -0.09,
+      "yodaStores": 134,
+      "snowflakeStores": 134,
+      "missingStoresInYoda": 0
+    }
   }
 }
