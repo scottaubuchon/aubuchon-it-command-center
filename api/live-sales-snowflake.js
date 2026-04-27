@@ -52,7 +52,7 @@ function buildCompanySql(storeFilter, dateFilter) {
     return `
 WITH day_sales AS (
   SELECT
-    SUM(NET_SALE_AMT)                          AS sales,
+    SUM(NET_SALE_GL_AMT)                       AS sales,
     SUM(GROSS_PROFIT_AMT)                      AS gp,
     SUM(TRANSACTION_CNT)                       AS txns,
     COUNT(DISTINCT STORE_CD)                   AS store_count
@@ -123,7 +123,7 @@ WITH day_store AS (
   SELECT
     asd.STORE_CD,
     asd.STORE_NM,
-    asd.NET_SALE_AMT    AS NET_SALES,
+    asd.NET_SALE_GL_AMT AS NET_SALES,
     asd.GROSS_PROFIT_AMT AS GP,
     asd.TRANSACTION_CNT
   FROM PRD_EDW_DB.ANALYTICS_BASE.AGG_SALES_DAY_STORE_ALL asd
@@ -192,7 +192,7 @@ function buildProductsSql(storeFilter, dateFilter) {
       : "";
     const dateKey = dateKeyOf(dateFilter);
     return `
-SELECT dp.PRODUCT_CD AS sku, dp.PRODUCT_DESC AS product, SUM(asp.NET_SALE_AMT) AS sales
+SELECT dp.PRODUCT_CD AS sku, dp.PRODUCT_DESC AS product, SUM(asp.NET_SALE_GL_AMT) AS sales
 FROM PRD_EDW_DB.ANALYTICS_BASE.AGG_SALES_DAY_STORE_PRODUCT asp
 LEFT JOIN PRD_EDW_DB.ANALYTICS_BASE.DIM_PRODUCT dp ON dp.PRODUCT_KEY = asp.PRODUCT_KEY
 WHERE asp.TRANSACTION_DATE_KEY = ${dateKey}
@@ -306,7 +306,7 @@ function buildDowAvgSql(dowKeys) {
   return `
 SELECT
   STORE_CD                 AS store,
-  AVG(NET_SALE_AMT)        AS dow_avg,
+  AVG(NET_SALE_GL_AMT)     AS dow_avg,
   COUNT(*)                 AS samples
 FROM PRD_EDW_DB.ANALYTICS_BASE.AGG_SALES_DAY_STORE_ALL
 WHERE TRANSACTION_DATE_KEY IN (${dowKeys.join(",")})
@@ -409,8 +409,14 @@ function fmtAsOfET(ts) {
 const CACHE_REPO  = "scottaubuchon/aubuchon-it-command-center";
 const CACHE_BRANCH = "main";
 
+// Cache path includes a version segment so old snapshots written under a
+// different metric definition are skipped automatically. Bump when the SQL
+// behind the snapshot changes in a way that would shift the totals.
+//   v1     - original NET_SALE_AMT-based snapshots
+//   v2-gl  - NET_SALE_GL_AMT (matches YODA "Sales TY" / scorecard ACTUAL_SALES_AMT)
+const CACHE_VERSION = "v2-gl";
 function cachePathFor(date) {
-  return `public/data/live-sales-snowflake/history/${date}.json`;
+  return `public/data/live-sales-snowflake/history/${CACHE_VERSION}/${date}.json`;
 }
 
 async function readHistoryCache(date) {
@@ -647,7 +653,7 @@ export default async function handler(req, res) {
 
     // Missing-store estimation — only fires company-wide when at least one
     // store is flagged as not reporting. Uses each missing store's historical
-    // same-DOW NET_SALE_AMT average as its expected EOD, then scales by a
+    // same-DOW NET_SALE_GL_AMT average as its expected EOD, then scales by a
     // peer-based pace factor (reporting stores' current total / their own
     // historical same-DOW total). For past-date views the day is already over,
     // so pace is forced to 1.0 and estimatedCurrent == estimatedEOD.
