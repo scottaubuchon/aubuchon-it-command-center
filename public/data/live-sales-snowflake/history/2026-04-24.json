@@ -3,16 +3,26 @@
   "storeFilter": null,
   "dateFilter": "2026-04-24",
   "companyTotal": {
-    "sales": 1259494.45,
+    "sales": 1338945.87,
     "plan": 1289097,
     "gp": 575682.12,
-    "gpPct": 45.70739632874127,
+    "gpPct": 42.99517500285504,
     "txns": 32441,
     "customers": 0,
-    "storeCount": 134,
-    "pctToPlan": 97.70362121702246
+    "storeCount": 136,
+    "pctToPlan": 103.86696036062455
   },
   "topStores": [
+    {
+      "store": "233",
+      "name": "ITHACA, NY - DOWNTOWN - (ACE)",
+      "city": "Ithaca",
+      "state": "NY",
+      "sales": 59684.44,
+      "plan": 27024.72,
+      "gp": 0,
+      "txns": 0
+    },
     {
       "store": "209",
       "name": "MOUNT JOY, PA - ACE",
@@ -82,6 +92,16 @@
       "plan": 24925.19,
       "gp": 10912.17,
       "txns": 388
+    },
+    {
+      "store": "234",
+      "name": "ITHACA, NY - TRIPHAMMER - (ACE)",
+      "city": "Ithaca",
+      "state": "NY",
+      "sales": 19766.98,
+      "plan": 17992.14,
+      "gp": 0,
+      "txns": 0
     },
     {
       "store": "198",
@@ -192,26 +212,6 @@
       "plan": 12728.42,
       "gp": 5588.55,
       "txns": 347
-    },
-    {
-      "store": "132",
-      "name": "EASTON, NY - ACE",
-      "city": "Greenwich",
-      "state": "NY",
-      "sales": 13938.11,
-      "plan": 10681.5,
-      "gp": 5148.73,
-      "txns": 267
-    },
-    {
-      "store": "063",
-      "name": "MIDDLEBURY, VT - ACE",
-      "city": "Middlebury",
-      "state": "VT",
-      "sales": 13609.67,
-      "plan": 13000.03,
-      "gp": 6915.01,
-      "txns": 330
     }
   ],
   "topProducts": [
@@ -606,13 +606,13 @@
       "sales": 1299
     },
     {
-      "sku": "937701",
-      "product": "GRILL SPIRIT E-425C LP BLK",
+      "sku": "736741",
+      "product": "LM2135SP 21\" SELECT CUT SP LAW",
       "sales": 1298
     },
     {
-      "sku": "736741",
-      "product": "LM2135SP 21\" SELECT CUT SP LAW",
+      "sku": "937701",
+      "product": "GRILL SPIRIT E-425C LP BLK",
       "sales": 1298
     },
     {
@@ -1540,53 +1540,11 @@
       "state": "RI"
     }
   ],
-  "notReporting": [
-    {
-      "store": "233",
-      "name": "ITHACA, NY - DOWNTOWN - (ACE)",
-      "city": "Ithaca",
-      "state": "NY",
-      "plan": 27024.72
-    },
-    {
-      "store": "234",
-      "name": "ITHACA, NY - TRIPHAMMER - (ACE)",
-      "city": "Ithaca",
-      "state": "NY",
-      "plan": 17992.14
-    }
-  ],
-  "estimatedMissing": {
-    "paceAtNow": 1,
-    "sampleWeeks": 8,
-    "stores": [
-      {
-        "store": "233",
-        "dowAvg": 25206.4125,
-        "samples": 8,
-        "basis": "dowAvg",
-        "plan": 27024.72,
-        "estimatedCurrent": 25206.4125,
-        "estimatedEOD": 25206.4125
-      },
-      {
-        "store": "234",
-        "dowAvg": 15530.02875,
-        "samples": 8,
-        "basis": "dowAvg",
-        "plan": 17992.14,
-        "estimatedCurrent": 15530.02875,
-        "estimatedEOD": 15530.02875
-      }
-    ],
-    "totalEstimatedCurrent": 40736.441249999996,
-    "totalEstimatedEOD": 40736.441249999996,
-    "projectedCompanyEOD": 1300230.8912499999,
-    "projectedCompanyCurrent": 1300230.8912499999
-  },
+  "notReporting": [],
+  "estimatedMissing": null,
   "asOfET": "End of day · 2026-04-24",
   "cached": true,
-  "refreshedAt": "2026-04-26T14:27:52.051Z",
+  "refreshedAt": "2026-04-27T15:36:21.107Z",
   "source": "snowflake",
-  "cachedAt": "2026-04-26T14:27:52.051Z"
+  "cachedAt": "2026-04-27T15:36:21.108Z"
 }
