@@ -4944,20 +4944,6 @@ const YODA_REPORTS = [
     icon: TrendingUp,
   },
   {
-    id: "live-sales",
-    label: "Live Sales",
-    description: "Today's sales vs. plan — company total, top 20 stores, and top 20 products",
-    icon: Zap,
-    view: "live-sales",
-  },
-  {
-    id: "live-sales-snowflake",
-    label: "Live Sales (Snowflake)",
-    description: "Same view, sourced live from Snowflake (FCT_LIVE_SALE) instead of YODA / Power BI",
-    icon: Database,
-    view: "live-sales-snowflake",
-  },
-  {
     id: "live-sales-yoda",
     label: "Live Sales (YODA Design)",
     description: "Same Snowflake data, re-skinned with the YODA design system — warm cream surface, KPI hero tinted by today's tone, confidence pill on the EOD forecast, ranked stores & products",
@@ -4970,6 +4956,27 @@ const YODA_REPORTS = [
     description: "Snowflake-native replacement for Power BI Store-Manager-Dashboard-v3 — KPI strip, sales drivers, product & customer drills",
     icon: LayoutGrid,
     view: "yoda-2",
+  },
+];
+
+// Reports kept available for reference but no longer the canonical version of
+// the underlying data. Rendered in a separate, de-emphasized section under
+// YODA Reports. Clicking still routes to the same view component — they're
+// not removed, just retired from the primary list.
+const YODA_DECOMMISSIONED_REPORTS = [
+  {
+    id: "live-sales",
+    label: "Live Sales",
+    description: "Today's sales vs. plan — company total, top 20 stores, and top 20 products. Sourced from YODA / Power BI.",
+    icon: Zap,
+    view: "live-sales",
+  },
+  {
+    id: "live-sales-snowflake",
+    label: "Live Sales (Snowflake)",
+    description: "Same view, sourced live from Snowflake (FCT_LIVE_SALE) instead of YODA / Power BI. Superseded by Live Sales (YODA Design).",
+    icon: Database,
+    view: "live-sales-snowflake",
   },
 ];
 
@@ -8832,6 +8839,73 @@ function YODAReports({ goHome }) {
             );
           })}
         </div>
+
+        {/* Decommissioned Reports — kept clickable for reference but visually
+            de-emphasized so the active list stays the canonical surface. */}
+        {YODA_DECOMMISSIONED_REPORTS.length > 0 && (
+          <div className="mt-10">
+            <div className="flex items-center gap-3 mb-3">
+              <Archive className="w-5 h-5 text-slate-400" />
+              <div>
+                <h2 className="text-lg font-semibold text-slate-700">Decommissioned Reports</h2>
+                <p className="text-xs text-slate-500">Retired versions kept available for reference. Use the active reports above for current data.</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 opacity-90">
+              {YODA_DECOMMISSIONED_REPORTS.map(function (rpt) {
+                var Icon = rpt.icon || FileText;
+                if (rpt.view) {
+                  return (
+                    <button
+                      key={rpt.id}
+                      onClick={function () { setSubView(rpt.view); }}
+                      className="group bg-slate-50 rounded-xl border border-dashed border-slate-300 p-5 hover:border-slate-400 hover:bg-slate-100 transition-all text-left cursor-pointer"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center flex-shrink-0">
+                          <Icon className="w-5 h-5 text-slate-500" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-2 min-w-0">
+                              <h3 className="font-semibold text-slate-700 truncate">{rpt.label}</h3>
+                              <span className="text-[9px] uppercase tracking-wide font-bold px-1.5 py-0.5 rounded bg-slate-200 text-slate-600 border border-slate-300 shrink-0">Retired</span>
+                            </div>
+                            <ArrowRight className="w-4 h-4 text-slate-400 shrink-0" />
+                          </div>
+                          <p className="text-sm text-slate-500 mt-1">{rpt.description}</p>
+                        </div>
+                      </div>
+                    </button>
+                  );
+                }
+                return (
+                  <a
+                    key={rpt.id}
+                    href={rpt.url}
+                    className="group bg-slate-50 rounded-xl border border-dashed border-slate-300 p-5 hover:border-slate-400 hover:bg-slate-100 transition-all"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center flex-shrink-0">
+                        <Icon className="w-5 h-5 text-slate-500" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2 min-w-0">
+                            <h3 className="font-semibold text-slate-700 truncate">{rpt.label}</h3>
+                            <span className="text-[9px] uppercase tracking-wide font-bold px-1.5 py-0.5 rounded bg-slate-200 text-slate-600 border border-slate-300 shrink-0">Retired</span>
+                          </div>
+                          <ArrowRight className="w-4 h-4 text-slate-400 shrink-0" />
+                        </div>
+                        <p className="text-sm text-slate-500 mt-1">{rpt.description}</p>
+                      </div>
+                    </div>
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
