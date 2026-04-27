@@ -9450,13 +9450,23 @@ function Yoda2ChatPanel({ selectedStore, selectedDate }) {
   const [sending, setSending] = useState(false);
   const [error, setError] = useState(null);
   const [showDetails, setShowDetails] = useState({});
-  const listRef = useRef(null);
+  const [expanded, setExpanded] = useState(false);
+  const listRefSidebar = useRef(null);
+  const listRefExpanded = useRef(null);
 
   useEffect(function () {
-    if (listRef.current) {
-      listRef.current.scrollTop = listRef.current.scrollHeight;
-    }
-  }, [messages, sending]);
+    [listRefSidebar, listRefExpanded].forEach(function (ref) {
+      if (ref.current) ref.current.scrollTop = ref.current.scrollHeight;
+    });
+  }, [messages, sending, expanded]);
+
+  // Close expanded mode on Esc
+  useEffect(function () {
+    if (!expanded) return;
+    function onKey(e) { if (e.key === "Escape") setExpanded(false); }
+    document.addEventListener("keydown", onKey);
+    return function () { document.removeEventListener("keydown", onKey); };
+  }, [expanded]);
 
   function toggleDetails(idx) {
     setShowDetails(function (s) {
@@ -9466,8 +9476,8 @@ function Yoda2ChatPanel({ selectedStore, selectedDate }) {
     });
   }
 
-  async function send() {
-    var q = String(input || "").trim();
+  async function send(forceQuestion) {
+    var q = String((forceQuestion != null ? forceQuestion : input) || "").trim();
     if (!q || sending) return;
     setError(null);
     setInput("");
@@ -9505,6 +9515,7 @@ function Yoda2ChatPanel({ selectedStore, selectedDate }) {
         row_count: Number(data.row_count || 0),
         kind: data.kind || "answer",
         took_ms: Number(data.took_ms || 0),
+        timings: data.timings || null,
       }]));
     } catch (e) {
       setError(String(e.message || e));
@@ -9530,38 +9541,31 @@ function Yoda2ChatPanel({ selectedStore, selectedDate }) {
     "Member sales vs last year",
     "How many transactions yesterday?",
     "Which stores beat plan yesterday?",
+    "Which stores are running payroll over target?",
+    "What's the next 7 days of weather for stores in MA?",
   ];
 
-  return (
-    <div className="mt-4 pt-4 border-t border-slate-100">
-      <div className="flex items-center justify-between mb-2">
-        <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Ask YODA</div>
-        {messages.length > 0 && (
-          <button
-            onClick={function () { setMessages([]); setShowDetails({}); setError(null); }}
-            className="text-[10px] text-slate-400 hover:text-slate-600"
-            title="Clear conversation"
-          >
-            Clear
-          </button>
-        )}
-      </div>
+  // Shared message list renderer. `mode` is "sidebar" or "expanded".
+  function renderMessages(mode) {
+    var isExpanded = mode === "expanded";
+    var baseText   = isExpanded ? "text-sm"   : "text-[12px]";
+    var btnText    = isExpanded ? "text-xs"   : "text-[10px]";
+    var tableText  = isExpanded ? "text-xs"   : "text-[10px]";
+    var maxRows    = isExpanded ? 100         : 25;
 
-      <div
-        ref={listRef}
-        className="bg-slate-50 border border-slate-200 rounded-lg p-2 mb-2 overflow-y-auto text-[12px]"
-        style={{ maxHeight: 280, minHeight: 60 }}
-      >
+    return (
+      <>
         {messages.length === 0 && !sending && (
-          <div className="text-slate-400 text-[11px] leading-snug">
-            Ask a question about stores, products, members, margins, or inventory. Answers come from the same semantic view as the rest of YODA 2.0.
+          <div className={(isExpanded ? "text-slate-500 text-sm" : "text-slate-400 text-[11px]") + " leading-relaxed"}>
+            Ask about stores, products, members, margins, inventory, plan, payroll, or weather. Answers come from the same semantic view as the rest of YODA 2.0. Use the expand button for a bigger reading space.
           </div>
         )}
         {messages.map(function (m, i) {
           if (m.role === "user") {
             return (
-              <div key={i} className="mb-2 flex justify-end">
-                <div className="bg-emerald-600 text-white rounded-lg px-2 py-1 max-w-[95%] whitespace-pre-wrap break-words">
+              <div key={i} className={(isExpanded ? "mb-4" : "mb-2") + " flex justify-end"}>
+                <div className={"bg-emerald-600 text-white rounded-lg whitespace-pre-wrap break-words " +
+                  (isExpanded ? "px-4 py-2 max-w-[80%] text-sm" : "px-2 py-1 max-w-[95%] " + baseText)}>
                   {m.content}
                 </div>
               </div>
@@ -9570,60 +9574,25 @@ function Yoda2ChatPanel({ selectedStore, selectedDate }) {
           var isErr = m.kind === "error" || m.kind === "blocked";
           var hasRows = Array.isArray(m.rows) && m.rows.length > 0;
           return (
-            <div key={i} className="mb-2">
-              <div className={"rounded-lg px-2 py-1 max-w-full whitespace-pre-wrap break-words " + (isErr ? "bg-red-50 text-red-800 border border-red-200" : "bg-white text-slate-800 border border-slate-200")}>
-                {m.content}
+            <div key={i} className={isExpanded ? "mb-5" : "mb-2"}>
+              <div className={"rounded-lg break-words " +
+                (isExpanded ? "px-4 py-3 " : "px-2 py-1 ") +
+                (isErr ? "bg-red-50 text-red-800 border border-red-200" : "bg-white text-slate-800 border border-slate-200") +
+                " " + (isExpanded ? "" : baseText)}>
+                {isErr
+                  ? <div className={isExpanded ? "text-sm" : ""}>{m.content}</div>
+                  : <Y2CRendered text={m.content} expanded={isExpanded} />}
               </div>
               {(m.sql || hasRows) && (
                 <div className="mt-1">
                   <button
                     onClick={function () { toggleDetails(i); }}
-                    className="text-[10px] text-emerald-700 hover:text-emerald-900 underline"
+                    className={btnText + " text-emerald-700 hover:text-emerald-900 underline"}
                   >
                     {showDetails[i] ? "Hide" : "Show"} SQL{hasRows ? " & data (" + (m.row_count || m.rows.length) + " row" + ((m.row_count || m.rows.length) === 1 ? "" : "s") + ")" : ""}
                   </button>
                   {showDetails[i] && (
-                    <div className="mt-1 space-y-1">
-                      {m.sql && (
-                        <pre className="bg-slate-900 text-emerald-200 text-[10px] leading-snug rounded p-2 overflow-x-auto whitespace-pre-wrap break-words">
-                          {m.sql}
-                        </pre>
-                      )}
-                      {hasRows && (
-                        <div className="overflow-x-auto border border-slate-200 rounded bg-white">
-                          <table className="text-[10px] w-full">
-                            <thead>
-                              <tr className="bg-slate-100">
-                                {m.columns.map(function (c) {
-                                  return <th key={c} className="text-left px-1.5 py-1 font-semibold text-slate-600 whitespace-nowrap">{c}</th>;
-                                })}
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {m.rows.slice(0, 25).map(function (r, ri) {
-                                return (
-                                  <tr key={ri} className="border-t border-slate-100">
-                                    {m.columns.map(function (c) {
-                                      var v = r[c];
-                                      var disp;
-                                      if (v === null || v === undefined) disp = "—";
-                                      else if (typeof v === "number") disp = Math.abs(v) >= 1000 ? v.toLocaleString() : String(v);
-                                      else disp = String(v);
-                                      return <td key={c} className="px-1.5 py-1 whitespace-nowrap text-slate-700">{disp}</td>;
-                                    })}
-                                  </tr>
-                                );
-                              })}
-                            </tbody>
-                          </table>
-                          {m.rows.length > 25 && (
-                            <div className="text-[10px] text-slate-400 px-1.5 py-1 border-t border-slate-100">
-                              Showing first 25 of {m.rows.length} rows
-                            </div>
-                          )}
-                        </div>
-                      )}
-                    </div>
+                    <Y2CDataViewer message={m} isExpanded={isExpanded} maxRows={maxRows} tableText={tableText} />
                   )}
                 </div>
               )}
@@ -9631,68 +9600,734 @@ function Yoda2ChatPanel({ selectedStore, selectedDate }) {
           );
         })}
         {sending && (
-          <div className="text-slate-500 italic text-[11px]">YODA is thinking…</div>
+          <div className={isExpanded ? "text-slate-500 italic text-sm" : "text-slate-500 italic text-[11px]"}>
+            YODA is thinking…
+          </div>
         )}
+      </>
+    );
+  }
+
+  // ==== SIDEBAR MODE ====
+  const sidebarBody = (
+    <div
+      ref={listRefSidebar}
+      className="bg-slate-50 border border-slate-200 rounded-lg p-2 mb-2 overflow-y-auto"
+      style={{ maxHeight: 360, minHeight: 80 }}
+    >
+      {renderMessages("sidebar")}
+    </div>
+  );
+
+  // ==== SHARED INPUT FOOTER ====
+  function footer(isExpanded) {
+    return (
+      <>
+        <textarea
+          value={input}
+          onChange={function (e) { setInput(e.target.value); }}
+          onKeyDown={onKey}
+          rows={isExpanded ? 3 : 2}
+          placeholder="Ask about sales, SKUs, members, plan, payroll, weather…"
+          disabled={sending}
+          className={"w-full bg-white border border-slate-200 rounded-lg px-3 py-2 resize-none focus:outline-none focus:ring-1 focus:ring-emerald-500 " +
+            (isExpanded ? "text-sm" : "text-xs")}
+        />
+        <div className="flex items-center justify-between mt-1.5 gap-2 flex-wrap">
+          <div className={(isExpanded ? "text-xs" : "text-[10px]") + " text-slate-400 leading-tight"}>
+            {selectedStore ? ("Scoped to " + selectedStore) : "All stores"} · {selectedDate || "(latest)"}
+          </div>
+          <button
+            onClick={function () { send(); }}
+            disabled={sending || !input.trim()}
+            className={"font-medium rounded " +
+              (isExpanded ? "text-sm px-4 py-1.5" : "text-xs px-3 py-1") + " " +
+              (sending || !input.trim() ? "bg-slate-200 text-slate-400 cursor-not-allowed" : "bg-emerald-600 text-white hover:bg-emerald-700")}
+          >
+            {sending ? "…" : "Ask"}
+          </button>
+        </div>
+
+        {messages.length === 0 && !sending && (
+          <div className={"mt-2 flex flex-wrap gap-1 " + (isExpanded ? "gap-2" : "")}>
+            {suggestions.map(function (s) {
+              return (
+                <button
+                  key={s}
+                  onClick={function () { setInput(s); }}
+                  className={"bg-white hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 text-slate-600 rounded-full " +
+                    (isExpanded ? "text-xs px-3 py-1" : "text-[10px] px-2 py-0.5")}
+                >
+                  {s}
+                </button>
+              );
+            })}
+          </div>
+        )}
+
+        {error && (
+          <div className={(isExpanded ? "text-xs" : "text-[10px]") + " mt-1 text-red-600 leading-snug"}>{error}</div>
+        )}
+      </>
+    );
+  }
+
+  return (
+    <div className="mt-4 pt-4 border-t border-slate-100">
+      <div className="flex items-center justify-between mb-2">
+        <div className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Ask YODA</div>
+        <div className="flex items-center gap-2">
+          {messages.length > 0 && (
+            <button
+              onClick={function () { setMessages([]); setShowDetails({}); setError(null); }}
+              className="text-[10px] text-slate-400 hover:text-slate-600"
+              title="Clear conversation"
+            >
+              Clear
+            </button>
+          )}
+          <button
+            onClick={function () { setExpanded(true); }}
+            className="text-[11px] text-emerald-700 hover:text-emerald-900 font-semibold flex items-center gap-1"
+            title="Expand to full screen"
+          >
+            <span style={{ display: "inline-block", transform: "rotate(0deg)" }}>⤢</span> Expand
+          </button>
+        </div>
       </div>
 
-      <textarea
-        value={input}
-        onChange={function (e) { setInput(e.target.value); }}
-        onKeyDown={onKey}
-        rows={2}
-        placeholder="Ask about sales, SKUs, members…"
-        disabled={sending}
-        className="w-full text-xs bg-white border border-slate-200 rounded-lg px-2 py-1.5 resize-none focus:outline-none focus:ring-1 focus:ring-emerald-500"
-      />
-      <div className="flex items-center justify-between mt-1">
-        <div className="text-[10px] text-slate-400 leading-tight">
-          {selectedStore ? ("Scoped to " + selectedStore) : "All stores"} · {selectedDate}
-        </div>
-        <button
-          onClick={send}
-          disabled={sending || !input.trim()}
-          className={"text-xs font-medium px-3 py-1 rounded " + (sending || !input.trim() ? "bg-slate-200 text-slate-400 cursor-not-allowed" : "bg-emerald-600 text-white hover:bg-emerald-700")}
+      {sidebarBody}
+      {footer(false)}
+
+      {expanded && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          style={{ background: "rgba(15, 23, 42, 0.55)" }}
+          onClick={function () { setExpanded(false); }}
         >
-          {sending ? "…" : "Ask"}
-        </button>
-      </div>
+          <div
+            className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl flex flex-col overflow-hidden"
+            style={{ height: "90vh" }}
+            onClick={function (e) { e.stopPropagation(); }}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-5 py-3 border-b border-slate-200 bg-slate-50 flex-shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="text-lg font-bold" style={{ color: "#01683F", fontFamily: "Trebuchet MS, sans-serif" }}>
+                  Ask <span style={{ color: "#F58220" }}>YODA</span>
+                </div>
+                <div className="text-xs text-slate-500">
+                  {selectedStore ? ("Scoped to " + selectedStore) : "All stores"} · {selectedDate || "(latest)"}
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                {messages.length > 0 && (
+                  <button
+                    onClick={function () { setMessages([]); setShowDetails({}); setError(null); }}
+                    className="text-xs text-slate-500 hover:text-slate-800"
+                  >
+                    Clear
+                  </button>
+                )}
+                <button
+                  onClick={function () { setExpanded(false); }}
+                  className="text-sm text-slate-500 hover:text-slate-900 px-2"
+                  title="Close (Esc)"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
 
-      {messages.length === 0 && !sending && (
-        <div className="mt-2 flex flex-wrap gap-1">
-          {suggestions.map(function (s) {
-            return (
-              <button
-                key={s}
-                onClick={function () { setInput(s); }}
-                className="text-[10px] bg-white hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 text-slate-600 rounded-full px-2 py-0.5"
-              >
-                {s}
-              </button>
-            );
-          })}
+            {/* Message list */}
+            <div
+              ref={listRefExpanded}
+              className="flex-1 overflow-y-auto px-5 py-4"
+              style={{ background: "#F8FAFC" }}
+            >
+              {renderMessages("expanded")}
+            </div>
+
+            {/* Footer */}
+            <div className="px-5 py-3 border-t border-slate-200 bg-white flex-shrink-0">
+              {footer(true)}
+            </div>
+          </div>
         </div>
-      )}
-
-      {error && (
-        <div className="mt-1 text-[10px] text-red-600 leading-snug">{error}</div>
       )}
     </div>
   );
 }
 
 /* ============================================================
-   YODA 2.0 - AI Insights
-   Per-store Top 5 actionable recommendations from
-   /api/yoda-2?page=insights. Backend runs a rule-based retail-
-   analyst over the AUBUCHON_RETAIL_ANALYTICS semantic view.
+   Y2C visual helpers — cell decorators + inline SVG bar charts
+   Used by Y2CRendered (markdown tables) and Y2CDataChart (SQL rows)
+   to make chat answers scannable at a glance.
    ============================================================ */
+
+// Parse a cell string into a number. Handles "$1,234", "12.5%", "1.2K",
+// "1.2M", "-5%", "0.2–0.5" (range → midpoint), etc. Returns NaN if not numeric.
+function y2cParseNum(s) {
+  if (s === null || s === undefined) return NaN;
+  if (typeof s === "number") return s;
+  const raw = String(s).trim();
+  if (!raw) return NaN;
+
+  // Range like "0.2–0.5" or "0.2-0.5" — take midpoint
+  const range = raw.match(/^(-?[\d.]+)\s*[\u2013\u2014\-]\s*(-?[\d.]+)/);
+  if (range) return (parseFloat(range[1]) + parseFloat(range[2])) / 2;
+
+  let t = raw.replace(/[,\s$°F]/g, "");
+  let mult = 1;
+  if (/[kK]$/.test(t))  { mult = 1e3;  t = t.slice(0, -1); }
+  if (/[mM]$/.test(t))  { mult = 1e6;  t = t.slice(0, -1); }
+  if (/[bB]$/.test(t))  { mult = 1e9;  t = t.slice(0, -1); }
+  const hasPct = /%$/.test(t);
+  if (hasPct) t = t.slice(0, -1);
+  const n = parseFloat(t);
+  if (!Number.isFinite(n)) return NaN;
+  return (hasPct ? n / 100 : n) * mult;
+}
+
+// Column name classifier. Given a column header, infer what kind of cell it is.
+function y2cClassifyColumn(header, samples) {
+  const h = String(header || "").toLowerCase();
+  if (/temp|high\s*°|low\s*°|avg\s*°|temperature/.test(h)) return "temp";
+  if (/precip|rain|snow(\s|\b)/.test(h)) return "weather_amt";
+  if (/condition|weather/.test(h)) return "conditions";
+  if (/\bpct\b|percent|%|attn|attainment/.test(h)) return "pct";
+  if (/\bvar\b|variance|vs\s*ly|vs\.\s*ly|change/.test(h)) return "variance";
+  if (/store\s*cd|store_cd|\bcode\b/.test(h)) return "store_code";
+  if (/date|day|week|month|year|dt$/.test(h)) return "date";
+  if (/name|desc|department|class|city|state|location|store\s*nm/.test(h)) return "label";
+  // Infer from sample values: if most samples parse as numbers, call it "number"
+  if (samples && samples.length) {
+    let numCount = 0;
+    for (const s of samples) if (!Number.isNaN(y2cParseNum(s))) numCount++;
+    if (numCount / samples.length > 0.6) return "number";
+  }
+  return "text";
+}
+
+// Conditions string → emoji prefix.
+function y2cConditionIcon(text) {
+  const t = String(text || "").toLowerCase();
+  if (/snow|blizzard/.test(t)) return "\u2744\ufe0f";            // ❄️
+  if (/storm|thunder/.test(t)) return "\u26c8\ufe0f";            // ⛈️
+  if (/rain|shower|drizzle|precip/.test(t)) return "\ud83c\udf27\ufe0f"; // 🌧️
+  if (/cloud/.test(t)) return "\u2601\ufe0f";                    // ☁️
+  if (/wind/.test(t)) return "\ud83d\udca8";                     // 💨
+  if (/clear|sun|warm|hot|good/.test(t)) return "\u2600\ufe0f";  // ☀️
+  if (/cold|cool|freeze|frost/.test(t)) return "\ud83e\udd76";   // 🥶
+  return "";
+}
+
+// Temperature (°F) → background tint + text color (cool blue → warm orange).
+function y2cTempStyle(f) {
+  if (!Number.isFinite(f)) return null;
+  // Clamp to [10, 90]
+  const t = Math.max(10, Math.min(90, f));
+  // Interpolate across stops
+  const stops = [
+    { t: 10, bg: "#DBEAFE", fg: "#1E3A8A" }, // icy blue
+    { t: 32, bg: "#E0F2FE", fg: "#075985" }, // chilly
+    { t: 50, bg: "#F0FDF4", fg: "#166534" }, // mild green
+    { t: 70, bg: "#FEF9C3", fg: "#92400E" }, // warm yellow
+    { t: 90, bg: "#FED7AA", fg: "#9A3412" }, // hot orange
+  ];
+  let lo = stops[0], hi = stops[stops.length - 1];
+  for (let i = 0; i < stops.length - 1; i++) {
+    if (t >= stops[i].t && t <= stops[i + 1].t) { lo = stops[i]; hi = stops[i + 1]; break; }
+  }
+  const pct = (t - lo.t) / Math.max(1, hi.t - lo.t);
+  function lerp(a, b) {
+    const pa = parseInt(a.slice(1), 16), pb = parseInt(b.slice(1), 16);
+    const ra = (pa >> 16) & 255, ga = (pa >> 8) & 255, ba = pa & 255;
+    const rb = (pb >> 16) & 255, gb = (pb >> 8) & 255, bb = pb & 255;
+    const r = Math.round(ra + (rb - ra) * pct);
+    const g = Math.round(ga + (gb - ga) * pct);
+    const bB = Math.round(ba + (bb - ba) * pct);
+    return "#" + ((1 << 24) | (r << 16) | (g << 8) | bB).toString(16).slice(1);
+  }
+  return { bg: lerp(lo.bg, hi.bg), fg: lerp(lo.fg, hi.fg) };
+}
+
+// Variance value → color (green for positive, red for negative).
+function y2cVarianceCls(n) {
+  if (!Number.isFinite(n)) return "";
+  if (n > 0) return "text-emerald-700 font-semibold";
+  if (n < 0) return "text-rose-700 font-semibold";
+  return "text-slate-600";
+}
+
+// Weather precipitation amount → icon (no rain → · ; light → 🌦 ; heavy → 🌧 )
+function y2cPrecipIcon(inches) {
+  if (!Number.isFinite(inches) || inches <= 0) return "";
+  if (inches >= 1) return "\ud83c\udf27\ufe0f";  // 🌧️ heavy
+  if (inches >= 0.1) return "\ud83c\udf26\ufe0f"; // 🌦 light
+  return "\ud83d\udca7";                          // 💧 trace
+}
+
+// Snow → icon
+function y2cSnowIcon(inches) {
+  if (!Number.isFinite(inches) || inches <= 0) return "";
+  return "\u2744\ufe0f"; // ❄️
+}
+
+// Render a decorated cell. Returns a React node.
+function Y2CDecoratedCell({ value, kind, colMax, colMin }) {
+  const raw = value == null ? "" : String(value);
+  const num = y2cParseNum(raw);
+
+  if (kind === "temp" && Number.isFinite(num)) {
+    const s = y2cTempStyle(num);
+    if (s) {
+      return (
+        <span className="inline-block rounded px-1.5 py-0.5 font-semibold"
+              style={{ background: s.bg, color: s.fg, minWidth: 38, textAlign: "center" }}>
+          {Math.round(num)}°
+        </span>
+      );
+    }
+  }
+
+  if (kind === "conditions") {
+    const icon = y2cConditionIcon(raw);
+    return (
+      <span>
+        {icon ? <span className="mr-1">{icon}</span> : null}
+        {raw}
+      </span>
+    );
+  }
+
+  if (kind === "weather_amt" && raw) {
+    const h = String(raw).toLowerCase();
+    if (/^none$|^0(\.0+)?$|^\-$/.test(h.trim())) {
+      return <span className="text-slate-400">—</span>;
+    }
+    // Pick snow vs rain icon based on the column, fallback to precip
+    const isSnow = /snow/.test(h);
+    const icon = isSnow ? y2cSnowIcon(num) : y2cPrecipIcon(num);
+    return (
+      <span>
+        {icon ? <span className="mr-1">{icon}</span> : null}
+        {raw}
+      </span>
+    );
+  }
+
+  if (kind === "variance" || (kind === "pct" && /^[-+]/.test(raw.trim()))) {
+    if (Number.isFinite(num)) {
+      const cls = y2cVarianceCls(num);
+      const arrow = num > 0 ? "\u2191" : num < 0 ? "\u2193" : "\u2022";
+      return <span className={cls}>{arrow} {raw}</span>;
+    }
+  }
+
+  if ((kind === "number" || kind === "pct") && Number.isFinite(num) &&
+      Number.isFinite(colMax) && colMax > 0 && num >= 0) {
+    // Inline bar behind the number (proportional to column max)
+    const pct = Math.min(100, Math.round((num / colMax) * 100));
+    return (
+      <span className="relative inline-block" style={{ minWidth: 70 }}>
+        <span
+          className="absolute inset-y-0 left-0 rounded"
+          style={{ width: pct + "%", background: "rgba(1, 104, 63, 0.10)" }}
+        />
+        <span className="relative font-mono text-right block pr-1">{raw}</span>
+      </span>
+    );
+  }
+
+  return <span>{raw}</span>;
+}
+
+// Simple SVG horizontal bar chart. Takes a list of { label, value } pairs.
+function Y2CBarChart({ items, valueFormat, height, expanded }) {
+  if (!items || !items.length) return null;
+  const W = expanded ? 900 : 260;
+  const rowH = 22;
+  const H = items.length * rowH + 14;
+  const labelW = Math.min(expanded ? 220 : 110, W * 0.38);
+  const pad = 6;
+  const max = Math.max.apply(null, items.map(function (i) { return Math.abs(Number(i.value) || 0); }));
+  const safeMax = max > 0 ? max : 1;
+  function fmt(v) {
+    if (typeof valueFormat === "function") return valueFormat(v);
+    if (Math.abs(v) >= 1e6) return "$" + (v / 1e6).toFixed(1) + "M";
+    if (Math.abs(v) >= 1e3) return "$" + (v / 1e3).toFixed(1) + "K";
+    return "$" + Math.round(v).toLocaleString();
+  }
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} width="100%" style={{ maxHeight: H, display: "block" }}>
+      {items.map(function (it, i) {
+        const y = i * rowH + 4;
+        const v = Number(it.value) || 0;
+        const w = (Math.abs(v) / safeMax) * (W - labelW - pad - 90);
+        const barX = labelW + pad;
+        const color = v >= 0 ? "#01683F" : "#B91C1C";
+        return (
+          <g key={i}>
+            <text x={labelW - pad} y={y + rowH / 2 + 4} textAnchor="end"
+                  fill="#334155"
+                  style={{ fontSize: expanded ? 12 : 10 }}>
+              {String(it.label).slice(0, expanded ? 36 : 20)}
+            </text>
+            <rect x={barX} y={y + 3} width={Math.max(1, w)} height={rowH - 8}
+                  rx={3} fill={color} fillOpacity={0.85} />
+            <text x={barX + w + 4} y={y + rowH / 2 + 4}
+                  fill="#0F172A"
+                  style={{ fontSize: expanded ? 12 : 10, fontFamily: "ui-monospace, SFMono-Regular, monospace" }}>
+              {fmt(v)}
+            </text>
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
+// Pick the best "label" column + "value" column for a chart from rows/columns.
+// Returns { labelCol, valueCol } or null if nothing chartable.
+function y2cPickChartCols(columns, rows) {
+  if (!columns || columns.length < 2 || !rows || rows.length < 2) return null;
+  // Sample values per column
+  const samples = {};
+  for (const c of columns) samples[c] = rows.slice(0, 20).map(function (r) { return r[c]; });
+  // Prefer a numeric column for value
+  let valueCol = null;
+  for (const c of columns) {
+    const kind = y2cClassifyColumn(c, samples[c]);
+    if (kind === "number" || kind === "pct") { valueCol = c; break; }
+  }
+  if (!valueCol) {
+    // try anything that parses numerically
+    for (const c of columns) {
+      const parsed = samples[c].map(y2cParseNum).filter(Number.isFinite);
+      if (parsed.length >= rows.length * 0.5) { valueCol = c; break; }
+    }
+  }
+  if (!valueCol) return null;
+
+  // Pick a label column that isn't the value
+  let labelCol = null;
+  for (const c of columns) {
+    if (c === valueCol) continue;
+    const kind = y2cClassifyColumn(c, samples[c]);
+    if (kind === "label" || kind === "store_code" || kind === "date" || kind === "text") { labelCol = c; break; }
+  }
+  if (!labelCol) labelCol = columns.find(function (c) { return c !== valueCol; });
+  if (!labelCol) return null;
+  return { labelCol, valueCol };
+}
+
+
+/* Markdown renderer with GitHub-flavored table support, headers (###, ##),
+   **bold**, "- " bullets, "1. " numbered lists, and decorated cells (temp ramp,
+   weather/condition icons, variance arrows, inline proportional bars). */
+function Y2CRendered({ text, expanded }) {
+  const src = String(text || "");
+  if (!src.trim()) return null;
+
+  const blocks = src.split(/\n{2,}/);
+
+  function renderInline(s) {
+    const parts = [];
+    const re = /\*\*([^*]+)\*\*/g;
+    let last = 0, m, k = 0;
+    while ((m = re.exec(s)) !== null) {
+      if (m.index > last) parts.push(s.slice(last, m.index));
+      parts.push(<strong key={"b" + (k++)}>{m[1]}</strong>);
+      last = m.index + m[0].length;
+    }
+    if (last < s.length) parts.push(s.slice(last));
+    return parts;
+  }
+
+  const bodyCls  = expanded ? "text-sm leading-relaxed" : "text-[12px] leading-snug";
+  const h1Cls    = expanded ? "text-base font-bold text-slate-900 mt-3 mb-1" : "text-[13px] font-bold text-slate-900 mt-2 mb-1";
+  const h2Cls    = expanded ? "text-sm font-bold text-slate-900 mt-3 mb-1" : "text-[12px] font-bold text-slate-900 mt-2 mb-1";
+  const listCls  = expanded ? "list-disc pl-5 space-y-1 text-sm" : "list-disc pl-4 space-y-0.5 text-[12px]";
+  const olCls    = expanded ? "list-decimal pl-5 space-y-1 text-sm" : "list-decimal pl-4 space-y-0.5 text-[12px]";
+  const tableTextCls = expanded ? "text-xs" : "text-[11px]";
+
+  return (
+    <div>
+      {blocks.map(function (block, bi) {
+        const b = block.trim();
+        if (!b) return null;
+        let m;
+
+        if ((m = b.match(/^###\s+(.+)$/m)) && b.split("\n")[0].startsWith("###")) {
+          const lines = b.split("\n");
+          const head = lines[0].replace(/^###\s+/, "");
+          const rest = lines.slice(1).join("\n").trim();
+          return (
+            <div key={bi}>
+              <div className={h1Cls}>{renderInline(head)}</div>
+              {rest && <Y2CRendered text={rest} expanded={expanded} />}
+            </div>
+          );
+        }
+        if ((m = b.match(/^##\s+(.+)$/m)) && b.split("\n")[0].startsWith("##")) {
+          const lines = b.split("\n");
+          const head = lines[0].replace(/^##\s+/, "");
+          const rest = lines.slice(1).join("\n").trim();
+          return (
+            <div key={bi}>
+              <div className={h2Cls}>{renderInline(head)}</div>
+              {rest && <Y2CRendered text={rest} expanded={expanded} />}
+            </div>
+          );
+        }
+
+        // Pipe table block (GFM) — first row + separator row + data rows
+        const linesAll = b.split("\n");
+        if (linesAll.length >= 2) {
+          const first = linesAll[0].trim();
+          const sep   = (linesAll[1] || "").trim();
+          const looksRow = first.startsWith("|") && first.endsWith("|") && first.split("|").length >= 3;
+          const looksSep = /^\|?\s*:?-{2,}:?\s*(\|\s*:?-{2,}:?\s*)+\|?$/.test(sep);
+          if (looksRow && looksSep) {
+            function splitCells(line) {
+              return line
+                .replace(/^\|/, "")
+                .replace(/\|\s*$/, "")
+                .split("|")
+                .map(function (c) { return c.trim(); });
+            }
+            const headers = splitCells(first);
+            const bodyRows = linesAll.slice(2)
+              .filter(function (l) { return l.trim().length > 0; })
+              .map(splitCells);
+            const colMeta = headers.map(function (h, ci) {
+              const samples = bodyRows.map(function (r) { return r[ci]; });
+              const kind = y2cClassifyColumn(h, samples);
+              const nums = samples.map(y2cParseNum).filter(Number.isFinite);
+              const colMax = nums.length ? Math.max.apply(null, nums.map(Math.abs)) : 0;
+              const colMin = nums.length ? Math.min.apply(null, nums) : 0;
+              return { kind: kind, colMax: colMax, colMin: colMin };
+            });
+            return (
+              <div key={bi} className="my-2 overflow-x-auto border border-slate-200 rounded-lg bg-white">
+                <table className={tableTextCls + " w-full"}>
+                  <thead>
+                    <tr className="bg-slate-100">
+                      {headers.map(function (h, hi) {
+                        return (
+                          <th key={hi} className="text-left px-2 py-1 font-semibold text-slate-700 whitespace-nowrap border-b border-slate-200">
+                            {renderInline(h)}
+                          </th>
+                        );
+                      })}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {bodyRows.map(function (row, ri) {
+                      return (
+                        <tr key={ri} className={ri % 2 === 1 ? "bg-slate-50" : ""}>
+                          {row.map(function (cell, ci) {
+                            const meta = colMeta[ci] || {};
+                            const isText = meta.kind === "label" || meta.kind === "text" || meta.kind === "date" || meta.kind === "store_code";
+                            const alignRight = !isText && meta.kind !== "conditions";
+                            return (
+                              <td key={ci}
+                                  className={"px-2 py-1 border-t border-slate-100 whitespace-nowrap text-slate-700 " + (alignRight ? "text-right" : "")}>
+                                <Y2CDecoratedCell value={cell} kind={meta.kind} colMax={meta.colMax} colMin={meta.colMin} />
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            );
+          }
+        }
+
+        const lines = b.split("\n");
+        const allBullets = lines.every(function (l) { return /^\s*[-*]\s+/.test(l); });
+        if (allBullets && lines.length > 0) {
+          return (
+            <ul key={bi} className={listCls}>
+              {lines.map(function (l, li) {
+                return <li key={li} className="text-slate-700">{renderInline(l.replace(/^\s*[-*]\s+/, ""))}</li>;
+              })}
+            </ul>
+          );
+        }
+        const allNumbered = lines.every(function (l) { return /^\s*\d+\.\s+/.test(l); });
+        if (allNumbered && lines.length > 0) {
+          return (
+            <ol key={bi} className={olCls}>
+              {lines.map(function (l, li) {
+                return <li key={li} className="text-slate-700">{renderInline(l.replace(/^\s*\d+\.\s+/, ""))}</li>;
+              })}
+            </ol>
+          );
+        }
+
+        return (
+          <p key={bi} className={bodyCls + " text-slate-800 mb-2"}>
+            {lines.map(function (l, li) {
+              return (
+                <span key={li}>
+                  {renderInline(l)}
+                  {li < lines.length - 1 ? <br /> : null}
+                </span>
+              );
+            })}
+          </p>
+        );
+      })}
+    </div>
+  );
+}
+
+
+/* Tabbed data viewer for Ask YODA — Chart / Table / SQL. */
+function Y2CDataViewer({ message, isExpanded, maxRows, tableText }) {
+  const m = message;
+  const hasRows = Array.isArray(m.rows) && m.rows.length > 0;
+  const chartable = hasRows ? y2cPickChartCols(m.columns, m.rows) : null;
+  const tabs = [];
+  if (chartable) tabs.push("chart");
+  if (hasRows) tabs.push("table");
+  if (m.sql) tabs.push("sql");
+  const [tab, setTab] = useState(tabs[0] || "table");
+  if (tabs.length === 0) return null;
+
+  const btnBase = (isExpanded ? "text-xs " : "text-[10px] ") + "px-2 py-0.5 rounded border font-medium transition-colors";
+
+  return (
+    <div className="mt-1 space-y-1">
+      <div className="flex items-center gap-1">
+        {tabs.indexOf("chart") >= 0 && (
+          <button onClick={function(){setTab("chart");}} className={btnBase + " " + (tab === "chart" ? "bg-emerald-600 text-white border-emerald-600" : "bg-white text-slate-600 border-slate-200 hover:border-emerald-400")}>Chart</button>
+        )}
+        {tabs.indexOf("table") >= 0 && (
+          <button onClick={function(){setTab("table");}} className={btnBase + " " + (tab === "table" ? "bg-emerald-600 text-white border-emerald-600" : "bg-white text-slate-600 border-slate-200 hover:border-emerald-400")}>Table</button>
+        )}
+        {tabs.indexOf("sql") >= 0 && (
+          <button onClick={function(){setTab("sql");}} className={btnBase + " " + (tab === "sql" ? "bg-emerald-600 text-white border-emerald-600" : "bg-white text-slate-600 border-slate-200 hover:border-emerald-400")}>SQL</button>
+        )}
+        <span className={(isExpanded ? "text-xs" : "text-[10px]") + " text-slate-400 ml-2"}>
+          {hasRows ? ((m.row_count || m.rows.length) + " row" + ((m.row_count || m.rows.length) === 1 ? "" : "s")) : ""}
+        </span>
+      </div>
+
+      {tab === "chart" && chartable && (
+        <Y2CDataChart columns={m.columns} rows={m.rows} pick={chartable} isExpanded={isExpanded} />
+      )}
+
+      {tab === "table" && hasRows && (
+        <div className="overflow-x-auto border border-slate-200 rounded bg-white">
+          <table className={tableText + " w-full"}>
+            <thead>
+              <tr className="bg-slate-100">
+                {m.columns.map(function (c) {
+                  return <th key={c} className="text-left px-1.5 py-1 font-semibold text-slate-600 whitespace-nowrap border-b border-slate-200">{c}</th>;
+                })}
+              </tr>
+            </thead>
+            <tbody>
+              {(function () {
+                const colMeta = m.columns.map(function (c) {
+                  const samples = m.rows.slice(0, 30).map(function (r) { return r[c]; });
+                  const kind = y2cClassifyColumn(c, samples);
+                  const nums = samples.map(y2cParseNum).filter(Number.isFinite);
+                  const colMax = nums.length ? Math.max.apply(null, nums.map(Math.abs)) : 0;
+                  const colMin = nums.length ? Math.min.apply(null, nums) : 0;
+                  return { kind: kind, colMax: colMax, colMin: colMin };
+                });
+                return m.rows.slice(0, maxRows).map(function (r, ri) {
+                  return (
+                    <tr key={ri} className={(ri % 2 === 1 ? "bg-slate-50 " : "") + "border-t border-slate-100"}>
+                      {m.columns.map(function (c, ci) {
+                        const meta = colMeta[ci] || {};
+                        const isText = meta.kind === "label" || meta.kind === "text" || meta.kind === "date" || meta.kind === "store_code";
+                        const alignRight = !isText && meta.kind !== "conditions";
+                        var v = r[c];
+                        var disp;
+                        if (v === null || v === undefined) disp = "—";
+                        else if (typeof v === "number") disp = Math.abs(v) >= 1000 ? v.toLocaleString() : String(v);
+                        else disp = String(v);
+                        return (
+                          <td key={c} className={"px-1.5 py-1 whitespace-nowrap " + (alignRight ? "text-right" : "")}>
+                            <Y2CDecoratedCell value={disp} kind={meta.kind} colMax={meta.colMax} colMin={meta.colMin} />
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                });
+              })()}
+            </tbody>
+          </table>
+          {m.rows.length > maxRows && (
+            <div className={(isExpanded ? "text-xs" : "text-[10px]") + " text-slate-400 px-1.5 py-1 border-t border-slate-100"}>
+              Showing first {maxRows} of {m.rows.length} rows
+            </div>
+          )}
+        </div>
+      )}
+
+      {tab === "sql" && m.sql && (
+        <pre className={"bg-slate-900 text-emerald-200 rounded p-2 overflow-x-auto whitespace-pre-wrap break-words " +
+          (isExpanded ? "text-xs leading-relaxed" : "text-[10px] leading-snug")}>
+          {m.sql}
+        </pre>
+      )}
+
+      {m.timings && isExpanded && (
+        <div className="text-[11px] text-slate-400 font-mono">
+          timings(ms): gen {m.timings.gen || 0} · connect {m.timings.connect || 0} · exec {m.timings.exec || 0} · summary {m.timings.summary || 0} · total {m.took_ms || 0}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Y2CDataChart({ columns, rows, pick, isExpanded }) {
+  const items = rows.slice(0, isExpanded ? 30 : 15)
+    .map(function (r) {
+      return { label: r[pick.labelCol], value: y2cParseNum(r[pick.valueCol]) };
+    })
+    .filter(function (x) { return Number.isFinite(x.value); })
+    .sort(function (a, b) { return (b.value || 0) - (a.value || 0); });
+  if (!items.length) {
+    return <div className="text-xs text-slate-500 italic">No chartable numeric data.</div>;
+  }
+  const max = Math.max.apply(null, items.map(function (x) { return Math.abs(x.value); }));
+  function fmt(v) {
+    if (max < 10) return v.toFixed(2);
+    if (max < 1000) return Math.round(v).toLocaleString();
+    if (max < 1e6) return "$" + Math.round(v).toLocaleString();
+    if (max < 1e9) return "$" + (v / 1e6).toFixed(1) + "M";
+    return "$" + (v / 1e9).toFixed(1) + "B";
+  }
+  return (
+    <div className="border border-slate-200 rounded bg-white p-3">
+      <div className={(isExpanded ? "text-xs" : "text-[10px]") + " text-slate-500 mb-2"}>
+        {pick.valueCol} by {pick.labelCol} · top {items.length}
+      </div>
+      <Y2CBarChart items={items} valueFormat={fmt} expanded={isExpanded} />
+    </div>
+  );
+}
 
 function Yoda2Insights({ selectedStore, setSelectedStore, dateLabel, selectedDate }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [categoryFilter, setCategoryFilter] = useState("All");
+  const [feedbackMap, setFeedbackMap] = useState({});     // id -> feedback doc
+  const [showSuppressed, setShowSuppressed] = useState(false);
 
+  // Pull insights payload
   useEffect(function () {
     var cancelled = false;
     setLoading(true); setError(null);
@@ -9709,13 +10344,77 @@ function Yoda2Insights({ selectedStore, setSelectedStore, dateLabel, selectedDat
     return function () { cancelled = true; };
   }, [selectedDate]);
 
+  // Pull feedback docs from Firestore on mount + whenever selectedDate changes
+  useEffect(function () {
+    var cancelled = false;
+    (async function () {
+      try {
+        const snap = await getDocs(collection(db, "insights_feedback"));
+        if (cancelled) return;
+        const map = {};
+        snap.forEach(function (d) { map[d.id] = d.data(); });
+        setFeedbackMap(map);
+      } catch (e) {
+        console.warn("insights_feedback load failed:", e && e.message);
+      }
+    })();
+    return function () { cancelled = true; };
+  }, [selectedDate]);
+
+  // Save feedback helper. status is one of "good" | "bad" | "done" | null (clear).
+  async function saveFeedback(action, store, status) {
+    if (!action || !action.id) return;
+    const ref = doc(db, "insights_feedback", action.id);
+    const user = (typeof auth !== "undefined" && auth && auth.currentUser) ? (auth.currentUser.email || auth.currentUser.displayName || "unknown") : "unknown";
+    const existing = feedbackMap[action.id] || {};
+    const payload = {
+      id: action.id,
+      storeCode: (store && store.code) || "",
+      storeName: (store && store.name) || "",
+      ruleKey: action.ruleKey || null,
+      title: action.title || "",
+      category: action.category || "",
+      priority: action.priority || "",
+      status: status,
+      statusAt: serverTimestamp(),
+      statusBy: user,
+      lastShown: serverTimestamp(),
+      shownCount: (existing.shownCount || 0) + 0,
+    };
+    if (status === "done") {
+      // Snapshot the store's current KPIs so we can measure post-completion delta.
+      payload.snapshot = {
+        capturedAt: new Date().toISOString(),
+        netSales7d:   Number(store.netSales)     || 0,
+        lyNetSales7d: Number(store.lyNetSales)   || 0,
+        netSales28d:  Number(store.netSales28)   || 0,
+        lyNetSales28d:Number(store.lyNetSales28) || 0,
+        atv28:        Number(store.atv28)        || 0,
+        upt28:        Number(store.upt28)        || 0,
+        memberSales28:Number(store.memberSales28)|| 0,
+        proSales28:   Number(store.proSales28)   || 0,
+        mtdNetSales:  Number(store.mtdNetSales)  || 0,
+        mtdPlan:      Number(store.mtdPlan)      || 0,
+        plan28d:      Number(store.plan28d)      || 0,
+      };
+    }
+    try {
+      await setDoc(ref, payload, { merge: true });
+      setFeedbackMap(function (prev) {
+        return Object.assign({}, prev, { [action.id]: Object.assign({}, prev[action.id] || {}, payload, { statusAt: new Date() }) });
+      });
+    } catch (e) {
+      console.warn("saveFeedback failed:", e && e.message);
+    }
+  }
+
   if (loading && !data) {
     return <div className="bg-white rounded-xl p-12 text-center text-slate-500 border border-slate-200">Running the retail advisor...</div>;
   }
   if (error) {
     return (
       <div className="bg-red-50 border border-red-200 text-red-800 rounded-lg p-4 text-sm">
-        <div className="font-semibold mb-1">Could not generate insights</div>
+        <div className="font-semibold mb-1">Couldn't generate insights</div>
         <div>{error}</div>
       </div>
     );
@@ -9727,24 +10426,67 @@ function Yoda2Insights({ selectedStore, setSelectedStore, dateLabel, selectedDat
   var storesAll = (data && data.stores) || [];
   var stores = selectedStore ? storesAll.filter(function (s) { return s.code === selectedStore; }) : storesAll;
 
-  var totalActions = 0;
+  // Suppression window in ms (14 days) for done/bad feedback
+  const SUPPRESS_MS = 14 * 24 * 60 * 60 * 1000;
+  function feedbackOf(id) { return (feedbackMap || {})[id] || null; }
+  function feedbackAge(fb) {
+    if (!fb || !fb.statusAt) return Infinity;
+    var t = fb.statusAt;
+    if (t.toDate) t = t.toDate();
+    if (!(t instanceof Date)) t = new Date(t);
+    return Date.now() - t.getTime();
+  }
+  function isSuppressed(action) {
+    const fb = feedbackOf(action && action.id);
+    if (!fb) return false;
+    if ((fb.status === "done" || fb.status === "bad") && feedbackAge(fb) < SUPPRESS_MS) return true;
+    return false;
+  }
+
+  // Apply suppression + category filter
+  var totalActions = 0, suppressedCount = 0;
   var cats = { Sales: 0, Ops: 0, Payroll: 0 };
-  stores.forEach(function (s) {
-    (s.insights || []).forEach(function (a) {
+  var visibleStores = stores.map(function (s) {
+    var insights = (s.insights || []);
+    var filtered = insights.filter(function (a) {
+      if (isSuppressed(a)) { suppressedCount += 1; return false; }
+      if (categoryFilter !== "All" && a.category !== categoryFilter) return false;
+      return true;
+    });
+    filtered.forEach(function (a) {
       totalActions += 1;
       if (cats[a.category] != null) cats[a.category] += 1;
     });
-  });
-
-  var visibleStores = stores.map(function (s) {
-    var insights = (s.insights || []);
-    if (categoryFilter !== "All") insights = insights.filter(function (a) { return a.category === categoryFilter; });
-    return Object.assign({}, s, { insights: insights });
+    return Object.assign({}, s, { insights: filtered });
   }).filter(function (s) { return (s.insights || []).length > 0; });
+
+  // If "show suppressed" is on, add them back with a flag so the UI marks them
+  if (showSuppressed) {
+    visibleStores = stores.map(function (s) {
+      var insights = (s.insights || []);
+      var filtered = insights.filter(function (a) { return categoryFilter === "All" || a.category === categoryFilter; })
+        .map(function (a) { return Object.assign({}, a, { _suppressed: isSuppressed(a) }); });
+      return Object.assign({}, s, { insights: filtered });
+    }).filter(function (s) { return (s.insights || []).length > 0; });
+  }
+
+  // Feedback activity summary (across all stores, all time)
+  var fbStats = { good: 0, bad: 0, done: 0, doneLast7: 0, doneLast30: 0 };
+  Object.values(feedbackMap || {}).forEach(function (fb) {
+    if (!fb || !fb.status) return;
+    if (fb.status === "good") fbStats.good += 1;
+    else if (fb.status === "bad") fbStats.bad += 1;
+    else if (fb.status === "done") {
+      fbStats.done += 1;
+      var age = feedbackAge(fb);
+      if (age <= 7  * 86400000) fbStats.doneLast7  += 1;
+      if (age <= 30 * 86400000) fbStats.doneLast30 += 1;
+    }
+  });
 
   return (
     <div>
-      {execSummary && !selectedStore && <Y2IExecSummary exec={execSummary} peers={peers} dateLabel={dateLabel} />}
+      {execSummary && !selectedStore && <Y2IExecSummary exec={execSummary} peers={peers} dateLabel={dateLabel} fbStats={fbStats} />}
 
       {dataGaps.length > 0 && (
         <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 mb-4 text-xs text-amber-900">
@@ -9763,6 +10505,10 @@ function Yoda2Insights({ selectedStore, setSelectedStore, dateLabel, selectedDat
           <Y2ICatChip label={"Sales (" + cats.Sales + ")"} active={categoryFilter === "Sales"} onClick={function(){setCategoryFilter("Sales");}} />
           <Y2ICatChip label={"Ops (" + cats.Ops + ")"} active={categoryFilter === "Ops"} onClick={function(){setCategoryFilter("Ops");}} />
           <Y2ICatChip label={"Payroll (" + cats.Payroll + ")"} active={categoryFilter === "Payroll"} onClick={function(){setCategoryFilter("Payroll");}} />
+          <label className="flex items-center gap-1 ml-2 text-slate-600">
+            <input type="checkbox" checked={showSuppressed} onChange={function(e){setShowSuppressed(e.target.checked);}} />
+            Show completed/dismissed ({suppressedCount})
+          </label>
           {selectedStore && (
             <button onClick={function () { setSelectedStore(""); }} className="ml-auto text-slate-500 hover:text-slate-900 underline">
               Show all stores
@@ -9774,22 +10520,25 @@ function Yoda2Insights({ selectedStore, setSelectedStore, dateLabel, selectedDat
 
       {visibleStores.length === 0 ? (
         <div className="bg-white rounded-xl p-12 text-center text-slate-500 border border-slate-200">
-          No matching recommendations for the current filter.
+          No matching recommendations for the current filter. {suppressedCount > 0 ? "(" + suppressedCount + " recent completions hidden - toggle 'Show completed/dismissed' to review.)" : ""}
         </div>
       ) : (
         <div className="space-y-4">
-          {visibleStores.map(function (s) { return <Y2IStoreCard key={s.code} store={s} />; })}
+          {visibleStores.map(function (s) {
+            return <Y2IStoreCard key={s.code} store={s} feedbackMap={feedbackMap} onFeedback={saveFeedback} />;
+          })}
         </div>
       )}
 
       <div className="text-center text-[11px] text-slate-400 mt-4">
-        Decision-useful windows: trailing 7d, trailing 28d, MTD vs LY MTD, 4w-vs-prior-4w recency. Benchmarks are company peer medians. Impacts are estimates, not promises.
+        Decision-useful windows: trailing 7d, trailing 28d, MTD vs LY &amp; Plan, 4w-vs-prior-4w recency. Benchmarks are company peer medians.
+        Click 👍 / 👎 / ✓ on each action to teach the engine and suppress repeats.
       </div>
     </div>
   );
 }
 
-function Y2IExecSummary({ exec, peers, dateLabel }) {
+function Y2IExecSummary({ exec, peers, dateLabel, fbStats }) {
   var w = exec.windows || {};
   var c = exec.counts  || {};
   var themes = exec.topThemes || [];
@@ -9801,7 +10550,7 @@ function Y2IExecSummary({ exec, peers, dateLabel }) {
     return "text-rose-600";
   }
   function signFmt(v) {
-    if (v == null) return "\u2014";
+    if (v == null) return "—";
     return (v >= 0 ? "+" : "") + (v * 100).toFixed(1) + "%";
   }
   function dollar(v) {
@@ -9818,9 +10567,9 @@ function Y2IExecSummary({ exec, peers, dateLabel }) {
       </div>
 
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 my-3">
-        <Y2IWindowCard title="Trailing 7d"  ty={w.trailing7d && w.trailing7d.ty}  ly={w.trailing7d && w.trailing7d.ly}  yoy={w.trailing7d && w.trailing7d.yoy}  signCls={signCls} signFmt={signFmt} dollar={dollar} />
-        <Y2IWindowCard title="Trailing 28d" ty={w.trailing28d && w.trailing28d.ty} ly={w.trailing28d && w.trailing28d.ly} yoy={w.trailing28d && w.trailing28d.yoy} signCls={signCls} signFmt={signFmt} dollar={dollar} />
-        <Y2IWindowCard title="MTD vs LY MTD" ty={w.mtd && w.mtd.ty} ly={w.mtd && w.mtd.ly} yoy={w.mtd && w.mtd.yoy} signCls={signCls} signFmt={signFmt} dollar={dollar} />
+        <Y2IWindowCard title="Trailing 7d"  ty={w.trailing7d && w.trailing7d.ty}  ly={w.trailing7d && w.trailing7d.ly}  yoy={w.trailing7d && w.trailing7d.yoy}  plan={w.trailing7d && w.trailing7d.plan}  planAttn={w.trailing7d && w.trailing7d.planAttn}  signCls={signCls} signFmt={signFmt} dollar={dollar} />
+        <Y2IWindowCard title="Trailing 28d" ty={w.trailing28d && w.trailing28d.ty} ly={w.trailing28d && w.trailing28d.ly} yoy={w.trailing28d && w.trailing28d.yoy} plan={w.trailing28d && w.trailing28d.plan} planAttn={w.trailing28d && w.trailing28d.planAttn} signCls={signCls} signFmt={signFmt} dollar={dollar} />
+        <Y2IWindowCard title="MTD vs LY &amp; Plan" ty={w.mtd && w.mtd.ty} ly={w.mtd && w.mtd.ly} yoy={w.mtd && w.mtd.yoy} plan={w.mtd && w.mtd.plan} planAttn={w.mtd && w.mtd.planAttn} signCls={signCls} signFmt={signFmt} dollar={dollar} />
         <Y2IWindowCard title="Recency (4w vs prior)" ty={w.recencyTrend && w.recencyTrend.recent} ly={w.recencyTrend && w.recencyTrend.prior} yoy={w.recencyTrend && w.recencyTrend.var} signCls={signCls} signFmt={signFmt} dollar={dollar} tyLabel="Recent 4w" lyLabel="Prior 4w" />
       </div>
 
@@ -9837,6 +10586,14 @@ function Y2IExecSummary({ exec, peers, dateLabel }) {
             <div className="text-slate-600">Payroll over target</div><div className="text-right font-semibold">{c.payrollOver || 0}</div>
             <div className="text-slate-600">Likely understaffed</div><div className="text-right font-semibold">{c.payrollUnder || 0}</div>
           </div>
+          {fbStats && (
+            <div className="mt-3 pt-2 border-t border-slate-200 grid grid-cols-2 gap-y-1">
+              <div className="text-slate-600">Completed (total)</div><div className="text-right font-semibold text-emerald-700">{fbStats.done || 0}</div>
+              <div className="text-slate-600">Completed last 7d</div><div className="text-right font-semibold">{fbStats.doneLast7 || 0}</div>
+              <div className="text-slate-600">Endorsed 👍</div><div className="text-right font-semibold">{fbStats.good || 0}</div>
+              <div className="text-slate-600">Dismissed 👎</div><div className="text-right font-semibold">{fbStats.bad || 0}</div>
+            </div>
+          )}
         </div>
 
         <div className="bg-slate-50 rounded-lg p-3 text-xs">
@@ -9880,19 +10637,29 @@ function Y2IExecSummary({ exec, peers, dateLabel }) {
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 mt-3">
-        <Y2IMiniStat label="Peer ATV (28d)" value={peers.atv28Median ? "$" + peers.atv28Median.toFixed(2) : "\u2014"} />
-        <Y2IMiniStat label="Peer UPT (28d)" value={peers.upt28Median ? peers.upt28Median.toFixed(2) : "\u2014"} />
-        <Y2IMiniStat label="Peer Member %"  value={peers.memberPctMedian ? (peers.memberPctMedian * 100).toFixed(1) + "%" : "\u2014"} />
-        <Y2IMiniStat label="Peer Pro %"     value={peers.proPctMedian ? (peers.proPctMedian * 100).toFixed(1) + "%" : "\u2014"} />
-        <Y2IMiniStat label="Peer SPPH (4w)" value={peers.spph4wMedian ? "$" + peers.spph4wMedian.toFixed(0) + "/hr" : "\u2014"} />
+        <Y2IMiniStat label="Peer ATV (28d)" value={peers.atv28Median ? "$" + peers.atv28Median.toFixed(2) : "—"} />
+        <Y2IMiniStat label="Peer UPT (28d)" value={peers.upt28Median ? peers.upt28Median.toFixed(2) : "—"} />
+        <Y2IMiniStat label="Peer Member %"  value={peers.memberPctMedian ? (peers.memberPctMedian * 100).toFixed(1) + "%" : "—"} />
+        <Y2IMiniStat label="Peer Pro %"     value={peers.proPctMedian ? (peers.proPctMedian * 100).toFixed(1) + "%" : "—"} />
+        <Y2IMiniStat label="Peer SPPH (4w)" value={peers.spph4wMedian ? "$" + peers.spph4wMedian.toFixed(0) + "/hr" : "—"} />
       </div>
     </div>
   );
 }
 
-function Y2IWindowCard({ title, ty, ly, yoy, signCls, signFmt, dollar, tyLabel, lyLabel }) {
+function Y2IWindowCard({ title, ty, ly, yoy, plan, planAttn, signCls, signFmt, dollar, tyLabel, lyLabel }) {
   tyLabel = tyLabel || "TY";
   lyLabel = lyLabel || "LY";
+  function planPct(v) {
+    if (v == null) return "—";
+    return (v * 100).toFixed(0) + "%";
+  }
+  function planCls(v) {
+    if (v == null) return "text-slate-500";
+    if (v >= 1.0)  return "text-emerald-600";
+    if (v < 0.9)   return "text-rose-600";
+    return "text-amber-600";
+  }
   return (
     <div className="bg-slate-50 rounded-lg p-3">
       <div className="text-[10px] uppercase tracking-wide text-slate-500 font-semibold">{title}</div>
@@ -9901,6 +10668,11 @@ function Y2IWindowCard({ title, ty, ly, yoy, signCls, signFmt, dollar, tyLabel, 
         <div className={"text-sm font-semibold " + signCls(yoy)}>{signFmt(yoy)}</div>
       </div>
       <div className="text-[11px] text-slate-500">{lyLabel} {dollar(ly || 0)}</div>
+      {plan != null && plan > 0 && (
+        <div className="text-[11px] text-slate-500">
+          Plan {dollar(plan)} · <span className={"font-semibold " + planCls(planAttn)}>{planPct(planAttn)} attn</span>
+        </div>
+      )}
     </div>
   );
 }
@@ -9928,7 +10700,7 @@ function Y2ICatChip({ label, active, onClick }) {
   );
 }
 
-function Y2IStoreCard({ store }) {
+function Y2IStoreCard({ store, feedbackMap, onFeedback }) {
   var loc = [store.city, store.state].filter(Boolean).join(", ");
   var ns7   = Number(store.netSales)     || 0;
   var lns7  = Number(store.lyNetSales)   || 0;
@@ -9938,7 +10710,9 @@ function Y2IStoreCard({ store }) {
   var yoy28 = lns28 ? (ns28 - lns28) / lns28 : null;
   var mtd   = Number(store.mtdNetSales)  || 0;
   var mtdPlan = Number(store.mtdPlan)    || 0;
-  var planAttn = mtdPlan ? mtd / mtdPlan : null;
+  var mtdPlanAttn = mtdPlan ? mtd / mtdPlan : null;
+  var plan7 = Number(store.plan7d)       || 0;
+  var plan7Attn = plan7 ? ns7 / plan7 : null;
 
   return (
     <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
@@ -9954,10 +10728,11 @@ function Y2IStoreCard({ store }) {
         </div>
         <div className="flex items-center gap-4 text-xs flex-shrink-0 flex-wrap">
           <Y2IKpi label="7d Sales" value={"$" + Math.round(ns7).toLocaleString()} />
-          {yoy7 != null && <Y2IKpi label="7d YoY" value={(yoy7 >= 0 ? "+" : "") + (yoy7 * 100).toFixed(1) + "%"} tone={yoy7 >= 0 ? "pos" : "neg"} />}
+          {yoy7 != null && <Y2IKpi label="7d vs LY" value={(yoy7 >= 0 ? "+" : "") + (yoy7 * 100).toFixed(1) + "%"} tone={yoy7 >= 0 ? "pos" : "neg"} />}
+          {plan7Attn != null && <Y2IKpi label="7d vs Plan" value={(plan7Attn * 100).toFixed(0) + "%"} tone={plan7Attn >= 1 ? "pos" : (plan7Attn < 0.9 ? "neg" : "neutral")} />}
           <Y2IKpi label="28d Sales" value={"$" + Math.round(ns28).toLocaleString()} />
-          {yoy28 != null && <Y2IKpi label="28d YoY" value={(yoy28 >= 0 ? "+" : "") + (yoy28 * 100).toFixed(1) + "%"} tone={yoy28 >= 0 ? "pos" : "neg"} />}
-          {planAttn != null && <Y2IKpi label="MTD Plan" value={(planAttn * 100).toFixed(0) + "%"} tone={planAttn >= 1 ? "pos" : (planAttn < 0.9 ? "neg" : "neutral")} />}
+          {yoy28 != null && <Y2IKpi label="28d vs LY" value={(yoy28 >= 0 ? "+" : "") + (yoy28 * 100).toFixed(1) + "%"} tone={yoy28 >= 0 ? "pos" : "neg"} />}
+          {mtdPlanAttn != null && <Y2IKpi label="MTD vs Plan" value={(mtdPlanAttn * 100).toFixed(0) + "%"} tone={mtdPlanAttn >= 1 ? "pos" : (mtdPlanAttn < 0.9 ? "neg" : "neutral")} />}
           <Y2IKpi label="ATV 28d" value={"$" + (Number(store.atv28) || 0).toFixed(2)} />
           <Y2IKpi label="UPT 28d" value={(Number(store.upt28) || 0).toFixed(2)} />
           {Number.isFinite(Number(store.spph4w)) && Number(store.spph4w) > 0 && <Y2IKpi label="SPPH 4w" value={"$" + Math.round(Number(store.spph4w)).toLocaleString() + "/hr"} />}
@@ -9967,10 +10742,10 @@ function Y2IStoreCard({ store }) {
       {store.weather && (Number(store.weather.precipNext7) > 0 || Number(store.weather.snowNext7) > 0 || Number(store.weather.tempAvgNext7) > 0) && (
         <div className="px-4 py-2 bg-sky-50 border-b border-sky-100 text-[11px] text-sky-900 flex items-center gap-4 flex-wrap">
           <span className="font-semibold uppercase tracking-wide text-sky-700">Next 7d forecast</span>
-          {Number(store.weather.tempAvgNext7) > 0 && <span>Avg {Math.round(Number(store.weather.tempAvgNext7))}&deg;F</span>}
-          {Number(store.weather.precipNext7) > 0 && <span>Precip {Number(store.weather.precipNext7).toFixed(1)}&Prime;</span>}
-          {Number(store.weather.snowNext7) > 0 && <span>Snow {Number(store.weather.snowNext7).toFixed(1)}&Prime;</span>}
-          {Number(store.weather.tempAvgLast7) > 0 && <span className="text-sky-600">(last 7d avg {Math.round(Number(store.weather.tempAvgLast7))}&deg;F)</span>}
+          {Number(store.weather.tempAvgNext7) > 0 && <span>Avg {Math.round(Number(store.weather.tempAvgNext7))}°F</span>}
+          {Number(store.weather.precipNext7) > 0 && <span>Precip {Number(store.weather.precipNext7).toFixed(1)}″</span>}
+          {Number(store.weather.snowNext7) > 0 && <span>Snow {Number(store.weather.snowNext7).toFixed(1)}″</span>}
+          {Number(store.weather.tempAvgLast7) > 0 && <span className="text-sky-600">(last 7d avg {Math.round(Number(store.weather.tempAvgLast7))}°F)</span>}
         </div>
       )}
 
@@ -9980,7 +10755,10 @@ function Y2IStoreCard({ store }) {
         </div>
       ) : (
         <ol className="divide-y divide-slate-100">
-          {store.insights.map(function (a, i) { return <Y2IActionRow key={i} rank={i + 1} action={a} />; })}
+          {store.insights.map(function (a, i) {
+            const fb = (feedbackMap || {})[a.id] || null;
+            return <Y2IActionRow key={a.id || i} rank={i + 1} action={a} store={store} feedback={fb} onFeedback={onFeedback} />;
+          })}
         </ol>
       )}
     </div>
@@ -9999,7 +10777,7 @@ function Y2IKpi({ label, value, tone }) {
   );
 }
 
-function Y2IActionRow({ rank, action }) {
+function Y2IActionRow({ rank, action, store, feedback, onFeedback }) {
   var priorityStyles = {
     Urgent: { bg: "#FEE2E2", color: "#991B1B" },
     High:   { bg: "#FEF3C7", color: "#92400E" },
@@ -10014,8 +10792,28 @@ function Y2IActionRow({ rank, action }) {
   var p = priorityStyles[action.priority] || priorityStyles.Medium;
   var c = catStyles[action.category] || catStyles.Sales;
 
+  // Compute delta since completion if we have a snapshot >= 5 days old
+  var delta = null;
+  if (feedback && feedback.status === "done" && feedback.snapshot && feedback.snapshot.netSales28d > 0 && store) {
+    var snap = feedback.snapshot;
+    var current28 = Number(store.netSales28) || 0;
+    var snap28 = Number(snap.netSales28d) || 0;
+    var t = feedback.statusAt;
+    if (t && t.toDate) t = t.toDate();
+    if (!(t instanceof Date)) t = new Date(t || 0);
+    var days = Math.floor((Date.now() - t.getTime()) / 86400000);
+    if (days >= 5 && snap28 > 0) {
+      var pct28 = (current28 - snap28) / snap28;
+      delta = { days: days, pct28: pct28 };
+    }
+  }
+
+  var status = feedback && feedback.status;
+  var rowStyle = {};
+  if (action._suppressed) rowStyle.opacity = 0.55;
+
   return (
-    <li className="px-4 py-3 flex gap-3">
+    <li className="px-4 py-3 flex gap-3" style={rowStyle}>
       <div className="flex-shrink-0 w-7 h-7 rounded-full bg-slate-100 text-slate-700 text-xs font-bold flex items-center justify-center mt-0.5">
         {rank}
       </div>
@@ -10024,6 +10822,9 @@ function Y2IActionRow({ rank, action }) {
           <div className="font-semibold text-slate-900 text-sm">{action.title}</div>
           <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wide" style={{ background: c.bg, color: c.color }}>{action.category}</span>
           <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wide" style={{ background: p.bg, color: p.color }}>{action.priority}</span>
+          {status === "good" && <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wide" style={{ background: "#DCFCE7", color: "#166534" }}>👍 Endorsed</span>}
+          {status === "done" && <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wide" style={{ background: "#D1FAE5", color: "#065F46" }}>✓ Completed</span>}
+          {status === "bad"  && <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full uppercase tracking-wide" style={{ background: "#FEE2E2", color: "#991B1B" }}>👎 Dismissed</span>}
           {action.impact != null && action.impact > 0 && (
             <span className="text-[10px] font-semibold text-slate-500 ml-auto">~${Math.round(action.impact).toLocaleString()}/day opp</span>
           )}
@@ -10032,10 +10833,54 @@ function Y2IActionRow({ rank, action }) {
         {action.metric && (
           <div className="text-[11px] text-slate-500 mt-1 font-mono">{action.metric}</div>
         )}
+
+        {/* Feedback row */}
+        <div className="flex items-center gap-2 mt-2">
+          <button
+            onClick={function () { onFeedback(action, store, status === "good" ? null : "good"); }}
+            title="Mark as good suggestion"
+            className={"text-xs px-2 py-1 rounded border transition-colors " +
+              (status === "good"
+                ? "bg-emerald-600 text-white border-emerald-600"
+                : "bg-white text-slate-600 border-slate-200 hover:border-emerald-400 hover:text-emerald-700")}
+          >
+            👍 Good
+          </button>
+          <button
+            onClick={function () { onFeedback(action, store, status === "bad" ? null : "bad"); }}
+            title="Dismiss — hide for 14 days"
+            className={"text-xs px-2 py-1 rounded border transition-colors " +
+              (status === "bad"
+                ? "bg-rose-600 text-white border-rose-600"
+                : "bg-white text-slate-600 border-slate-200 hover:border-rose-400 hover:text-rose-700")}
+          >
+            👎 Not helpful
+          </button>
+          <button
+            onClick={function () { onFeedback(action, store, status === "done" ? null : "done"); }}
+            title="Mark done — hide for 14 days and snapshot current KPIs for outcome tracking"
+            className={"text-xs px-2 py-1 rounded border transition-colors " +
+              (status === "done"
+                ? "bg-sky-600 text-white border-sky-600"
+                : "bg-white text-slate-600 border-slate-200 hover:border-sky-400 hover:text-sky-700")}
+          >
+            ✓ Done
+          </button>
+          {delta && (
+            <span className="text-[11px] text-slate-500 ml-2">
+              Since you marked this done {delta.days}d ago: 28d sales{" "}
+              <span className={(delta.pct28 >= 0 ? "text-emerald-600" : "text-rose-600") + " font-semibold"}>
+                {(delta.pct28 >= 0 ? "+" : "") + (delta.pct28 * 100).toFixed(1) + "%"}
+              </span>
+            </span>
+          )}
+        </div>
       </div>
     </li>
   );
 }
+
+
 
 
 /* ───────── Main Dashboard ───────── */
