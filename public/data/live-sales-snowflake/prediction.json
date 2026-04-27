@@ -1,43 +1,43 @@
 {
-  "updatedAt": "2026-04-27T15:36:58.456Z",
-  "updatedAtET": "Apr 27, 2026, 11:36 AM",
+  "updatedAt": "2026-04-27T15:52:43.057Z",
+  "updatedAtET": "Apr 27, 2026, 11:52 AM",
   "dateET": "2026-04-27",
   "dow": 1,
   "season": "spring",
   "source": "snowflake",
   "current": {
-    "ts": "2026-04-27T15:36:58.456Z",
-    "tsET": "Apr 27, 2026, 11:36 AM",
+    "ts": "2026-04-27T15:52:43.057Z",
+    "tsET": "Apr 27, 2026, 11:52 AM",
     "dateET": "2026-04-27",
     "hourET": 11,
-    "minuteET": 36,
+    "minuteET": 52,
     "dow": 1,
-    "sales": 394687.28,
+    "sales": 441947.32,
     "plan": 1300987.3,
-    "pctToPlan": 30.337519820524,
-    "gp": 163481.0043,
-    "gpPct": 41.420388389511814,
-    "txns": 10830,
-    "customers": 9863,
+    "pctToPlan": 33.9701486709363,
+    "gp": 184867.9681,
+    "gpPct": 41.83031771750533,
+    "txns": 12165,
+    "customers": 11129,
     "storeCount": 134,
     "asOf": null,
-    "asOfET": "Apr 27, 11:30 AM ET"
+    "asOfET": "Apr 27, 11:45 AM ET"
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.41 shape + 0.59 level)",
+    "method": "blended (w=0.45 shape + 0.55 level)",
     "confidence": "medium",
-    "projectedEOD": 1137991.273219755,
-    "projectedPctToPlan": 87.47135911470887,
-    "projectedVariance": -162996.02678024513,
+    "projectedEOD": 1148576.0667203437,
+    "projectedPctToPlan": 88.28495610374856,
+    "projectedVariance": -152411.2332796564,
     "band": {
-      "low": 986092.392888073,
-      "high": 1289890.1535514367
+      "low": 999743.3711484926,
+      "high": 1297408.7622921946
     },
-    "pctOfDayElapsed": 0.3952,
+    "pctOfDayElapsed": 0.4224,
     "level_EOD": 1232903.1016298884,
-    "shape_EOD": 998702.6315789474,
-    "blendWeight": 0.40525891510588924,
+    "shape_EOD": 1046276.7992424243,
+    "blendWeight": 0.451849679443732,
     "factors": {
       "plan": 1300987.3,
       "recencyFactor": 0.9393,
@@ -46,26 +46,26 @@
       "holidayMult": 1,
       "weatherKey": "perfect_65_80F_dry",
       "weatherMult": 1.06,
-      "weatherSummary": "concord-nh: 71F Sunny | worcester-ma: 68F Sunny | burlington-vt: 70F Sunny | portland-me: 58F Sunny | albany-ny: 72F Sunny | scranton-pa: 72F Sunny"
+      "weatherSummary": "concord-nh: 71F Sunny | worcester-ma: 68F Sunny | burlington-vt: 70F Sunny | portland-me: 58F Sunny | albany-ny: 72F Sunny | scranton-pa: 72F Patchy Fog then Sunny"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.3952,
+      "basePaceFromCurve": 0.4224,
       "observedPaceCount": 1,
-      "blendedPaceAtNow": 0.3952,
+      "blendedPaceAtNow": 0.4224,
       "historyDays": 1,
       "avgHistoricalEOD": 1015170.4800000007
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 16917.326399999998,
+      "estimatedCurrent": 18081.6768,
       "estimatedEOD": 42807,
-      "paceUsed": 0.3952,
+      "paceUsed": 0.4224,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 28199,
-          "estimatedCurrent": 11144.2448,
+          "estimatedCurrent": 11911.2576,
           "estimatedEOD": 28199,
           "stdev": 0.2923
         },
@@ -73,24 +73,24 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 14608,
-          "estimatedCurrent": 5773.0815999999995,
+          "estimatedCurrent": 6170.4192,
           "estimatedEOD": 14608,
           "stdev": 0.1658
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1180798.273219755,
-    "combinedCurrentSales": 411604.60640000005,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $16,917 so far, +$42,807 to EOD."
+    "combinedProjectedEOD": 1191383.0667203437,
+    "combinedCurrentSales": 460028.9968,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $18,082 so far, +$42,807 to EOD."
   },
   "offlineStoresVersion": 2,
-  "baselineVersion": 14,
+  "baselineVersion": 15,
   "weatherRaw": {
     "mult": 1.06,
     "key": "perfect_65_80F_dry",
     "season": "spring",
-    "summary": "concord-nh: 71F Sunny | worcester-ma: 68F Sunny | burlington-vt: 70F Sunny | portland-me: 58F Sunny | albany-ny: 72F Sunny | scranton-pa: 72F Sunny",
+    "summary": "concord-nh: 71F Sunny | worcester-ma: 68F Sunny | burlington-vt: 70F Sunny | portland-me: 58F Sunny | albany-ny: 72F Sunny | scranton-pa: 72F Patchy Fog then Sunny",
     "tagWeights": {
       "perfect_65_80F_dry": 0.848,
       "normal": 0.152
@@ -134,15 +134,15 @@
         "temp": 72,
         "unit": "F",
         "short": "Sunny",
-        "detailed": "Sunny, with a high near 72. Southwest wind around 2 mph."
+        "detailed": "Sunny, with a high near 72. West wind around 2 mph."
       },
       {
         "station": "scranton-pa",
         "weight": 0.088,
         "temp": 72,
         "unit": "F",
-        "short": "Sunny",
-        "detailed": "Sunny, with a high near 72. East wind around 2 mph."
+        "short": "Patchy Fog then Sunny",
+        "detailed": "Patchy fog before 8am. Sunny, with a high near 72. East wind around 2 mph."
       }
     ]
   }
