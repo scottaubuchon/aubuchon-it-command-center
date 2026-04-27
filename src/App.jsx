@@ -6581,8 +6581,9 @@ function LiveSalesYodaView({ goBack }) {
     + "#yoda-live-sales .pill-state-bad{background:var(--bad-soft);color:var(--bad-ink);padding:2px 9px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;}"
     + "#yoda-live-sales .show-all{padding:14px;text-align:center;color:var(--accent-retail);font-weight:600;cursor:pointer;border-top:1px solid var(--border-1);background:transparent;width:100%;border-left:none;border-right:none;border-bottom:none;font-family:inherit;font-size:13px;}"
     + "#yoda-live-sales .show-all:hover{background:var(--paper-50);}"
-    + "@media (max-width: 720px){#yoda-live-sales{padding:14px 12px 24px !important;}#yoda-live-sales .paper{overflow-x:auto;-webkit-overflow-scrolling:touch;}#yoda-live-sales .hero-bad,#yoda-live-sales .hero-good,#yoda-live-sales .hero-warn{padding:16px 14px !important;border-radius:10px !important;}#yoda-live-sales .kpi-display{font-size:32px !important;}#yoda-live-sales .kpi-display-pct{font-size:22px !important;}#yoda-live-sales .y-btn{padding:8px 10px !important;font-size:12px !important;gap:6px !important;}#yoda-live-sales table{min-width:520px;}}"
-    + "@media (max-width: 480px){#yoda-live-sales{padding:12px 8px 20px !important;}#yoda-live-sales .kpi-display{font-size:28px !important;}#yoda-live-sales .kpi-display-pct{font-size:20px !important;}#yoda-live-sales .eyebrow{font-size:10px !important;}}"
+    + "@media (max-width: 720px){#yoda-live-sales{padding:14px 12px 24px !important;}#yoda-live-sales .paper{overflow-x:visible !important;}#yoda-live-sales .hero-bad,#yoda-live-sales .hero-good,#yoda-live-sales .hero-warn{padding:16px 14px !important;border-radius:10px !important;}#yoda-live-sales .kpi-display{font-size:32px !important;}#yoda-live-sales .kpi-display-pct{font-size:22px !important;}#yoda-live-sales .y-btn{padding:8px 10px !important;font-size:12px !important;gap:6px !important;}#yoda-live-sales .ranked-row[data-rank=\"stores\"]{grid-template-columns:30px minmax(0,1fr) auto auto !important;padding:10px 14px !important;column-gap:10px;}#yoda-live-sales .ranked-row[data-rank=\"stores\"] > :nth-child(4),#yoda-live-sales .ranked-row[data-rank=\"stores\"] > :nth-child(5),#yoda-live-sales .ranked-row[data-rank=\"stores\"] > :nth-child(7){display:none !important;}#yoda-live-sales .ranked-row[data-rank=\"products\"]{grid-template-columns:30px minmax(0,1fr) auto !important;padding:10px 14px !important;column-gap:10px;}#yoda-live-sales .ranked-row[data-rank=\"products\"] > :nth-child(2){display:none !important;}}"
+    + "@media (max-width: 560px){#yoda-live-sales{padding:12px 10px 20px !important;}#yoda-live-sales .hero-bad > div:first-child,#yoda-live-sales .hero-good > div:first-child,#yoda-live-sales .hero-warn > div:first-child{flex-direction:column !important;align-items:flex-start !important;gap:6px !important;}#yoda-live-sales .hero-bad > div:first-child > div:last-child,#yoda-live-sales .hero-good > div:first-child > div:last-child,#yoda-live-sales .hero-warn > div:first-child > div:last-child{text-align:left !important;}#yoda-live-sales .hero-bad > div:last-child,#yoda-live-sales .hero-good > div:last-child,#yoda-live-sales .hero-warn > div:last-child{grid-template-columns:repeat(2,1fr) !important;}}"
+    + "@media (max-width: 480px){#yoda-live-sales{padding:10px 8px 18px !important;}#yoda-live-sales .kpi-display{font-size:26px !important;}#yoda-live-sales .kpi-display-pct{font-size:20px !important;}#yoda-live-sales .eyebrow{font-size:10px !important;}#yoda-live-sales .filter-bar{flex-direction:column !important;align-items:stretch !important;gap:8px !important;}#yoda-live-sales .filter-bar > *{width:100% !important;}#yoda-live-sales .filter-bar input[type=\"date\"]{width:100% !important;}#yoda-live-sales .ranked-row[data-rank=\"stores\"]{padding:8px 12px !important;}#yoda-live-sales .ranked-row[data-rank=\"products\"]{padding:8px 12px !important;}#yoda-live-sales .ranked-row[data-rank=\"stores\"] .caption{display:none;}}"
   ;
 
   // ---- helpers --------------------------------------------------
@@ -6754,7 +6755,7 @@ function LiveSalesYodaView({ goBack }) {
           </div>
 
           {/* Filter bar */}
-          <div className="paper" style={{ padding: "12px 16px", marginBottom: 16, display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+          <div className="paper filter-bar" style={{ padding: "12px 16px", marginBottom: 16, display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
             <span style={{ fontSize: 13, fontWeight: 600, color: "var(--fg-2)" }}>View:</span>
             <div ref={storeBoxRef} style={{ position: "relative", flex: 1, minWidth: 220 }}>
               <button
@@ -7056,7 +7057,7 @@ function LiveSalesYodaView({ goBack }) {
               <span className="caption">{selectedStore ? "1 store" : (topStores.length + " stores")}</span>
             </div>
             {/* header */}
-            <div style={{ display: "grid", gridTemplateColumns: storesGridTmpl, padding: "9px 18px", background: "var(--paper-50)", borderBottom: "1px solid var(--border-1)", color: "var(--fg-3)", fontSize: 10, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase" }}>
+            <div className="ranked-row" data-rank="stores" data-header="1" style={{ display: "grid", gridTemplateColumns: storesGridTmpl, padding: "9px 18px", background: "var(--paper-50)", borderBottom: "1px solid var(--border-1)", color: "var(--fg-3)", fontSize: 10, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase" }}>
               <div>#</div>
               <div>Name</div>
               <div style={{ textAlign: "right" }}>Sales</div>
@@ -7073,7 +7074,7 @@ function LiveSalesYodaView({ goBack }) {
               var varColor = varTone === "good" ? "var(--good-strong)" : "var(--bad-strong)";
               var pctColor = pctTone === "good" ? "var(--good-strong)" : pctTone === "warn" ? "var(--warn)" : "var(--bad-strong)";
               return (
-                <div key={s.code} className="ranked-row" style={{ display: "grid", gridTemplateColumns: storesGridTmpl, padding: "12px 18px", borderBottom: i < visibleStores.length - 1 ? "1px solid var(--border-1)" : "none", alignItems: "center", transition: "background 80ms" }}>
+                <div key={s.code} className="ranked-row" data-rank="stores" style={{ display: "grid", gridTemplateColumns: storesGridTmpl, padding: "12px 18px", borderBottom: i < visibleStores.length - 1 ? "1px solid var(--border-1)" : "none", alignItems: "center", transition: "background 80ms" }}>
                   <div className="tab" style={{ color: "var(--fg-4)", fontWeight: 600 }}>{i + 1}</div>
                   <div>
                     <div style={{ fontWeight: 700, color: "var(--fg-1)" }}>{tc(s.name)}</div>
@@ -7104,7 +7105,7 @@ function LiveSalesYodaView({ goBack }) {
                 </div>
                 <span className="caption">{topProducts.length} products</span>
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: productsGridTmpl, padding: "9px 18px", background: "var(--paper-50)", borderBottom: "1px solid var(--border-1)", color: "var(--fg-3)", fontSize: 10, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase" }}>
+              <div className="ranked-row" data-rank="products" data-header="1" style={{ display: "grid", gridTemplateColumns: productsGridTmpl, padding: "9px 18px", background: "var(--paper-50)", borderBottom: "1px solid var(--border-1)", color: "var(--fg-3)", fontSize: 10, fontWeight: 600, letterSpacing: "0.14em", textTransform: "uppercase" }}>
                 <div>#</div>
                 <div>SKU</div>
                 <div>Product</div>
@@ -7112,7 +7113,7 @@ function LiveSalesYodaView({ goBack }) {
               </div>
               {visibleProducts.map(function (p, i) {
                 return (
-                  <div key={i} className="ranked-row" style={{ display: "grid", gridTemplateColumns: productsGridTmpl, padding: "12px 18px", borderBottom: i < visibleProducts.length - 1 ? "1px solid var(--border-1)" : "none", alignItems: "center", transition: "background 80ms" }}>
+                  <div key={i} className="ranked-row" data-rank="products" style={{ display: "grid", gridTemplateColumns: productsGridTmpl, padding: "12px 18px", borderBottom: i < visibleProducts.length - 1 ? "1px solid var(--border-1)" : "none", alignItems: "center", transition: "background 80ms" }}>
                     <div className="tab" style={{ color: "var(--fg-4)", fontWeight: 600 }}>{p.rank}</div>
                     <div className="tab" style={{ color: "var(--fg-3)", fontSize: 12 }}>{p.sku || "—"}</div>
                     <div style={{ fontWeight: 500, color: "var(--fg-1)" }}>{tc(p.desc)}</div>
