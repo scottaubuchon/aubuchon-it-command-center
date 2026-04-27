@@ -4937,10 +4937,10 @@ const PaymentHistory = ({ goHome, goBack }) => {
    ============================================================ */
 const YODA_REPORTS = [
   {
-    id: "daily-sales",
-    label: "Daily Sales Report",
-    description: "Yesterday's sales vs. last year — scorecard, cohorts, store map, and store ranks",
-    url: "https://aubuchon-it-command-center.vercel.app/reports/daily-sales-latest.html",
+    id: "daily-sales-yoda",
+    label: "Daily Sales Report (YODA Design)",
+    description: "Yesterday's sales vs. plan and last year — scorecard, cohorts, state map, store ranks, and top products. Re-skinned with the YODA design system.",
+    url: "https://aubuchon-it-command-center.vercel.app/reports/daily-sales-yoda-latest.html",
     icon: TrendingUp,
   },
   {
@@ -4951,11 +4951,11 @@ const YODA_REPORTS = [
     view: "live-sales-yoda",
   },
   {
-    id: "yoda-2",
-    label: "YODA 2.0 — Store Performance",
-    description: "Snowflake-native replacement for Power BI Store-Manager-Dashboard-v3 — KPI strip, sales drivers, product & customer drills",
+    id: "yoda-2-yoda",
+    label: "YODA 2.0 — Store Performance (YODA Design)",
+    description: "Same Snowflake-native dashboard — KPI hero, sales drivers, product & customer drills, AI insights, Ask YODA chat — re-skinned with the YODA design system.",
     icon: LayoutGrid,
-    view: "yoda-2",
+    view: "yoda-2-yoda",
   },
 ];
 
@@ -4964,6 +4964,20 @@ const YODA_REPORTS = [
 // YODA Reports. Clicking still routes to the same view component — they're
 // not removed, just retired from the primary list.
 const YODA_DECOMMISSIONED_REPORTS = [
+  {
+    id: "daily-sales",
+    label: "Daily Sales Report",
+    description: "Original Daily Sales Report layout. Superseded by Daily Sales Report (YODA Design).",
+    url: "https://aubuchon-it-command-center.vercel.app/reports/daily-sales-latest.html",
+    icon: TrendingUp,
+  },
+  {
+    id: "yoda-2",
+    label: "YODA 2.0 — Store Performance",
+    description: "Original YODA 2.0 dashboard with the blue gradient surface. Superseded by YODA 2.0 (YODA Design).",
+    icon: LayoutGrid,
+    view: "yoda-2",
+  },
   {
     id: "live-sales",
     label: "Live Sales",
@@ -7127,6 +7141,1950 @@ function LiveSalesYodaView({ goBack }) {
   );
 }
 
+
+
+/* ============================================================
+   YODA 2.0 - re-skinned with the YODA design system.
+   Mirrors Yoda2View's data layer 1:1, swaps render layer to
+   the same warm-paper / Inter aesthetic used by LiveSalesYodaView.
+   All selectors scoped to #yoda-2-yoda.
+   ============================================================ */
+
+/* ============================================================
+   Top-level - Yoda2YodaView
+   ============================================================ */
+function Yoda2YodaView({ goBack }) {
+  // ---- date helpers (ET-anchored) ----
+  var todayET = new Date().toLocaleDateString("en-CA", { timeZone: "America/New_York" });
+  var yesterdayET = (function () {
+    var d = new Date(new Date().toLocaleString("en-US", { timeZone: "America/New_York" }));
+    d.setDate(d.getDate() - 1);
+    return d.toISOString().slice(0, 10);
+  })();
+
+  // ---- sidebar filter state ----
+  const [selectedStore, setSelectedStore] = useState("");
+  const [selectedDate, setSelectedDate] = useState(yesterdayET);
+  const [activePage, setActivePage] = useState("main");
+  const [storeSearch, setStoreSearch] = useState("");
+  const [storeOpen, setStoreOpen] = useState(false);
+  const storeBoxRef = useRef(null);
+
+  // ---- summary (Main + Drivers) ----
+  const [summary, setSummary] = useState(null);
+  const [summaryLoading, setSummaryLoading] = useState(true);
+  const [summaryError, setSummaryError] = useState(null);
+
+  // ---- lazy products / customers ----
+  const [products, setProducts] = useState(null);
+  const [productsLoading, setProductsLoading] = useState(false);
+  const [productsError, setProductsError] = useState(null);
+  const [customers, setCustomers] = useState(null);
+  const [customersLoading, setCustomersLoading] = useState(false);
+  const [customersError, setCustomersError] = useState(null);
+
+  // ---- second-tier SKU drill ----
+  const [skuDrill, setSkuDrill] = useState(null);
+  const [skuLoading, setSkuLoading] = useState(false);
+  const [skuError, setSkuError] = useState(null);
+  const [skuDept, setSkuDept] = useState("");
+  const [skuPaste, setSkuPaste] = useState("");
+  const [skuWindow, setSkuWindow] = useState("8w");
+
+  // 1) Summary on mount + on store/date change
+  useEffect(function () {
+    var cancelled = false;
+    setSummaryLoading(true);
+    setSummaryError(null);
+    var url = "/api/yoda-2?page=summary&t=" + Date.now();
+    if (selectedStore) url += "&store=" + encodeURIComponent(selectedStore);
+    if (selectedDate) url += "&date=" + encodeURIComponent(selectedDate);
+    fetch(url, { cache: "no-store" })
+      .then(function (r) { return r.json().catch(function () { return { status: "error", error: "API HTTP " + r.status + " (non-JSON response)" }; }); })
+      .then(function (d) {
+        if (cancelled) return;
+        if (d.status !== "ok") throw new Error(d.error || "API HTTP error (no body)");
+        setSummary(d);
+        setSummaryLoading(false);
+      })
+      .catch(function (e) { if (!cancelled) { setSummaryError(String(e.message || e)); setSummaryLoading(false); } });
+    return function () { cancelled = true; };
+  }, [selectedStore, selectedDate]);
+
+  // 2) Invalidate per-tab caches when filters change
+  useEffect(function () {
+    setProducts(null);
+    setCustomers(null);
+    setSkuDrill(null);
+    setSkuDept("");
+    setSkuPaste("");
+  }, [selectedStore, selectedDate]);
+
+  // 3) Outside-click + ESC for store dropdown
+  useEffect(function () {
+    if (!storeOpen) return;
+    function onClick(e) {
+      if (storeBoxRef.current && !storeBoxRef.current.contains(e.target)) {
+        setStoreOpen(false); setStoreSearch("");
+      }
+    }
+    function onKey(e) { if (e.key === "Escape") { setStoreOpen(false); setStoreSearch(""); } }
+    document.addEventListener("mousedown", onClick);
+    document.addEventListener("keydown", onKey);
+    return function () {
+      document.removeEventListener("mousedown", onClick);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [storeOpen]);
+
+  // 4) Lazy products
+  useEffect(function () {
+    if (activePage !== "product" || products !== null || productsLoading) return;
+    var cancelled = false;
+    setProductsLoading(true); setProductsError(null);
+    var url = "/api/yoda-2?page=products&t=" + Date.now();
+    if (selectedStore) url += "&store=" + encodeURIComponent(selectedStore);
+    if (selectedDate) url += "&date=" + encodeURIComponent(selectedDate);
+    fetch(url, { cache: "no-store" })
+      .then(function (r) { return r.json().catch(function () { return { status: "error", error: "API HTTP " + r.status + " (non-JSON response)" }; }); })
+      .then(function (d) {
+        if (cancelled) return;
+        if (d.status !== "ok") throw new Error(d.error || "API HTTP error (no body)");
+        setProducts(d.products || []); setProductsLoading(false);
+      })
+      .catch(function (e) { if (!cancelled) { setProductsError(String(e.message || e)); setProductsLoading(false); } });
+    return function () { cancelled = true; };
+    // NOTE: productsLoading intentionally excluded from deps. If it were in deps,
+    // setProductsLoading(true) above would flip the deps mid-effect, causing React
+    // to run this effect's cleanup (cancelled=true) before the fetch resolves -
+    // silently swallowing the response and leaving products=null forever.
+  }, [activePage, products, selectedStore, selectedDate]);
+
+  // 5) Lazy customers
+  useEffect(function () {
+    if (activePage !== "customer" || customers !== null || customersLoading) return;
+    var cancelled = false;
+    setCustomersLoading(true); setCustomersError(null);
+    var url = "/api/yoda-2?page=customers&t=" + Date.now();
+    if (selectedStore) url += "&store=" + encodeURIComponent(selectedStore);
+    if (selectedDate) url += "&date=" + encodeURIComponent(selectedDate);
+    fetch(url, { cache: "no-store" })
+      .then(function (r) { return r.json().catch(function () { return { status: "error", error: "API HTTP " + r.status + " (non-JSON response)" }; }); })
+      .then(function (d) {
+        if (cancelled) return;
+        if (d.status !== "ok") throw new Error(d.error || "API HTTP error (no body)");
+        setCustomers(d.segments || []); setCustomersLoading(false);
+      })
+      .catch(function (e) { if (!cancelled) { setCustomersError(String(e.message || e)); setCustomersLoading(false); } });
+    return function () { cancelled = true; };
+    // See products effect - customersLoading excluded from deps for the same
+    // cleanup-cancels-fetch reason.
+  }, [activePage, customers, selectedStore, selectedDate]);
+
+  // 6) SKU drill
+  useEffect(function () {
+    if (activePage !== "product") return;
+    if (!skuDept && !skuPaste.trim()) { setSkuDrill(null); return; }
+    var cancelled = false;
+    setSkuLoading(true); setSkuError(null);
+    var url = "/api/yoda-2?page=sku-drill&window=" + encodeURIComponent(skuWindow) + "&t=" + Date.now();
+    if (selectedStore) url += "&store=" + encodeURIComponent(selectedStore);
+    if (selectedDate) url += "&date=" + encodeURIComponent(selectedDate);
+    if (skuDept) url += "&department=" + encodeURIComponent(skuDept);
+    if (skuPaste.trim()) url += "&skus=" + encodeURIComponent(skuPaste.trim());
+    fetch(url, { cache: "no-store" })
+      .then(function (r) { return r.json().catch(function () { return { status: "error", error: "API HTTP " + r.status + " (non-JSON response)" }; }); })
+      .then(function (d) {
+        if (cancelled) return;
+        if (d.status !== "ok") throw new Error(d.error || "API HTTP error (no body)");
+        setSkuDrill(d); setSkuLoading(false);
+      })
+      .catch(function (e) { if (!cancelled) { setSkuError(String(e.message || e)); setSkuLoading(false); } });
+    return function () { cancelled = true; };
+    // skuLoading deliberately excluded from deps (same cleanup-cancels-fetch
+    // pattern as the products / customers effects).
+  }, [activePage, skuDept, skuPaste, skuWindow, selectedStore, selectedDate]);
+
+  // ---- derived ----
+  var stores = (summary && summary.stores) || [];
+  var storeLabel = (function () {
+    if (!selectedStore) return "All stores" + (stores.length ? " (" + stores.length + ")" : "");
+    var s = stores.find(function (x) { return x.code === selectedStore; });
+    if (!s) return selectedStore;
+    return s.code + " - " + tcYoda(s.name) + (s.city ? ", " + tcYoda(s.city) : "") + (s.state ? " " + s.state : "");
+  })();
+
+  var dateLabel = (function () {
+    try {
+      var d = new Date(selectedDate + "T00:00:00");
+      return d.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+    } catch (_) { return selectedDate; }
+  })();
+
+  // store dropdown filter (matches LiveSalesYodaView pattern)
+  var qStr = String(storeSearch || "").trim().toLowerCase();
+  var dropdownStores = stores.filter(function (s) {
+    if (!qStr) return true;
+    var hay = (String(s.code || "") + " " + String(s.name || "") + " " + String(s.city || "") + " " + String(s.state || "")).toLowerCase();
+    return hay.indexOf(qStr) !== -1;
+  });
+  if (selectedStore) {
+    var hasSel = dropdownStores.some(function (s) { return s.code === selectedStore; });
+    if (!hasSel) {
+      var pinned = stores.find(function (s) { return s.code === selectedStore; });
+      if (pinned) dropdownStores = [pinned].concat(dropdownStores);
+    }
+  }
+  var selectedStoreLabel = "All stores";
+  if (selectedStore) {
+    var sel = stores.find(function (s) { return s.code === selectedStore; });
+    selectedStoreLabel = sel ? (sel.code + " - " + (tcYoda(sel.name) || ("Store " + sel.code))) : ("Store " + selectedStore);
+  }
+
+  // ---- handler: refresh ----
+  var handleRefresh = function () {
+    if (summaryLoading) return;
+    setSummary(null);
+    setSummaryLoading(true);
+    setSummaryError(null);
+    var url = "/api/yoda-2?page=summary&t=" + Date.now();
+    if (selectedStore) url += "&store=" + encodeURIComponent(selectedStore);
+    if (selectedDate) url += "&date=" + encodeURIComponent(selectedDate);
+    fetch(url, { cache: "no-store" })
+      .then(function (r) { return r.json().catch(function () { return { status: "error", error: "API HTTP " + r.status + " (non-JSON response)" }; }); })
+      .then(function (d) {
+        if (d.status !== "ok") throw new Error(d.error || "API HTTP error (no body)");
+        setSummary(d); setSummaryLoading(false);
+      })
+      .catch(function (e) { setSummaryError(String(e.message || e)); setSummaryLoading(false); });
+  };
+
+  // ---- YODA tokens (scoped under #yoda-2-yoda) ----
+  var YODA_CSS = ""
+    + "@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');"
+    + "#yoda-2-yoda{"
+    + "  --bg-warm:#faf5e8;--bg-raised:#ffffff;--paper-50:#f5f4ef;"
+    + "  --border-1:#dedcd2;--border-2:#c9c6b9;"
+    + "  --fg-1:#121210;--fg-2:#36342f;--fg-3:#807c70;--fg-4:#a8a497;"
+    + "  --good:#1f8a6b;--good-strong:#0e6651;--good-soft:#d8ece3;--good-ink:#06352a;"
+    + "  --bad:#c52a30;--bad-strong:#97142a;--bad-soft:#f8dcd9;--bad-ink:#470810;"
+    + "  --warn:#e36b3c;--warn-soft:#fbe1cf;--warn-ink:#5a260a;"
+    + "  --watch:#f0a04b;--watch-soft:#fbeacf;--watch-ink:#5b3b0a;"
+    + "  --info:#2c6bb8;--info-soft:#dde9f7;--info-ink:#0e2c52;"
+    + "  --accent-retail:#ee6a1f;--accent-retail-soft:#fde2cd;"
+    + "  background:var(--bg-warm);color:var(--fg-1);"
+    + "  font-family:'Inter',ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;"
+    + "  font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;"
+    + "}"
+    + "#yoda-2-yoda *{box-sizing:border-box;}"
+    + "#yoda-2-yoda .tab{font-variant-numeric:tabular-nums;}"
+    + "#yoda-2-yoda .eyebrow{font-variant-numeric:tabular-nums;font-size:11px;letter-spacing:0.10em;text-transform:uppercase;font-weight:500;color:var(--fg-3);}"
+    + "#yoda-2-yoda .caption{font-size:11px;color:var(--fg-3);}"
+    + "#yoda-2-yoda .paper{background:var(--bg-raised);border:1px solid var(--border-1);border-radius:8px;}"
+    + "#yoda-2-yoda .kpi-display{font-variant-numeric:tabular-nums;font-size:44px;line-height:1.05;font-weight:700;letter-spacing:-0.02em;}"
+    + "#yoda-2-yoda .kpi-display-pct{font-variant-numeric:tabular-nums;font-size:28px;line-height:1;font-weight:700;letter-spacing:-0.02em;}"
+    + "#yoda-2-yoda .kpi-sm{font-variant-numeric:tabular-nums;font-size:24px;line-height:1;font-weight:500;}"
+    + "#yoda-2-yoda .hero-bad{background:var(--bad-soft);border:1px solid #ecb6ad;border-radius:12px;padding:20px 22px;}"
+    + "#yoda-2-yoda .hero-good{background:var(--good-soft);border:1px solid #aed8c2;border-radius:12px;padding:20px 22px;}"
+    + "#yoda-2-yoda .hero-warn{background:var(--warn-soft);border:1px solid #f1c19d;border-radius:12px;padding:20px 22px;}"
+    + "#yoda-2-yoda .conf-low{background:var(--watch-soft);color:var(--watch-ink);padding:2px 9px;border-radius:4px;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;}"
+    + "#yoda-2-yoda .conf-med{background:var(--info-soft);color:var(--info-ink);padding:2px 9px;border-radius:4px;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;}"
+    + "#yoda-2-yoda .conf-hi{background:var(--good-soft);color:var(--good-ink);padding:2px 9px;border-radius:4px;font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;}"
+    + "#yoda-2-yoda .y-btn{background:#fff;border:1px solid var(--border-1);border-radius:6px;padding:9px 13px;font-size:13px;font-weight:600;color:var(--fg-1);cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-family:inherit;transition:background 80ms,border-color 80ms;}"
+    + "#yoda-2-yoda .y-btn:hover{background:var(--paper-50);}"
+    + "#yoda-2-yoda .y-btn:disabled{cursor:wait;opacity:0.5;}"
+    + "#yoda-2-yoda .y-btn-primary{background:var(--accent-retail);border:1px solid var(--accent-retail);border-radius:6px;padding:9px 13px;font-size:13px;font-weight:700;color:#fff;cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-family:inherit;transition:background 80ms,border-color 80ms;}"
+    + "#yoda-2-yoda .y-btn-primary:hover{background:#d75c14;border-color:#d75c14;}"
+    + "#yoda-2-yoda .y-btn-primary:disabled{cursor:not-allowed;opacity:0.5;}"
+    + "#yoda-2-yoda input[type='text'],#yoda-2-yoda input[type='date'],#yoda-2-yoda textarea{font-family:inherit;font-size:13px;color:var(--fg-1);background:#fff;border:1px solid var(--border-1);border-radius:4px;padding:8px 10px;outline:none;}"
+    + "#yoda-2-yoda input[type='text']:focus,#yoda-2-yoda input[type='date']:focus,#yoda-2-yoda textarea:focus{border-color:var(--accent-retail);box-shadow:0 0 0 2px rgba(238,106,31,.20);}"
+    + "#yoda-2-yoda .ranked-row:hover{background:rgba(11,61,46,0.04);}"
+    + "#yoda-2-yoda .show-all{padding:14px;text-align:center;color:var(--accent-retail);font-weight:600;cursor:pointer;border-top:1px solid var(--border-1);background:transparent;width:100%;border-left:none;border-right:none;border-bottom:none;font-family:inherit;font-size:13px;}"
+    + "#yoda-2-yoda .show-all:hover{background:var(--paper-50);}"
+    + "#yoda-2-yoda .nav-item{width:100%;text-align:left;padding:9px 11px;border:1px solid transparent;background:transparent;border-radius:6px;font-family:inherit;font-size:13px;font-weight:500;color:var(--fg-2);cursor:pointer;display:flex;align-items:center;gap:8px;transition:background 80ms;}"
+    + "#yoda-2-yoda .nav-item:hover{background:var(--paper-50);}"
+    + "#yoda-2-yoda .nav-item.active{background:var(--good-soft);color:var(--good-ink);font-weight:700;border-color:#aed8c2;}"
+    + "#yoda-2-yoda .seg-track{display:inline-flex;background:var(--paper-50);border:1px solid var(--border-1);border-radius:6px;padding:3px;gap:2px;}"
+    + "#yoda-2-yoda .seg-btn{background:transparent;border:none;border-radius:4px;padding:5px 11px;font-family:inherit;font-size:12px;font-weight:500;color:var(--fg-3);cursor:pointer;}"
+    + "#yoda-2-yoda .seg-btn:hover{color:var(--fg-1);}"
+    + "#yoda-2-yoda .seg-btn.active{background:var(--good-soft);color:var(--good-ink);font-weight:700;}"
+    + "#yoda-2-yoda .chip{padding:5px 11px;border-radius:999px;border:1px solid var(--border-1);background:#fff;font-size:12px;font-weight:500;color:var(--fg-2);cursor:pointer;font-family:inherit;}"
+    + "#yoda-2-yoda .chip:hover{background:var(--paper-50);}"
+    + "#yoda-2-yoda .chip.active{background:var(--good-soft);color:var(--good-ink);border-color:#aed8c2;font-weight:700;}"
+    + "#yoda-2-yoda .pill{padding:2px 9px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;display:inline-block;}"
+    + "#yoda-2-yoda .ai-pill{padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;background:var(--accent-retail-soft);color:var(--accent-retail);}"
+    + "#yoda-2-yoda code{font-family:'SFMono-Regular',ui-monospace,Menlo,Consolas,monospace;font-size:11px;background:var(--paper-50);padding:1px 5px;border-radius:3px;color:var(--fg-2);}"
+    + "#yoda-2-yoda pre{font-family:'SFMono-Regular',ui-monospace,Menlo,Consolas,monospace;}"
+    + "#yoda-2-yoda table{border-collapse:collapse;}"
+    + "#yoda-2-yoda .h-row{padding:9px 14px;background:var(--paper-50);border-bottom:1px solid var(--border-1);color:var(--fg-3);font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;}"
+  ;
+
+  // ---- meta string ----
+  var metaStr = "Snowflake - ";
+  if (summary && summary.asOf) {
+    try {
+      metaStr += "refreshed " + new Date(summary.asOf).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" });
+    } catch (_) { metaStr += "refreshed"; }
+  } else if (summaryLoading) {
+    metaStr += "loading...";
+  } else {
+    metaStr += "-";
+  }
+
+  return (
+    <Fragment>
+      <style dangerouslySetInnerHTML={{ __html: YODA_CSS }} />
+      <div id="yoda-2-yoda" style={{ padding: "22px 24px 36px" }}>
+        <div style={{ maxWidth: 1400, margin: "0 auto" }}>
+          {/* ============ Top header ============ */}
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 18, flexWrap: "wrap", gap: 12 }}>
+            <div style={{ display: "flex", gap: 14, alignItems: "center", minWidth: 0 }}>
+              <button onClick={goBack} className="y-btn" title="Back to Reports">
+                <ArrowLeft className="w-4 h-4" /> Back
+              </button>
+              <div style={{ width: 1, height: 30, background: "var(--border-1)", flexShrink: 0 }} />
+              {/* BrandTile - orange icon (retail-only chrome) */}
+              <div style={{
+                width: 44, height: 44, borderRadius: 8,
+                background: "var(--accent-retail)", display: "grid", placeItems: "center",
+                boxShadow: "0 1px 0 rgba(238,106,31,.20),0 4px 12px rgba(238,106,31,.20)", flexShrink: 0,
+              }}>
+                <Zap className="w-5 h-5" style={{ color: "#fff" }} />
+              </div>
+              <div style={{ minWidth: 0 }}>
+                <div style={{ fontSize: 26, fontWeight: 700, letterSpacing: "-0.02em", color: "var(--fg-1)" }}>YODA 2.0</div>
+                <div className="caption" style={{ fontSize: 13 }}>Store performance dashboard - {metaStr}</div>
+              </div>
+            </div>
+            <button onClick={handleRefresh} disabled={summaryLoading} className="y-btn" title="Re-query Snowflake">
+              <RotateCcw className={"w-4 h-4 " + (summaryLoading ? "animate-spin" : "")} />
+              {summaryLoading ? "Refreshing..." : "Refresh"}
+            </button>
+          </div>
+
+          {/* ============ Body: sidebar + main ============ */}
+          <div style={{ display: "flex", flexDirection: "row", gap: 16, alignItems: "flex-start", flexWrap: "wrap" }}>
+            {/* ============ Sidebar ============ */}
+            <aside className="paper" style={{ width: 256, flexShrink: 0, padding: 16, position: "sticky", top: 16 }}>
+              {/* Store selector */}
+              <div className="eyebrow" style={{ marginBottom: 6 }}>Store</div>
+              <div ref={storeBoxRef} style={{ position: "relative", marginBottom: 14 }}>
+                <button
+                  type="button"
+                  onClick={function () { var n = !storeOpen; setStoreOpen(n); if (!n) setStoreSearch(""); }}
+                  className="y-btn"
+                  style={{ width: "100%", justifyContent: "space-between" }}
+                  aria-haspopup="listbox"
+                  aria-expanded={storeOpen}
+                >
+                  <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{selectedStoreLabel}</span>
+                  <ChevronDown className="w-4 h-4" style={{ transition: "transform 160ms", transform: storeOpen ? "rotate(180deg)" : "none", color: "var(--fg-3)" }} />
+                </button>
+                {storeOpen && (
+                  <div style={{ position: "absolute", zIndex: 20, top: "100%", left: 0, right: 0, marginTop: 4, background: "#fff", border: "1px solid var(--border-1)", borderRadius: 8, boxShadow: "0 1px 0 rgba(18,18,16,0.04),0 12px 32px rgba(18,18,16,0.12)", maxHeight: 320, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+                    <div style={{ padding: 8, borderBottom: "1px solid var(--border-1)", background: "var(--paper-50)" }}>
+                      <input
+                        type="text"
+                        value={storeSearch}
+                        onChange={function (e) { setStoreSearch(e.target.value); }}
+                        placeholder="Search stores..."
+                        autoFocus
+                        style={{ width: "100%" }}
+                      />
+                    </div>
+                    <div role="listbox" style={{ overflowY: "auto" }}>
+                      <button
+                        type="button"
+                        onClick={function () { setSelectedStore(""); setStoreSearch(""); setStoreOpen(false); }}
+                        style={{ width: "100%", textAlign: "left", padding: "8px 12px", fontSize: 13, border: "none", borderBottom: "1px solid var(--border-1)", background: !selectedStore ? "var(--good-soft)" : "transparent", color: !selectedStore ? "var(--good-ink)" : "var(--fg-2)", fontWeight: !selectedStore ? 700 : 500, cursor: "pointer", fontFamily: "inherit" }}
+                      >
+                        All stores
+                      </button>
+                      {dropdownStores.map(function (s) {
+                        var label = s.code + " - " + (tcYoda(s.name) || ("Store " + s.code));
+                        var isSel = s.code === selectedStore;
+                        return (
+                          <button
+                            key={s.code}
+                            type="button"
+                            role="option"
+                            aria-selected={isSel}
+                            onClick={function () { setSelectedStore(s.code); setStoreSearch(""); setStoreOpen(false); }}
+                            style={{ width: "100%", textAlign: "left", padding: "8px 12px", fontSize: 13, border: "none", background: isSel ? "var(--good-soft)" : "transparent", color: isSel ? "var(--good-ink)" : "var(--fg-2)", fontWeight: isSel ? 700 : 500, cursor: "pointer", fontFamily: "inherit" }}
+                          >
+                            <div>{label}</div>
+                            {(s.city || s.state) && (
+                              <div className="caption" style={{ marginTop: 1, color: isSel ? "var(--good-ink)" : "var(--fg-3)", opacity: isSel ? 0.85 : 1 }}>{tcYoda(s.city)}{s.state ? ", " + s.state : ""}</div>
+                            )}
+                          </button>
+                        );
+                      })}
+                      {dropdownStores.length === 0 && qStr && (
+                        <div className="caption" style={{ padding: "16px 12px", textAlign: "center", fontStyle: "italic" }}>
+                          No matches for "{storeSearch}"
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Date selector */}
+              <div className="eyebrow" style={{ marginBottom: 6 }}>Report date</div>
+              <input
+                type="date"
+                value={selectedDate}
+                max={todayET}
+                onChange={function (e) { setSelectedDate(e.target.value || todayET); }}
+                style={{ width: "100%", marginBottom: 14 }}
+              />
+
+              {/* Page nav */}
+              <div className="eyebrow" style={{ marginBottom: 6 }}>Page</div>
+              <nav style={{ display: "flex", flexDirection: "column", gap: 3, marginBottom: 14 }}>
+                <button onClick={function () { setActivePage("main"); }}     className={"nav-item" + (activePage === "main"     ? " active" : "")}>
+                  <BarChart3 className="w-4 h-4" /> Main dashboard
+                </button>
+                <button onClick={function () { setActivePage("drivers"); }}  className={"nav-item" + (activePage === "drivers"  ? " active" : "")}>
+                  <TrendingUp className="w-4 h-4" /> Sales drivers
+                </button>
+                <button onClick={function () { setActivePage("product"); }}  className={"nav-item" + (activePage === "product"  ? " active" : "")}>
+                  <Tag className="w-4 h-4" /> Product drill
+                </button>
+                <button onClick={function () { setActivePage("customer"); }} className={"nav-item" + (activePage === "customer" ? " active" : "")}>
+                  <Filter className="w-4 h-4" /> Customer drill
+                </button>
+                <button onClick={function () { setActivePage("insights"); }} className={"nav-item" + (activePage === "insights" ? " active" : "")}>
+                  <Eye className="w-4 h-4" /> AI insights
+                </button>
+                <button onClick={function () { setActivePage("online"); }}   className={"nav-item" + (activePage === "online"   ? " active" : "")}>
+                  <Database className="w-4 h-4" /> Online sales
+                </button>
+              </nav>
+
+              {/* Ask YODA chat */}
+              <Yoda2YodaChatPanel selectedStore={selectedStore} selectedDate={selectedDate} />
+
+              {/* Footer caption */}
+              <div className="caption" style={{ paddingTop: 12, marginTop: 12, borderTop: "1px solid var(--border-1)", lineHeight: 1.4, fontSize: 10 }}>
+                v2.0 - <code style={{ fontSize: 9 }}>AUBUCHON_RETAIL_ANALYTICS</code>
+              </div>
+            </aside>
+
+            {/* ============ Main pane ============ */}
+            <main style={{ flex: 1, minWidth: 0 }}>
+              {summaryError && (
+                <div className="hero-bad" style={{ marginBottom: 14 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <AlertTriangle className="w-5 h-5" style={{ color: "var(--bad-strong)" }} />
+                    <strong style={{ color: "var(--bad-ink)", fontSize: 14 }}>Couldn't load data</strong>
+                  </div>
+                  <div style={{ color: "var(--bad-strong)", fontSize: 13, marginTop: 6 }}>{summaryError}</div>
+                </div>
+              )}
+              {summaryLoading && !summary ? (
+                <div className="paper" style={{ padding: 56, textAlign: "center" }}>
+                  <RotateCcw className="w-6 h-6 animate-spin" style={{ color: "var(--accent-retail)", display: "block", margin: "0 auto 12px" }} />
+                  <div style={{ color: "var(--fg-2)", fontWeight: 500 }}>Querying Snowflake...</div>
+                  <div className="caption" style={{ marginTop: 4 }}>AUBUCHON_RETAIL_ANALYTICS - may take a few seconds on first load</div>
+                </div>
+              ) : (
+                <Fragment>
+                  {activePage === "main"     && <Yoda2YodaMain     summary={summary} storeLabel={storeLabel} dateLabel={dateLabel} />}
+                  {activePage === "drivers"  && <Yoda2YodaDrivers  summary={summary} storeLabel={storeLabel} dateLabel={dateLabel} />}
+                  {activePage === "product"  && <Yoda2YodaProduct  products={products} loading={productsLoading} error={productsError} storeLabel={storeLabel} dateLabel={dateLabel} skuDept={skuDept} setSkuDept={setSkuDept} skuPaste={skuPaste} setSkuPaste={setSkuPaste} skuWindow={skuWindow} setSkuWindow={setSkuWindow} skuDrill={skuDrill} skuLoading={skuLoading} skuError={skuError} />}
+                  {activePage === "customer" && <Yoda2YodaCustomer segments={customers} loading={customersLoading} error={customersError} storeLabel={storeLabel} dateLabel={dateLabel} />}
+                  {activePage === "insights" && <Yoda2YodaInsights selectedStore={selectedStore} setSelectedStore={setSelectedStore} dateLabel={dateLabel} selectedDate={selectedDate} />}
+                  {activePage === "online"   && <Yoda2YodaOnline />}
+                </Fragment>
+              )}
+
+              <div className="caption" style={{ textAlign: "center", padding: "20px 0 0" }}>
+                Data from Snowflake - <code>PRD_EDW_DB.SI_AGENTS.AUBUCHON_RETAIL_ANALYTICS</code>
+              </div>
+            </main>
+          </div>
+        </div>
+      </div>
+    </Fragment>
+  );
+}
+
+/* ============================================================
+   Yoda2YodaChatPanel - sidebar-embedded Ask YODA
+   ============================================================ */
+function Yoda2YodaChatPanel({ selectedStore, selectedDate }) {
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState("");
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState(null);
+  const [showDetails, setShowDetails] = useState({});
+  const listRef = useRef(null);
+
+  useEffect(function () {
+    if (listRef.current) {
+      listRef.current.scrollTop = listRef.current.scrollHeight;
+    }
+  }, [messages, sending]);
+
+  function toggleDetails(idx) {
+    setShowDetails(function (s) {
+      var next = Object.assign({}, s);
+      next[idx] = !s[idx];
+      return next;
+    });
+  }
+
+  async function send() {
+    var qStr = String(input || "").trim();
+    if (!qStr || sending) return;
+    setError(null);
+    setInput("");
+    var hist = messages
+      .filter(function (m) { return m.role === "user" || m.role === "assistant"; })
+      .slice(-8)
+      .map(function (m) { return { role: m.role, content: String(m.content || "").slice(0, 2000) }; });
+    var nextMsgs = messages.concat([{ role: "user", content: qStr }]);
+    setMessages(nextMsgs);
+    setSending(true);
+    try {
+      var resp = await fetch("/api/yoda-chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          question: qStr,
+          store: selectedStore || "",
+          date: selectedDate || "",
+          history: hist,
+        }),
+      });
+      var text = await resp.text();
+      var data;
+      try { data = JSON.parse(text); }
+      catch (_) { data = { status: "error", error: "Non-JSON response (HTTP " + resp.status + ")" }; }
+      if (data.status !== "ok") {
+        throw new Error(data.error || ("HTTP " + resp.status));
+      }
+      setMessages(nextMsgs.concat([{
+        role: "assistant",
+        content: String(data.answer || ""),
+        sql: data.sql || null,
+        rows: Array.isArray(data.rows) ? data.rows : [],
+        columns: Array.isArray(data.columns) ? data.columns : [],
+        row_count: Number(data.row_count || 0),
+        kind: data.kind || "answer",
+        took_ms: Number(data.took_ms || 0),
+      }]));
+    } catch (e) {
+      setError(String(e.message || e));
+      setMessages(nextMsgs.concat([{
+        role: "assistant",
+        content: "Sorry - I couldn't answer that. " + String(e.message || e),
+        kind: "error",
+      }]));
+    } finally {
+      setSending(false);
+    }
+  }
+
+  function onKey(e) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      send();
+    }
+  }
+
+  var suggestions = [
+    "Top 5 departments yesterday",
+    "Member sales vs last year",
+    "How many transactions yesterday?",
+    "Which stores beat plan yesterday?",
+  ];
+
+  return (
+    <div style={{ marginTop: 14, paddingTop: 12, borderTop: "1px solid var(--border-1)" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
+        <div className="eyebrow">Ask YODA</div>
+        {messages.length > 0 && (
+          <button
+            onClick={function () { setMessages([]); setShowDetails({}); setError(null); }}
+            style={{ background: "transparent", border: "none", color: "var(--fg-3)", fontSize: 10, cursor: "pointer", fontFamily: "inherit" }}
+            title="Clear conversation"
+          >
+            Clear
+          </button>
+        )}
+      </div>
+
+      <div
+        ref={listRef}
+        style={{
+          background: "var(--paper-50)",
+          border: "1px solid var(--border-1)",
+          borderRadius: 6,
+          padding: 8,
+          marginBottom: 8,
+          overflowY: "auto",
+          fontSize: 12,
+          maxHeight: 280,
+          minHeight: 60,
+        }}
+      >
+        {messages.length === 0 && !sending && (
+          <div className="caption" style={{ lineHeight: 1.4 }}>
+            Ask a question about stores, products, members, margins, or inventory. Answers come from the same semantic view as the rest of YODA 2.0.
+          </div>
+        )}
+        {messages.map(function (m, i) {
+          if (m.role === "user") {
+            return (
+              <div key={i} style={{ marginBottom: 6, display: "flex", justifyContent: "flex-end" }}>
+                <div style={{
+                  background: "var(--good-strong)",
+                  color: "#fff",
+                  borderRadius: 6,
+                  padding: "5px 9px",
+                  maxWidth: "92%",
+                  whiteSpace: "pre-wrap",
+                  wordBreak: "break-word",
+                  fontWeight: 500,
+                }}>
+                  {m.content}
+                </div>
+              </div>
+            );
+          }
+          var isErr = m.kind === "error" || m.kind === "blocked";
+          var hasRows = Array.isArray(m.rows) && m.rows.length > 0;
+          return (
+            <div key={i} style={{ marginBottom: 8 }}>
+              <div style={{
+                background: isErr ? "var(--bad-soft)" : "#fff",
+                color: isErr ? "var(--bad-ink)" : "var(--fg-1)",
+                border: isErr ? "1px solid #ecb6ad" : "1px solid var(--border-1)",
+                borderRadius: 6,
+                padding: "5px 9px",
+                whiteSpace: "pre-wrap",
+                wordBreak: "break-word",
+              }}>
+                {m.content}
+              </div>
+              {(m.sql || hasRows) && (
+                <div style={{ marginTop: 4 }}>
+                  <button
+                    onClick={function () { toggleDetails(i); }}
+                    style={{ background: "transparent", border: "none", color: "var(--accent-retail)", fontSize: 10, cursor: "pointer", textDecoration: "underline", fontFamily: "inherit", padding: 0 }}
+                  >
+                    {showDetails[i] ? "Hide" : "Show"} SQL{hasRows ? " & data (" + (m.row_count || m.rows.length) + " row" + ((m.row_count || m.rows.length) === 1 ? "" : "s") + ")" : ""}
+                  </button>
+                  {showDetails[i] && (
+                    <div style={{ marginTop: 4 }}>
+                      {m.sql && (
+                        <pre style={{
+                          background: "var(--fg-1)",
+                          color: "var(--paper-50)",
+                          fontSize: 10,
+                          lineHeight: 1.4,
+                          borderRadius: 4,
+                          padding: 8,
+                          overflowX: "auto",
+                          whiteSpace: "pre-wrap",
+                          wordBreak: "break-word",
+                          margin: 0,
+                        }}>
+                          {m.sql}
+                        </pre>
+                      )}
+                      {hasRows && (
+                        <div style={{ marginTop: 4, overflowX: "auto", border: "1px solid var(--border-1)", borderRadius: 4, background: "#fff" }}>
+                          <table style={{ fontSize: 10, width: "100%" }}>
+                            <thead>
+                              <tr style={{ background: "var(--paper-50)" }}>
+                                {m.columns.map(function (c) {
+                                  return <th key={c} style={{ textAlign: "left", padding: "4px 6px", fontWeight: 700, color: "var(--fg-3)", whiteSpace: "nowrap" }}>{c}</th>;
+                                })}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {m.rows.slice(0, 25).map(function (r, ri) {
+                                return (
+                                  <tr key={ri} style={{ borderTop: "1px solid var(--border-1)" }}>
+                                    {m.columns.map(function (c) {
+                                      var v = r[c];
+                                      var disp;
+                                      if (v === null || v === undefined) disp = "-";
+                                      else if (typeof v === "number") disp = Math.abs(v) >= 1000 ? v.toLocaleString() : String(v);
+                                      else disp = String(v);
+                                      return <td key={c} className="tab" style={{ padding: "4px 6px", whiteSpace: "nowrap", color: "var(--fg-2)" }}>{disp}</td>;
+                                    })}
+                                  </tr>
+                                );
+                              })}
+                            </tbody>
+                          </table>
+                          {m.rows.length > 25 && (
+                            <div className="caption" style={{ padding: "4px 6px", borderTop: "1px solid var(--border-1)" }}>
+                              Showing first 25 of {m.rows.length} rows
+                            </div>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+        {sending && (
+          <div style={{ color: "var(--fg-3)", fontStyle: "italic", fontSize: 11 }}>YODA is thinking...</div>
+        )}
+      </div>
+
+      <textarea
+        value={input}
+        onChange={function (e) { setInput(e.target.value); }}
+        onKeyDown={onKey}
+        rows={2}
+        placeholder="Ask about sales, SKUs, members..."
+        disabled={sending}
+        style={{ width: "100%", resize: "none", fontSize: 12 }}
+      />
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 6 }}>
+        <div className="caption" style={{ fontSize: 10, lineHeight: 1.3 }}>
+          {selectedStore ? ("Scoped to " + selectedStore) : "All stores"} - {selectedDate}
+        </div>
+        <button
+          onClick={send}
+          disabled={sending || !input.trim()}
+          className="y-btn-primary"
+          style={{ padding: "5px 11px", fontSize: 12 }}
+        >
+          {sending ? "..." : "Ask"}
+        </button>
+      </div>
+
+      {messages.length === 0 && !sending && (
+        <div style={{ marginTop: 8, display: "flex", flexWrap: "wrap", gap: 4 }}>
+          {suggestions.map(function (s) {
+            return (
+              <button
+                key={s}
+                onClick={function () { setInput(s); }}
+                className="chip"
+                style={{ fontSize: 10, padding: "3px 8px" }}
+              >
+                {s}
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      {error && (
+        <div style={{ marginTop: 4, fontSize: 10, color: "var(--bad-strong)", lineHeight: 1.4 }}>{error}</div>
+      )}
+    </div>
+  );
+}
+
+/* ============================================================
+   Yoda2YodaMain - KPI hero + tile row + 8-week trend
+   ============================================================ */
+function Yoda2YodaMain({ summary, storeLabel, dateLabel }) {
+  if (!summary || !summary.kpis) return null;
+  var k = summary.kpis;
+  var planVar = k.dailyPlan ? (k.netSales - k.dailyPlan) / k.dailyPlan : null;
+  var lyVar   = k.lyNetSales ? (k.netSales - k.lyNetSales) / k.lyNetSales : null;
+  var pctToPlan = k.dailyPlan ? Math.max(0, Math.min(1.05, k.netSales / k.dailyPlan)) : 0;
+  var heroTone = planVar === null ? "warn" : planVar >= 0.02 ? "good" : planVar <= -0.02 ? "bad" : "warn";
+
+  var heroClass = heroTone === "good" ? "hero-good" : heroTone === "warn" ? "hero-warn" : "hero-bad";
+  var heroTextColor = heroTone === "good" ? "var(--good-strong)" : heroTone === "warn" ? "var(--warn)" : "var(--bad-strong)";
+  var heroBarColor  = heroTone === "good" ? "var(--good-strong)" : heroTone === "warn" ? "var(--warn)" : "var(--bad-strong)";
+  var pctText = (pctToPlan * 100).toFixed(1) + "%";
+  var barPct = Math.min(1.05, Math.max(0.02, pctToPlan));
+
+  var trend = (summary && summary.weeklyTrend) || [];
+
+  return (
+    <Fragment>
+      {/* ---- KpiHero ---- */}
+      <div className={heroClass}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 12 }}>
+          <div style={{ minWidth: 0 }}>
+            <div className="eyebrow">{storeLabel} - {dateLabel}</div>
+            <div className="kpi-display tab" style={{ marginTop: 4 }}>{fmtDollarYoda(k.netSales)}</div>
+            <div className="caption" style={{ marginTop: 4 }}>Net sales (GL) - comparing same day 364 days ago (trade-week alignment)</div>
+          </div>
+          <div style={{ textAlign: "right" }}>
+            <div className="kpi-display-pct tab" style={{ color: heroTextColor }}>{pctText}</div>
+            <div className="caption" style={{ marginTop: 2 }}>of plan - {fmtDollarYoda(k.dailyPlan)}</div>
+          </div>
+        </div>
+        {/* Progress bar */}
+        <div style={{ height: 6, background: "rgba(0,0,0,0.06)", borderRadius: 999, overflow: "hidden", marginTop: 14 }}>
+          <div style={{ width: (barPct * 100) + "%", height: "100%", background: heroBarColor, borderRadius: 999, transition: "width 480ms cubic-bezier(0.16,1,0.3,1)" }} />
+        </div>
+        {/* Sub-KPI hero rail */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))", gap: 8, marginTop: 14 }}>
+          <HeroSubYoda label="vs Plan" pct={planVar} />
+          <HeroSubYoda label="vs LY" pct={lyVar} />
+          <HeroSubYoda label="Plan total" value={fmtDollarYoda(k.dailyPlan)} />
+        </div>
+      </div>
+
+      {/* ---- 5-tile sub-KPI row ---- */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(165px,1fr))", gap: 10, marginTop: 14 }}>
+        <KpiTileYoda
+          label="Transactions"
+          tip="COUNT(DISTINCT transaction_id) WHERE type NOT IN ('return','fee-expense'). Skill section 5, verified query KPI_TRANSACTION_COUNT."
+          value={fmtIntYoda(k.txnCount)}
+          compare={"LY: " + fmtIntYoda(k.lyTxnCount)}
+          variance={pctYoda(k.txnCount, k.lyTxnCount)}
+        />
+        <KpiTileYoda
+          label="Avg ticket"
+          tip="Net sales (GL) / transaction count (excl. returns & fees). Skill section 5, verified query KPI_AVERAGE_SALE."
+          value={fmtDollar2Yoda(k.avgTicket)}
+          compare={"LY: " + fmtDollar2Yoda(k.lyAvgTicket)}
+          variance={pctYoda(k.avgTicket, k.lyAvgTicket)}
+        />
+        <KpiTileYoda
+          label="UPT (sale-type)"
+          tip="SUM(upt_sale_qty) / COUNT(DISTINCT transaction_id WHERE type='sale'). Skill section 5, verified query KPI_UPT_AVG."
+          value={(Number(k.upt) || 0).toFixed(2)}
+          compare={"LY: " + ((Number(k.lyUpt) || 0).toFixed(2))}
+          variance={pctYoda(k.upt, k.lyUpt)}
+        />
+        <KpiTileYoda
+          label="Member sales"
+          tip="Generated - not verified. SUM(net_sale_gl_amt) WHERE customer_category IN ('Rewards','Military','Employee','Stock Holder')."
+          value={fmtDollarYoda(k.memberSales)}
+          compare={"LY: " + fmtDollarYoda(k.lyMemberSales)}
+          variance={pctYoda(k.memberSales, k.lyMemberSales)}
+          unverified
+        />
+        <KpiTileYoda
+          label="Pro sales"
+          tip="Generated - not verified. SUM(net_sale_gl_amt) WHERE customer_category='Professional'."
+          value={fmtDollarYoda(k.proSales)}
+          compare={"LY: " + fmtDollarYoda(k.lyProSales)}
+          variance={pctYoda(k.proSales, k.lyProSales)}
+          unverified
+        />
+      </div>
+
+      {/* ---- AnomalyCallout ---- */}
+      <AnomalyCalloutYoda kpis={k} storeLabel={storeLabel} planVar={planVar} lyVar={lyVar} />
+
+      {/* ---- 8-week trend ---- */}
+      <div className="paper" style={{ padding: 18, marginTop: 14 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 8, marginBottom: 12 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <TrendingUp className="w-4 h-4" style={{ color: "var(--accent-retail)" }} />
+            <strong style={{ fontSize: 14 }}>8-week net sales trend</strong>
+          </div>
+          <div className="caption">Daily net sales, last 8 weeks</div>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "minmax(0,2fr) minmax(180px,1fr)", gap: 18 }}>
+          <div>
+            <TrendChartYoda data={trend} />
+          </div>
+          <div>
+            <div className="eyebrow" style={{ marginBottom: 6 }}>Last 7 days</div>
+            <TrendTableYoda data={trend} />
+          </div>
+        </div>
+      </div>
+    </Fragment>
+  );
+}
+
+/* ============================================================
+   Yoda2YodaDrivers - 3-level decomposition
+   ============================================================ */
+function Yoda2YodaDrivers({ summary, storeLabel, dateLabel }) {
+  const [compareAgainst, setCompareAgainst] = useState("ly");
+  if (!summary || !summary.kpis) return null;
+  var k = summary.kpis;
+  var lyVar   = k.lyNetSales ? (k.netSales - k.lyNetSales) / k.lyNetSales : null;
+  var planVar = k.dailyPlan ? (k.netSales - k.dailyPlan) / k.dailyPlan : null;
+  var txnVar = pctYoda(k.txnCount, k.lyTxnCount);
+  var avgVar = pctYoda(k.avgTicket, k.lyAvgTicket);
+  var uptVar = pctYoda(k.upt, k.lyUpt);
+  var rpuVar = (avgVar != null && uptVar != null && uptVar !== -1) ? ((1 + avgVar) / (1 + uptVar)) - 1 : null;
+  var topVar = compareAgainst === "ly" ? lyVar : planVar;
+
+  return (
+    <div className="paper" style={{ padding: 22 }}>
+      <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", flexWrap: "wrap", gap: 10, marginBottom: 4 }}>
+        <div>
+          <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+            <BarChart3 className="w-4 h-4" style={{ color: "var(--accent-retail)" }} />
+            <strong style={{ fontSize: 16 }}>Sales drivers - {storeLabel}</strong>
+          </div>
+          <div className="caption" style={{ marginTop: 4 }}>{dateLabel} - what's driving the variance - decomposition with coaching</div>
+        </div>
+        {/* LY/Plan toggle */}
+        <div className="seg-track">
+          <button onClick={function () { setCompareAgainst("ly"); }} className={"seg-btn" + (compareAgainst === "ly" ? " active" : "")}>Last year</button>
+          <button onClick={function () { setCompareAgainst("plan"); }} className={"seg-btn" + (compareAgainst === "plan" ? " active" : "")}>Sales plan</button>
+        </div>
+      </div>
+
+      {/* Top-level node */}
+      <div style={{ marginTop: 18, display: "flex", justifyContent: "center" }}>
+        <div style={{ minWidth: 260 }}>
+          <DriverNodeYoda label={"Net sales vs " + (compareAgainst === "ly" ? "LY" : "Plan")} pct={topVar} big />
+        </div>
+      </div>
+
+      <div style={{ textAlign: "center", color: "var(--fg-3)", fontSize: 11, margin: "12px 0", letterSpacing: "0.10em", textTransform: "uppercase" }}>
+        &darr; broken down into &darr;
+      </div>
+
+      {/* Tier 2: Txn + Avg Ticket */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 12 }}>
+        <div>
+          <DriverNodeYoda label="Transaction count (excl. returns & fees)" pct={txnVar} goalLabel="Goal: 0%" goalMet={txnVar != null && txnVar >= 0} />
+          <CoachingBlockYoda text={
+            txnVar == null ? "No traffic comparison available." :
+            txnVar > 0.02 ? "Strong traffic. Whatever marketing/promo is working, double down." :
+            txnVar > -0.02 ? "Traffic is flat to LY. Look at local events, marketing flight, weather." :
+            "Traffic is down. Diagnose: weather? promotions ended? competitor opening? Consider re-engagement - postcards, social, local events."
+          } />
+        </div>
+        <div>
+          <DriverNodeYoda label="Average ticket" pct={avgVar} goalLabel="Goal: +3%" goalMet={avgVar != null && avgVar >= 0.03} />
+          <CoachingBlockYoda text={
+            avgVar == null ? "No basket comparison available." :
+            avgVar > 0.03 ? "Avg ticket up. Basket-builder coaching is landing - formalize what's working." :
+            avgVar > -0.02 ? "Avg ticket flat. Push add-ons: paint/primer, fasteners, batteries. Upsell opportunities at register." :
+            "Avg ticket down. Investigate: are higher-ticket items out of stock? Weak associate engagement? Try focused training on top 5 add-on categories."
+          } />
+        </div>
+      </div>
+
+      <div style={{ textAlign: "center", color: "var(--fg-3)", fontSize: 11, margin: "12px 0", letterSpacing: "0.10em", textTransform: "uppercase" }}>
+        &darr; Average ticket further breaks down into &darr;
+      </div>
+
+      {/* Tier 3: UPT + RPU */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(280px,1fr))", gap: 12 }}>
+        <DriverNodeYoda label="UPT (sale-type only)" pct={uptVar} goalLabel="Goal: +1%" goalMet={uptVar != null && uptVar >= 0.01} />
+        <DriverNodeYoda label="Retail per unit (derived, approx)" pct={rpuVar} goalLabel="Goal: +2%" goalMet={rpuVar != null && rpuVar >= 0.02} />
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   Yoda2YodaProduct - Tier 1 dept bars + Tier 2 SKU drill
+   ============================================================ */
+function Yoda2YodaProduct({ products, loading, error, storeLabel, dateLabel,
+                            skuDrill, skuLoading, skuError,
+                            skuDept, setSkuDept, skuPaste, setSkuPaste,
+                            skuWindow, setSkuWindow }) {
+  const [pasteDraft, setPasteDraft] = useState(skuPaste || "");
+  const [pasteOpen, setPasteOpen] = useState(false);
+
+  return (
+    <div className="paper" style={{ padding: 22 }}>
+      <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+        <Tag className="w-4 h-4" style={{ color: "var(--accent-retail)" }} />
+        <strong style={{ fontSize: 16 }}>Product drill - {storeLabel}</strong>
+      </div>
+      <div className="caption" style={{ marginTop: 4, marginBottom: 16 }}>{dateLabel} - top 20 departments by net sales - click a department to drill into SKUs</div>
+
+      {loading && (
+        <div style={{ color: "var(--fg-3)", textAlign: "center", padding: "32px 0" }}>
+          <RotateCcw className="w-5 h-5 animate-spin" style={{ color: "var(--accent-retail)", display: "block", margin: "0 auto 8px" }} />
+          Loading product data...
+        </div>
+      )}
+      {error && (
+        <div className="hero-bad" style={{ padding: 14 }}>
+          <strong style={{ color: "var(--bad-ink)" }}>Couldn't load products:</strong>
+          <div style={{ color: "var(--bad-strong)", marginTop: 4, fontSize: 13 }}>{error}</div>
+        </div>
+      )}
+      {!loading && !error && products && products.length === 0 && (
+        <div style={{ color: "var(--fg-3)", textAlign: "center", padding: "32px 0" }}>No product data for this filter.</div>
+      )}
+
+      {products && products.length > 0 && (
+        <Fragment>
+          {/* ---- Tier 1: Department bars ---- */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 22 }}>
+            {products.map(function (p, i) {
+              var maxVal = Math.max.apply(null, products.map(function(q){return q.netSales || 0;})) || 1;
+              var pctBar = ((p.netSales || 0) / maxVal) * 100;
+              var isSelected = skuDept === p.department;
+              return (
+                <div key={i}
+                     onClick={function () { setSkuDept(p.department); setSkuPaste(""); setPasteDraft(""); }}
+                     style={{
+                       display: "flex", alignItems: "center", gap: 10,
+                       cursor: "pointer", borderRadius: 6,
+                       background: isSelected ? "var(--good-soft)" : "transparent",
+                       padding: "5px 8px",
+                       transition: "background 80ms",
+                     }}
+                     title={"Click to drill into " + p.department + " SKUs"}>
+                  <div style={{ width: 200, flexShrink: 0, fontSize: 13, color: "var(--fg-1)", fontWeight: isSelected ? 700 : 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{tcYoda(p.department)}</div>
+                  <div style={{ flex: 1, position: "relative", height: 26, background: "var(--paper-50)", borderRadius: 4, overflow: "hidden" }}>
+                    <div style={{ position: "absolute", top: 0, left: 0, height: "100%", width: pctBar + "%", background: isSelected ? "var(--accent-retail)" : "var(--good-strong)", borderRadius: 4, transition: "width 240ms" }} />
+                    <div className="tab" style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "flex-end", paddingRight: 10, fontSize: 12, fontWeight: 700, color: "var(--fg-1)" }}>{fmtDollarYoda(p.netSales)}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Tier 1 detail table */}
+          <div style={{ overflowX: "auto", border: "1px solid var(--border-1)", borderRadius: 8 }}>
+            <table style={{ width: "100%", fontSize: 13 }}>
+              <thead>
+                <tr>
+                  <th className="h-row" style={{ textAlign: "left" }}>Department</th>
+                  <th className="h-row" style={{ textAlign: "right" }}>Net sales (GL)</th>
+                  <th className="h-row" style={{ textAlign: "right" }}>Gross merch profit</th>
+                  <th className="h-row" style={{ textAlign: "right" }}>Gross margin %</th>
+                  <th className="h-row" style={{ textAlign: "right" }}> </th>
+                </tr>
+              </thead>
+              <tbody>
+                {products.map(function (p, i) {
+                  var isSelected = skuDept === p.department;
+                  return (
+                    <tr key={i}
+                        onClick={function () { setSkuDept(p.department); setSkuPaste(""); setPasteDraft(""); }}
+                        className="ranked-row"
+                        style={{
+                          borderTop: "1px solid var(--border-1)",
+                          background: isSelected ? "var(--good-soft)" : "transparent",
+                          cursor: "pointer",
+                        }}>
+                      <td style={{ padding: "8px 14px", fontWeight: isSelected ? 700 : 500, color: "var(--fg-1)" }}>{tcYoda(p.department)}</td>
+                      <td className="tab" style={{ padding: "8px 14px", textAlign: "right", fontWeight: 700, color: "var(--fg-1)" }}>{fmtDollarYoda(p.netSales)}</td>
+                      <td className="tab" style={{ padding: "8px 14px", textAlign: "right", color: "var(--fg-2)" }}>{fmtDollarYoda(p.grossProfit)}</td>
+                      <td className="tab" style={{ padding: "8px 14px", textAlign: "right", color: "var(--fg-2)" }}>{((p.grossMarginPct || 0) * 100).toFixed(1)}%</td>
+                      <td style={{ padding: "8px 14px", textAlign: "right", fontSize: 12, fontWeight: 700, color: "var(--accent-retail)" }}>Drill <ChevronRight className="w-3 h-3" style={{ display: "inline", verticalAlign: "middle" }} /></td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </Fragment>
+      )}
+
+      {/* ============ Tier 2: SKU drill ============ */}
+      <div className="paper" style={{ marginTop: 22, padding: 18 }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10, marginBottom: 12 }}>
+          <div>
+            <strong style={{ fontSize: 14 }}>SKU drill</strong>
+            <div className="caption" style={{ marginTop: 2 }}>
+              {skuDept
+                ? ("Showing SKUs in " + tcYoda(skuDept))
+                : skuPaste
+                  ? "Showing pasted SKU list"
+                  : "Click a department above, or paste a SKU list below."}
+            </div>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+            <div className="seg-track">
+              {["4w", "8w", "12w"].map(function (w) {
+                return (
+                  <button key={w} onClick={function () { setSkuWindow(w); }} className={"seg-btn" + (skuWindow === w ? " active" : "")}>
+                    {w}
+                  </button>
+                );
+              })}
+            </div>
+            <button onClick={function () { setPasteOpen(!pasteOpen); }} className="y-btn" style={{ padding: "6px 11px", fontSize: 12 }}>
+              Paste SKU list {pasteOpen ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
+            </button>
+            {(skuDept || skuPaste) && (
+              <button onClick={function () { setSkuDept(""); setSkuPaste(""); setPasteDraft(""); }} className="y-btn" style={{ padding: "6px 11px", fontSize: 12 }}>
+                Clear
+              </button>
+            )}
+          </div>
+        </div>
+
+        {pasteOpen && (
+          <div style={{ background: "var(--paper-50)", border: "1px solid var(--border-1)", borderRadius: 6, padding: 12, marginBottom: 12 }}>
+            <div className="caption" style={{ marginBottom: 4 }}>Paste SKU codes (comma, space, or newline separated)</div>
+            <textarea
+              value={pasteDraft}
+              onChange={function (e) { setPasteDraft(e.target.value); }}
+              placeholder="e.g. 736743, 194586, 779421"
+              rows={3}
+              style={{ width: "100%", fontFamily: "'SFMono-Regular',ui-monospace,Menlo,Consolas,monospace", fontSize: 12 }}
+            />
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 8 }}>
+              <button onClick={function () { setPasteDraft(""); setSkuPaste(""); setSkuDept(""); }} className="y-btn" style={{ padding: "6px 11px", fontSize: 12 }}>Reset</button>
+              <button onClick={function () { setSkuPaste(pasteDraft); setSkuDept(""); }} className="y-btn-primary" style={{ padding: "6px 11px", fontSize: 12 }}>Drill</button>
+            </div>
+          </div>
+        )}
+
+        {skuLoading && (
+          <div style={{ color: "var(--fg-3)", textAlign: "center", padding: "32px 0" }}>
+            <RotateCcw className="w-5 h-5 animate-spin" style={{ color: "var(--accent-retail)", display: "block", margin: "0 auto 8px" }} />
+            Loading SKU data...
+          </div>
+        )}
+        {skuError && (
+          <div className="hero-bad" style={{ padding: 14 }}>
+            <strong style={{ color: "var(--bad-ink)" }}>Couldn't load SKUs:</strong>
+            <div style={{ color: "var(--bad-strong)", marginTop: 4, fontSize: 13 }}>{skuError}</div>
+          </div>
+        )}
+        {!skuLoading && !skuError && skuDrill && skuDrill.skus && skuDrill.skus.length === 0 && (
+          <div style={{ color: "var(--fg-3)", textAlign: "center", padding: "32px 0" }}>No SKU data for this filter.</div>
+        )}
+        {!skuLoading && !skuError && skuDrill && skuDrill.skus && skuDrill.skus.length > 0 && (
+          <Fragment>
+            <div className="caption" style={{ marginBottom: 8 }}>
+              {skuDrill.skus.length.toLocaleString()} SKUs - sparkline: last {skuDrill.window} ({skuDrill.grain} grain)
+              {skuDrill.skus.length > 500 && " - showing first 500 by net sales - use paste list to narrow"}
+            </div>
+            <div style={{ overflowX: "auto", border: "1px solid var(--border-1)", borderRadius: 8 }}>
+              <table style={{ width: "100%", fontSize: 13 }}>
+                <thead>
+                  <tr>
+                    <th className="h-row" style={{ textAlign: "left" }}>SKU</th>
+                    <th className="h-row" style={{ textAlign: "left" }}>Description</th>
+                    <th className="h-row" style={{ textAlign: "right" }}>Net sales</th>
+                    <th className="h-row" style={{ textAlign: "right" }}>Units</th>
+                    <th className="h-row" style={{ textAlign: "right" }}>Margin %</th>
+                    <th className="h-row" style={{ textAlign: "right" }}>On-hand</th>
+                    <th className="h-row" style={{ textAlign: "left", minWidth: 100 }}>Trend ({skuDrill.window})</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {skuDrill.skus.slice(0, 500).map(function (s, i) {
+                    var marginColor = (s.grossMarginPct || 0) >= 0 ? "var(--good-strong)" : "var(--bad-strong)";
+                    var onHandColor = s.onHand === 0 ? "var(--bad-strong)" : "var(--fg-1)";
+                    return (
+                      <tr key={s.sku + "_" + i} className="ranked-row" style={{ borderTop: "1px solid var(--border-1)" }}>
+                        <td className="tab" style={{ padding: "6px 10px", fontFamily: "'SFMono-Regular',ui-monospace,Menlo,Consolas,monospace", fontSize: 11, color: "var(--fg-3)" }}>{s.sku}</td>
+                        <td style={{ padding: "6px 10px", fontSize: 12, color: "var(--fg-1)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", maxWidth: 240 }} title={s.description}>{tcYoda(s.description)}</td>
+                        <td className="tab" style={{ padding: "6px 10px", textAlign: "right", fontWeight: 700, color: "var(--fg-1)" }}>{fmtDollarYoda(s.netSales)}</td>
+                        <td className="tab" style={{ padding: "6px 10px", textAlign: "right", color: "var(--fg-2)" }}>{fmtIntYoda(s.unitsSold)}</td>
+                        <td className="tab" style={{ padding: "6px 10px", textAlign: "right", color: marginColor, fontWeight: 600 }}>{((s.grossMarginPct || 0) * 100).toFixed(1)}%</td>
+                        <td className="tab" style={{ padding: "6px 10px", textAlign: "right", color: onHandColor, fontWeight: s.onHand === 0 ? 700 : 500 }}>
+                          {s.onHand === null || s.onHand === undefined ? "-" : fmtIntYoda(s.onHand)}
+                        </td>
+                        <td style={{ padding: "6px 10px" }}>
+                          <SkuSparklineYoda data={s.sparkline || []} />
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </Fragment>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   Yoda2YodaCustomer - segments + flags + table
+   ============================================================ */
+function Yoda2YodaCustomer({ segments, loading, error, storeLabel, dateLabel }) {
+  return (
+    <div className="paper" style={{ padding: 22 }}>
+      <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+        <Filter className="w-4 h-4" style={{ color: "var(--accent-retail)" }} />
+        <strong style={{ fontSize: 16 }}>Customer drill - {storeLabel}</strong>
+      </div>
+      <div className="caption" style={{ marginTop: 4, marginBottom: 16 }}>
+        {dateLabel} - sales and transactions by customer segment.
+        <span style={{ marginLeft: 6, color: "var(--warn-ink)", background: "var(--warn-soft)", padding: "1px 7px", borderRadius: 4, fontWeight: 600, fontSize: 10, letterSpacing: "0.10em", textTransform: "uppercase" }}>Unverified</span>
+        <span style={{ marginLeft: 6 }}>Segment-sliced figures are unverified - flag for the analytics team if numbers look off.</span>
+      </div>
+
+      {loading && (
+        <div style={{ color: "var(--fg-3)", textAlign: "center", padding: "32px 0" }}>
+          <RotateCcw className="w-5 h-5 animate-spin" style={{ color: "var(--accent-retail)", display: "block", margin: "0 auto 8px" }} />
+          Loading customer data...
+        </div>
+      )}
+      {error && (
+        <div className="hero-bad" style={{ padding: 14 }}>
+          <strong style={{ color: "var(--bad-ink)" }}>Couldn't load customer segments:</strong>
+          <div style={{ color: "var(--bad-strong)", marginTop: 4, fontSize: 13 }}>{error}</div>
+        </div>
+      )}
+      {!loading && !error && segments && segments.length === 0 && (
+        <div style={{ color: "var(--fg-3)", textAlign: "center", padding: "32px 0" }}>No customer data for this filter.</div>
+      )}
+
+      {segments && segments.length > 0 && (
+        <Fragment>
+          {/* Per-segment TY/LY bars */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 14, marginBottom: 22 }}>
+            {segments.map(function (s, i) {
+              var maxVal = Math.max.apply(null, segments.map(function(q){return Math.max(q.netSalesTy || 0, q.netSalesLy || 0);})) || 1;
+              return (
+                <div key={i}>
+                  <div style={{ fontSize: 13, fontWeight: 700, color: "var(--fg-1)", marginBottom: 4 }}>{tcYoda(s.category)}</div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                    <div className="eyebrow" style={{ width: 28 }}>TY</div>
+                    <div style={{ flex: 1, position: "relative", height: 18, background: "var(--paper-50)", borderRadius: 4, overflow: "hidden" }}>
+                      <div style={{ position: "absolute", top: 0, left: 0, height: "100%", width: ((s.netSalesTy || 0) / maxVal * 100) + "%", background: "var(--good-strong)", borderRadius: 4 }} />
+                    </div>
+                    <div className="tab" style={{ width: 100, textAlign: "right", fontSize: 12, fontWeight: 700, color: "var(--fg-1)" }}>{fmtDollarYoda(s.netSalesTy)}</div>
+                  </div>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <div className="eyebrow" style={{ width: 28 }}>LY</div>
+                    <div style={{ flex: 1, position: "relative", height: 18, background: "var(--paper-50)", borderRadius: 4, overflow: "hidden" }}>
+                      <div style={{ position: "absolute", top: 0, left: 0, height: "100%", width: ((s.netSalesLy || 0) / maxVal * 100) + "%", background: "var(--fg-4)", borderRadius: 4 }} />
+                    </div>
+                    <div className="tab" style={{ width: 100, textAlign: "right", fontSize: 12, color: "var(--fg-3)" }}>{fmtDollarYoda(s.netSalesLy)}</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Segment Health Flags */}
+          <div className="eyebrow" style={{ marginBottom: 8 }}>Segment health flags</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 22 }}>
+            {segments.filter(function (s) { return s.salesVar != null && (s.salesVar <= -0.05 || s.salesVar >= 0.10); }).map(function (s, i) {
+              var critical = s.salesVar <= -0.10;
+              var warning = s.salesVar <= -0.05 && s.salesVar > -0.10;
+              var cls = critical ? "hero-bad" : warning ? "hero-warn" : "hero-good";
+              var pillBg = critical ? "var(--bad)" : warning ? "var(--warn)" : "var(--good-strong)";
+              var pillText = critical ? "Critical" : warning ? "Watch" : "Strong";
+              var ink = critical ? "var(--bad-ink)" : warning ? "var(--warn-ink)" : "var(--good-ink)";
+              var msg = critical
+                ? "Sales down " + fmtPctYoda(s.salesVar) + " vs LY. Worth investigating."
+                : warning
+                  ? "Sales down " + fmtPctYoda(s.salesVar) + " vs LY. Monitor."
+                  : "Sales up " + fmtPctYoda(s.salesVar) + " vs LY. What's working?";
+              return (
+                <div key={i} className={cls} style={{ padding: "12px 16px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+                    <span className="pill" style={{ background: pillBg, color: "#fff" }}>{pillText}</span>
+                    <strong style={{ color: ink, fontSize: 13 }}>{tcYoda(s.category)}:</strong>
+                    <span style={{ color: ink, fontSize: 13 }}>{msg}</span>
+                  </div>
+                </div>
+              );
+            })}
+            {segments.filter(function (s) { return s.salesVar != null && (s.salesVar <= -0.05 || s.salesVar >= 0.10); }).length === 0 && (
+              <div className="caption" style={{ fontStyle: "italic" }}>No segments outside normal variance bands.</div>
+            )}
+          </div>
+
+          {/* Detail table */}
+          <div style={{ overflowX: "auto", border: "1px solid var(--border-1)", borderRadius: 8 }}>
+            <table style={{ width: "100%", fontSize: 13 }}>
+              <thead>
+                <tr>
+                  <th className="h-row" style={{ textAlign: "left" }}>Segment</th>
+                  <th className="h-row" style={{ textAlign: "right" }}>Net sales TY</th>
+                  <th className="h-row" style={{ textAlign: "right" }}>Net sales LY</th>
+                  <th className="h-row" style={{ textAlign: "right" }}>Sales var</th>
+                  <th className="h-row" style={{ textAlign: "right" }}>Txn TY</th>
+                  <th className="h-row" style={{ textAlign: "right" }}>Txn LY</th>
+                  <th className="h-row" style={{ textAlign: "right" }}>Txn var</th>
+                </tr>
+              </thead>
+              <tbody>
+                {segments.map(function (s, i) {
+                  var sv = s.salesVar;
+                  var tv = s.txnVar;
+                  var svColor = sv == null ? "var(--fg-3)" : sv >= 0 ? "var(--good-strong)" : "var(--bad-strong)";
+                  var tvColor = tv == null ? "var(--fg-3)" : tv >= 0 ? "var(--good-strong)" : "var(--bad-strong)";
+                  return (
+                    <tr key={i} className="ranked-row" style={{ borderTop: "1px solid var(--border-1)" }}>
+                      <td style={{ padding: "8px 14px", color: "var(--fg-1)", fontWeight: 500 }}>{tcYoda(s.category)}</td>
+                      <td className="tab" style={{ padding: "8px 14px", textAlign: "right", fontWeight: 700, color: "var(--fg-1)" }}>{fmtDollarYoda(s.netSalesTy)}</td>
+                      <td className="tab" style={{ padding: "8px 14px", textAlign: "right", color: "var(--fg-2)" }}>{fmtDollarYoda(s.netSalesLy)}</td>
+                      <td className="tab" style={{ padding: "8px 14px", textAlign: "right", color: svColor, fontWeight: 700 }}>{sv == null ? "-" : fmtPctYoda(sv)}</td>
+                      <td className="tab" style={{ padding: "8px 14px", textAlign: "right", color: "var(--fg-2)" }}>{fmtIntYoda(s.txnCountTy)}</td>
+                      <td className="tab" style={{ padding: "8px 14px", textAlign: "right", color: "var(--fg-2)" }}>{fmtIntYoda(s.txnCountLy)}</td>
+                      <td className="tab" style={{ padding: "8px 14px", textAlign: "right", color: tvColor, fontWeight: 700 }}>{tv == null ? "-" : fmtPctYoda(tv)}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        </Fragment>
+      )}
+    </div>
+  );
+}
+
+/* ============================================================
+   Yoda2YodaOnline - empty state for v1.1
+   ============================================================ */
+function Yoda2YodaOnline() {
+  return (
+    <div className="paper" style={{ padding: 56, textAlign: "center" }}>
+      <div style={{ width: 56, height: 56, borderRadius: 12, background: "var(--paper-50)", display: "grid", placeItems: "center", margin: "0 auto 14px" }}>
+        <Database className="w-7 h-7" style={{ color: "var(--accent-retail)" }} />
+      </div>
+      <strong style={{ fontSize: 18, color: "var(--fg-1)" }}>Online sales - coming in v1.1</strong>
+      <div className="caption" style={{ marginTop: 8, maxWidth: 520, marginLeft: "auto", marginRight: "auto", lineHeight: 1.5 }}>
+        Will combine HardwareStore.com + Ace Online channels into one toggleable view, replacing two separate Power BI pages.
+        Backend queries are scoped; rendering deferred to keep the prototype focused.
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   Yoda2YodaInsights - AI insights, exec summary + per-store cards
+   ============================================================ */
+function Yoda2YodaInsights({ selectedStore, setSelectedStore, dateLabel, selectedDate }) {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [categoryFilter, setCategoryFilter] = useState("All");
+
+  useEffect(function () {
+    var cancelled = false;
+    setLoading(true); setError(null);
+    var url = "/api/yoda-2?page=insights&t=" + Date.now();
+    if (selectedDate) url += "&date=" + encodeURIComponent(selectedDate);
+    fetch(url, { cache: "no-store" })
+      .then(function (r) { return r.json().catch(function () { return { status: "error", error: "API HTTP " + r.status + " (non-JSON response)" }; }); })
+      .then(function (d) {
+        if (cancelled) return;
+        if (d.status !== "ok") throw new Error(d.error || "API HTTP error (no body)");
+        setData(d); setLoading(false);
+      })
+      .catch(function (e) { if (!cancelled) { setError(String(e.message || e)); setLoading(false); } });
+    return function () { cancelled = true; };
+  }, [selectedDate]);
+
+  if (loading && !data) {
+    return (
+      <div className="paper" style={{ padding: 56, textAlign: "center" }}>
+        <RotateCcw className="w-6 h-6 animate-spin" style={{ color: "var(--accent-retail)", display: "block", margin: "0 auto 12px" }} />
+        <div style={{ color: "var(--fg-2)", fontWeight: 500 }}>Running the retail advisor...</div>
+      </div>
+    );
+  }
+  if (error) {
+    return (
+      <div className="hero-bad">
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <AlertTriangle className="w-5 h-5" style={{ color: "var(--bad-strong)" }} />
+          <strong style={{ color: "var(--bad-ink)" }}>Could not generate insights</strong>
+        </div>
+        <div style={{ color: "var(--bad-strong)", fontSize: 13, marginTop: 6 }}>{error}</div>
+      </div>
+    );
+  }
+
+  var execSummary = (data && data.exec) || null;
+  var peers = (data && data.peers) || {};
+  var dataGaps = (data && data.dataGaps) || [];
+  var storesAll = (data && data.stores) || [];
+  var stores = selectedStore ? storesAll.filter(function (s) { return s.code === selectedStore; }) : storesAll;
+
+  var totalActions = 0;
+  var cats = { Sales: 0, Ops: 0, Payroll: 0 };
+  stores.forEach(function (s) {
+    (s.insights || []).forEach(function (a) {
+      totalActions += 1;
+      if (cats[a.category] != null) cats[a.category] += 1;
+    });
+  });
+
+  var visibleStores = stores.map(function (s) {
+    var insights = (s.insights || []);
+    if (categoryFilter !== "All") insights = insights.filter(function (a) { return a.category === categoryFilter; });
+    return Object.assign({}, s, { insights: insights });
+  }).filter(function (s) { return (s.insights || []).length > 0; });
+
+  return (
+    <div>
+      {execSummary && !selectedStore && (
+        <Yoda2YodaExecSummary exec={execSummary} peers={peers} dateLabel={dateLabel} />
+      )}
+
+      {dataGaps.length > 0 && (
+        <div className="hero-warn" style={{ marginBottom: 14 }}>
+          <strong style={{ color: "var(--warn-ink)" }}>Some enrichment data is not connected in this environment:</strong>
+          <ul style={{ marginTop: 4, marginBottom: 0, paddingLeft: 22, color: "var(--warn-ink)", fontSize: 12 }}>
+            {dataGaps.map(function (g, i) { return <li key={i} style={{ fontFamily: "'SFMono-Regular',ui-monospace,Menlo,Consolas,monospace" }}>{g}</li>; })}
+          </ul>
+          <div className="caption" style={{ marginTop: 6, color: "var(--warn-ink)" }}>Core sales analysis still ran. Payroll / weather / inventory rules are skipped where the table was not reachable.</div>
+        </div>
+      )}
+
+      {/* Filter bar */}
+      <div className="paper" style={{ padding: "10px 14px", marginBottom: 14, display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+        <span className="eyebrow" style={{ marginRight: 4 }}>Filter</span>
+        <button onClick={function () { setCategoryFilter("All"); }}     className={"chip" + (categoryFilter === "All"     ? " active" : "")}>All ({totalActions})</button>
+        <button onClick={function () { setCategoryFilter("Sales"); }}   className={"chip" + (categoryFilter === "Sales"   ? " active" : "")}>Sales ({cats.Sales})</button>
+        <button onClick={function () { setCategoryFilter("Ops"); }}     className={"chip" + (categoryFilter === "Ops"     ? " active" : "")}>Ops ({cats.Ops})</button>
+        <button onClick={function () { setCategoryFilter("Payroll"); }} className={"chip" + (categoryFilter === "Payroll" ? " active" : "")}>Payroll ({cats.Payroll})</button>
+        {selectedStore && (
+          <button onClick={function () { setSelectedStore(""); }} className="y-btn" style={{ marginLeft: "auto", padding: "5px 11px", fontSize: 12 }}>Show all stores</button>
+        )}
+        <div className="caption" style={{ marginLeft: selectedStore ? 0 : "auto" }}>
+          {stores.length} store{stores.length === 1 ? "" : "s"} - {totalActions} actions
+        </div>
+      </div>
+
+      {visibleStores.length === 0 ? (
+        <div className="paper" style={{ padding: 48, textAlign: "center", color: "var(--fg-3)" }}>
+          No matching recommendations for the current filter.
+        </div>
+      ) : (
+        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          {visibleStores.map(function (s) { return <Yoda2YodaInsightStoreCard key={s.code} store={s} />; })}
+        </div>
+      )}
+
+      <div className="caption" style={{ textAlign: "center", marginTop: 14, lineHeight: 1.4 }}>
+        Decision-useful windows: trailing 7d, trailing 28d, MTD vs LY MTD, 4w-vs-prior-4w recency. Benchmarks are company peer medians. Impacts are estimates, not promises.
+      </div>
+    </div>
+  );
+}
+
+/* ---- Insights: Executive summary card ---- */
+function Yoda2YodaExecSummary({ exec, peers, dateLabel }) {
+  var w = exec.windows || {};
+  var c = exec.counts || {};
+  var themes = exec.topThemes || [];
+  var topStores = exec.topOppStores || [];
+
+  return (
+    <div className="paper" style={{ padding: 18, marginBottom: 14 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 4, flexWrap: "wrap" }}>
+        <span className="ai-pill">AI</span>
+        <strong style={{ fontSize: 16, color: "var(--fg-1)" }}>Executive summary</strong>
+        <span className="eyebrow" style={{ marginLeft: 4 }}>- as of {dateLabel}</span>
+      </div>
+
+      {/* 4-window grid */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(170px,1fr))", gap: 10, margin: "12px 0" }}>
+        <Yoda2YodaWindowCard title="Trailing 7d"            ty={w.trailing7d  && w.trailing7d.ty}  ly={w.trailing7d  && w.trailing7d.ly}  yoy={w.trailing7d  && w.trailing7d.yoy}  />
+        <Yoda2YodaWindowCard title="Trailing 28d"           ty={w.trailing28d && w.trailing28d.ty} ly={w.trailing28d && w.trailing28d.ly} yoy={w.trailing28d && w.trailing28d.yoy} />
+        <Yoda2YodaWindowCard title="MTD vs LY MTD"          ty={w.mtd         && w.mtd.ty}         ly={w.mtd         && w.mtd.ly}         yoy={w.mtd         && w.mtd.yoy}         />
+        <Yoda2YodaWindowCard title="Recency 4w-vs-prior-4w" ty={w.recencyTrend && w.recencyTrend.recent} ly={w.recencyTrend && w.recencyTrend.prior} yoy={w.recencyTrend && w.recencyTrend.var} tyLabel="Recent 4w" lyLabel="Prior 4w" />
+      </div>
+
+      {/* 3 stat panels */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 10 }}>
+        {/* Activity */}
+        <div style={{ background: "var(--paper-50)", border: "1px solid var(--border-1)", borderRadius: 6, padding: 12 }}>
+          <div className="eyebrow" style={{ marginBottom: 8 }}>Activity</div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr auto", rowGap: 4, fontSize: 12 }}>
+            <span style={{ color: "var(--fg-3)" }}>Stores analyzed</span><span className="tab" style={{ fontWeight: 700, color: "var(--fg-1)" }}>{c.stores || 0}</span>
+            <span style={{ color: "var(--fg-3)" }}>Total actions</span><span className="tab" style={{ fontWeight: 700, color: "var(--fg-1)" }}>{c.actions || 0}</span>
+            <span style={{ color: "var(--fg-3)" }}>Urgent actions</span><span className="tab" style={{ fontWeight: 700, color: "var(--bad-strong)" }}>{c.urgent || 0}</span>
+            <span style={{ color: "var(--fg-3)" }}>Stores below LY (7d)</span><span className="tab" style={{ fontWeight: 700, color: "var(--fg-1)" }}>{c.storesBelowLy7 || 0}</span>
+            <span style={{ color: "var(--fg-3)" }}>Stores below LY (28d)</span><span className="tab" style={{ fontWeight: 700, color: "var(--fg-1)" }}>{c.storesBelowLy28 || 0}</span>
+            <span style={{ color: "var(--fg-3)" }}>Weather alerts</span><span className="tab" style={{ fontWeight: 700, color: "var(--fg-1)" }}>{c.weatherAlerts || 0}</span>
+            <span style={{ color: "var(--fg-3)" }}>Payroll over target</span><span className="tab" style={{ fontWeight: 700, color: "var(--fg-1)" }}>{c.payrollOver || 0}</span>
+            <span style={{ color: "var(--fg-3)" }}>Likely understaffed</span><span className="tab" style={{ fontWeight: 700, color: "var(--fg-1)" }}>{c.payrollUnder || 0}</span>
+          </div>
+        </div>
+        {/* Top recurring themes */}
+        <div style={{ background: "var(--paper-50)", border: "1px solid var(--border-1)", borderRadius: 6, padding: 12 }}>
+          <div className="eyebrow" style={{ marginBottom: 8 }}>Top recurring themes</div>
+          {themes.length === 0 ? (
+            <div className="caption" style={{ fontStyle: "italic" }}>No systemic themes detected.</div>
+          ) : (
+            <ul style={{ margin: 0, padding: 0, listStyle: "none", fontSize: 12 }}>
+              {themes.map(function (t, i) {
+                return (
+                  <li key={i} style={{ display: "flex", alignItems: "center", gap: 8, padding: "3px 0" }}>
+                    <span className="tab" style={{ width: 18, textAlign: "center", fontWeight: 700, color: "var(--fg-4)" }}>{i + 1}</span>
+                    <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "var(--fg-1)" }}>{t.title}</span>
+                    <span className="caption">{t.storeCount} stores</span>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+        {/* Biggest opportunity stores */}
+        <div style={{ background: "var(--paper-50)", border: "1px solid var(--border-1)", borderRadius: 6, padding: 12 }}>
+          <div className="eyebrow" style={{ marginBottom: 8 }}>Biggest opportunity stores</div>
+          {topStores.length === 0 ? (
+            <div className="caption" style={{ fontStyle: "italic" }}>No ranked opportunities yet.</div>
+          ) : (
+            <ul style={{ margin: 0, padding: 0, listStyle: "none", fontSize: 12 }}>
+              {topStores.map(function (s, i) {
+                return (
+                  <li key={s.code} style={{ display: "flex", alignItems: "center", gap: 8, padding: "3px 0" }}>
+                    <span className="tab" style={{ width: 18, textAlign: "center", fontWeight: 700, color: "var(--fg-4)" }}>{i + 1}</span>
+                    <span className="tab" style={{ background: "var(--good-strong)", color: "#fff", padding: "1px 6px", borderRadius: 3, fontSize: 10, fontWeight: 700, letterSpacing: "0.10em" }}>{s.code}</span>
+                    <span style={{ flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "var(--fg-1)" }}>{tcYoda(s.name) || "-"}</span>
+                    <span className="caption">~{fmtDollarYoda(s.topImpact)}/day</span>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </div>
+      </div>
+
+      {/* 5 peer benchmarks */}
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(140px,1fr))", gap: 8, marginTop: 12 }}>
+        <Yoda2YodaPeerStat label="Peer ATV (28d)" value={peers.atv28Median ? "$" + peers.atv28Median.toFixed(2) : "-"} />
+        <Yoda2YodaPeerStat label="Peer UPT (28d)" value={peers.upt28Median ? peers.upt28Median.toFixed(2) : "-"} />
+        <Yoda2YodaPeerStat label="Peer Member %" value={peers.memberPctMedian ? (peers.memberPctMedian * 100).toFixed(1) + "%" : "-"} />
+        <Yoda2YodaPeerStat label="Peer Pro %" value={peers.proPctMedian ? (peers.proPctMedian * 100).toFixed(1) + "%" : "-"} />
+        <Yoda2YodaPeerStat label="Peer SPPH (4w)" value={peers.spph4wMedian ? "$" + peers.spph4wMedian.toFixed(0) + "/hr" : "-"} />
+      </div>
+    </div>
+  );
+}
+
+function Yoda2YodaWindowCard({ title, ty, ly, yoy, tyLabel, lyLabel }) {
+  tyLabel = tyLabel || "TY";
+  lyLabel = lyLabel || "LY";
+  var tone = (yoy == null) ? null : (yoy >= 0 ? "good" : "bad");
+  var color = tone === "good" ? "var(--good-strong)" : tone === "bad" ? "var(--bad-strong)" : "var(--fg-1)";
+  return (
+    <div style={{ background: "var(--paper-50)", border: "1px solid var(--border-1)", borderRadius: 6, padding: 12 }}>
+      <div className="eyebrow">{title}</div>
+      <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginTop: 4 }}>
+        <div className="tab" style={{ fontSize: 22, fontWeight: 700, color: "var(--fg-1)", letterSpacing: "-0.01em" }}>{fmtDollarYoda(ty || 0)}</div>
+        <div className="tab" style={{ fontSize: 14, fontWeight: 700, color: color }}>
+          {yoy == null ? "-" : ((yoy >= 0 ? "+" : "") + (yoy * 100).toFixed(1) + "%")}
+        </div>
+      </div>
+      <div className="caption" style={{ marginTop: 2 }}>{lyLabel} {fmtDollarYoda(ly || 0)}</div>
+    </div>
+  );
+}
+
+function Yoda2YodaPeerStat({ label, value }) {
+  return (
+    <div style={{ background: "var(--paper-50)", border: "1px solid var(--border-1)", borderRadius: 6, padding: "8px 12px" }}>
+      <div className="eyebrow">{label}</div>
+      <div className="kpi-sm tab" style={{ marginTop: 2, fontSize: 18, color: "var(--fg-1)", fontWeight: 700 }}>{value}</div>
+    </div>
+  );
+}
+
+/* ---- Insights: Per-store card ---- */
+function Yoda2YodaInsightStoreCard({ store }) {
+  var loc = [tcYoda(store.city), store.state].filter(Boolean).join(", ");
+  var ns7   = Number(store.netSales)     || 0;
+  var lns7  = Number(store.lyNetSales)   || 0;
+  var yoy7  = lns7 ? (ns7 - lns7) / lns7 : null;
+  var ns28  = Number(store.netSales28)   || 0;
+  var lns28 = Number(store.lyNetSales28) || 0;
+  var yoy28 = lns28 ? (ns28 - lns28) / lns28 : null;
+  var mtd   = Number(store.mtdNetSales)  || 0;
+  var mtdPlan = Number(store.mtdPlan)    || 0;
+  var planAttn = mtdPlan ? mtd / mtdPlan : null;
+
+  var w = store.weather || {};
+  var hasWeather = w && (Number(w.precipNext7) > 0 || Number(w.snowNext7) > 0 || Number(w.tempAvgNext7) > 0);
+
+  return (
+    <div className="paper" style={{ overflow: "hidden", padding: 0 }}>
+      {/* Header strip */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 18px", background: "var(--paper-50)", borderBottom: "1px solid var(--border-1)", flexWrap: "wrap", gap: 12 }}>
+        <div style={{ minWidth: 0, display: "flex", alignItems: "center", gap: 10 }}>
+          <span className="tab" style={{ background: "var(--good-strong)", color: "#fff", padding: "2px 7px", borderRadius: 4, fontSize: 11, fontWeight: 700, letterSpacing: "0.14em" }}>{store.code}</span>
+          <strong style={{ color: "var(--fg-1)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{tcYoda(store.name) || "(unnamed)"}</strong>
+          {loc && <span className="caption" style={{ marginLeft: 4 }}>- {loc}</span>}
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
+          <Yoda2YodaInsightKpi label="7d sales" value={fmtDollarYoda(ns7)} />
+          {yoy7 != null && <Yoda2YodaInsightKpi label="7d YoY" value={(yoy7 >= 0 ? "+" : "") + (yoy7 * 100).toFixed(1) + "%"} tone={yoy7 >= 0 ? "good" : "bad"} />}
+          <Yoda2YodaInsightKpi label="28d sales" value={fmtDollarYoda(ns28)} />
+          {yoy28 != null && <Yoda2YodaInsightKpi label="28d YoY" value={(yoy28 >= 0 ? "+" : "") + (yoy28 * 100).toFixed(1) + "%"} tone={yoy28 >= 0 ? "good" : "bad"} />}
+          {planAttn != null && <Yoda2YodaInsightKpi label="MTD plan" value={(planAttn * 100).toFixed(0) + "%"} tone={planAttn >= 1 ? "good" : (planAttn < 0.9 ? "bad" : "warn")} />}
+          <Yoda2YodaInsightKpi label="ATV 28d" value={"$" + (Number(store.atv28) || 0).toFixed(2)} />
+          <Yoda2YodaInsightKpi label="UPT 28d" value={(Number(store.upt28) || 0).toFixed(2)} />
+          {Number.isFinite(Number(store.spph4w)) && Number(store.spph4w) > 0 && <Yoda2YodaInsightKpi label="SPPH 4w" value={"$" + Math.round(Number(store.spph4w)).toLocaleString() + "/hr"} />}
+        </div>
+      </div>
+
+      {/* Weather strip */}
+      {hasWeather && (
+        <div style={{ background: "var(--info-soft)", borderBottom: "1px solid var(--border-1)", padding: "8px 18px", display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap", fontSize: 11, color: "var(--info-ink)" }}>
+          <strong style={{ letterSpacing: "0.10em", textTransform: "uppercase", fontSize: 10, color: "var(--info)" }}>Next 7d forecast</strong>
+          {Number(w.tempAvgNext7) > 0 && <span className="tab">Avg {Math.round(Number(w.tempAvgNext7))}&deg;F</span>}
+          {Number(w.precipNext7) > 0 && <span className="tab">Precip {Number(w.precipNext7).toFixed(1)}&Prime;</span>}
+          {Number(w.snowNext7) > 0 && <span className="tab">Snow {Number(w.snowNext7).toFixed(1)}&Prime;</span>}
+          {Number(w.tempAvgLast7) > 0 && <span className="caption tab" style={{ color: "var(--info)" }}>(last 7d avg {Math.round(Number(w.tempAvgLast7))}&deg;F)</span>}
+        </div>
+      )}
+
+      {/* Action list */}
+      {(!store.insights || store.insights.length === 0) ? (
+        <div className="caption" style={{ padding: "16px 18px" }}>
+          No actionable gaps vs peers for this store over the analyzed windows. Keep the crew focused on execution basics.
+        </div>
+      ) : (
+        <ol style={{ margin: 0, padding: 0, listStyle: "none" }}>
+          {store.insights.map(function (a, i) { return <Yoda2YodaInsightAction key={i} rank={i + 1} action={a} last={i === store.insights.length - 1} />; })}
+        </ol>
+      )}
+    </div>
+  );
+}
+
+function Yoda2YodaInsightKpi({ label, value, tone }) {
+  var color = "var(--fg-1)";
+  if (tone === "good") color = "var(--good-strong)";
+  else if (tone === "bad") color = "var(--bad-strong)";
+  else if (tone === "warn") color = "var(--warn)";
+  return (
+    <div style={{ textAlign: "right" }}>
+      <div className="eyebrow" style={{ fontSize: 10 }}>{label}</div>
+      <div className="tab" style={{ fontSize: 13, fontWeight: 700, color: color, lineHeight: 1.2 }}>{value}</div>
+    </div>
+  );
+}
+
+function Yoda2YodaInsightAction({ rank, action, last }) {
+  // category pill
+  var catBg = "var(--good-soft)", catFg = "var(--good-ink)";
+  if (action.category === "Ops") { catBg = "var(--info-soft)"; catFg = "var(--info-ink)"; }
+  else if (action.category === "Payroll") { catBg = "var(--watch-soft)"; catFg = "var(--watch-ink)"; }
+  // priority pill
+  var prBg = "var(--paper-50)", prFg = "var(--fg-3)";
+  if (action.priority === "Urgent") { prBg = "var(--bad-soft)"; prFg = "var(--bad-ink)"; }
+  else if (action.priority === "High") { prBg = "var(--watch-soft)"; prFg = "var(--watch-ink)"; }
+  else if (action.priority === "Medium") { prBg = "var(--info-soft)"; prFg = "var(--info-ink)"; }
+
+  return (
+    <li style={{ padding: "12px 18px", display: "flex", gap: 12, borderBottom: last ? "none" : "1px solid var(--border-1)" }}>
+      <div className="tab" style={{ flexShrink: 0, width: 28, height: 28, borderRadius: 999, background: "var(--paper-50)", color: "var(--fg-2)", fontSize: 12, fontWeight: 700, display: "flex", alignItems: "center", justifyContent: "center", marginTop: 2 }}>
+        {rank}
+      </div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginBottom: 4 }}>
+          <strong style={{ fontSize: 14, color: "var(--fg-1)" }}>{action.title}</strong>
+          <span className="pill" style={{ background: catBg, color: catFg }}>{action.category}</span>
+          <span className="pill" style={{ background: prBg, color: prFg }}>{action.priority}</span>
+          {action.impact != null && action.impact > 0 && (
+            <span className="tab" style={{ marginLeft: "auto", fontSize: 11, fontWeight: 700, color: "var(--fg-3)" }}>~${Math.round(action.impact).toLocaleString()}/day opp</span>
+          )}
+        </div>
+        <div style={{ fontSize: 13, color: "var(--fg-2)", lineHeight: 1.5 }}>{action.detail}</div>
+        {action.metric && (
+          <div className="tab" style={{ fontSize: 11, color: "var(--fg-3)", marginTop: 4, fontFamily: "'SFMono-Regular',ui-monospace,Menlo,Consolas,monospace" }}>{action.metric}</div>
+        )}
+      </div>
+    </li>
+  );
+}
+
+/* ============================================================
+   Shared building blocks (Yoda-suffixed to avoid clashing
+   with the original operator-design components).
+   ============================================================ */
+
+/* HeroSubYoda - sub-KPI tile in the Main hero */
+function HeroSubYoda({ label, pct, value }) {
+  var disp;
+  var color = "var(--fg-1)";
+  if (value !== undefined) {
+    disp = value;
+  } else if (pct === null || pct === undefined) {
+    disp = "-";
+    color = "var(--fg-3)";
+  } else {
+    var up = pct >= 0;
+    color = up ? "var(--good-strong)" : "var(--bad-strong)";
+    disp = (up ? "▲ " : "▼ ") + fmtPctYoda(Math.abs(pct));
+  }
+  return (
+    <div style={{ background: "rgba(255,255,255,0.80)", border: "1px solid rgba(0,0,0,0.05)", borderRadius: 8, padding: "10px 14px" }}>
+      <div className="eyebrow">{label}</div>
+      <div className="kpi-sm tab" style={{ marginTop: 2, color: color, fontWeight: 700 }}>{disp}</div>
+    </div>
+  );
+}
+
+/* HeroVarYoda - original hero variance (kept for parity) */
+function HeroVarYoda({ label, pct, small }) {
+  if (pct === null || pct === undefined) {
+    return <span className="caption" style={{ color: "var(--fg-4)" }}>{label}: -</span>;
+  }
+  var up = pct >= 0;
+  var color = up ? "var(--good-strong)" : "var(--bad-strong)";
+  var size = small ? { fontSize: 15, fontWeight: 600 } : { fontSize: 28, fontWeight: 700, letterSpacing: "-0.02em", lineHeight: 1 };
+  return (
+    <Fragment>
+      <span className="tab" style={Object.assign({ color: color }, size)}>
+        {up ? "▲" : "▼"} {fmtPctYoda(Math.abs(pct))}
+      </span>
+      <span className="caption" style={{ marginLeft: 6 }}>{label}</span>
+    </Fragment>
+  );
+}
+
+/* KpiTileYoda - one of the 5 sub-KPI tiles below the Main hero */
+function KpiTileYoda({ label, tip, value, compare, variance, unverified }) {
+  var vColor = variance == null ? "var(--fg-3)" : variance >= 0 ? "var(--good-strong)" : "var(--bad-strong)";
+  return (
+    <div className="paper" style={{ padding: 14 }} title={tip}>
+      <div className="eyebrow" style={{ marginBottom: 4, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{label}</div>
+      <div style={{ display: "flex", alignItems: "baseline", gap: 6, flexWrap: "wrap" }}>
+        <div className="tab" style={{ fontSize: 22, fontWeight: 700, color: "var(--fg-1)", letterSpacing: "-0.01em", lineHeight: 1.1 }}>{value}</div>
+        {unverified && (
+          <span className="pill" style={{ background: "var(--watch-soft)", color: "var(--watch-ink)", fontSize: 9 }}>Generated</span>
+        )}
+      </div>
+      <div className="caption" style={{ marginTop: 4 }}>{compare}</div>
+      {variance != null && (
+        <div className="tab" style={{ fontSize: 12, fontWeight: 700, color: vColor, marginTop: 4 }}>
+          {variance >= 0 ? "▲" : "▼"} {fmtPctYoda(Math.abs(variance))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* AnomalyCalloutYoda - one-line diagnosis below KPI tiles */
+function AnomalyCalloutYoda({ kpis, storeLabel, planVar, lyVar }) {
+  var k = kpis;
+  var txnVar = pctYoda(k.txnCount, k.lyTxnCount) || 0;
+  var avgVar = pctYoda(k.avgTicket, k.lyAvgTicket) || 0;
+  var uptVar = pctYoda(k.upt, k.lyUpt) || 0;
+  var pv = planVar == null ? 0 : planVar;
+  var lv = lyVar == null ? 0 : lyVar;
+
+  var heroClass = "hero-good";
+  var header = "Steady";
+  var msg = "";
+
+  if (planVar == null && lyVar == null) {
+    heroClass = "hero-warn"; header = "Comparison unavailable";
+    msg = "No LY or Plan data available for this date.";
+  } else if (pv >= 0.05 && lv >= 0.05) {
+    var driver = uptVar > 0.02 ? "UPT (sale-type)" : txnVar > 0.02 ? "traffic" : "mix";
+    header = "Strong day - beating plan (" + fmtPctYoda(pv) + ") and LY (" + fmtPctYoda(lv) + ")";
+    msg = storeLabel + " is crushing it today. Primary driver looks like " + driver + " (UPT " + fmtPctYoda(uptVar) + ", Txn " + fmtPctYoda(txnVar) + "). Document what's working.";
+  } else if (pv >= 0.02 && lv <= -0.02) {
+    heroClass = "hero-warn";
+    header = "Hit plan (" + fmtPctYoda(pv) + ") but trailing LY (" + fmtPctYoda(lv) + ")";
+    msg = "Plan may have been set conservatively given the YoY softening. Worth a plan review - celebrating the beat could mask a real trend.";
+  } else if (pv <= -0.02 && lv >= 0.02) {
+    heroClass = "hero-good";
+    header = "Missed plan (" + fmtPctYoda(pv) + ") but ahead of LY (" + fmtPctYoda(lv) + ")";
+    msg = "Behind today's plan but still growing vs last year. Plan may be set aggressively - comp growth of " + fmtPctYoda(lv) + " is healthy. Don't over-correct.";
+  } else if (pv <= -0.05 || lv <= -0.05) {
+    heroClass = "hero-warn";
+    if (txnVar < -0.05) {
+      header = "Soft day - traffic down";
+      msg = "Missed plan (" + fmtPctYoda(pv) + "), trailed LY (" + fmtPctYoda(lv) + "). Transactions fell " + fmtPctYoda(txnVar) + " - it's a traffic problem, not a basket problem (Avg Ticket " + fmtPctYoda(avgVar) + "). Check weather, local events, marketing flight.";
+    } else if (avgVar < -0.05) {
+      header = "Soft day - basket shrunk";
+      msg = "Missed plan (" + fmtPctYoda(pv) + "). Transactions held (" + fmtPctYoda(txnVar) + ") but average ticket dropped " + fmtPctYoda(avgVar) + ". Focus add-on coaching (paint/primer, fasteners, batteries) at register.";
+    } else {
+      header = "Soft day (" + fmtPctYoda(pv) + " vs plan, " + fmtPctYoda(lv) + " vs LY)";
+      msg = "Behind both plan and LY. Worth a closer look at the day's mix and promotions.";
+    }
+  } else {
+    msg = storeLabel + " tracking plan (" + fmtPctYoda(pv) + ") and LY (" + fmtPctYoda(lv) + "). Normal variability.";
+  }
+
+  var ink = heroClass === "hero-good" ? "var(--good-ink)" : heroClass === "hero-warn" ? "var(--warn-ink)" : "var(--bad-ink)";
+  return (
+    <div className={heroClass} style={{ padding: "12px 16px", marginTop: 14 }}>
+      <div className="eyebrow" style={{ color: ink, marginBottom: 4 }}>{header}</div>
+      <div style={{ fontSize: 13, color: ink, lineHeight: 1.5 }}>{msg}</div>
+    </div>
+  );
+}
+
+/* TrendChartYoda - 8-week SVG line chart */
+function TrendChartYoda({ data }) {
+  if (!data || data.length === 0) {
+    return (
+      <div style={{ height: 220, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <span className="caption">No trend data</span>
+      </div>
+    );
+  }
+  var vals = data.map(function (d) { return d.netSales || 0; });
+  var min = Math.min.apply(null, vals);
+  var max = Math.max.apply(null, vals);
+  var range = max - min || 1;
+  var w = 600, h = 240, padL = 56, padR = 16, padT = 16, padB = 28;
+  var innerW = w - padL - padR;
+  var innerH = h - padT - padB;
+  var stepX = data.length > 1 ? innerW / (data.length - 1) : 0;
+  var pts = data.map(function (d, i) {
+    var x = padL + i * stepX;
+    var y = padT + innerH - ((d.netSales - min) / range) * innerH;
+    return { x: x, y: y, d: d };
+  });
+  var pathD = pts.map(function (p, i) { return (i === 0 ? "M" : "L") + p.x.toFixed(1) + "," + p.y.toFixed(1); }).join(" ");
+  var areaD = pathD + " L" + (padL + innerW).toFixed(1) + "," + (padT + innerH).toFixed(1) + " L" + padL.toFixed(1) + "," + (padT + innerH).toFixed(1) + " Z";
+  var yTicks = [0, 0.25, 0.5, 0.75, 1].map(function (t) {
+    var v = min + range * (1 - t);
+    var y = padT + innerH * t;
+    return { v: v, y: y };
+  });
+  return (
+    <svg viewBox={"0 0 " + w + " " + h} preserveAspectRatio="xMidYMid meet" style={{ width: "100%", height: "auto", maxHeight: 280, display: "block" }}>
+      {yTicks.map(function (t, i) {
+        return (
+          <g key={i}>
+            <line x1={padL} y1={t.y} x2={padL + innerW} y2={t.y} stroke="var(--border-1)" strokeWidth="1" />
+            <text x={padL - 6} y={t.y + 4} fontSize="10" fill="var(--fg-3)" textAnchor="end" style={{ fontVariantNumeric: "tabular-nums" }}>${Math.round(t.v / 1000)}K</text>
+          </g>
+        );
+      })}
+      {[0, Math.floor(data.length / 2), data.length - 1].filter(function (v, i, a) { return a.indexOf(v) === i; }).map(function (i) {
+        if (!pts[i]) return null;
+        return <text key={i} x={pts[i].x} y={padT + innerH + 16} fontSize="10" fill="var(--fg-3)" textAnchor="middle">{shortDateYoda(data[i].date)}</text>;
+      })}
+      <path d={areaD} fill="var(--good-soft)" />
+      <path d={pathD} fill="none" stroke="var(--good-strong)" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
+      {pts.map(function (p, i) {
+        return <circle key={i} cx={p.x} cy={p.y} r="3" fill="var(--good-strong)"><title>{shortDateYoda(p.d.date)}: {fmtDollarYoda(p.d.netSales)}</title></circle>;
+      })}
+    </svg>
+  );
+}
+
+/* TrendTableYoda - last 7 days */
+function TrendTableYoda({ data }) {
+  var last7 = (data || []).slice(-7);
+  if (last7.length === 0) return <div className="caption">No data</div>;
+  return (
+    <table style={{ width: "100%", fontSize: 12 }}>
+      <thead>
+        <tr>
+          <th className="eyebrow" style={{ textAlign: "left", padding: "4px 0", fontWeight: 500 }}>Day</th>
+          <th className="eyebrow" style={{ textAlign: "right", padding: "4px 0", fontWeight: 500 }}>Net sales</th>
+        </tr>
+      </thead>
+      <tbody>
+        {last7.map(function (d, i) {
+          return (
+            <tr key={i} style={{ borderTop: "1px solid var(--border-1)" }}>
+              <td style={{ padding: "5px 0", color: "var(--fg-2)" }}>{shortDateYoda(d.date)}</td>
+              <td className="tab" style={{ padding: "5px 0", textAlign: "right", fontWeight: 700, color: "var(--fg-1)" }}>{fmtDollarYoda(d.netSales)}</td>
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  );
+}
+
+/* DriverNodeYoda - single tinted decomposition card */
+function DriverNodeYoda({ label, pct, big, goalLabel, goalMet }) {
+  var hasVal = pct != null;
+  var positive = hasVal && pct >= 0;
+  var cls = !hasVal ? "" : positive ? "hero-good" : "hero-bad";
+  var bgFallback = !hasVal ? { background: "var(--paper-50)", border: "1px solid var(--border-1)", borderRadius: 12 } : {};
+  var ink = !hasVal ? "var(--fg-3)" : positive ? "var(--good-ink)" : "var(--bad-ink)";
+  var pctFontSize = big ? 32 : 26;
+  return (
+    <div className={cls} style={Object.assign({ padding: 16, minWidth: 0 }, bgFallback)}>
+      <div className="eyebrow" style={{ color: ink }}>{label}</div>
+      <div className="tab kpi-sm" style={{ marginTop: 4, fontSize: pctFontSize, fontWeight: 700, letterSpacing: "-0.02em", color: ink }}>
+        {hasVal ? fmtPctYoda(pct) : "-"}
+      </div>
+      {goalLabel && (
+        <div className="caption" style={{ marginTop: 4, color: ink, opacity: 0.85 }}>
+          {goalLabel} - {goalMet ? <CheckCircle className="w-3 h-3" style={{ display: "inline", verticalAlign: "middle" }} /> : <XCircle className="w-3 h-3" style={{ display: "inline", verticalAlign: "middle" }} />} {goalMet ? "Beat" : "Miss"}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* CoachingBlockYoda - paper-50 block with bold lead */
+function CoachingBlockYoda({ text }) {
+  return (
+    <div style={{ background: "var(--paper-50)", border: "1px solid var(--border-1)", borderRadius: 6, padding: "8px 12px", marginTop: 8, fontSize: 12, color: "var(--fg-2)", lineHeight: 1.5 }}>
+      <strong style={{ color: "var(--fg-1)" }}>Coaching:</strong> {text}
+    </div>
+  );
+}
+
+/* SkuSparklineYoda - tiny SVG line for sku trend */
+function SkuSparklineYoda({ data }) {
+  if (!data || data.length === 0) {
+    return <span className="caption" style={{ color: "var(--fg-4)" }}>-</span>;
+  }
+  var values = data.map(function (d) { return d.netSales || 0; });
+  var max = Math.max.apply(null, values);
+  var min = Math.min.apply(null, values);
+  var range = max - min || 1;
+  var W = 80, H = 20;
+  var step = data.length > 1 ? W / (data.length - 1) : W;
+  var points = values.map(function (v, i) {
+    var x = i * step;
+    var y = H - ((v - min) / range) * (H - 2) - 1;
+    return x.toFixed(1) + "," + y.toFixed(1);
+  }).join(" ");
+  var last = values[values.length - 1];
+  var first = values[0];
+  var stroke = last >= first ? "var(--good-strong)" : "var(--bad-strong)";
+  return (
+    <svg width={W} height={H} viewBox={"0 0 " + W + " " + H} style={{ display: "block" }}>
+      <polyline points={points} fill="none" stroke={stroke} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+/* ============================================================
+   Formatting helpers (Yoda-suffixed)
+   ============================================================ */
+function fmtDollarYoda(x) {
+  var v = Number(x) || 0;
+  return "$" + Math.round(v).toLocaleString("en-US");
+}
+function fmtDollar2Yoda(x) {
+  var v = Number(x) || 0;
+  return "$" + v.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+function fmtIntYoda(x) {
+  return Math.round(Number(x) || 0).toLocaleString("en-US");
+}
+function fmtPctYoda(x) {
+  if (x == null) return "-";
+  var v = Number(x);
+  return (v >= 0 ? "+" : "") + (v * 100).toFixed(1) + "%";
+}
+function pctYoda(a, b) {
+  if (b == null || b === 0 || !isFinite(b)) return null;
+  return ((Number(a) || 0) - Number(b)) / Number(b);
+}
+function shortDateYoda(iso) {
+  if (!iso) return "";
+  var s = String(iso).slice(0, 10);
+  var parts = s.split("-");
+  if (parts.length !== 3) return s;
+  try {
+    var d = new Date(parts[0] + "-" + parts[1] + "-" + parts[2] + "T00:00:00");
+    return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  } catch (_) { return s; }
+}
+/* tcYoda - title-case helper that preserves 2-letter state codes after a comma */
+function tcYoda(str) {
+  var out = String(str || "").replace(/\b\w+/g, function (w) {
+    return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
+  });
+  return out.replace(/,\s*([A-Za-z]{2})\b/g, function (_m, st) { return ", " + st.toUpperCase(); });
+}
+
+
 /* ============================================================
    YODA 2.0 — Store Performance Dashboard
    Ports the Streamlit-in-Snowflake prototype into the workbench.
@@ -8768,6 +10726,10 @@ function YODAReports({ goHome }) {
 
   if (subView === "yoda-2") {
     return <Yoda2View goBack={function () { setSubView(null); }} />;
+  }
+
+  if (subView === "yoda-2-yoda") {
+    return <Yoda2YodaView goBack={function () { setSubView(null); }} />;
   }
 
   return (
