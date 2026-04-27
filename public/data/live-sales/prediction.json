@@ -1,43 +1,43 @@
 {
-  "updatedAt": "2026-04-27T20:20:56.912Z",
-  "updatedAtET": "Apr 27, 2026, 4:20 PM",
+  "updatedAt": "2026-04-27T20:36:40.086Z",
+  "updatedAtET": "Apr 27, 2026, 4:36 PM",
   "dateET": "2026-04-27",
   "dow": 1,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-04-27T20:20:56.912Z",
-    "tsET": "Apr 27, 2026, 4:20 PM",
+    "ts": "2026-04-27T20:36:40.086Z",
+    "tsET": "Apr 27, 2026, 4:36 PM",
     "dateET": "2026-04-27",
     "hourET": 16,
-    "minuteET": 20,
+    "minuteET": 36,
     "dow": 1,
-    "sales": 1043044.320000001,
+    "sales": 1061349.1800000002,
     "plan": 1300987.3000000003,
-    "pctToPlan": 80.17328993142368,
-    "gp": 440278.75110000116,
-    "gpPct": 42.210934152826866,
-    "txns": 29182,
-    "customers": 27352,
+    "pctToPlan": 81.58028752471296,
+    "gp": 447481.3178000001,
+    "gpPct": 42.16155495592883,
+    "txns": 29777,
+    "customers": 27917,
     "storeCount": 134,
-    "asOf": "2026-04-27T20:15:10.777000",
-    "asOfET": "Apr 27, 2026, 4:15 PM"
+    "asOf": "2026-04-27T20:30:10.693000",
+    "asOfET": "Apr 27, 2026, 4:30 PM"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.95 shape + 0.05 level)",
     "confidence": "medium",
-    "projectedEOD": 1211016.565330232,
-    "projectedPctToPlan": 93.0844263683613,
-    "projectedVariance": -89970.73466976825,
+    "projectedEOD": 1203430.9200311466,
+    "projectedPctToPlan": 92.50135800950142,
+    "projectedVariance": -97556.37996885367,
     "band": {
-      "low": 1104293.263941193,
-      "high": 1317739.866719271
+      "low": 1098065.161967568,
+      "high": 1308796.6780947254
     },
-    "pctOfDayElapsed": 0.8621666666666666,
+    "pctOfDayElapsed": 0.88298,
     "level_EOD": 1232903.1016298886,
-    "shape_EOD": 1209794.3011792009,
-    "blendWeight": 0.9471082822477316,
+    "shape_EOD": 1202008.1768556482,
+    "blendWeight": 0.9539489678031319,
     "factors": {
       "plan": 1300987.3000000003,
       "recencyFactor": 0.9393,
@@ -49,23 +49,23 @@
       "weatherSummary": "concord-nh: 71F Sunny | worcester-ma: 68F Sunny | burlington-vt: 70F Sunny | portland-me: 58F Sunny | albany-ny: 74F Sunny | scranton-pa: 72F Sunny"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.8621666666666666,
+      "basePaceFromCurve": 0.88298,
       "observedPaceCount": 1,
-      "blendedPaceAtNow": 0.8621666666666666,
+      "blendedPaceAtNow": 0.88298,
       "historyDays": 1,
       "avgHistoricalEOD": 1015170.4800000007
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 36906.7685,
+      "estimatedCurrent": 37797.72486,
       "estimatedEOD": 42807,
-      "paceUsed": 0.8621666666666666,
+      "paceUsed": 0.88298,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 28199,
-          "estimatedCurrent": 24312.237833333333,
+          "estimatedCurrent": 24899.153019999998,
           "estimatedEOD": 28199,
           "stdev": 0.2923
         },
@@ -73,16 +73,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 14608,
-          "estimatedCurrent": 12594.530666666666,
+          "estimatedCurrent": 12898.57184,
           "estimatedEOD": 14608,
           "stdev": 0.1658
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1253823.565330232,
-    "combinedCurrentSales": 1079951.088500001,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $36,907 so far, +$42,807 to EOD."
+    "combinedProjectedEOD": 1246237.9200311466,
+    "combinedCurrentSales": 1099146.9048600001,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $37,798 so far, +$42,807 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 15,
