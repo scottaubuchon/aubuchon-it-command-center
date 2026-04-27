@@ -7073,7 +7073,7 @@ function LiveSalesYodaView({ goBack }) {
             })}
             {topStores.length > 5 && (
               <button onClick={function () { setShowAllStores(!showAllStores); }} className="show-all">
-                {showAllStores ? "Show top 5" : "Show all " + topStores.length + " stores"} ⌄
+                {showAllStores ? "Show top 5" : "Show top " + topStores.length + " stores"} ⌄
               </button>
             )}
           </div>
