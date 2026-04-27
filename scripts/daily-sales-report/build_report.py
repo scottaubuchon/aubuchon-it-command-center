@@ -34,6 +34,7 @@ from queries import (
     aggregate_by_state, build_store_ranks,
 )
 from renderer import render_report
+from renderer_yoda import render_report as render_report_yoda
 
 
 REPO = "scottaubuchon/aubuchon-it-command-center"
@@ -73,21 +74,30 @@ def build(report_date: date) -> str:
 
     print(f"      {len(dim)} stores in dim, {len(store_ty)} with TY sales, {len(state_data)} states")
 
-    print("[6/6] Rendering HTML...")
-    return render_report(report_date, totals, cohorts, metrics, state_data, store_ranked)
+    print("[6/7] Rendering original HTML...")
+    html = render_report(report_date, totals, cohorts, metrics, state_data, store_ranked)
+
+    print("[7/7] Rendering YODA-design HTML...")
+    html_yoda = render_report_yoda(report_date, totals, cohorts, metrics, state_data, store_ranked)
+
+    return html, html_yoda
 
 
-def push_to_github(html: str, report_date: date) -> None:
+def push_to_github(html: str, html_yoda: str, report_date: date) -> None:
     print("[PUSH] Uploading to GitHub...")
-    for path in (
-        f"public/reports/daily-sales-latest.html",
-        f"public/reports/daily-sales-{report_date.isoformat()}.html",
-    ):
+    iso = report_date.isoformat()
+    targets = [
+        (f"public/reports/daily-sales-latest.html", html),
+        (f"public/reports/daily-sales-{iso}.html", html),
+        (f"public/reports/daily-sales-yoda-latest.html", html_yoda),
+        (f"public/reports/daily-sales-yoda-{iso}.html", html_yoda),
+    ]
+    for path, html_body in targets:
         url = f"https://api.github.com/repos/{REPO}/contents/{path}"
         # GET existing SHA if file exists
         r = requests.get(url, headers={"Authorization": f"token {GITHUB_TOKEN}"})
         sha = r.json().get("sha") if r.status_code == 200 else None
-        b64 = base64.b64encode(html.encode("utf-8")).decode()
+        b64 = base64.b64encode(html_body.encode("utf-8")).decode()
         body = {"message": f"report: daily sales {report_date.isoformat()}", "content": b64}
         if sha:
             body["sha"] = sha
@@ -111,23 +121,35 @@ def main():
     else:
         report_date = date.today() - timedelta(days=1)
 
-    html = build(report_date)
+    html, html_yoda = build(report_date)
 
     out_dir = Path(args.out)
     out_dir.mkdir(parents=True, exist_ok=True)
-    dated = out_dir / f"daily-sales-{report_date.isoformat()}.html"
-    latest = out_dir / "daily-sales-latest.html"
+
+    iso = report_date.isoformat()
+    dated      = out_dir / f"daily-sales-{iso}.html"
+    latest     = out_dir / "daily-sales-latest.html"
+    dated_yoda = out_dir / f"daily-sales-yoda-{iso}.html"
+    latest_yoda= out_dir / "daily-sales-yoda-latest.html"
+
     dated.write_text(html, encoding="utf-8")
     shutil.copyfile(dated, latest)
+    dated_yoda.write_text(html_yoda, encoding="utf-8")
+    shutil.copyfile(dated_yoda, latest_yoda)
+
     print(f"Wrote {dated}")
     print(f"Wrote {latest}")
+    print(f"Wrote {dated_yoda}")
+    print(f"Wrote {latest_yoda}")
 
     if args.push:
-        push_to_github(html, report_date)
+        push_to_github(html, html_yoda, report_date)
         print()
         print("Live at:")
         print(f"  https://aubuchon-it-command-center.vercel.app/reports/daily-sales-latest.html")
-        print(f"  https://aubuchon-it-command-center.vercel.app/reports/daily-sales-{report_date.isoformat()}.html")
+        print(f"  https://aubuchon-it-command-center.vercel.app/reports/daily-sales-{iso}.html")
+        print(f"  https://aubuchon-it-command-center.vercel.app/reports/daily-sales-yoda-latest.html")
+        print(f"  https://aubuchon-it-command-center.vercel.app/reports/daily-sales-yoda-{iso}.html")
 
 
 if __name__ == "__main__":
