@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-04-27T19:16:11.624Z",
+  "updatedAt": "2026-04-27T19:16:58.521Z",
   "updatedAtET": "Apr 27, 2026, 3:16 PM",
   "dateET": "2026-04-27",
   "dow": 1,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-04-27T19:16:11.624Z",
+    "ts": "2026-04-27T19:16:58.521Z",
     "tsET": "Apr 27, 2026, 3:16 PM",
     "dateET": "2026-04-27",
     "hourET": 15,
@@ -102,7 +102,7 @@
         "temp": 71,
         "unit": "F",
         "short": "Sunny",
-        "detailed": "Sunny, with a high near 71. East wind around 5 mph."
+        "detailed": "Sunny, with a high near 71. Southeast wind around 5 mph."
       },
       {
         "station": "worcester-ma",
