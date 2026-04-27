@@ -3,14 +3,14 @@
   "storeFilter": null,
   "dateFilter": "2026-04-25",
   "companyTotal": {
-    "sales": 1657128.75,
+    "sales": 1716866.19,
     "plan": 1827013.16,
-    "gp": 757335.86,
-    "gpPct": 45.70169095189496,
-    "txns": 40074,
+    "gp": 760996.8,
+    "gpPct": 44.32475893767819,
+    "txns": 40306,
     "customers": 0,
-    "storeCount": 133,
-    "pctToPlan": 90.70152236889197
+    "storeCount": 135,
+    "pctToPlan": 93.97119996661655
   },
   "topStores": [
     {
@@ -42,6 +42,16 @@
       "plan": 38525.32,
       "gp": 14364.88,
       "txns": 538
+    },
+    {
+      "store": "233",
+      "name": "ITHACA, NY - DOWNTOWN - (ACE)",
+      "city": "Ithaca",
+      "state": "NY",
+      "sales": 32885.19,
+      "plan": 48360.96,
+      "gp": 0,
+      "txns": 0
     },
     {
       "store": "182",
@@ -194,36 +204,26 @@
       "txns": 415
     },
     {
-      "store": "153",
-      "name": "KINGSTON, MA - ACE",
-      "city": "Kingston",
-      "state": "MA",
-      "sales": 18077.39,
-      "plan": 19981.03,
-      "gp": 8006.06,
-      "txns": 368
-    },
-    {
-      "store": "004",
-      "name": "GARDNER, MA - ACE",
-      "city": "Gardner",
-      "state": "MA",
-      "sales": 18011.93,
-      "plan": 17905.57,
-      "gp": 7869.9,
-      "txns": 445
+      "store": "234",
+      "name": "ITHACA, NY - TRIPHAMMER - (ACE)",
+      "city": "Ithaca",
+      "state": "NY",
+      "sales": 18101.77,
+      "plan": 27676.63,
+      "gp": 0,
+      "txns": 0
     }
   ],
   "topProducts": [
     {
       "sku": "25",
       "product": "MIDWEST NUTS & BOLTS",
-      "sales": 24563.55
+      "sales": 24715.88
     },
     {
       "sku": "105",
       "product": "PROPANE, TANK, EX 20LB",
-      "sales": 10263.91
+      "sales": 10317.89
     },
     {
       "sku": "500808",
@@ -233,7 +233,7 @@
     {
       "sku": "114960",
       "product": "BLACK SCOTTS MULCH",
-      "sales": 8071.88
+      "sales": 8121.24
     },
     {
       "sku": "133666",
@@ -243,7 +243,7 @@
     {
       "sku": "102836",
       "product": "2CUFT/50QT MG POTTING MIX",
-      "sales": 6679.13
+      "sales": 6712.13
     },
     {
       "sku": "193991",
@@ -253,7 +253,12 @@
     {
       "sku": "134239",
       "product": "STEP 1 CRAB & FERT15000",
-      "sales": 5763.92
+      "sales": 5863.91
+    },
+    {
+      "sku": "963314",
+      "product": "POKEMON - PERFECT ORDER BOOST",
+      "sales": 5588.11
     },
     {
       "sku": "705228",
@@ -261,14 +266,9 @@
       "sales": 5518.66
     },
     {
-      "sku": "963314",
-      "product": "POKEMON - PERFECT ORDER BOOST",
-      "sales": 5500.22
-    },
-    {
       "sku": "161927",
       "product": "PROPANE,TANK, 20LB W/OPD VALVE",
-      "sales": 5288.63
+      "sales": 5358.62
     },
     {
       "sku": "825446",
@@ -288,7 +288,7 @@
     {
       "sku": "116766",
       "product": "COMPOST,LBSTR,QUODDY 1CFT-",
-      "sales": 4894.31
+      "sales": 4908.3
     },
     {
       "sku": "747195",
@@ -298,7 +298,7 @@
     {
       "sku": "fee-50",
       "product": "Screen Repair (50)",
-      "sales": 4351.63
+      "sales": 4319.58
     },
     {
       "sku": "763500",
@@ -309,6 +309,11 @@
       "sku": "765126",
       "product": "1.5CF MG ORG BED/GARDEN SOIL",
       "sales": 4242.59
+    },
+    {
+      "sku": "15000",
+      "product": "SCOTTS  4 STEP 15M",
+      "sales": 4049.85
     },
     {
       "sku": "937435",
@@ -341,14 +346,9 @@
       "sales": 3543.92
     },
     {
-      "sku": "15000",
-      "product": "SCOTTS  4 STEP 15M",
-      "sales": 3469.87
-    },
-    {
       "sku": "944662",
       "product": "1.5CF SCOTTS LAWN SOIL",
-      "sales": 3374
+      "sales": 3388
     },
     {
       "sku": "792745",
@@ -366,6 +366,11 @@
       "sales": 3237.36
     },
     {
+      "sku": "129991",
+      "product": "PELLET,GREEN SUPREME,BLEND40LB",
+      "sales": 2997.68
+    },
+    {
       "sku": "fee-60",
       "product": "Equipment Rental (60)",
       "sales": 2906.2
@@ -374,11 +379,6 @@
       "sku": "134221",
       "product": "STEP 1 CRABGRSS PRVNTR 5M",
       "sales": 2863.49
-    },
-    {
-      "sku": "129991",
-      "product": "PELLET,GREEN SUPREME,BLEND40LB",
-      "sales": 2805.92
     },
     {
       "sku": "989196",
@@ -391,24 +391,24 @@
       "sales": 2746.92
     },
     {
-      "sku": "5000",
-      "product": "SCOTTS 4 STEP 5M",
-      "sales": 2713.67
-    },
-    {
-      "sku": "779028",
-      "product": "PAPR YARD BAG ACE 30G PK5",
-      "sales": 2708.17
+      "sku": "385678",
+      "product": "RAPID GRASS, SUNSHADE 16LB",
+      "sales": 2732.75
     },
     {
       "sku": "342024",
       "product": "WHEELBARROW 6CF POLY",
-      "sales": 2658.09
+      "sales": 2723.08
     },
     {
-      "sku": "385678",
-      "product": "RAPID GRASS, SUNSHADE 16LB",
-      "sales": 2622.76
+      "sku": "779028",
+      "product": "PAPR YARD BAG ACE 30G PK5",
+      "sales": 2718.64
+    },
+    {
+      "sku": "5000",
+      "product": "SCOTTS 4 STEP 5M",
+      "sales": 2713.67
     },
     {
       "sku": "792275",
@@ -461,14 +461,19 @@
       "sales": 2390.86
     },
     {
+      "sku": "168187",
+      "product": "GRUB CNTRL,GRUBEX 5000 #99605",
+      "sales": 2338.32
+    },
+    {
+      "sku": "135404",
+      "product": "HF POTTING SOIL 2CF-",
+      "sales": 2320.2
+    },
+    {
       "sku": "100102",
       "product": "20# LP TANK(NO EXCHANGE)",
       "sales": 2319.69
-    },
-    {
-      "sku": "168187",
-      "product": "GRUB CNTRL,GRUBEX 5000 #99605",
-      "sales": 2307.33
     },
     {
       "sku": "500800",
@@ -481,11 +486,6 @@
       "sales": 2286.3
     },
     {
-      "sku": "135404",
-      "product": "HF POTTING SOIL 2CF-",
-      "sales": 2282.21
-    },
-    {
       "sku": "116769",
       "product": "SCHOODIC COW COMPOST 1CF     8",
       "sales": 2279.31
@@ -494,6 +494,11 @@
       "sku": "524688",
       "product": "GRASS SEED, EZ-SEED 10LB",
       "sales": 2252.76
+    },
+    {
+      "sku": "126462",
+      "product": "SOIL,POTTING,BAR HARBOR 1CFT-",
+      "sales": 2209.62
     },
     {
       "sku": "743742",
@@ -506,11 +511,6 @@
       "sales": 2179.16
     },
     {
-      "sku": "126462",
-      "product": "SOIL,POTTING,BAR HARBOR 1CFT-",
-      "sales": 2175.64
-    },
-    {
       "sku": "901",
       "product": "DUMP SKU 901",
       "sales": 2155.48
@@ -519,6 +519,11 @@
       "sku": "103080",
       "product": "ANT BAITS, TERRO LIQUID, 6-PK",
       "sales": 2149.66
+    },
+    {
+      "sku": "133211",
+      "product": "OF POTTING SOIL 1.5CF",
+      "sales": 2143.66
     },
     {
       "sku": "130743",
@@ -539,11 +544,6 @@
       "sku": "385672",
       "product": "RAPID GRASS, SUN/SHADE 5.6LB",
       "sales": 2085.28
-    },
-    {
-      "sku": "133211",
-      "product": "OF POTTING SOIL 1.5CF",
-      "sales": 2067.68
     },
     {
       "sku": "128578",
@@ -676,6 +676,11 @@
       "sales": 1499.69
     },
     {
+      "sku": "779257",
+      "product": "RAKE FBRGLS 24X65\"",
+      "sales": 1495.32
+    },
+    {
       "sku": "126090",
       "product": "GRASS SEED, EZ-SEED 3.75LB",
       "sales": 1484.31
@@ -691,24 +696,19 @@
       "sales": 1469.97
     },
     {
+      "sku": "478940",
+      "product": "COLOR SAMPLES PASTEL 1/2 PINT",
+      "sales": 1469.58
+    },
+    {
       "sku": "779256",
       "product": "RAKE BOW FIBER 16T ACE",
       "sales": 1462.91
     },
     {
-      "sku": "478940",
-      "product": "COLOR SAMPLES PASTEL 1/2 PINT",
-      "sales": 1457.6
-    },
-    {
       "sku": "142539",
       "product": "8 CUFT WHEELBARROW,2WHL",
       "sales": 1452.71
-    },
-    {
-      "sku": "779257",
-      "product": "RAKE FBRGLS 24X65\"",
-      "sales": 1451.34
     },
     {
       "sku": "191182",
@@ -1542,20 +1542,6 @@
   ],
   "notReporting": [
     {
-      "store": "233",
-      "name": "ITHACA, NY - DOWNTOWN - (ACE)",
-      "city": "Ithaca",
-      "state": "NY",
-      "plan": 48360.96
-    },
-    {
-      "store": "234",
-      "name": "ITHACA, NY - TRIPHAMMER - (ACE)",
-      "city": "Ithaca",
-      "state": "NY",
-      "plan": 27676.63
-    },
-    {
       "store": "148",
       "name": "AYER, MA - (IND)",
       "city": "Ayer",
@@ -1568,24 +1554,6 @@
     "sampleWeeks": 8,
     "stores": [
       {
-        "store": "233",
-        "dowAvg": 28167.385,
-        "samples": 8,
-        "basis": "dowAvg",
-        "plan": 48360.96,
-        "estimatedCurrent": 28167.385,
-        "estimatedEOD": 28167.385
-      },
-      {
-        "store": "234",
-        "dowAvg": 19065.8775,
-        "samples": 8,
-        "basis": "dowAvg",
-        "plan": 27676.63,
-        "estimatedCurrent": 19065.8775,
-        "estimatedEOD": 19065.8775
-      },
-      {
         "store": "148",
         "dowAvg": 5576.01375,
         "samples": 8,
@@ -1595,14 +1563,14 @@
         "estimatedEOD": 5576.01375
       }
     ],
-    "totalEstimatedCurrent": 52809.276249999995,
-    "totalEstimatedEOD": 52809.276249999995,
-    "projectedCompanyEOD": 1709938.02625,
-    "projectedCompanyCurrent": 1709938.02625
+    "totalEstimatedCurrent": 5576.01375,
+    "totalEstimatedEOD": 5576.01375,
+    "projectedCompanyEOD": 1722442.2037499999,
+    "projectedCompanyCurrent": 1722442.2037499999
   },
   "asOfET": "End of day · 2026-04-25",
   "cached": true,
-  "refreshedAt": "2026-04-26T15:36:50.286Z",
+  "refreshedAt": "2026-04-27T15:22:41.217Z",
   "source": "snowflake",
-  "cachedAt": "2026-04-26T15:36:50.286Z"
+  "cachedAt": "2026-04-27T15:22:41.217Z"
 }
