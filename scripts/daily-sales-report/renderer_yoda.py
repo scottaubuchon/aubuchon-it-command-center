@@ -442,6 +442,7 @@ details.collapse .body { padding: 0 18px 18px; border-top: 1px solid var(--borde
   text-align: right; padding: 8px 10px;
   background: var(--paper-50);
   border-bottom: 1px solid var(--border-1);
+  white-space: nowrap;
 }
 .state-table th:first-child { text-align: left; }
 .state-table td {
@@ -450,8 +451,11 @@ details.collapse .body { padding: 0 18px 18px; border-top: 1px solid var(--borde
   font-variant-numeric: tabular-nums;
   color: var(--fg-1);
 }
+.state-table td.tabular { white-space: nowrap; }
 .state-table td:first-child { text-align: left; font-weight: 500; }
 .state-table tr:last-child td { border-bottom: none; }
+/* Belt-and-suspenders: keep arrow + percent on one line in any tabular cell */
+.tabular .delta-inline { white-space: nowrap; display: inline-block; }
 
 /* ---------- Ranked list (stores + products) ---------- */
 .ranked-table { width: 100%; border-collapse: collapse; }
@@ -872,7 +876,7 @@ def _render_state_map(state_data) -> str:
             f'<tr>'
             f'<td>{escape(name_map.get(r["code"], r["code"]))}</td>'
             f'<td class="tabular">{fmt_dollars(r["sales"])}</td>'
-            f'<td class="tabular tone-{tone}">{arrow}&thinsp;{fmt_pct_from_pct(r["vsP_pct"])}</td>'
+            f'<td class="tabular tone-{tone}"><span class="delta-inline">{arrow}&nbsp;{fmt_pct_from_pct(r["vsP_pct"])}</span></td>'
             f'<td class="tabular">{fmt_int(r["stores"])}</td>'
             f'</tr>'
         )
@@ -937,7 +941,7 @@ def _store_row(rank: int, r) -> str:
     cohort = escape(r.get("cohort", ""))
     meta = f"{cohort} &middot; #{code} &middot; {state}"
     vsLY_html = (
-        f'<span aria-hidden="true">{l_arrow}</span>&thinsp;{fmt_pct(vsLY_frac)}'
+        f'<span class="delta-inline"><span aria-hidden="true">{l_arrow}</span>&nbsp;{fmt_pct(vsLY_frac)}</span>'
         if vsLY_frac is not None else EM_DASH
     )
     return f"""
@@ -949,7 +953,7 @@ def _store_row(rank: int, r) -> str:
   </td>
   <td class="tabular">{fmt_dollars(r.get("sales"))}</td>
   <td class="tabular">{fmt_dollars(r.get("plan"))}</td>
-  <td class="tabular tone-{p_tone}"><span aria-hidden="true">{p_arrow}</span>&thinsp;{fmt_pct(vsP_frac)}</td>
+  <td class="tabular tone-{p_tone}"><span class="delta-inline"><span aria-hidden="true">{p_arrow}</span>&nbsp;{fmt_pct(vsP_frac)}</span></td>
   <td class="tabular tone-{l_tone}">{vsLY_html}</td>
   <td class="tabular">{fmt_int(r.get("txns"))}</td>
 </tr>"""
