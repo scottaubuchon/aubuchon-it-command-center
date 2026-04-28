@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-04-28T22:40:08.773Z",
+  "updatedAt": "2026-04-28T22:40:47.337Z",
   "updatedAtET": "Apr 28, 2026, 6:40 PM",
   "dateET": "2026-04-28",
   "dow": 2,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-04-28T22:40:08.773Z",
+    "ts": "2026-04-28T22:40:47.337Z",
     "tsET": "Apr 28, 2026, 6:40 PM",
     "dateET": "2026-04-28",
     "hourET": 18,
@@ -46,7 +46,7 @@
       "holidayMult": 1,
       "weatherKey": "normal",
       "weatherMult": 1,
-      "weatherSummary": "concord-nh: 37F Mostly Cloudy | worcester-ma: 38F Mostly Cloudy | burlington-vt: 50F Mostly Cloudy | portland-me: 41F Mostly Cloudy then Slight Chance Rain Showers | albany-ny: 71F Mostly Cloudy | scranton-pa: 48F Mostly Cloudy"
+      "weatherSummary": "concord-nh: 37F Mostly Cloudy | worcester-ma: 38F Mostly Cloudy | burlington-vt: 50F Mostly Cloudy | portland-me: 50F Sunny | albany-ny: 71F Mostly Cloudy | scranton-pa: 48F Mostly Cloudy"
     },
     "shapeDetail": {
       "basePaceFromCurve": 0.9833333333333333,
@@ -90,10 +90,9 @@
     "mult": 1,
     "key": "normal",
     "season": "spring",
-    "summary": "concord-nh: 37F Mostly Cloudy | worcester-ma: 38F Mostly Cloudy | burlington-vt: 50F Mostly Cloudy | portland-me: 41F Mostly Cloudy then Slight Chance Rain Showers | albany-ny: 71F Mostly Cloudy | scranton-pa: 48F Mostly Cloudy",
+    "summary": "concord-nh: 37F Mostly Cloudy | worcester-ma: 38F Mostly Cloudy | burlington-vt: 50F Mostly Cloudy | portland-me: 50F Sunny | albany-ny: 71F Mostly Cloudy | scranton-pa: 48F Mostly Cloudy",
     "tagWeights": {
-      "normal": 0.728,
-      "coldRain_lt_50F": 0.152,
+      "normal": 0.88,
       "perfect_65_80F_dry": 0.12
     },
     "forecasts": [
@@ -124,10 +123,10 @@
       {
         "station": "portland-me",
         "weight": 0.152,
-        "temp": 41,
+        "temp": 50,
         "unit": "F",
-        "short": "Mostly Cloudy then Slight Chance Rain Showers",
-        "detailed": "A slight chance of rain showers between 2am and 3am. Mostly cloudy, with a low around 41. Northeast wind 0 to 5 mph. Chance of precipitation is 20%."
+        "short": "Sunny",
+        "detailed": "Sunny, with a high near 50. Southeast wind around 10 mph."
       },
       {
         "station": "albany-ny",
