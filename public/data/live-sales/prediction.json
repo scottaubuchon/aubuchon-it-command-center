@@ -1,43 +1,43 @@
 {
-  "updatedAt": "2026-04-28T22:40:47.337Z",
-  "updatedAtET": "Apr 28, 2026, 6:40 PM",
+  "updatedAt": "2026-04-28T22:56:23.219Z",
+  "updatedAtET": "Apr 28, 2026, 6:56 PM",
   "dateET": "2026-04-28",
   "dow": 2,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-04-28T22:40:47.337Z",
-    "tsET": "Apr 28, 2026, 6:40 PM",
+    "ts": "2026-04-28T22:56:23.219Z",
+    "tsET": "Apr 28, 2026, 6:56 PM",
     "dateET": "2026-04-28",
     "hourET": 18,
-    "minuteET": 40,
+    "minuteET": 56,
     "dow": 2,
-    "sales": 1172283.6600000001,
+    "sales": 1182401.63,
     "plan": 1201208.1800000002,
-    "pctToPlan": 97.59204769984167,
-    "gp": 498772.90000000026,
-    "gpPct": 42.547116966554,
-    "txns": 33497,
-    "customers": 31278,
+    "pctToPlan": 98.43436380861141,
+    "gp": 503338.9313999999,
+    "gpPct": 42.56920141424364,
+    "txns": 33944,
+    "customers": 31619,
     "storeCount": 134,
-    "asOf": "2026-04-28T22:30:13.657000",
-    "asOfET": "Apr 28, 2026, 6:30 PM"
+    "asOf": "2026-04-28T22:45:15.347000",
+    "asOfET": "Apr 28, 2026, 6:45 PM"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.98 shape + 0.02 level)",
     "confidence": "medium",
-    "projectedEOD": 1191776.1391523976,
-    "projectedPctToPlan": 99.21478716140591,
-    "projectedVariance": -9432.040847602533,
+    "projectedEOD": 1195506.920843946,
+    "projectedPctToPlan": 99.52537293277057,
+    "projectedVariance": -5701.259156054119,
     "band": {
-      "low": 1068473.6192451934,
-      "high": 1315078.6590596018
+      "low": 1071919.520926879,
+      "high": 1319094.320761013
     },
-    "pctOfDayElapsed": 0.9833333333333333,
+    "pctOfDayElapsed": 0.9886666666666667,
     "level_EOD": 1176021.7153529504,
-    "shape_EOD": 1192152.8745762715,
-    "blendWeight": 0.9766454835230229,
+    "shape_EOD": 1195955.7956844233,
+    "blendWeight": 0.9774820391503823,
     "factors": {
       "plan": 1201208.1800000002,
       "recencyFactor": 0.9393,
@@ -46,26 +46,26 @@
       "holidayMult": 1,
       "weatherKey": "normal",
       "weatherMult": 1,
-      "weatherSummary": "concord-nh: 37F Mostly Cloudy | worcester-ma: 38F Mostly Cloudy | burlington-vt: 50F Mostly Cloudy | portland-me: 50F Sunny | albany-ny: 71F Mostly Cloudy | scranton-pa: 48F Mostly Cloudy"
+      "weatherSummary": "concord-nh: 37F Mostly Cloudy | worcester-ma: 38F Mostly Cloudy | burlington-vt: 50F Mostly Cloudy | portland-me: 41F Mostly Cloudy then Slight Chance Rain Showers | albany-ny: 49F Mostly Cloudy | scranton-pa: 48F Mostly Cloudy"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.9833333333333333,
+      "basePaceFromCurve": 0.9886666666666667,
       "observedPaceCount": 1,
-      "blendedPaceAtNow": 0.9833333333333333,
+      "blendedPaceAtNow": 0.9886666666666667,
       "historyDays": 1,
       "avgHistoricalEOD": 1023405.7099999997
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 41684.48333333333,
+      "estimatedCurrent": 41910.568666666666,
       "estimatedEOD": 42391,
-      "paceUsed": 0.9833333333333333,
+      "paceUsed": 0.9886666666666667,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 28783,
-          "estimatedCurrent": 28303.283333333333,
+          "estimatedCurrent": 28456.792666666668,
           "estimatedEOD": 28783,
           "stdev": 0.4847
         },
@@ -73,16 +73,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 13608,
-          "estimatedCurrent": 13381.199999999999,
+          "estimatedCurrent": 13453.776,
           "estimatedEOD": 13608,
           "stdev": 0.1026
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1234167.1391523976,
-    "combinedCurrentSales": 1213968.1433333335,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $41,684 so far, +$42,391 to EOD."
+    "combinedProjectedEOD": 1237897.920843946,
+    "combinedCurrentSales": 1224312.1986666666,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $41,911 so far, +$42,391 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 16,
@@ -90,10 +90,10 @@
     "mult": 1,
     "key": "normal",
     "season": "spring",
-    "summary": "concord-nh: 37F Mostly Cloudy | worcester-ma: 38F Mostly Cloudy | burlington-vt: 50F Mostly Cloudy | portland-me: 50F Sunny | albany-ny: 71F Mostly Cloudy | scranton-pa: 48F Mostly Cloudy",
+    "summary": "concord-nh: 37F Mostly Cloudy | worcester-ma: 38F Mostly Cloudy | burlington-vt: 50F Mostly Cloudy | portland-me: 41F Mostly Cloudy then Slight Chance Rain Showers | albany-ny: 49F Mostly Cloudy | scranton-pa: 48F Mostly Cloudy",
     "tagWeights": {
-      "normal": 0.88,
-      "perfect_65_80F_dry": 0.12
+      "normal": 0.848,
+      "coldRain_lt_50F": 0.152
     },
     "forecasts": [
       {
@@ -123,18 +123,18 @@
       {
         "station": "portland-me",
         "weight": 0.152,
-        "temp": 50,
+        "temp": 41,
         "unit": "F",
-        "short": "Sunny",
-        "detailed": "Sunny, with a high near 50. Southeast wind around 10 mph."
+        "short": "Mostly Cloudy then Slight Chance Rain Showers",
+        "detailed": "A slight chance of rain showers between 2am and 3am. Mostly cloudy, with a low around 41. Northeast wind 0 to 5 mph. Chance of precipitation is 20%."
       },
       {
         "station": "albany-ny",
         "weight": 0.12,
-        "temp": 71,
+        "temp": 49,
         "unit": "F",
         "short": "Mostly Cloudy",
-        "detailed": "Mostly cloudy, with a high near 71. South wind around 12 mph, with gusts as high as 25 mph."
+        "detailed": "Mostly cloudy, with a low around 49. South wind around 8 mph, with gusts as high as 21 mph."
       },
       {
         "station": "scranton-pa",
