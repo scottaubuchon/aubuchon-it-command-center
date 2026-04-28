@@ -1,16 +1,16 @@
 {
-  "updatedAt": "2026-04-28T00:04:24.167Z",
-  "updatedAtET": "Apr 27, 2026, 8:04 PM",
+  "updatedAt": "2026-04-28T00:20:00.373Z",
+  "updatedAtET": "Apr 27, 2026, 8:20 PM",
   "dateET": "2026-04-27",
   "dow": 1,
   "season": "spring",
   "source": "snowflake",
   "current": {
-    "ts": "2026-04-28T00:04:24.167Z",
-    "tsET": "Apr 27, 2026, 8:04 PM",
+    "ts": "2026-04-28T00:20:00.373Z",
+    "tsET": "Apr 27, 2026, 8:20 PM",
     "dateET": "2026-04-27",
     "hourET": 20,
-    "minuteET": 4,
+    "minuteET": 20,
     "dow": 1,
     "sales": 1272170.65,
     "plan": 1300987.3,
@@ -125,7 +125,7 @@
         "temp": 40,
         "unit": "F",
         "short": "Mostly Clear",
-        "detailed": "Mostly clear, with a low around 40. Southeast wind 0 to 5 mph."
+        "detailed": "Mostly clear, with a low around 40. Southeast wind around 0 mph."
       },
       {
         "station": "albany-ny",
