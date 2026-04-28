@@ -1,43 +1,43 @@
 {
-  "updatedAt": "2026-04-28T21:36:35.998Z",
-  "updatedAtET": "Apr 28, 2026, 5:36 PM",
+  "updatedAt": "2026-04-28T21:52:17.839Z",
+  "updatedAtET": "Apr 28, 2026, 5:52 PM",
   "dateET": "2026-04-28",
   "dow": 2,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-04-28T21:36:35.998Z",
-    "tsET": "Apr 28, 2026, 5:36 PM",
+    "ts": "2026-04-28T21:52:17.839Z",
+    "tsET": "Apr 28, 2026, 5:52 PM",
     "dateET": "2026-04-28",
     "hourET": 17,
-    "minuteET": 36,
+    "minuteET": 52,
     "dow": 2,
-    "sales": 1106433.4199999997,
+    "sales": 1131032.96,
     "plan": 1201208.1800000002,
-    "pctToPlan": 92.11004706944298,
-    "gp": 471797.20649999985,
-    "gpPct": 42.64126498456635,
-    "txns": 31451,
-    "customers": 29468,
+    "pctToPlan": 94.15794687645233,
+    "gp": 481881.35770000005,
+    "gpPct": 42.60542130443308,
+    "txns": 32258,
+    "customers": 30225,
     "storeCount": 134,
-    "asOf": "2026-04-28T21:30:08.337000",
-    "asOfET": "Apr 28, 2026, 5:30 PM"
+    "asOf": "2026-04-28T21:45:07.303000",
+    "asOfET": "Apr 28, 2026, 5:45 PM"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.97 shape + 0.03 level)",
     "confidence": "medium",
-    "projectedEOD": 1174344.292250738,
-    "projectedPctToPlan": 97.76359433805536,
-    "projectedVariance": -26863.887749262154,
+    "projectedEOD": 1186497.345411836,
+    "projectedPctToPlan": 98.77533013568353,
+    "projectedVariance": -14710.83458816423,
     "band": {
-      "low": 1051993.23358206,
-      "high": 1296695.350919416
+      "low": 1063136.1145742987,
+      "high": 1309858.5762493731
     },
-    "pctOfDayElapsed": 0.944,
+    "pctOfDayElapsed": 0.9546666666666667,
     "level_EOD": 1246583.0182741275,
-    "shape_EOD": 1172069.3008474573,
-    "blendWeight": 0.9694688242400521,
+    "shape_EOD": 1184741.2290502794,
+    "blendWeight": 0.9716030796715784,
     "factors": {
       "plan": 1201208.1800000002,
       "recencyFactor": 0.9393,
@@ -49,23 +49,23 @@
       "weatherSummary": "concord-nh: 65F Sunny | worcester-ma: 66F Mostly Sunny | burlington-vt: 74F Cloudy | portland-me: 50F Sunny | albany-ny: 71F Mostly Cloudy | scranton-pa: 66F Chance Rain Showers"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.944,
+      "basePaceFromCurve": 0.9546666666666667,
       "observedPaceCount": 1,
-      "blendedPaceAtNow": 0.944,
+      "blendedPaceAtNow": 0.9546666666666667,
       "historyDays": 1,
       "avgHistoricalEOD": 1023405.7099999997
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 40017.104,
+      "estimatedCurrent": 40469.274666666664,
       "estimatedEOD": 42391,
-      "paceUsed": 0.944,
+      "paceUsed": 0.9546666666666667,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 28783,
-          "estimatedCurrent": 27171.152,
+          "estimatedCurrent": 27478.170666666665,
           "estimatedEOD": 28783,
           "stdev": 0.4847
         },
@@ -73,16 +73,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 13608,
-          "estimatedCurrent": 12845.952,
+          "estimatedCurrent": 12991.104,
           "estimatedEOD": 13608,
           "stdev": 0.1026
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1216735.292250738,
-    "combinedCurrentSales": 1146450.5239999997,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $40,017 so far, +$42,391 to EOD."
+    "combinedProjectedEOD": 1228888.345411836,
+    "combinedCurrentSales": 1171502.2346666667,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $40,469 so far, +$42,391 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 16,
@@ -127,7 +127,7 @@
         "temp": 50,
         "unit": "F",
         "short": "Sunny",
-        "detailed": "Sunny, with a high near 50. Southeast wind around 10 mph."
+        "detailed": "Sunny, with a high near 50. East wind around 10 mph."
       },
       {
         "station": "albany-ny",
