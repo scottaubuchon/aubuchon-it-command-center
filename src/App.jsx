@@ -6688,7 +6688,11 @@ function LiveSalesYodaView({ goBack }) {
   var visibleStores = showAllStores ? topStores : topStores.slice(0, 5);
   var visibleProducts = showAllProducts ? topProducts : topProducts.slice(0, 20);
 
-  var heroClass = heroTone === "good" ? "hero-good" : heroTone === "warn" ? "hero-warn" : "hero-bad";
+  // Box background tone = predictor engine's EOD verdict when available,
+  // else fall back to current-pace tone. Text and bar colors stay tied to
+  // current-pace tone so today's actual % is still read literally.
+  var heroBoxTone = (forecast.isProjection && fcTone) ? fcTone : heroTone;
+  var heroClass = heroBoxTone === "good" ? "hero-good" : heroBoxTone === "warn" ? "hero-warn" : "hero-bad";
   var heroTextColor = heroTone === "good" ? "var(--good-strong)" : heroTone === "warn" ? "var(--warn)" : "var(--bad-strong)";
   var heroBarColor  = heroTone === "good" ? "var(--good-strong)" : heroTone === "warn" ? "var(--warn)" : "var(--bad-strong)";
 
