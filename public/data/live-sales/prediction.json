@@ -1,43 +1,43 @@
 {
-  "updatedAt": "2026-04-28T20:36:21.653Z",
-  "updatedAtET": "Apr 28, 2026, 4:36 PM",
+  "updatedAt": "2026-04-28T20:52:03.399Z",
+  "updatedAtET": "Apr 28, 2026, 4:52 PM",
   "dateET": "2026-04-28",
   "dow": 2,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-04-28T20:36:21.653Z",
-    "tsET": "Apr 28, 2026, 4:36 PM",
+    "ts": "2026-04-28T20:52:03.399Z",
+    "tsET": "Apr 28, 2026, 4:52 PM",
     "dateET": "2026-04-28",
     "hourET": 16,
-    "minuteET": 36,
+    "minuteET": 52,
     "dow": 2,
-    "sales": 995367.7,
+    "sales": 1042182.0899999999,
     "plan": 1201208.1800000002,
-    "pctToPlan": 82.8638795982891,
-    "gp": 425943.45969999966,
-    "gpPct": 42.79257401058922,
-    "txns": 28035,
-    "customers": 26230,
+    "pctToPlan": 86.76115492320405,
+    "gp": 445677.73419999983,
+    "gpPct": 42.76390263048945,
+    "txns": 29565,
+    "customers": 27684,
     "storeCount": 134,
-    "asOf": "2026-04-28T20:15:09.980000",
-    "asOfET": "Apr 28, 2026, 4:15 PM"
+    "asOf": "2026-04-28T20:45:09.107000",
+    "asOfET": "Apr 28, 2026, 4:45 PM"
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.95 shape + 0.05 level)",
+    "method": "blended (w=0.96 shape + 0.04 level)",
     "confidence": "medium",
-    "projectedEOD": 1128997.4420763035,
-    "projectedPctToPlan": 93.98849099381785,
-    "projectedVariance": -72210.73792369664,
+    "projectedEOD": 1159108.85774108,
+    "projectedPctToPlan": 96.49525178400631,
+    "projectedVariance": -42099.322258920176,
     "band": {
-      "low": 1009704.4507205831,
-      "high": 1248290.433432024
+      "low": 1037171.8641804495,
+      "high": 1281045.8513017104
     },
-    "pctOfDayElapsed": 0.886,
+    "pctOfDayElapsed": 0.902,
     "level_EOD": 1246583.0182741275,
-    "shape_EOD": 1123439.841986456,
-    "blendWeight": 0.9548687937294651,
+    "shape_EOD": 1155412.5166297115,
+    "blendWeight": 0.9594568303925191,
     "factors": {
       "plan": 1201208.1800000002,
       "recencyFactor": 0.9393,
@@ -49,23 +49,23 @@
       "weatherSummary": "concord-nh: 65F Sunny | worcester-ma: 66F Mostly Sunny | burlington-vt: 74F Mostly Cloudy | portland-me: 50F Sunny | albany-ny: 71F Mostly Cloudy | scranton-pa: 66F Chance Rain Showers"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.886,
+      "basePaceFromCurve": 0.902,
       "observedPaceCount": 1,
-      "blendedPaceAtNow": 0.886,
+      "blendedPaceAtNow": 0.902,
       "historyDays": 1,
       "avgHistoricalEOD": 1023405.7099999997
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 37558.426,
+      "estimatedCurrent": 38236.682,
       "estimatedEOD": 42391,
-      "paceUsed": 0.886,
+      "paceUsed": 0.902,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 28783,
-          "estimatedCurrent": 25501.738,
+          "estimatedCurrent": 25962.266,
           "estimatedEOD": 28783,
           "stdev": 0.4847
         },
@@ -73,16 +73,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 13608,
-          "estimatedCurrent": 12056.688,
+          "estimatedCurrent": 12274.416000000001,
           "estimatedEOD": 13608,
           "stdev": 0.1026
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1171388.4420763035,
-    "combinedCurrentSales": 1032926.1259999999,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $37,558 so far, +$42,391 to EOD."
+    "combinedProjectedEOD": 1201499.85774108,
+    "combinedCurrentSales": 1080418.7719999999,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $38,237 so far, +$42,391 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 16,
