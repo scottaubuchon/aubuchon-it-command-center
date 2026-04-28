@@ -1,16 +1,16 @@
 {
-  "updatedAt": "2026-04-28T08:14:29.436Z",
-  "updatedAtET": "Apr 28, 2026, 4:14 AM",
+  "updatedAt": "2026-04-28T08:30:16.498Z",
+  "updatedAtET": "Apr 28, 2026, 4:30 AM",
   "dateET": "2026-04-28",
   "dow": 2,
   "season": "spring",
   "source": "snowflake",
   "current": {
-    "ts": "2026-04-28T08:14:29.436Z",
-    "tsET": "Apr 28, 2026, 4:14 AM",
+    "ts": "2026-04-28T08:30:16.498Z",
+    "tsET": "Apr 28, 2026, 4:30 AM",
     "dateET": "2026-04-28",
     "hourET": 4,
-    "minuteET": 14,
+    "minuteET": 30,
     "dow": 2,
     "sales": 0,
     "plan": 1201208.18,
@@ -27,17 +27,17 @@
     "available": true,
     "method": "blended (w=0.04 shape + 0.96 level)",
     "confidence": "low",
-    "projectedEOD": 1126566.8661720238,
-    "projectedPctToPlan": 93.78614672537644,
-    "projectedVariance": -74641.31382797612,
+    "projectedEOD": 1126494.805811968,
+    "projectedPctToPlan": 93.78014773525501,
+    "projectedVariance": -74713.374188032,
     "band": {
-      "low": 903564.6725763824,
-      "high": 1349569.0597676653
+      "low": 903513.8549443401,
+      "high": 1349475.756679596
     },
-    "pctOfDayElapsed": 0.003447142857142857,
+    "pctOfDayElapsed": 0.0036642857142857145,
     "level_EOD": 1176021.7153529502,
     "shape_EOD": 0,
-    "blendWeight": 0.04205266666022733,
+    "blendWeight": 0.04211394134513755,
     "factors": {
       "plan": 1201208.18,
       "recencyFactor": 0.9393,
@@ -49,23 +49,23 @@
       "weatherSummary": "concord-nh: 36F Mostly Clear | worcester-ma: 40F Clear | burlington-vt: 49F Mostly Clear | portland-me: 39F Partly Cloudy | albany-ny: 45F Mostly Clear | scranton-pa: 45F Mostly Clear"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.003447142857142857,
+      "basePaceFromCurve": 0.0036642857142857145,
       "observedPaceCount": 0,
-      "blendedPaceAtNow": 0.003447142857142857,
+      "blendedPaceAtNow": 0.0036642857142857145,
       "historyDays": 0,
       "avgHistoricalEOD": null
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 146.12783285714286,
+      "estimatedCurrent": 155.33273571428572,
       "estimatedEOD": 42391,
-      "paceUsed": 0.003447142857142857,
+      "paceUsed": 0.0036642857142857145,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 28783,
-          "estimatedCurrent": 99.21911285714285,
+          "estimatedCurrent": 105.46913571428573,
           "estimatedEOD": 28783,
           "stdev": 0.4847
         },
@@ -73,16 +73,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 13608,
-          "estimatedCurrent": 46.908719999999995,
+          "estimatedCurrent": 49.863600000000005,
           "estimatedEOD": 13608,
           "stdev": 0.1026
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1168957.8661720238,
-    "combinedCurrentSales": 146.12783285714286,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $146 so far, +$42,391 to EOD."
+    "combinedProjectedEOD": 1168885.805811968,
+    "combinedCurrentSales": 155.33273571428572,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $155 so far, +$42,391 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 16,
@@ -109,7 +109,7 @@
         "temp": 40,
         "unit": "F",
         "short": "Clear",
-        "detailed": "Clear, with a low around 40. Northeast wind around 2 mph."
+        "detailed": "Clear, with a low around 40. North wind around 2 mph."
       },
       {
         "station": "burlington-vt",
@@ -117,7 +117,7 @@
         "temp": 49,
         "unit": "F",
         "short": "Mostly Clear",
-        "detailed": "Mostly clear, with a low around 49. Southeast wind 5 to 9 mph."
+        "detailed": "Mostly clear, with a low around 49. Southeast wind 6 to 9 mph."
       },
       {
         "station": "portland-me",
