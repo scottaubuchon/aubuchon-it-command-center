@@ -1,43 +1,43 @@
 {
-  "updatedAt": "2026-04-29T18:10:35.001Z",
-  "updatedAtET": "Apr 29, 2026, 2:10 PM",
+  "updatedAt": "2026-04-29T18:26:36.858Z",
+  "updatedAtET": "Apr 29, 2026, 2:26 PM",
   "dateET": "2026-04-29",
   "dow": 3,
   "season": "spring",
   "source": "snowflake",
   "current": {
-    "ts": "2026-04-29T18:10:35.001Z",
-    "tsET": "Apr 29, 2026, 2:10 PM",
+    "ts": "2026-04-29T18:26:36.858Z",
+    "tsET": "Apr 29, 2026, 2:26 PM",
     "dateET": "2026-04-29",
     "hourET": 14,
-    "minuteET": 10,
+    "minuteET": 26,
     "dow": 3,
-    "sales": 649030.08,
+    "sales": 688290.65,
     "plan": 1113954.99,
-    "pctToPlan": 58.26358208602306,
-    "gp": 279730.1771,
-    "gpPct": 43.099724607525125,
-    "txns": 18549,
-    "customers": 17239,
+    "pctToPlan": 61.7880126377458,
+    "gp": 296159.4374,
+    "gpPct": 43.028252294288755,
+    "txns": 19688,
+    "customers": 18330,
     "storeCount": 133,
     "asOf": null,
-    "asOfET": "Apr 29, 2:00 PM ET"
+    "asOfET": "Apr 29, 2:15 PM ET"
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.75 shape + 0.25 level)",
+    "method": "blended (w=0.80 shape + 0.20 level)",
     "confidence": "high",
-    "projectedEOD": 1061873.8032669649,
-    "projectedPctToPlan": 95.32465968548378,
-    "projectedVariance": -52081.18673303514,
+    "projectedEOD": 1065819.223142734,
+    "projectedPctToPlan": 95.67884095054272,
+    "projectedVariance": -48135.76685726596,
     "band": {
-      "low": 963435.7150751433,
-      "high": 1160311.8914587863
+      "low": 970301.0572282925,
+      "high": 1161337.3890571757
     },
-    "pctOfDayElapsed": 0.6106555053207199,
+    "pctOfDayElapsed": 0.6447135903513379,
     "level_EOD": 1058893.977172284,
-    "shape_EOD": 1062841.609295122,
-    "blendWeight": 0.7548388507231415,
+    "shape_EOD": 1067591.3464534145,
+    "blendWeight": 0.7962460540194456,
     "factors": {
       "plan": 1113954.99,
       "recencyFactor": 0.9393,
@@ -46,26 +46,26 @@
       "holidayMult": 1,
       "weatherKey": "normal",
       "weatherMult": 1,
-      "weatherSummary": "concord-nh: 62F Partly Sunny | worcester-ma: 64F Partly Sunny | burlington-vt: 71F Partly Sunny | portland-me: 47F Slight Chance Drizzle then Scattered Rain Showers | albany-ny: 71F Mostly Cloudy then Slight Chance Light Rain | scranton-pa: 63F Rain Showers"
+      "weatherSummary": "concord-nh: 61F Mostly Cloudy | worcester-ma: 64F Partly Sunny | burlington-vt: 71F Partly Sunny | portland-me: 47F Slight Chance Drizzle then Scattered Rain Showers | albany-ny: 71F Mostly Cloudy then Slight Chance Light Rain | scranton-pa: 63F Rain Showers"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.6348666666666667,
+      "basePaceFromCurve": 0.6751333333333334,
       "observedPaceCount": 2,
-      "blendedPaceAtNow": 0.6106555053207199,
+      "blendedPaceAtNow": 0.6447135903513379,
       "historyDays": 2,
       "avgHistoricalEOD": 1038700.2749999999
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 25542.498476555073,
+      "estimatedCurrent": 26967.08005721576,
       "estimatedEOD": 41828,
-      "paceUsed": 0.6106555053207199,
+      "paceUsed": 0.6447135903513379,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 26994,
-          "estimatedCurrent": 16484.03471062751,
+          "estimatedCurrent": 17403.398657944017,
           "estimatedEOD": 26994,
           "stdev": 0.4325
         },
@@ -73,16 +73,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 14834,
-          "estimatedCurrent": 9058.46376592756,
+          "estimatedCurrent": 9563.681399271747,
           "estimatedEOD": 14834,
           "stdev": 0.1986
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1103701.8032669649,
-    "combinedCurrentSales": 674572.5784765551,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $25,542 so far, +$41,828 to EOD."
+    "combinedProjectedEOD": 1107647.223142734,
+    "combinedCurrentSales": 715257.7300572158,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $26,967 so far, +$41,828 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 17,
@@ -90,7 +90,7 @@
     "mult": 1,
     "key": "normal",
     "season": "spring",
-    "summary": "concord-nh: 62F Partly Sunny | worcester-ma: 64F Partly Sunny | burlington-vt: 71F Partly Sunny | portland-me: 47F Slight Chance Drizzle then Scattered Rain Showers | albany-ny: 71F Mostly Cloudy then Slight Chance Light Rain | scranton-pa: 63F Rain Showers",
+    "summary": "concord-nh: 61F Mostly Cloudy | worcester-ma: 64F Partly Sunny | burlington-vt: 71F Partly Sunny | portland-me: 47F Slight Chance Drizzle then Scattered Rain Showers | albany-ny: 71F Mostly Cloudy then Slight Chance Light Rain | scranton-pa: 63F Rain Showers",
     "tagWeights": {
       "normal": 0.41600000000000004,
       "perfect_65_80F_dry": 0.224,
@@ -101,10 +101,10 @@
       {
         "station": "concord-nh",
         "weight": 0.144,
-        "temp": 62,
+        "temp": 61,
         "unit": "F",
-        "short": "Partly Sunny",
-        "detailed": "Partly sunny, with a high near 62. East wind 0 to 5 mph."
+        "short": "Mostly Cloudy",
+        "detailed": "Mostly cloudy, with a high near 61. Southeast wind 5 to 10 mph."
       },
       {
         "station": "worcester-ma",
@@ -144,7 +144,7 @@
         "temp": 63,
         "unit": "F",
         "short": "Rain Showers",
-        "detailed": "Rain showers after 2pm. Cloudy, with a high near 63. South wind around 9 mph. Chance of precipitation is 90%. New rainfall amounts less than a tenth of an inch possible."
+        "detailed": "Rain showers. Cloudy, with a high near 63. South wind around 9 mph. Chance of precipitation is 90%. New rainfall amounts less than a tenth of an inch possible."
       }
     ]
   }
