@@ -1,16 +1,16 @@
 {
-  "updatedAt": "2026-04-29T15:17:40.053Z",
-  "updatedAtET": "Apr 29, 2026, 11:17 AM",
+  "updatedAt": "2026-04-29T15:18:44.904Z",
+  "updatedAtET": "Apr 29, 2026, 11:18 AM",
   "dateET": "2026-04-29",
   "dow": 3,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-04-29T15:17:40.053Z",
-    "tsET": "Apr 29, 2026, 11:17 AM",
+    "ts": "2026-04-29T15:18:44.904Z",
+    "tsET": "Apr 29, 2026, 11:18 AM",
     "dateET": "2026-04-29",
     "hourET": 11,
-    "minuteET": 17,
+    "minuteET": 18,
     "dow": 3,
     "sales": 341420.07,
     "plan": 1113954.989999999,
@@ -25,19 +25,19 @@
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.33 shape + 0.67 level)",
+    "method": "blended (w=0.34 shape + 0.66 level)",
     "confidence": "medium",
-    "projectedEOD": 1072230.31406379,
-    "projectedPctToPlan": 96.25436608204349,
-    "projectedVariance": -41724.67593620904,
+    "projectedEOD": 1069004.6021934033,
+    "projectedPctToPlan": 95.96479317296331,
+    "projectedVariance": -44950.38780659577,
     "band": {
-      "low": 939217.6539969494,
-      "high": 1205242.9741306307
+      "low": 936736.760899691,
+      "high": 1201272.4434871157
     },
-    "pctOfDayElapsed": 0.35124666666666665,
+    "pctOfDayElapsed": 0.35402,
     "level_EOD": 1122427.61580262,
-    "shape_EOD": 972023.6585875074,
-    "blendWeight": 0.3337498737951175,
+    "shape_EOD": 964408.9881927575,
+    "blendWeight": 0.33808048087289283,
     "factors": {
       "plan": 1113954.989999999,
       "recencyFactor": 0.9393,
@@ -49,23 +49,23 @@
       "weatherSummary": "concord-nh: 62F Partly Sunny | worcester-ma: 66F Mostly Sunny | burlington-vt: 71F Partly Sunny | portland-me: 47F Slight Chance Drizzle then Scattered Rain Showers | albany-ny: 71F Mostly Cloudy then Slight Chance Light Rain | scranton-pa: 63F Cloudy then Chance Rain Showers"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.35124666666666665,
+      "basePaceFromCurve": 0.35402,
       "observedPaceCount": 1,
-      "blendedPaceAtNow": 0.35124666666666665,
+      "blendedPaceAtNow": 0.35402,
       "historyDays": 1,
       "avgHistoricalEOD": 1023405.7099999997
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 14691.945573333333,
+      "estimatedCurrent": 14807.94856,
       "estimatedEOD": 41828,
-      "paceUsed": 0.35124666666666665,
+      "paceUsed": 0.35402,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 26994,
-          "estimatedCurrent": 9481.55252,
+          "estimatedCurrent": 9556.41588,
           "estimatedEOD": 26994,
           "stdev": 0.4325
         },
@@ -73,16 +73,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 14834,
-          "estimatedCurrent": 5210.393053333333,
+          "estimatedCurrent": 5251.53268,
           "estimatedEOD": 14834,
           "stdev": 0.1986
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1114058.31406379,
-    "combinedCurrentSales": 356112.01557333337,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $14,692 so far, +$41,828 to EOD."
+    "combinedProjectedEOD": 1110832.6021934033,
+    "combinedCurrentSales": 356228.01856,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $14,808 so far, +$41,828 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 17,
@@ -128,7 +128,7 @@
         "temp": 47,
         "unit": "F",
         "short": "Slight Chance Drizzle then Scattered Rain Showers",
-        "detailed": "A slight chance of drizzle between 10am and 11am, then scattered rain showers between 3pm and 5pm, then patchy fog and scattered rain showers. Cloudy, with a high near 47. East wind 5 to 10 mph. Chance of precipitation is 50%. New rainfall amounts less than a tenth of an inch possible."
+        "detailed": "A slight chance of drizzle before 11am, then scattered rain showers between 3pm and 5pm, then patchy fog and scattered rain showers. Cloudy, with a high near 47. East wind 5 to 10 mph. Chance of precipitation is 50%. New rainfall amounts less than a tenth of an inch possible."
       },
       {
         "station": "albany-ny",
