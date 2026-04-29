@@ -1,12 +1,12 @@
 {
-  "updatedAt": "2026-04-29T12:52:07.971Z",
+  "updatedAt": "2026-04-29T12:52:52.253Z",
   "updatedAtET": "Apr 29, 2026, 8:52 AM",
   "dateET": "2026-04-29",
   "dow": 3,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-04-29T12:52:07.971Z",
+    "ts": "2026-04-29T12:52:52.253Z",
     "tsET": "Apr 29, 2026, 8:52 AM",
     "dateET": "2026-04-29",
     "hourET": 8,
@@ -136,7 +136,7 @@
         "temp": 71,
         "unit": "F",
         "short": "Partly Sunny then Slight Chance Light Rain",
-        "detailed": "A slight chance of rain after 5pm. Partly sunny, with a high near 71. South wind 3 to 10 mph. Chance of precipitation is 20%."
+        "detailed": "A slight chance of rain after 5pm. Partly sunny, with a high near 71. South wind 5 to 10 mph. Chance of precipitation is 20%."
       },
       {
         "station": "scranton-pa",
