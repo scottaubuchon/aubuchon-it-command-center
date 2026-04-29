@@ -1,16 +1,16 @@
 {
-  "updatedAt": "2026-04-29T00:32:04.254Z",
-  "updatedAtET": "Apr 28, 2026, 8:32 PM",
+  "updatedAt": "2026-04-29T00:47:42.726Z",
+  "updatedAtET": "Apr 28, 2026, 8:47 PM",
   "dateET": "2026-04-28",
   "dow": 2,
   "season": "spring",
   "source": "snowflake",
   "current": {
-    "ts": "2026-04-29T00:32:04.254Z",
-    "tsET": "Apr 28, 2026, 8:32 PM",
+    "ts": "2026-04-29T00:47:42.726Z",
+    "tsET": "Apr 28, 2026, 8:47 PM",
     "dateET": "2026-04-28",
     "hourET": 20,
-    "minuteET": 32,
+    "minuteET": 47,
     "dow": 2,
     "sales": 1198215.67,
     "plan": 1201208.18,
@@ -21,7 +21,7 @@
     "customers": 32087,
     "storeCount": 134,
     "asOf": null,
-    "asOfET": "Apr 28, 8:15 PM ET"
+    "asOfET": "Apr 28, 8:30 PM ET"
   },
   "prediction": {
     "available": true,
@@ -50,10 +50,10 @@
     },
     "shapeDetail": {
       "basePaceFromCurve": 1,
-      "observedPaceCount": 0,
+      "observedPaceCount": 1,
       "blendedPaceAtNow": 1,
-      "historyDays": 0,
-      "avgHistoricalEOD": null
+      "historyDays": 1,
+      "avgHistoricalEOD": 1023405.71
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
@@ -134,7 +134,7 @@
         "temp": 49,
         "unit": "F",
         "short": "Mostly Cloudy",
-        "detailed": "Mostly cloudy, with a low around 49. South wind around 8 mph, with gusts as high as 21 mph."
+        "detailed": "Mostly cloudy, with a low around 49. South wind around 6 mph."
       },
       {
         "station": "scranton-pa",
