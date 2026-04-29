@@ -1,43 +1,43 @@
 {
-  "updatedAt": "2026-04-28T23:59:42.366Z",
-  "updatedAtET": "Apr 28, 2026, 7:59 PM",
+  "updatedAt": "2026-04-29T00:15:25.300Z",
+  "updatedAtET": "Apr 28, 2026, 8:15 PM",
   "dateET": "2026-04-28",
   "dow": 2,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-04-28T23:59:42.366Z",
-    "tsET": "Apr 28, 2026, 7:59 PM",
+    "ts": "2026-04-29T00:15:25.300Z",
+    "tsET": "Apr 28, 2026, 8:15 PM",
     "dateET": "2026-04-28",
-    "hourET": 19,
-    "minuteET": 59,
+    "hourET": 20,
+    "minuteET": 15,
     "dow": 2,
-    "sales": 1197792.2499999998,
+    "sales": 1198048.0299999996,
     "plan": 1201208.1800000002,
-    "pctToPlan": 99.71562547967328,
-    "gp": 509826.59349999996,
-    "gpPct": 42.56385808974804,
-    "txns": 34588,
-    "customers": 32064,
+    "pctToPlan": 99.73691904096086,
+    "gp": 509911.1756999999,
+    "gpPct": 42.561830822425385,
+    "txns": 34605,
+    "customers": 32080,
     "storeCount": 134,
-    "asOf": "2026-04-28T23:45:06.433000",
-    "asOfET": "Apr 28, 2026, 7:45 PM"
+    "asOf": "2026-04-29T00:00:08.373000",
+    "asOfET": "Apr 28, 2026, 8:00 PM"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.98 shape + 0.02 level)",
     "confidence": "medium",
-    "projectedEOD": 1197533.6134242085,
-    "projectedPctToPlan": 99.69409410983268,
-    "projectedVariance": -3674.566575791687,
+    "projectedEOD": 1197589.0821195366,
+    "projectedPctToPlan": 99.69871185189035,
+    "projectedVariance": -3619.0978804635815,
     "band": {
-      "low": 1073937.411965075,
-      "high": 1321129.8148833418
+      "low": 1073990.0393299886,
+      "high": 1321188.1249090845
     },
-    "pctOfDayElapsed": 0.9998333333333334,
+    "pctOfDayElapsed": 1,
     "level_EOD": 1176021.7153529504,
-    "shape_EOD": 1197991.9153192197,
-    "blendWeight": 0.9791398396138965,
+    "shape_EOD": 1198048.0299999996,
+    "blendWeight": 0.9791636554813196,
     "factors": {
       "plan": 1201208.1800000002,
       "recencyFactor": 0.9393,
@@ -49,23 +49,23 @@
       "weatherSummary": "concord-nh: 37F Mostly Cloudy | worcester-ma: 38F Mostly Cloudy | burlington-vt: 50F Mostly Cloudy | portland-me: 41F Mostly Cloudy then Slight Chance Rain Showers | albany-ny: 49F Mostly Cloudy | scranton-pa: 48F Mostly Cloudy"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.9998333333333334,
+      "basePaceFromCurve": 1,
       "observedPaceCount": 1,
-      "blendedPaceAtNow": 0.9998333333333334,
+      "blendedPaceAtNow": 1,
       "historyDays": 1,
       "avgHistoricalEOD": 1023405.7099999997
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 42383.93483333333,
+      "estimatedCurrent": 42391,
       "estimatedEOD": 42391,
-      "paceUsed": 0.9998333333333334,
+      "paceUsed": 1,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 28783,
-          "estimatedCurrent": 28778.202833333333,
+          "estimatedCurrent": 28783,
           "estimatedEOD": 28783,
           "stdev": 0.4847
         },
@@ -73,16 +73,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 13608,
-          "estimatedCurrent": 13605.732,
+          "estimatedCurrent": 13608,
           "estimatedEOD": 13608,
           "stdev": 0.1026
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1239924.6134242085,
-    "combinedCurrentSales": 1240176.1848333331,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $42,384 so far, +$42,391 to EOD."
+    "combinedProjectedEOD": 1239980.0821195366,
+    "combinedCurrentSales": 1240439.0299999996,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $42,391 so far, +$42,391 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 16,
@@ -142,7 +142,7 @@
         "temp": 48,
         "unit": "F",
         "short": "Mostly Cloudy",
-        "detailed": "Mostly cloudy, with a low around 48. South wind 2 to 7 mph."
+        "detailed": "Mostly cloudy, with a low around 48. South wind 2 to 6 mph."
       }
     ]
   }
