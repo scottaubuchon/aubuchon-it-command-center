@@ -1,43 +1,43 @@
 {
-  "updatedAt": "2026-04-29T23:28:03.436Z",
-  "updatedAtET": "Apr 29, 2026, 7:28 PM",
+  "updatedAt": "2026-04-29T23:43:40.430Z",
+  "updatedAtET": "Apr 29, 2026, 7:43 PM",
   "dateET": "2026-04-29",
   "dow": 3,
   "season": "spring",
   "source": "snowflake",
   "current": {
-    "ts": "2026-04-29T23:28:03.436Z",
-    "tsET": "Apr 29, 2026, 7:28 PM",
+    "ts": "2026-04-29T23:43:40.430Z",
+    "tsET": "Apr 29, 2026, 7:43 PM",
     "dateET": "2026-04-29",
     "hourET": 19,
-    "minuteET": 28,
+    "minuteET": 43,
     "dow": 3,
-    "sales": 1071163.57,
+    "sales": 1071221.73,
     "plan": 1113954.99,
-    "pctToPlan": 96.15860421793165,
-    "gp": 456503.716,
-    "gpPct": 42.617554291918275,
-    "txns": 32098,
-    "customers": 29752,
+    "pctToPlan": 96.16382525473493,
+    "gp": 456464.8045,
+    "gpPct": 42.61160800948278,
+    "txns": 32124,
+    "customers": 29764,
     "storeCount": 133,
     "asOf": null,
-    "asOfET": "Apr 29, 7:15 PM ET"
+    "asOfET": "Apr 29, 7:30 PM ET"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.98 shape + 0.02 level)",
     "confidence": "high",
-    "projectedEOD": 1081961.7961844234,
-    "projectedPctToPlan": 97.12796350815066,
-    "projectedVariance": -31993.19381557661,
+    "projectedEOD": 1081276.642470266,
+    "projectedPctToPlan": 97.06645709897722,
+    "projectedVariance": -32678.34752973402,
     "band": {
-      "low": 999584.3149506765,
-      "high": 1164339.2774181701
+      "low": 998960.0890660128,
+      "high": 1163593.195874519
     },
-    "pctOfDayElapsed": 0.9877383371004215,
+    "pctOfDayElapsed": 0.9884420590228171,
     "level_EOD": 974182.4589985013,
-    "shape_EOD": 1084460.86353647,
-    "blendWeight": 0.9773385608676786,
+    "shape_EOD": 1083747.621038121,
+    "blendWeight": 0.9774474064396361,
     "factors": {
       "plan": 1113954.99,
       "recencyFactor": 0.9393,
@@ -49,23 +49,23 @@
       "weatherSummary": "concord-nh: 43F Cloudy then Scattered Rain Showers | worcester-ma: 45F Patchy Fog | burlington-vt: 50F Chance Rain Showers then Rain | portland-me: 43F Patchy Fog then Light Rain | albany-ny: 48F Rain Showers | scranton-pa: 47F Rain Showers"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.9983866666666666,
+      "basePaceFromCurve": 0.99922,
       "observedPaceCount": 2,
-      "blendedPaceAtNow": 0.9877383371004215,
+      "blendedPaceAtNow": 0.9884420590228171,
       "historyDays": 2,
       "avgHistoricalEOD": 1038700.2749999999
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 41315.11916423643,
+      "estimatedCurrent": 41344.554444806396,
       "estimatedEOD": 41828,
-      "paceUsed": 0.9877383371004215,
+      "paceUsed": 0.9884420590228171,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 26994,
-          "estimatedCurrent": 26663.008671688778,
+          "estimatedCurrent": 26682.004941261926,
           "estimatedEOD": 26994,
           "stdev": 0.4325
         },
@@ -73,16 +73,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 14834,
-          "estimatedCurrent": 14652.110492547652,
+          "estimatedCurrent": 14662.54950354447,
           "estimatedEOD": 14834,
           "stdev": 0.1986
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1123789.7961844234,
-    "combinedCurrentSales": 1112478.6891642364,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $41,315 so far, +$41,828 to EOD."
+    "combinedProjectedEOD": 1123104.642470266,
+    "combinedCurrentSales": 1112566.2844448064,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $41,345 so far, +$41,828 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 17,
