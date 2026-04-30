@@ -1,7 +1,7 @@
 {
-  "version": 18,
-  "generatedAt": "2026-04-28",
-  "sourceDates": "2026-04-15..2026-04-28",
+  "version": 19,
+  "generatedAt": "2026-04-30",
+  "sourceDates": "2026-04-15..2026-04-29",
   "description": "Plan-anchored Aubuchon EOD forecast baseline. forecast = plan * recencyFactor * holidayMult * weatherMult. See log-live-sales.js for the blending logic with the pace-curve shape projection.",
   "recencyFactor": 0.9393,
   "recencyStdev": 0.093,
@@ -363,39 +363,33 @@
     ]
   ],
   "learningLog": {
-    "updatedAt": "2026-04-30T13:51:11.492414-04:00",
-    "daysOfData": 14,
-    "dowsUpdated": [
-      0,
-      1,
-      2,
-      3,
-      4,
-      5,
-      6
-    ],
+    "updatedAt": "2026-04-30T19:42:37.101500-04:00",
+    "daysOfData": 15,
+    "dowsUpdated": [],
     "holidayUpdated": null,
-    "recencyMessage": "unchanged (insufficient data <20 days, have 14); observed trimmed mean = 0.9718 (Snowflake-authoritative prior preserved)",
+    "recencyMessage": "unchanged (insufficient data <20 days, have 15); recencyFactor preserved at 0.9393 from prior Snowflake-anchored manual rerun",
     "lookbackApplied": true,
-    "lookbackMethod": "Cross-file asOfET-bucketed snapshots; latest cross-file snapshot per sales_date used as canonical EOD (handles late-reporting stores up to 2 weeks delay)",
-    "schemaNote": "EOD = max(sales) across all same-day valid snapshots (incl. late-night recovery h22+); pace bucketing limited to 07:00..21:30; drops snapshots where asOfET date\u2260dateET (stale YODA pre-rollover) or storeCount=0/plan=0",
-    "manualRerun": "User-triggered manual rerun after token rotation; same input data as v17 \u2014 re-blend nudges curves further toward observed"
+    "lookbackMethod": "Snowflake total_net_sales_gl from PRD_EDW_DB.SI_AGENTS.AUBUCHON_RETAIL_ANALYTICS as authoritative EOD; YODA EOD = max(sales) across all cross-file snapshots where asOfET-parsed-date == sales_date and storeCount>0/plan>0",
+    "schemaNote": "Nightly tune at 21:33 ET. Refreshed lookbackDelta over trailing 15 days; left recencyFactor, dowPlanRatio, dowPaceCurve, holidayMult, weatherPriors untouched (pending full self-tune logic).",
+    "previousVersion": 18,
+    "previousLookbackDates": "2026-04-15..2026-04-26",
+    "snowflakeQueryId": "01c410ab-0a11-6921-0003-347a15e5ed22"
   },
   "lookbackDelta": {
     "2026-04-15": {
       "yodaEOD": 1053994.84,
       "snowflakeEOD": 1054969.71,
-      "delta": 974.87,
-      "deltaPct": 0.092,
+      "delta": -974.87,
+      "deltaPct": -0.092,
       "yodaStores": 134,
       "snowflakeStores": 134,
       "missingStoresInYoda": 0
     },
     "2026-04-16": {
-      "yodaEOD": 1035694.45,
+      "yodaEOD": 1042549.54,
       "snowflakeEOD": 1046471.77,
-      "delta": 10777.32,
-      "deltaPct": 1.03,
+      "delta": -3922.23,
+      "deltaPct": -0.375,
       "yodaStores": 134,
       "snowflakeStores": 134,
       "missingStoresInYoda": 0
@@ -403,17 +397,17 @@
     "2026-04-17": {
       "yodaEOD": 1211604.37,
       "snowflakeEOD": 1215075.08,
-      "delta": 3470.71,
-      "deltaPct": 0.286,
+      "delta": -3470.71,
+      "deltaPct": -0.286,
       "yodaStores": 134,
       "snowflakeStores": 134,
       "missingStoresInYoda": 0
     },
     "2026-04-18": {
-      "yodaEOD": 1782361.58,
+      "yodaEOD": 1782386.38,
       "snowflakeEOD": 1776905.45,
-      "delta": -5456.13,
-      "deltaPct": -0.307,
+      "delta": 5480.93,
+      "deltaPct": 0.308,
       "yodaStores": 134,
       "snowflakeStores": 134,
       "missingStoresInYoda": 0
@@ -421,8 +415,8 @@
     "2026-04-19": {
       "yodaEOD": 811882.41,
       "snowflakeEOD": 818439.87,
-      "delta": 6557.46,
-      "deltaPct": 0.801,
+      "delta": -6557.46,
+      "deltaPct": -0.801,
       "yodaStores": 133,
       "snowflakeStores": 134,
       "missingStoresInYoda": 1
@@ -430,8 +424,8 @@
     "2026-04-20": {
       "yodaEOD": 1015170.48,
       "snowflakeEOD": 1016619.04,
-      "delta": 1448.56,
-      "deltaPct": 0.142,
+      "delta": -1448.56,
+      "deltaPct": -0.142,
       "yodaStores": 134,
       "snowflakeStores": 134,
       "missingStoresInYoda": 0
@@ -439,55 +433,82 @@
     "2026-04-21": {
       "yodaEOD": 1023405.71,
       "snowflakeEOD": 1023251.03,
-      "delta": -154.68,
-      "deltaPct": -0.015,
+      "delta": 154.68,
+      "deltaPct": 0.015,
       "yodaStores": 134,
       "snowflakeStores": 134,
       "missingStoresInYoda": 0
     },
     "2026-04-22": {
-      "yodaEOD": 935325.9,
+      "yodaEOD": 937050.21,
       "snowflakeEOD": 936970.56,
-      "delta": 1644.66,
-      "deltaPct": 0.176,
+      "delta": 79.65,
+      "deltaPct": 0.009,
       "yodaStores": 134,
       "snowflakeStores": 134,
       "missingStoresInYoda": 0
     },
     "2026-04-23": {
-      "yodaEOD": 1083366.24,
+      "yodaEOD": 1086487.35,
       "snowflakeEOD": 1089987.68,
-      "delta": 6621.44,
-      "deltaPct": 0.607,
+      "delta": -3500.33,
+      "deltaPct": -0.321,
       "yodaStores": 134,
       "snowflakeStores": 134,
       "missingStoresInYoda": 0
     },
     "2026-04-24": {
-      "yodaEOD": 1245465.11,
+      "yodaEOD": 1245499.63,
       "snowflakeEOD": 1242737.96,
-      "delta": -2727.15,
-      "deltaPct": -0.219,
+      "delta": 2761.67,
+      "deltaPct": 0.222,
       "yodaStores": 134,
       "snowflakeStores": 134,
       "missingStoresInYoda": 0
     },
     "2026-04-25": {
-      "yodaEOD": 1651786.29,
+      "yodaEOD": 1651841.22,
       "snowflakeEOD": 1644539.61,
-      "delta": -7246.68,
-      "deltaPct": -0.441,
+      "delta": 7301.61,
+      "deltaPct": 0.444,
       "yodaStores": 133,
       "snowflakeStores": 133,
       "missingStoresInYoda": 0
     },
     "2026-04-26": {
-      "yodaEOD": 1426121.22,
+      "yodaEOD": 1434666.99,
       "snowflakeEOD": 1424844.61,
-      "delta": -1276.61,
-      "deltaPct": -0.09,
+      "delta": 9822.38,
+      "deltaPct": 0.689,
       "yodaStores": 134,
       "snowflakeStores": 134,
+      "missingStoresInYoda": 0
+    },
+    "2026-04-27": {
+      "yodaEOD": 1272647.7,
+      "snowflakeEOD": 1269943.56,
+      "delta": 2704.14,
+      "deltaPct": 0.213,
+      "yodaStores": 134,
+      "snowflakeStores": 134,
+      "missingStoresInYoda": 0
+    },
+    "2026-04-28": {
+      "yodaEOD": 1198433.34,
+      "snowflakeEOD": 1197812.97,
+      "delta": 620.37,
+      "deltaPct": 0.052,
+      "yodaStores": 134,
+      "snowflakeStores": 134,
+      "missingStoresInYoda": 0
+    },
+    "2026-04-29": {
+      "yodaEOD": 1071865.81,
+      "snowflakeEOD": 1071503.69,
+      "delta": 362.12,
+      "deltaPct": 0.034,
+      "yodaStores": 133,
+      "snowflakeStores": 133,
       "missingStoresInYoda": 0
     }
   }
