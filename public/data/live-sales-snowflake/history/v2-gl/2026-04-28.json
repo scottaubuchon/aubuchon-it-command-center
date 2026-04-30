@@ -3,14 +3,14 @@
   "storeFilter": null,
   "dateFilter": "2026-04-28",
   "companyTotal": {
-    "sales": 1185820.63,
+    "sales": 1197812.97,
     "plan": 1201208.18,
-    "gp": 558404.14,
-    "gpPct": 47.09010164547399,
-    "txns": 31085,
+    "gp": 564649.73,
+    "gpPct": 47.1400581010573,
+    "txns": 31552,
     "customers": 0,
-    "storeCount": 133,
-    "pctToPlan": 98.71899390495325
+    "storeCount": 134,
+    "pctToPlan": 99.71735040965173
   },
   "topStores": [
     {
@@ -218,7 +218,7 @@
     {
       "sku": "25",
       "product": "MIDWEST NUTS & BOLTS",
-      "sales": 18993.33
+      "sales": 19273.77
     },
     {
       "sku": "500808",
@@ -238,17 +238,17 @@
     {
       "sku": "114960",
       "product": "BLACK SCOTTS MULCH",
-      "sales": 5080.35
+      "sales": 5102.67
     },
     {
       "sku": "133666",
       "product": "BROWN SCOTTS MULCH",
-      "sales": 4846.82
+      "sales": 4860.14
     },
     {
       "sku": "105",
       "product": "PROPANE, TANK, EX 20LB",
-      "sales": 4570.64
+      "sales": 4620.61
     },
     {
       "sku": "792745",
@@ -258,12 +258,12 @@
     {
       "sku": "792739",
       "product": "WOODLUXE WB D/S STN SLD B1 GL",
-      "sales": 3551.19
+      "sales": 3626.18
     },
     {
       "sku": "225006",
       "product": "PREMIUM TOP SOIL .75CF",
-      "sales": 3503.3
+      "sales": 3538.23
     },
     {
       "sku": "134239",
@@ -271,14 +271,14 @@
       "sales": 3319.89
     },
     {
+      "sku": "937435",
+      "product": ".75CU.FT MG GARDEN SOIL",
+      "sales": 3192.74
+    },
+    {
       "sku": "1227920217000751",
       "product": "Window 35-1/2x52-7/8 see line",
       "sales": 3188.96
-    },
-    {
-      "sku": "937435",
-      "product": ".75CU.FT MG GARDEN SOIL",
-      "sales": 3180.24
     },
     {
       "sku": "500816",
@@ -293,7 +293,7 @@
     {
       "sku": "116766",
       "product": "COMPOST,LBSTR,QUODDY 1CFT-",
-      "sales": 3036.48
+      "sales": 3092.44
     },
     {
       "sku": "fee-50",
@@ -331,6 +331,11 @@
       "sales": 2471.83
     },
     {
+      "sku": "103080",
+      "product": "ANT BAITS, TERRO LIQUID, 6-PK",
+      "sales": 2365.55
+    },
+    {
       "sku": "825446",
       "product": "SPIRIT E-210LP BLK",
       "sales": 2360.2
@@ -339,11 +344,6 @@
       "sku": "498990",
       "product": "CULVERT 18INX20FT",
       "sales": 2357.38
-    },
-    {
-      "sku": "103080",
-      "product": "ANT BAITS, TERRO LIQUID, 6-PK",
-      "sales": 2338.58
     },
     {
       "sku": "161927",
@@ -371,6 +371,11 @@
       "sales": 1996
     },
     {
+      "sku": "705228",
+      "product": "TRUFUEL 50:1 2CYCLE 110 OZ",
+      "sales": 1938.89
+    },
+    {
       "sku": "770743",
       "product": "12M TB WEED&FEED",
       "sales": 1935.43
@@ -386,24 +391,19 @@
       "sales": 1885.4
     },
     {
-      "sku": "705228",
-      "product": "TRUFUEL 50:1 2CYCLE 110 OZ",
-      "sales": 1854.81
+      "sku": "189542",
+      "product": "5/8 X 100' ZERO-G LIGHTWEIGHT",
+      "sales": 1882.82
+    },
+    {
+      "sku": "122385",
+      "product": "CEILING,WTRBORN,WHT.1G #N50809",
+      "sales": 1869.16
     },
     {
       "sku": "385678",
       "product": "RAPID GRASS, SUNSHADE 16LB",
       "sales": 1819.64
-    },
-    {
-      "sku": "189542",
-      "product": "5/8 X 100' ZERO-G LIGHTWEIGHT",
-      "sales": 1812.83
-    },
-    {
-      "sku": "122385",
-      "product": "CEILING,WTRBORN,WHT.1G #N50809",
-      "sales": 1811.17
     },
     {
       "sku": "781035",
@@ -421,14 +421,14 @@
       "sales": 1726.28
     },
     {
+      "sku": "126462",
+      "product": "SOIL,POTTING,BAR HARBOR 1CFT-",
+      "sales": 1710.13
+    },
+    {
       "sku": "791939",
       "product": "GEN SA-E-325 LP INDIGO",
       "sales": 1698
-    },
-    {
-      "sku": "126462",
-      "product": "SOIL,POTTING,BAR HARBOR 1CFT-",
-      "sales": 1693.14
     },
     {
       "sku": "122347",
@@ -448,7 +448,7 @@
     {
       "sku": "101600",
       "product": "40LB PELLETIZED LIME",
-      "sales": 1677.37
+      "sales": 1680.36
     },
     {
       "sku": "168187",
@@ -491,19 +491,29 @@
       "sales": 1502.52
     },
     {
+      "sku": "385672",
+      "product": "RAPID GRASS, SUN/SHADE 5.6LB",
+      "sales": 1499.9
+    },
+    {
+      "sku": "215756",
+      "product": "KEY BLANK,SCHLAGE SC1-AUB",
+      "sales": 1483.36
+    },
+    {
       "sku": "944662",
       "product": "1.5CF SCOTTS LAWN SOIL",
       "sales": 1458.75
     },
     {
-      "sku": "385672",
-      "product": "RAPID GRASS, SUN/SHADE 5.6LB",
-      "sales": 1457.91
-    },
-    {
       "sku": "364141",
       "product": "5/4X6X16 PREM PT DECKING",
       "sales": 1439.2
+    },
+    {
+      "sku": "262844",
+      "product": "TURF BUILDER TRIPLE ACTION 12K",
+      "sales": 1421.25
     },
     {
       "sku": "110112",
@@ -516,14 +526,14 @@
       "sales": 1407.25
     },
     {
-      "sku": "215756",
-      "product": "KEY BLANK,SCHLAGE SC1-AUB",
-      "sales": 1399.5
-    },
-    {
       "sku": "524688",
       "product": "GRASS SEED, EZ-SEED 10LB",
       "sales": 1388.12
+    },
+    {
+      "sku": "102835",
+      "product": "1CF/25QT MG POTTING MIX",
+      "sales": 1385.33
     },
     {
       "sku": "637557",
@@ -546,11 +556,6 @@
       "sales": 1363.35
     },
     {
-      "sku": "102835",
-      "product": "1CF/25QT MG POTTING MIX",
-      "sales": 1362.35
-    },
-    {
       "sku": "500800",
       "product": "REGAL,SLCT.S.GLS,PSTL.1G#5511X",
       "sales": 1351.8
@@ -564,11 +569,6 @@
       "sku": "932620",
       "product": "BOMOL  OIL TONE 5G",
       "sales": 1322.97
-    },
-    {
-      "sku": "262844",
-      "product": "TURF BUILDER TRIPLE ACTION 12K",
-      "sales": 1311.26
     },
     {
       "sku": "116769",
@@ -598,7 +598,7 @@
     {
       "sku": "901",
       "product": "DUMP SKU 901",
-      "sales": 1225.32
+      "sales": 1225.33
     },
     {
       "sku": "500806",
@@ -641,6 +641,11 @@
       "sales": 1170.02
     },
     {
+      "sku": "129878",
+      "product": "REGAL,SLCT.S.GLS,WHT.1G #55101",
+      "sales": 1163.99
+    },
+    {
       "sku": "791908",
       "product": "GEN SA-E-330 LP INDIGO",
       "sales": 1149
@@ -649,6 +654,11 @@
       "sku": "126467",
       "product": "3CF DARK BROWN CEDAR MULCH",
       "sales": 1138.91
+    },
+    {
+      "sku": "211292",
+      "product": "KEY BLANK,KWIKSET KW1-AUB",
+      "sales": 1123.57
     },
     {
       "sku": "212779",
@@ -676,19 +686,9 @@
       "sales": 1113.34
     },
     {
-      "sku": "129878",
-      "product": "REGAL,SLCT.S.GLS,WHT.1G #55101",
-      "sales": 1107.46
-    },
-    {
       "sku": "333096",
       "product": "ELEMENT GUARD EXT L LUST WH GL",
       "sales": 1106.88
-    },
-    {
-      "sku": "211292",
-      "product": "KEY BLANK,KWIKSET KW1-AUB",
-      "sales": 1105.6
     },
     {
       "sku": "333100",
@@ -1554,13 +1554,6 @@
       "city": "Ithaca",
       "state": "NY",
       "plan": 17602.34
-    },
-    {
-      "store": "155",
-      "name": "SANDWICH, MA - (IND)",
-      "city": "Sandwich",
-      "state": "MA",
-      "plan": 3575.39
     }
   ],
   "estimatedMissing": {
@@ -1584,25 +1577,16 @@
         "plan": 17602.34,
         "estimatedCurrent": 13704.6725,
         "estimatedEOD": 13704.6725
-      },
-      {
-        "store": "155",
-        "dowAvg": 2682.88375,
-        "samples": 8,
-        "basis": "dowAvg",
-        "plan": 3575.39,
-        "estimatedCurrent": 2682.88375,
-        "estimatedEOD": 2682.88375
       }
     ],
-    "totalEstimatedCurrent": 49386.48910714,
-    "totalEstimatedEOD": 49386.48910714,
-    "projectedCompanyEOD": 1235207.11910714,
-    "projectedCompanyCurrent": 1235207.11910714
+    "totalEstimatedCurrent": 46703.60535714,
+    "totalEstimatedEOD": 46703.60535714,
+    "projectedCompanyEOD": 1244516.57535714,
+    "projectedCompanyCurrent": 1244516.57535714
   },
   "asOfET": "End of day · 2026-04-28",
   "cached": true,
-  "refreshedAt": "2026-04-29T23:05:31.243Z",
+  "refreshedAt": "2026-04-30T11:35:05.808Z",
   "source": "snowflake",
-  "cachedAt": "2026-04-29T23:05:31.243Z"
+  "cachedAt": "2026-04-30T11:35:05.809Z"
 }
