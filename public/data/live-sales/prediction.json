@@ -1,43 +1,43 @@
 {
-  "updatedAt": "2026-04-30T21:00:18.847Z",
-  "updatedAtET": "Apr 30, 2026, 5:00 PM",
+  "updatedAt": "2026-04-30T21:16:04.920Z",
+  "updatedAtET": "Apr 30, 2026, 5:16 PM",
   "dateET": "2026-04-30",
   "dow": 4,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-04-30T21:00:18.847Z",
-    "tsET": "Apr 30, 2026, 5:00 PM",
+    "ts": "2026-04-30T21:16:04.920Z",
+    "tsET": "Apr 30, 2026, 5:16 PM",
     "dateET": "2026-04-30",
     "hourET": 17,
-    "minuteET": 0,
+    "minuteET": 16,
     "dow": 4,
-    "sales": 795568.9199999999,
+    "sales": 811512.8500000002,
     "plan": 1248058.8500000003,
-    "pctToPlan": 63.74450371470862,
-    "gp": 337138.12509999983,
-    "gpPct": 42.376985403099944,
-    "txns": 23451,
-    "customers": 21745,
+    "pctToPlan": 65.02200196729505,
+    "gp": 343459.4567000003,
+    "gpPct": 42.32335405409787,
+    "txns": 23872,
+    "customers": 22145,
     "storeCount": 134,
-    "asOf": "2026-04-30T20:45:13.973000",
-    "asOfET": "Apr 30, 2026, 4:45 PM"
+    "asOf": "2026-04-30T21:00:14.680000",
+    "asOfET": "Apr 30, 2026, 5:00 PM"
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.95 shape + 0.05 level)",
+    "method": "blended (w=0.96 shape + 0.04 level)",
     "confidence": "high",
-    "projectedEOD": 911087.5795871583,
-    "projectedPctToPlan": 73.00037010171098,
-    "projectedVariance": -336971.27041284204,
+    "projectedEOD": 905513.1378419688,
+    "projectedPctToPlan": 72.55372115200886,
+    "projectedVariance": -342545.7121580315,
     "band": {
-      "low": 808802.1569932458,
-      "high": 1013373.0021810707
+      "low": 804453.181876461,
+      "high": 1006573.0938074766
     },
-    "pctOfDayElapsed": 0.8853747877351288,
+    "pctOfDayElapsed": 0.9071859673303331,
     "level_EOD": 1174827.98792067,
-    "shape_EOD": 898567.3988245581,
-    "blendWeight": 0.9546798158812139,
+    "shape_EOD": 894538.5832941401,
+    "blendWeight": 0.9608456318124057,
     "factors": {
       "plan": 1248058.8500000003,
       "recencyFactor": 0.9393,
@@ -46,26 +46,26 @@
       "holidayMult": 1,
       "weatherKey": "rain_gt_0_5in",
       "weatherMult": 0.95,
-      "weatherSummary": "concord-nh: 52F Light Rain Likely | worcester-ma: 56F Slight Chance Rain Showers | burlington-vt: 53F Chance Rain Showers | portland-me: 50F Light Rain | albany-ny: 58F Partly Sunny | scranton-pa: 58F Partly Sunny"
+      "weatherSummary": "concord-nh: 52F Light Rain Likely | worcester-ma: 56F Slight Chance Rain Showers | burlington-vt: 53F Cloudy | portland-me: 50F Light Rain | albany-ny: 58F Partly Sunny | scranton-pa: 58F Partly Sunny"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.8942,
+      "basePaceFromCurve": 0.9185733333333334,
       "observedPaceCount": 2,
-      "blendedPaceAtNow": 0.8853747877351288,
+      "blendedPaceAtNow": 0.9071859673303331,
       "historyDays": 2,
       "avgHistoricalEOD": 1068680.5399999998
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 40690.939869518785,
+      "estimatedCurrent": 41693.35987253478,
       "estimatedEOD": 45959,
-      "paceUsed": 0.8853747877351288,
+      "paceUsed": 0.9071859673303331,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 30687,
-          "estimatedCurrent": 27169.496111227898,
+          "estimatedCurrent": 27838.81577946593,
           "estimatedEOD": 30687,
           "stdev": 0.3949
         },
@@ -73,16 +73,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 15272,
-          "estimatedCurrent": 13521.443758290887,
+          "estimatedCurrent": 13854.544093068847,
           "estimatedEOD": 15272,
           "stdev": 0.1435
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 957046.5795871583,
-    "combinedCurrentSales": 836259.8598695187,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $40,691 so far, +$45,959 to EOD."
+    "combinedProjectedEOD": 951472.1378419688,
+    "combinedCurrentSales": 853206.209872535,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $41,693 so far, +$45,959 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 18,
@@ -90,7 +90,7 @@
     "mult": 0.95,
     "key": "rain_gt_0_5in",
     "season": "spring",
-    "summary": "concord-nh: 52F Light Rain Likely | worcester-ma: 56F Slight Chance Rain Showers | burlington-vt: 53F Chance Rain Showers | portland-me: 50F Light Rain | albany-ny: 58F Partly Sunny | scranton-pa: 58F Partly Sunny",
+    "summary": "concord-nh: 52F Light Rain Likely | worcester-ma: 56F Slight Chance Rain Showers | burlington-vt: 53F Cloudy | portland-me: 50F Light Rain | albany-ny: 58F Partly Sunny | scranton-pa: 58F Partly Sunny",
     "tagWeights": {
       "rain_gt_0_5in": 0.88,
       "normal": 0.12
@@ -117,8 +117,8 @@
         "weight": 0.224,
         "temp": 53,
         "unit": "F",
-        "short": "Chance Rain Showers",
-        "detailed": "A chance of rain showers before 5pm. Cloudy, with a high near 53. Northwest wind around 8 mph. Chance of precipitation is 40%. New rainfall amounts less than a tenth of an inch possible."
+        "short": "Cloudy",
+        "detailed": "Cloudy, with a high near 53. North wind around 8 mph. New rainfall amounts less than a tenth of an inch possible."
       },
       {
         "station": "portland-me",
