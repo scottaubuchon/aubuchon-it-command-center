@@ -542,22 +542,92 @@ function buildPrediction({ entry, et, baseline, weather, observedHistory }) {
     if (pct > 0.05) shape_EOD = curSales / pct;
   }
 
+  // --- SHAPE SANITY (soft) ---
+  // If shape and level disagree wildly, the shape model is in la-la land
+  // (typically means the live feed returned stale or rolled-over data).
+  // Reject shape and let the level model carry; record why.
+  let shapeRejected = false;
+  let shapeRejectReason = null;
+  if (shape_EOD != null && level_EOD > 0) {
+    const ratio = shape_EOD / level_EOD;
+    if (ratio > 3) {
+      shapeRejected = true;
+      shapeRejectReason = `shape EOD ($${Math.round(shape_EOD).toLocaleString()}) is ${ratio.toFixed(1)}\u00d7 the plan-anchored estimate ($${Math.round(level_EOD).toLocaleString()}) — likely stale/rolled-over live data`;
+    } else if (ratio < 0.33) {
+      shapeRejected = true;
+      shapeRejectReason = `shape EOD ($${Math.round(shape_EOD).toLocaleString()}) is only ${(ratio*100).toFixed(0)}% of the plan-anchored estimate ($${Math.round(level_EOD).toLocaleString()}) — likely a sales-feed glitch`;
+    }
+  }
+
   // --- BLEND ---
   const w = blendWeight(pctOfDayElapsed ?? 0);
   let projectedEOD;
   let method;
-  if (level_EOD > 0 && shape_EOD != null) {
+  const shapeUsable = shape_EOD != null && !shapeRejected;
+  if (level_EOD > 0 && shapeUsable) {
     projectedEOD = w * shape_EOD + (1 - w) * level_EOD;
     method = `blended (w=${w.toFixed(2)} shape + ${(1-w).toFixed(2)} level)`;
   } else if (level_EOD > 0) {
     projectedEOD = level_EOD;
-    method = 'level only (plan × factors — early in day or no shape yet)';
-  } else if (shape_EOD != null) {
+    method = shapeRejected
+      ? `level only (shape rejected: ${shapeRejectReason})`
+      : 'level only (plan \u00d7 factors — early in day or no shape yet)';
+  } else if (shapeUsable) {
     projectedEOD = shape_EOD;
     method = 'shape only (pace curve — no plan available)';
   } else {
     projectedEOD = curSales;
     method = 'current sales (insufficient data)';
+  }
+
+  // --- HARD SANITY CHECKS — return available:false if projection is unreliable ---
+  const _unavailCtx = {
+    attemptedProjectedEOD: projectedEOD,
+    shape_EOD,
+    level_EOD,
+    pctOfDayElapsed,
+    currentSales: curSales,
+    plan,
+    method,
+    shapeRejected,
+    shapeRejectReason,
+    factors: {
+      plan,
+      recencyFactor: recency,
+      dowPlanRatio: dowRatio,
+      holidayKey: hkey,
+      holidayMult,
+      weatherKey: weather?.key || null,
+      weatherMult,
+      weatherSummary: weather?.summary || null,
+    },
+  };
+
+  if (level_EOD <= 0 && (shape_EOD == null || shapeRejected)) {
+    return {
+      available: false,
+      reasonCode: 'insufficient-data',
+      reason: 'EOD forecast is unavailable — no daily plan loaded and no usable pace curve yet. The plan file may not have been imported for today.',
+      ..._unavailCtx,
+    };
+  }
+
+  if (plan > 0 && projectedEOD > plan * 2) {
+    return {
+      available: false,
+      reasonCode: 'implausible-high',
+      reason: `EOD forecast is unavailable — projected $${Math.round(projectedEOD).toLocaleString()} is more than 2\u00d7 today's plan ($${Math.round(plan).toLocaleString()}). The live sales feed is most likely returning stale or rolled-over data; the next refresh-live-sales run should clear this.`,
+      ..._unavailCtx,
+    };
+  }
+
+  if (plan > 0 && pctOfDayElapsed != null && pctOfDayElapsed > 0.5 && projectedEOD < plan * 0.3) {
+    return {
+      available: false,
+      reasonCode: 'implausible-low',
+      reason: `EOD forecast is unavailable — past mid-day but projection ($${Math.round(projectedEOD).toLocaleString()}) is under 30% of plan ($${Math.round(plan).toLocaleString()}). Likely a sales-feed glitch — check the live data source.`,
+      ..._unavailCtx,
+    };
   }
 
   // --- BAND (confidence interval) ---
