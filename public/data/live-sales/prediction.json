@@ -1,43 +1,43 @@
 {
-  "updatedAt": "2026-04-30T12:01:08.679Z",
-  "updatedAtET": "Apr 30, 2026, 8:01 AM",
+  "updatedAt": "2026-04-30T13:57:17.142Z",
+  "updatedAtET": "Apr 30, 2026, 9:57 AM",
   "dateET": "2026-04-30",
   "dow": 4,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-04-30T12:01:08.679Z",
-    "tsET": "Apr 30, 2026, 8:01 AM",
+    "ts": "2026-04-30T13:57:17.142Z",
+    "tsET": "Apr 30, 2026, 9:57 AM",
     "dateET": "2026-04-30",
-    "hourET": 8,
-    "minuteET": 1,
+    "hourET": 9,
+    "minuteET": 57,
     "dow": 4,
-    "sales": 11608.72,
+    "sales": 135968.57,
     "plan": 1248058.8500000006,
-    "pctToPlan": 0.9301420361708099,
-    "gp": 3627.805199999998,
-    "gpPct": 31.250690859974213,
-    "txns": 583,
-    "customers": 269,
-    "storeCount": 83,
-    "asOf": "2026-04-30T11:45:11.427000",
-    "asOfET": "Apr 30, 2026, 7:45 AM"
+    "pctToPlan": 10.89440373745196,
+    "gp": 56345.455,
+    "gpPct": 41.440058537057496,
+    "txns": 4075,
+    "customers": 3404,
+    "storeCount": 133,
+    "asOf": "2026-04-30T13:45:12.357000",
+    "asOfET": "Apr 30, 2026, 9:45 AM"
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.05 shape + 0.95 level)",
+    "method": "blended (w=0.13 shape + 0.87 level)",
     "confidence": "medium",
-    "projectedEOD": 1142246.8600825956,
-    "projectedPctToPlan": 91.52187495666531,
-    "projectedVariance": -105811.98991740495,
+    "projectedEOD": 1118519.9939171555,
+    "projectedPctToPlan": 89.62077340480819,
+    "projectedVariance": -129538.85608284501,
     "band": {
-      "low": 902786.1955066113,
-      "high": 1381707.5246585798
+      "low": 894164.6096004675,
+      "high": 1342875.3782338435
     },
-    "pctOfDayElapsed": 0.0233725339944663,
+    "pctOfDayElapsed": 0.18141781531862883,
     "level_EOD": 1174827.98792067,
-    "shape_EOD": 496682.13137473626,
-    "blendWeight": 0.04804442513889722,
+    "shape_EOD": 749477.4962491686,
+    "blendWeight": 0.13238022549883707,
     "factors": {
       "plan": 1248058.8500000006,
       "recencyFactor": 0.9393,
@@ -49,23 +49,23 @@
       "weatherSummary": "concord-nh: 52F Light Rain | worcester-ma: 57F Chance Rain Showers | burlington-vt: 55F Rain Showers | portland-me: 50F Light Rain | albany-ny: 59F Chance Rain Showers | scranton-pa: 59F Slight Chance Rain Showers"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.026763333333333333,
+      "basePaceFromCurve": 0.19218000000000002,
       "observedPaceCount": 2,
-      "blendedPaceAtNow": 0.0233725339944663,
+      "blendedPaceAtNow": 0.18141781531862883,
       "historyDays": 2,
       "avgHistoricalEOD": 1068680.5399999998
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 1074.1782898516767,
+      "estimatedCurrent": 8337.781374228862,
       "estimatedEOD": 45959,
-      "paceUsed": 0.0233725339944663,
+      "paceUsed": 0.18141781531862883,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 30687,
-          "estimatedCurrent": 717.2329506881873,
+          "estimatedCurrent": 5567.168498682763,
           "estimatedEOD": 30687,
           "stdev": 0.3949
         },
@@ -73,19 +73,19 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 15272,
-          "estimatedCurrent": 356.94533916348934,
+          "estimatedCurrent": 2770.6128755460995,
           "estimatedEOD": 15272,
           "stdev": 0.1435
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1188205.8600825956,
-    "combinedCurrentSales": 12682.898289851677,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $1,074 so far, +$45,959 to EOD."
+    "combinedProjectedEOD": 1164478.9939171555,
+    "combinedCurrentSales": 144306.35137422886,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $8,338 so far, +$45,959 to EOD."
   },
   "offlineStoresVersion": 2,
-  "baselineVersion": 17,
+  "baselineVersion": 18,
   "weatherRaw": {
     "mult": 0.95,
     "key": "rain_gt_0_5in",
@@ -133,7 +133,7 @@
         "temp": 59,
         "unit": "F",
         "short": "Chance Rain Showers",
-        "detailed": "A chance of rain showers. Mostly cloudy, with a high near 59. Southwest wind 5 to 9 mph. Chance of precipitation is 50%. New rainfall amounts between a tenth and quarter of an inch possible."
+        "detailed": "A chance of rain showers. Mostly cloudy, with a high near 59. Southwest wind 5 to 9 mph. Chance of precipitation is 50%. New rainfall amounts less than a tenth of an inch possible."
       },
       {
         "station": "scranton-pa",
