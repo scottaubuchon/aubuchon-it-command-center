@@ -5326,7 +5326,21 @@ function LiveSalesView({ goBack }) {
         {(function () {
           if (!prediction || !prediction.prediction) return null;
           var p = prediction.prediction;
-          if (!p.available) return null;
+          if (!p.available) {
+            return (
+              <div className="rounded-xl border-2 mb-5 overflow-hidden bg-amber-50 border-amber-200">
+                <div className="p-4 sm:p-5 flex items-start gap-3">
+                  <AlertTriangle className="w-5 h-5 text-amber-700 shrink-0 mt-0.5" />
+                  <div className="flex-1 min-w-0">
+                    <h2 className="font-bold text-slate-900">EOD Forecast unavailable</h2>
+                    <p className="text-sm text-amber-900 mt-1">{p.reason || "Predictor is not producing a reliable number right now."}</p>
+                    {p.reasonCode ? <div className="text-[11px] text-amber-700 mt-1 font-mono">code: {p.reasonCode}</div> : null}
+                    {prediction.updatedAtET ? <div className="mt-2 text-xs text-slate-500">as of {prediction.updatedAtET}</div> : null}
+                  </div>
+                </div>
+              </div>
+            );
+          }
           var proj = Number(p.projectedEOD || 0);
           var plan = Number((prediction.current && prediction.current.plan) || 0);
           var projVar = plan > 0 ? proj - plan : 0;
@@ -6168,7 +6182,21 @@ function LiveSalesSnowflakeView({ goBack }) {
         {!selectedStore && isToday && (function () {
           if (!prediction || !prediction.prediction) return null;
           var p = prediction.prediction;
-          if (!p.available) return null;
+          if (!p.available) {
+            return (
+              <div className="rounded-xl border-2 mb-5 overflow-hidden bg-[#FAEEDA] border-[#F58220]">
+                <div className="p-4 sm:p-5 flex items-start gap-3">
+                  <AlertTriangle className="w-5 h-5 text-[#854F0B] shrink-0 mt-0.5" />
+                  <div className="flex-1 min-w-0">
+                    <h2 className="font-bold text-slate-900" style={{ fontFamily: "'Trebuchet MS', 'Arial Black', sans-serif" }}>EOD Forecast unavailable</h2>
+                    <p className="text-sm text-[#854F0B] mt-1">{p.reason || "Predictor is not producing a reliable number right now."}</p>
+                    {p.reasonCode ? <div className="text-[11px] text-[#854F0B] mt-1 font-mono">code: {p.reasonCode}</div> : null}
+                    {prediction.updatedAtET ? <div className="mt-2 text-xs text-slate-500">as of {prediction.updatedAtET}</div> : null}
+                  </div>
+                </div>
+              </div>
+            );
+          }
           var rawProj = Number(p.projectedEOD || 0);
           var missingEOD = (estimatedMissing && estimatedMissing.totalEstimatedEOD) ? Number(estimatedMissing.totalEstimatedEOD) : 0;
           var missingCount = (notReporting && notReporting.length) || 0;
