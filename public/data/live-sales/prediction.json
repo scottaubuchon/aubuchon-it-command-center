@@ -1,20 +1,20 @@
 {
-  "updatedAt": "2026-04-30T03:58:13.220Z",
-  "updatedAtET": "Apr 29, 2026, 11:58 PM",
-  "dateET": "2026-04-29",
-  "dow": 3,
+  "updatedAt": "2026-04-30T04:13:50.307Z",
+  "updatedAtET": "Apr 30, 2026, 12:13 AM",
+  "dateET": "2026-04-30",
+  "dow": 4,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-04-30T03:58:13.220Z",
-    "tsET": "Apr 29, 2026, 11:58 PM",
-    "dateET": "2026-04-29",
-    "hourET": 23,
-    "minuteET": 58,
-    "dow": 3,
+    "ts": "2026-04-30T04:13:50.307Z",
+    "tsET": "Apr 30, 2026, 12:13 AM",
+    "dateET": "2026-04-30",
+    "hourET": 0,
+    "minuteET": 13,
+    "dow": 4,
     "sales": 1071865.8099999998,
-    "plan": 1113954.9899999993,
-    "pctToPlan": 96.2216444669816,
+    "plan": 1248058.85,
+    "pctToPlan": 85.88263365946244,
     "gp": 456783.44819999975,
     "gpPct": 42.61573080682551,
     "txns": 32184,
@@ -25,64 +25,64 @@
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.98 shape + 0.02 level)",
-    "confidence": "high",
-    "projectedEOD": 1081070.0889032858,
-    "projectedPctToPlan": 97.04791473695778,
-    "projectedVariance": -32884.9010967135,
+    "method": "blended (w=0.04 shape + 0.96 level)",
+    "confidence": "low",
+    "projectedEOD": 594291191.8474936,
+    "projectedPctToPlan": 47617.24111387004,
+    "projectedVariance": 593043132.9974936,
     "band": {
-      "low": 998779.1664850475,
-      "high": 1163361.0113215242
+      "low": 469261479.7645875,
+      "high": 719320903.9303999
     },
-    "pctOfDayElapsed": 0.9892418264404642,
-    "level_EOD": 974182.4589985006,
-    "shape_EOD": 1083522.5334707461,
-    "blendWeight": 0.9775704874969432,
+    "pctOfDayElapsed": 0.00007428571428571429,
+    "level_EOD": 1137728.1567231752,
+    "shape_EOD": 14428962826.923075,
+    "blendWeight": 0.041111772538848415,
     "factors": {
-      "plan": 1113954.9899999993,
+      "plan": 1248058.85,
       "recencyFactor": 0.9393,
-      "dowPlanRatio": 1.012,
+      "dowPlanRatio": 1.0549,
       "holidayKey": null,
       "holidayMult": 1,
       "weatherKey": "coldRain_lt_50F",
       "weatherMult": 0.92,
-      "weatherSummary": "concord-nh: 43F Cloudy then Scattered Rain Showers | worcester-ma: 45F Patchy Fog | burlington-vt: 50F Chance Rain Showers then Rain | portland-me: 43F Isolated Rain Showers then Light Rain | albany-ny: 48F Rain Showers | scranton-pa: 47F Rain Showers"
+      "weatherSummary": "concord-nh: 43F Cloudy then Scattered Rain Showers | worcester-ma: 45F Patchy Fog | burlington-vt: 50F Chance Rain Showers then Rain | portland-me: 43F Light Rain | albany-ny: 48F Rain Showers | scranton-pa: 47F Rain Showers"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 1,
-      "observedPaceCount": 2,
-      "blendedPaceAtNow": 0.9892418264404642,
-      "historyDays": 2,
-      "avgHistoricalEOD": 1038700.2749999998
+      "basePaceFromCurve": 0.00007428571428571429,
+      "observedPaceCount": 0,
+      "blendedPaceAtNow": 0.00007428571428571429,
+      "historyDays": 0,
+      "avgHistoricalEOD": null
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 41378.007116351735,
-      "estimatedEOD": 41828,
-      "paceUsed": 0.9892418264404642,
+      "estimatedCurrent": 3.414097142857143,
+      "estimatedEOD": 45959,
+      "paceUsed": 0.00007428571428571429,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
-          "dowEOD": 26994,
-          "estimatedCurrent": 26703.593862933893,
-          "estimatedEOD": 26994,
-          "stdev": 0.4325
+          "dowEOD": 30687,
+          "estimatedCurrent": 2.2796057142857142,
+          "estimatedEOD": 30687,
+          "stdev": 0.3949
         },
         {
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
-          "dowEOD": 14834,
-          "estimatedCurrent": 14674.413253417846,
-          "estimatedEOD": 14834,
-          "stdev": 0.1986
+          "dowEOD": 15272,
+          "estimatedCurrent": 1.1344914285714285,
+          "estimatedEOD": 15272,
+          "stdev": 0.1435
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1122898.0889032858,
-    "combinedCurrentSales": 1113243.8171163516,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $41,378 so far, +$41,828 to EOD."
+    "combinedProjectedEOD": 594337150.8474936,
+    "combinedCurrentSales": 1071869.2240971427,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $3 so far, +$45,959 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 17,
@@ -90,7 +90,7 @@
     "mult": 0.92,
     "key": "coldRain_lt_50F",
     "season": "spring",
-    "summary": "concord-nh: 43F Cloudy then Scattered Rain Showers | worcester-ma: 45F Patchy Fog | burlington-vt: 50F Chance Rain Showers then Rain | portland-me: 43F Isolated Rain Showers then Light Rain | albany-ny: 48F Rain Showers | scranton-pa: 47F Rain Showers",
+    "summary": "concord-nh: 43F Cloudy then Scattered Rain Showers | worcester-ma: 45F Patchy Fog | burlington-vt: 50F Chance Rain Showers then Rain | portland-me: 43F Light Rain | albany-ny: 48F Rain Showers | scranton-pa: 47F Rain Showers",
     "tagWeights": {
       "coldRain_lt_50F": 0.776,
       "rain_gt_0_5in": 0.224
@@ -102,7 +102,7 @@
         "temp": 43,
         "unit": "F",
         "short": "Cloudy then Scattered Rain Showers",
-        "detailed": "Patchy drizzle between midnight and 2am, then scattered rain showers between 2am and 3am, then rain showers likely and patchy fog. Cloudy, with a low around 43. East wind 0 to 10 mph. Chance of precipitation is 60%. New rainfall amounts between a tenth and quarter of an inch possible."
+        "detailed": "Patchy drizzle between midnight and 2am, then scattered rain showers between 2am and 3am, then rain showers likely and patchy fog. Cloudy, with a low around 43. East wind 0 to 5 mph. Chance of precipitation is 60%. New rainfall amounts between a tenth and quarter of an inch possible."
       },
       {
         "station": "worcester-ma",
@@ -125,8 +125,8 @@
         "weight": 0.152,
         "temp": 43,
         "unit": "F",
-        "short": "Isolated Rain Showers then Light Rain",
-        "detailed": "Patchy drizzle and patchy fog before 8pm, then isolated rain showers between 8pm and 9pm, then patchy fog and scattered rain showers between 9pm and midnight, then rain showers likely and patchy fog between midnight and 5am, then rain and patchy fog. Cloudy, with a low around 43. East wind 5 to 10 mph. Chance of precipitation is 80%. New rainfall amounts between a quarter and half of an inch possible."
+        "short": "Light Rain",
+        "detailed": "Rain showers likely and patchy fog before 5am, then rain and patchy fog. Cloudy, with a low around 43. East wind 5 to 10 mph. Chance of precipitation is 80%. New rainfall amounts between a quarter and half of an inch possible."
       },
       {
         "station": "albany-ny",
