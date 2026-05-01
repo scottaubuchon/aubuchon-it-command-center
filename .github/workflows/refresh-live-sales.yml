@@ -1,12 +1,16 @@
 name: Refresh Live Sales
 
 on:
-  # Cron here is a safety net. Primary trigger is workflow_dispatch fired by the
-  # Cowork hourly scheduled task (which then runs an internal 15-min loop for
-  # the full hour).
+  # Primary trigger: cron every 15 min during 7am-9pm ET window.
+  # Covers both DST (UTC-4) and standard (UTC-5) time:
+  #   DST:      UTC 11 = 7am ET ... UTC 1 = 9pm ET  (UTC 2 = 10pm, harmless overrun)
+  #   Standard: UTC 11 = 6am ET ... UTC 2 = 9pm ET  (UTC 11 = 6am, harmless early)
+  # workflow_dispatch is kept for ad-hoc manual runs.
+  # NOTE: GitHub Actions cron can drift 0-15 min under load, so actual cadence
+  # is "approximately every 15 min" which is the intended freshness target.
   schedule:
-    - cron: '0 11-23 * * *'
-    - cron: '0 0-2 * * *'
+    - cron: '*/15 11-23 * * *'
+    - cron: '*/15 0-2 * * *'
   workflow_dispatch: {}
 
 concurrency:
@@ -16,26 +20,23 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 58
+    timeout-minutes: 5
     steps:
-      - name: Ping /api/log-live-sales (yoda + snowflake) every 15 min for ~45 min
+      - name: Ping /api/log-live-sales (yoda + snowflake)
         run: |
           set -u
           BASE="https://aubuchon-it-command-center.vercel.app/api/log-live-sales"
-          TOTAL_PINGS=4
-          SLEEP_SEC=900
           # Pipelines: label + URL. Both run each pass; same prediction engine,
           # different live-sales source, different per-source log dir.
           SOURCES="yoda:${BASE} snowflake:${BASE}?source=snowflake"
-          for i in $(seq 1 $TOTAL_PINGS); do
-            for PAIR in $SOURCES; do
-              LABEL="${PAIR%%:*}"
-              URL="${PAIR#*:}"
-              echo "=== Ping $i/$TOTAL_PINGS [$LABEL] at $(date -u +%FT%TZ) ==="
-              CODE=$(curl -s -o /tmp/resp.json -w "%{http_code}" --max-time 180 "$URL" || echo "curl_err")
-              echo "HTTP $CODE"
-              if [ "$CODE" = "200" ]; then
-                python3 -c "
+          for PAIR in $SOURCES; do
+            LABEL="${PAIR%%:*}"
+            URL="${PAIR#*:}"
+            echo "=== [$LABEL] $(date -u +%FT%TZ) ==="
+            CODE=$(curl -s -o /tmp/resp.json -w "%{http_code}" --max-time 180 "$URL" || echo "curl_err")
+            echo "HTTP $CODE"
+            if [ "$CODE" = "200" ]; then
+              python3 -c "
           import json
           try:
               d = json.load(open('/tmp/resp.json'))
@@ -52,13 +53,7 @@ jobs:
           except Exception as e:
               print('  parse err:', e)
           "
-              else
-                echo "  body: $(head -c 300 /tmp/resp.json 2>/dev/null || echo '-')"
-              fi
-            done
-            if [ "$i" -lt "$TOTAL_PINGS" ]; then
-              echo "  sleeping ${SLEEP_SEC}s..."
-              sleep $SLEEP_SEC
+            else
+              echo "  body: $(head -c 300 /tmp/resp.json 2>/dev/null || echo '-')"
             fi
           done
-          echo "=== Loop complete ==="
