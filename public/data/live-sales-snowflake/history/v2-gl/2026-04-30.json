@@ -3,16 +3,26 @@
   "storeFilter": null,
   "dateFilter": "2026-04-30",
   "companyTotal": {
-    "sales": 928749.74,
+    "sales": 996952.63,
     "plan": 1248058.85,
     "gp": 440101.27,
-    "gpPct": 47.38642187937517,
+    "gpPct": 44.14465208843473,
     "txns": 24872,
     "customers": 0,
-    "storeCount": 134,
-    "pctToPlan": 74.41554058127947
+    "storeCount": 136,
+    "pctToPlan": 79.88025805033152
   },
   "topStores": [
+    {
+      "store": "233",
+      "name": "ITHACA, NY - DOWNTOWN - (ACE)",
+      "city": "Ithaca",
+      "state": "NY",
+      "sales": 49086.26,
+      "plan": 29215.01,
+      "gp": 0,
+      "txns": 0
+    },
     {
       "store": "209",
       "name": "MOUNT JOY, PA - ACE",
@@ -52,6 +62,16 @@
       "plan": 25516.32,
       "gp": 9642.2,
       "txns": 443
+    },
+    {
+      "store": "234",
+      "name": "ITHACA, NY - TRIPHAMMER - (ACE)",
+      "city": "Ithaca",
+      "state": "NY",
+      "sales": 19116.63,
+      "plan": 23337.56,
+      "gp": 0,
+      "txns": 0
     },
     {
       "store": "172",
@@ -192,26 +212,6 @@
       "plan": 24657.83,
       "gp": 4658.41,
       "txns": 227
-    },
-    {
-      "store": "003",
-      "name": "MEREDITH, NH - (IND)",
-      "city": "Meredith",
-      "state": "NH",
-      "sales": 10150.97,
-      "plan": 9406.11,
-      "gp": 3298.55,
-      "txns": 196
-    },
-    {
-      "store": "074",
-      "name": "EASTHAMPTON, MA - ACE",
-      "city": "Easthampton",
-      "state": "MA",
-      "sales": 10090.12,
-      "plan": 9342.8,
-      "gp": 5180.04,
-      "txns": 250
     }
   ],
   "topProducts": [
@@ -1540,53 +1540,11 @@
       "state": "RI"
     }
   ],
-  "notReporting": [
-    {
-      "store": "233",
-      "name": "ITHACA, NY - DOWNTOWN - (ACE)",
-      "city": "Ithaca",
-      "state": "NY",
-      "plan": 29215.01
-    },
-    {
-      "store": "234",
-      "name": "ITHACA, NY - TRIPHAMMER - (ACE)",
-      "city": "Ithaca",
-      "state": "NY",
-      "plan": 23337.56
-    }
-  ],
-  "estimatedMissing": {
-    "paceAtNow": 1,
-    "sampleWeeks": 8,
-    "stores": [
-      {
-        "store": "233",
-        "dowAvg": 34999.88125,
-        "samples": 8,
-        "basis": "dowAvg",
-        "plan": 29215.01,
-        "estimatedCurrent": 34999.88125,
-        "estimatedEOD": 34999.88125
-      },
-      {
-        "store": "234",
-        "dowAvg": 15434.3375,
-        "samples": 8,
-        "basis": "dowAvg",
-        "plan": 23337.56,
-        "estimatedCurrent": 15434.3375,
-        "estimatedEOD": 15434.3375
-      }
-    ],
-    "totalEstimatedCurrent": 50434.21875,
-    "totalEstimatedEOD": 50434.21875,
-    "projectedCompanyEOD": 979183.95875,
-    "projectedCompanyCurrent": 979183.95875
-  },
+  "notReporting": [],
+  "estimatedMissing": null,
   "asOfET": "End of day · 2026-04-30",
   "cached": true,
-  "refreshedAt": "2026-05-01T12:10:22.695Z",
+  "refreshedAt": "2026-05-01T15:35:45.618Z",
   "source": "snowflake",
-  "cachedAt": "2026-05-01T12:10:22.695Z"
+  "cachedAt": "2026-05-01T15:35:45.619Z"
 }
