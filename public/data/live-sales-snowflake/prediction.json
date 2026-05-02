@@ -1,43 +1,43 @@
 {
-  "updatedAt": "2026-05-02T23:06:53.421Z",
-  "updatedAtET": "May 2, 2026, 7:06 PM",
+  "updatedAt": "2026-05-02T23:58:31.218Z",
+  "updatedAtET": "May 2, 2026, 7:58 PM",
   "dateET": "2026-05-02",
   "dow": 6,
   "season": "spring",
   "source": "snowflake",
   "current": {
-    "ts": "2026-05-02T23:06:53.421Z",
-    "tsET": "May 2, 2026, 7:06 PM",
+    "ts": "2026-05-02T23:58:31.218Z",
+    "tsET": "May 2, 2026, 7:58 PM",
     "dateET": "2026-05-02",
     "hourET": 19,
-    "minuteET": 6,
+    "minuteET": 58,
     "dow": 6,
-    "sales": 1497417.86,
+    "sales": 1499937.69,
     "plan": 2302663.91,
-    "pctToPlan": 65.02980541350475,
-    "gp": 630618.6406,
-    "gpPct": 42.11373841901418,
-    "txns": 40813,
-    "customers": 38207,
+    "pctToPlan": 65.13923649413516,
+    "gp": 631511.4333,
+    "gpPct": 42.10251115831352,
+    "txns": 40902,
+    "customers": 38274,
     "storeCount": 134,
     "asOf": null,
-    "asOfET": "May 2, 7:00 PM ET"
+    "asOfET": "May 2, 7:45 PM ET"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.98 shape + 0.02 level)",
     "confidence": "high",
-    "projectedEOD": 1510299.7365270697,
-    "projectedPctToPlan": 65.58923905343484,
-    "projectedVariance": -792364.1734729304,
+    "projectedEOD": 1511113.269256088,
+    "projectedPctToPlan": 65.62456912160003,
+    "projectedVariance": -791550.6407439122,
     "band": {
-      "low": 1277608.5376928807,
-      "high": 1742990.9353612585
+      "low": 1278331.764156242,
+      "high": 1743894.774355934
     },
-    "pctOfDayElapsed": 0.9988285887016324,
+    "pctOfDayElapsed": 0.9998998119044791,
     "level_EOD": 2028862.1061526353,
-    "shape_EOD": 1499174.0093727985,
-    "blendWeight": 0.9789957010136563,
+    "shape_EOD": 1500087.980957926,
+    "blendWeight": 0.9791493422752067,
     "factors": {
       "plan": 2302663.91,
       "recencyFactor": 0.9393,
@@ -49,23 +49,23 @@
       "weatherSummary": "concord-nh: 38F Slight Chance Rain Showers then Mostly Cloudy | worcester-ma: 39F Slight Chance Rain Showers then Mostly Cloudy | burlington-vt: 38F Scattered Rain Showers then Mostly Cloudy | portland-me: 42F Chance Rain Showers | albany-ny: 35F Mostly Clear then Areas Of Frost | scranton-pa: 33F Mostly Cloudy then Widespread Frost"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.999274,
+      "basePaceFromCurve": 0.99997,
       "observedPaceCount": 2,
-      "blendedPaceAtNow": 0.9988285887016324,
+      "blendedPaceAtNow": 0.9998998119044791,
       "historyDays": 2,
       "avgHistoricalEOD": 1717073.935
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 42730.88585324454,
+      "estimatedCurrent": 42776.71385308552,
       "estimatedEOD": 42781,
-      "paceUsed": 0.9988285887016324,
+      "paceUsed": 0.9998998119044791,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 24716,
-          "estimatedCurrent": 24687.047398349547,
+          "estimatedCurrent": 24713.523751031105,
           "estimatedEOD": 24716,
           "stdev": 0.3879
         },
@@ -73,16 +73,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 18065,
-          "estimatedCurrent": 18043.83845489499,
+          "estimatedCurrent": 18063.190102054414,
           "estimatedEOD": 18065,
           "stdev": 0.1722
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1553080.7365270697,
-    "combinedCurrentSales": 1540148.7458532446,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $42,731 so far, +$42,781 to EOD."
+    "combinedProjectedEOD": 1553894.269256088,
+    "combinedCurrentSales": 1542714.4038530854,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $42,777 so far, +$42,781 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 21,
@@ -110,7 +110,7 @@
         "temp": 39,
         "unit": "F",
         "short": "Slight Chance Rain Showers then Mostly Cloudy",
-        "detailed": "A slight chance of rain showers before midnight. Mostly cloudy, with a low around 39. West wind 2 to 6 mph. Chance of precipitation is 20%."
+        "detailed": "A slight chance of rain showers between 8pm and 11pm. Mostly cloudy, with a low around 39. Northwest wind 2 to 6 mph. Chance of precipitation is 20%."
       },
       {
         "station": "burlington-vt",
