@@ -1,43 +1,43 @@
 {
-  "updatedAt": "2026-05-02T01:16:46.813Z",
-  "updatedAtET": "May 1, 2026, 9:16 PM",
+  "updatedAt": "2026-05-02T01:29:46.698Z",
+  "updatedAtET": "May 1, 2026, 9:29 PM",
   "dateET": "2026-05-01",
   "dow": 5,
   "season": "spring",
   "source": "snowflake",
   "current": {
-    "ts": "2026-05-02T01:16:46.813Z",
-    "tsET": "May 1, 2026, 9:16 PM",
+    "ts": "2026-05-02T01:29:46.698Z",
+    "tsET": "May 1, 2026, 9:29 PM",
     "dateET": "2026-05-01",
     "hourET": 21,
-    "minuteET": 16,
+    "minuteET": 29,
     "dow": 5,
-    "sales": 1268530.4,
+    "sales": 1268634.77,
     "plan": 1563972.37,
-    "pctToPlan": 81.10951474161911,
-    "gp": 543911.6115,
-    "gpPct": 42.87730207332832,
-    "txns": 36326,
-    "customers": 33876,
+    "pctToPlan": 81.11618813317016,
+    "gp": 543947.7921,
+    "gpPct": 42.876626509298646,
+    "txns": 36352,
+    "customers": 33878,
     "storeCount": 134,
     "asOf": null,
-    "asOfET": "May 1, 8:30 PM ET"
+    "asOfET": "May 1, 9:15 PM ET"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.98 shape + 0.02 level)",
     "confidence": "high",
-    "projectedEOD": 1273335.5940550214,
-    "projectedPctToPlan": 81.41675764099473,
-    "projectedVariance": -290636.7759449787,
+    "projectedEOD": 1273431.225520296,
+    "projectedPctToPlan": 81.42287229283315,
+    "projectedVariance": -290541.1444797041,
     "band": {
-      "low": 1066396.5783034514,
-      "high": 1480274.6098065914
+      "low": 1066476.8170611279,
+      "high": 1480385.6339794644
     },
-    "pctOfDayElapsed": 0.9999948518673633,
+    "pctOfDayElapsed": 1,
     "level_EOD": 1498831.3630730195,
-    "shape_EOD": 1268536.9305963733,
-    "blendWeight": 0.9791629202363167,
+    "shape_EOD": 1268634.77,
+    "blendWeight": 0.9791636554813196,
     "factors": {
       "plan": 1563972.37,
       "recencyFactor": 0.9393,
@@ -51,21 +51,21 @@
     "shapeDetail": {
       "basePaceFromCurve": 1,
       "observedPaceCount": 2,
-      "blendedPaceAtNow": 0.9999948518673633,
+      "blendedPaceAtNow": 1,
       "historyDays": 2,
       "avgHistoricalEOD": 1228534.7400000002
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 40475.791624183395,
+      "estimatedCurrent": 40476,
       "estimatedEOD": 40476,
-      "paceUsed": 0.9999948518673633,
+      "paceUsed": 1,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 24862,
-          "estimatedCurrent": 24861.872007126385,
+          "estimatedCurrent": 24862,
           "estimatedEOD": 24862,
           "stdev": 0.3127
         },
@@ -73,15 +73,15 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 15614,
-          "estimatedCurrent": 15613.91961705701,
+          "estimatedCurrent": 15614,
           "estimatedEOD": 15614,
           "stdev": 0.1906
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1313811.5940550214,
-    "combinedCurrentSales": 1309006.1916241832,
+    "combinedProjectedEOD": 1313907.225520296,
+    "combinedCurrentSales": 1309110.77,
     "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $40,476 so far, +$40,476 to EOD."
   },
   "offlineStoresVersion": 2,
@@ -133,7 +133,7 @@
         "temp": 42,
         "unit": "F",
         "short": "Rain Showers",
-        "detailed": "Rain showers after 7pm. Mostly cloudy, with a low around 42. North wind around 5 mph. Chance of precipitation is 80%. New rainfall amounts between a tenth and quarter of an inch possible."
+        "detailed": "Rain showers. Mostly cloudy, with a low around 42. North wind around 3 mph. Chance of precipitation is 80%. New rainfall amounts between a tenth and quarter of an inch possible."
       },
       {
         "station": "scranton-pa",
