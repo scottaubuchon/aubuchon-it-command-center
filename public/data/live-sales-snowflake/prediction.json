@@ -1,43 +1,43 @@
 {
-  "updatedAt": "2026-05-02T23:58:31.218Z",
-  "updatedAtET": "May 2, 2026, 7:58 PM",
+  "updatedAt": "2026-05-03T01:45:41.571Z",
+  "updatedAtET": "May 2, 2026, 9:45 PM",
   "dateET": "2026-05-02",
   "dow": 6,
   "season": "spring",
   "source": "snowflake",
   "current": {
-    "ts": "2026-05-02T23:58:31.218Z",
-    "tsET": "May 2, 2026, 7:58 PM",
+    "ts": "2026-05-03T01:45:41.571Z",
+    "tsET": "May 2, 2026, 9:45 PM",
     "dateET": "2026-05-02",
-    "hourET": 19,
-    "minuteET": 58,
+    "hourET": 21,
+    "minuteET": 45,
     "dow": 6,
-    "sales": 1499937.69,
+    "sales": 1500305.95,
     "plan": 2302663.91,
-    "pctToPlan": 65.13923649413516,
-    "gp": 631511.4333,
-    "gpPct": 42.10251115831352,
-    "txns": 40902,
-    "customers": 38274,
+    "pctToPlan": 65.1552292752962,
+    "gp": 631688.635,
+    "gpPct": 42.10398785661018,
+    "txns": 40941,
+    "customers": 38288,
     "storeCount": 134,
     "asOf": null,
-    "asOfET": "May 2, 7:45 PM ET"
+    "asOfET": "May 2, 9:30 PM ET"
   },
   "prediction": {
     "available": true,
     "method": "blended (w=0.98 shape + 0.02 level)",
     "confidence": "high",
-    "projectedEOD": 1511113.269256088,
-    "projectedPctToPlan": 65.62456912160003,
-    "projectedVariance": -791550.6407439122,
+    "projectedEOD": 1511319.1281670656,
+    "projectedPctToPlan": 65.63350915449338,
+    "projectedVariance": -791344.7818329346,
     "band": {
-      "low": 1278331.764156242,
-      "high": 1743894.774355934
+      "low": 1278509.1754924022,
+      "high": 1744129.080841729
     },
-    "pctOfDayElapsed": 0.9998998119044791,
+    "pctOfDayElapsed": 1,
     "level_EOD": 2028862.1061526353,
-    "shape_EOD": 1500087.980957926,
-    "blendWeight": 0.9791493422752067,
+    "shape_EOD": 1500305.95,
+    "blendWeight": 0.9791636554813196,
     "factors": {
       "plan": 2302663.91,
       "recencyFactor": 0.9393,
@@ -49,23 +49,23 @@
       "weatherSummary": "concord-nh: 38F Slight Chance Rain Showers then Mostly Cloudy | worcester-ma: 39F Slight Chance Rain Showers then Mostly Cloudy | burlington-vt: 38F Scattered Rain Showers then Mostly Cloudy | portland-me: 42F Chance Rain Showers | albany-ny: 35F Mostly Clear then Areas Of Frost | scranton-pa: 33F Mostly Cloudy then Widespread Frost"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.99997,
+      "basePaceFromCurve": 1,
       "observedPaceCount": 2,
-      "blendedPaceAtNow": 0.9998998119044791,
+      "blendedPaceAtNow": 1,
       "historyDays": 2,
       "avgHistoricalEOD": 1717073.935
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 42776.71385308552,
+      "estimatedCurrent": 42781,
       "estimatedEOD": 42781,
-      "paceUsed": 0.9998998119044791,
+      "paceUsed": 1,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 24716,
-          "estimatedCurrent": 24713.523751031105,
+          "estimatedCurrent": 24716,
           "estimatedEOD": 24716,
           "stdev": 0.3879
         },
@@ -73,19 +73,19 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 18065,
-          "estimatedCurrent": 18063.190102054414,
+          "estimatedCurrent": 18065,
           "estimatedEOD": 18065,
           "stdev": 0.1722
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1553894.269256088,
-    "combinedCurrentSales": 1542714.4038530854,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $42,777 so far, +$42,781 to EOD."
+    "combinedProjectedEOD": 1554100.1281670656,
+    "combinedCurrentSales": 1543086.95,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $42,781 so far, +$42,781 to EOD."
   },
   "offlineStoresVersion": 2,
-  "baselineVersion": 21,
+  "baselineVersion": 22,
   "weatherRaw": {
     "mult": 0.92,
     "key": "coldRain_lt_50F",
@@ -134,7 +134,7 @@
         "temp": 35,
         "unit": "F",
         "short": "Mostly Clear then Areas Of Frost",
-        "detailed": "Areas of frost after 3am. Mostly clear, with a low around 35. Northwest wind around 7 mph."
+        "detailed": "Areas of frost after 3am. Mostly clear, with a low around 35. Northwest wind around 6 mph."
       },
       {
         "station": "scranton-pa",
