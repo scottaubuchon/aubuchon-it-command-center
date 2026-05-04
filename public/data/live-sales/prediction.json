@@ -1,16 +1,16 @@
 {
-  "updatedAt": "2026-05-04T19:14:56.714Z",
-  "updatedAtET": "May 4, 2026, 3:14 PM",
+  "updatedAt": "2026-05-04T20:41:06.860Z",
+  "updatedAtET": "May 4, 2026, 4:41 PM",
   "dateET": "2026-05-04",
   "dow": 1,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-05-04T19:14:56.714Z",
-    "tsET": "May 4, 2026, 3:14 PM",
+    "ts": "2026-05-04T20:41:06.860Z",
+    "tsET": "May 4, 2026, 4:41 PM",
     "dateET": "2026-05-04",
-    "hourET": 15,
-    "minuteET": 14,
+    "hourET": 16,
+    "minuteET": 41,
     "dow": 1,
     "sales": 0,
     "plan": 0,
@@ -20,8 +20,8 @@
     "txns": 0,
     "customers": 0,
     "storeCount": 0,
-    "asOf": "2026-05-04T19:14:56.705Z",
-    "asOfET": "May 4, 2026, 3:14 PM"
+    "asOf": "2026-05-04T20:41:06.850Z",
+    "asOfET": "May 4, 2026, 4:41 PM"
   },
   "prediction": {
     "available": true,
@@ -34,10 +34,10 @@
       "low": 0,
       "high": 0
     },
-    "pctOfDayElapsed": 0.7132623669547475,
+    "pctOfDayElapsed": 0.8600049464734867,
     "level_EOD": 0,
     "shape_EOD": 0,
-    "blendWeight": 0.863283838146887,
+    "blendWeight": 0.9463451061565644,
     "factors": {
       "plan": 0,
       "recencyFactor": 0.9393,
@@ -49,23 +49,23 @@
       "weatherSummary": "concord-nh: 71F Mostly Sunny | worcester-ma: 69F Sunny | burlington-vt: 66F Partly Sunny | portland-me: 67F Mostly Sunny | albany-ny: 71F Mostly Sunny | scranton-pa: 72F Sunny"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.7378286666666667,
+      "basePaceFromCurve": 0.8834443333333333,
       "observedPaceCount": 2,
-      "blendedPaceAtNow": 0.7132623669547475,
+      "blendedPaceAtNow": 0.8600049464734867,
       "historyDays": 2,
       "avgHistoricalEOD": 1224918.7349999999
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 30532.622142231878,
+      "estimatedCurrent": 36814.23174369054,
       "estimatedEOD": 42807,
-      "paceUsed": 0.7132623669547475,
+      "paceUsed": 0.8600049464734867,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 28199,
-          "estimatedCurrent": 20113.285485756925,
+          "estimatedCurrent": 24251.27948560585,
           "estimatedEOD": 28199,
           "stdev": 0.2923
         },
@@ -73,7 +73,7 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 14608,
-          "estimatedCurrent": 10419.336656474952,
+          "estimatedCurrent": 12562.952258084693,
           "estimatedEOD": 14608,
           "stdev": 0.1658
         }
@@ -81,8 +81,8 @@
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
     "combinedProjectedEOD": 42807,
-    "combinedCurrentSales": 30532.622142231878,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $30,533 so far, +$42,807 to EOD."
+    "combinedCurrentSales": 36814.23174369054,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $36,814 so far, +$42,807 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 23,
@@ -101,7 +101,7 @@
         "temp": 71,
         "unit": "F",
         "short": "Mostly Sunny",
-        "detailed": "Mostly sunny, with a high near 71. West wind around 15 mph, with gusts as high as 35 mph."
+        "detailed": "Mostly sunny, with a high near 71. West wind around 15 mph, with gusts as high as 30 mph."
       },
       {
         "station": "worcester-ma",
@@ -109,7 +109,7 @@
         "temp": 69,
         "unit": "F",
         "short": "Sunny",
-        "detailed": "Sunny, with a high near 69. Southwest wind 15 to 18 mph, with gusts as high as 37 mph."
+        "detailed": "Sunny, with a high near 69. Southwest wind around 16 mph, with gusts as high as 36 mph."
       },
       {
         "station": "burlington-vt",
@@ -117,7 +117,7 @@
         "temp": 66,
         "unit": "F",
         "short": "Partly Sunny",
-        "detailed": "Partly sunny, with a high near 66. Southwest wind around 12 mph."
+        "detailed": "Partly sunny, with a high near 66. Southwest wind around 10 mph."
       },
       {
         "station": "portland-me",
@@ -133,7 +133,7 @@
         "temp": 71,
         "unit": "F",
         "short": "Mostly Sunny",
-        "detailed": "Mostly sunny, with a high near 71. Southwest wind around 14 mph, with gusts as high as 26 mph."
+        "detailed": "Mostly sunny, with a high near 71. Southwest wind around 14 mph, with gusts as high as 24 mph."
       },
       {
         "station": "scranton-pa",
