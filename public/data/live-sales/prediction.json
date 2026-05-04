@@ -1,71 +1,71 @@
 {
-  "updatedAt": "2026-05-04T12:16:12.636Z",
-  "updatedAtET": "May 4, 2026, 8:16 AM",
+  "updatedAt": "2026-05-04T14:34:59.770Z",
+  "updatedAtET": "May 4, 2026, 10:34 AM",
   "dateET": "2026-05-04",
   "dow": 1,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-05-04T12:16:12.636Z",
-    "tsET": "May 4, 2026, 8:16 AM",
+    "ts": "2026-05-04T14:34:59.770Z",
+    "tsET": "May 4, 2026, 10:34 AM",
     "dateET": "2026-05-04",
-    "hourET": 8,
-    "minuteET": 16,
+    "hourET": 10,
+    "minuteET": 34,
     "dow": 1,
-    "sales": 23791.600000000002,
-    "plan": 1261509.67,
-    "pctToPlan": 1.8859625546905245,
-    "gp": 8425.102000000003,
-    "gpPct": 35.41208661880664,
-    "txns": 817,
-    "customers": 415,
-    "storeCount": 103,
-    "asOf": "2026-05-04T12:00:09.147000",
-    "asOfET": "May 4, 2026, 8:00 AM"
+    "sales": 0,
+    "plan": 0,
+    "pctToPlan": 0,
+    "gp": 0,
+    "gpPct": 0,
+    "txns": 0,
+    "customers": 0,
+    "storeCount": 0,
+    "asOf": "2026-05-04T14:34:59.760Z",
+    "asOfET": "May 4, 2026, 10:34 AM"
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.05 shape + 0.95 level)",
+    "method": "shape only (pace curve — no plan available)",
     "confidence": "medium",
-    "projectedEOD": 1164603.8017531396,
-    "projectedPctToPlan": 92.31826195617982,
-    "projectedVariance": -96905.86824686034,
+    "projectedEOD": 0,
+    "projectedPctToPlan": null,
+    "projectedVariance": null,
     "band": {
-      "low": 974834.420460169,
-      "high": 1354373.1830461102
+      "low": 0,
+      "high": 0
     },
-    "pctOfDayElapsed": 0.038695546783171594,
-    "level_EOD": 1195491.4432132402,
-    "shape_EOD": 614840.775692225,
-    "blendWeight": 0.05319487807009658,
+    "pctOfDayElapsed": 0.2349910497503019,
+    "level_EOD": 0,
+    "shape_EOD": 0,
+    "blendWeight": 0.1816716609076255,
     "factors": {
-      "plan": 1261509.67,
+      "plan": 0,
       "recencyFactor": 0.9393,
       "dowPlanRatio": 0.9518,
       "holidayKey": null,
       "holidayMult": 1,
       "weatherKey": "perfect_65_80F_dry",
       "weatherMult": 1.06,
-      "weatherSummary": "concord-nh: 71F Mostly Sunny | worcester-ma: 69F Sunny | burlington-vt: 65F Slight Chance Rain Showers | portland-me: 62F Mostly Sunny | albany-ny: 71F Mostly Sunny | scranton-pa: 71F Sunny"
+      "weatherSummary": "concord-nh: 71F Mostly Sunny | worcester-ma: 69F Sunny | burlington-vt: 65F Slight Chance Rain Showers | portland-me: 62F Mostly Sunny | albany-ny: 71F Mostly Sunny | scranton-pa: 72F Mostly Sunny"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.04657133333333333,
+      "basePaceFromCurve": 0.2503373333333333,
       "observedPaceCount": 2,
-      "blendedPaceAtNow": 0.038695546783171594,
+      "blendedPaceAtNow": 0.2349910497503019,
       "historyDays": 2,
       "avgHistoricalEOD": 1224918.7349999999
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 1656.4402711472264,
+      "estimatedCurrent": 10059.261866661174,
       "estimatedEOD": 42807,
-      "paceUsed": 0.038695546783171594,
+      "paceUsed": 0.2349910497503019,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 28199,
-          "estimatedCurrent": 1091.1757237386557,
+          "estimatedCurrent": 6626.512611908764,
           "estimatedEOD": 28199,
           "stdev": 0.2923
         },
@@ -73,16 +73,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 14608,
-          "estimatedCurrent": 565.2645474085707,
+          "estimatedCurrent": 3432.7492547524103,
           "estimatedEOD": 14608,
           "stdev": 0.1658
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1207410.8017531396,
-    "combinedCurrentSales": 25448.040271147227,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $1,656 so far, +$42,807 to EOD."
+    "combinedProjectedEOD": 42807,
+    "combinedCurrentSales": 10059.261866661174,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $10,059 so far, +$42,807 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 23,
@@ -90,7 +90,7 @@
     "mult": 1.06,
     "key": "perfect_65_80F_dry",
     "season": "spring",
-    "summary": "concord-nh: 71F Mostly Sunny | worcester-ma: 69F Sunny | burlington-vt: 65F Slight Chance Rain Showers | portland-me: 62F Mostly Sunny | albany-ny: 71F Mostly Sunny | scranton-pa: 71F Sunny",
+    "summary": "concord-nh: 71F Mostly Sunny | worcester-ma: 69F Sunny | burlington-vt: 65F Slight Chance Rain Showers | portland-me: 62F Mostly Sunny | albany-ny: 71F Mostly Sunny | scranton-pa: 72F Mostly Sunny",
     "tagWeights": {
       "perfect_65_80F_dry": 0.624,
       "rain_gt_0_5in": 0.224,
@@ -111,7 +111,7 @@
         "temp": 69,
         "unit": "F",
         "short": "Sunny",
-        "detailed": "Sunny, with a high near 69. Southwest wind 13 to 18 mph, with gusts as high as 32 mph."
+        "detailed": "Sunny, with a high near 69. Southwest wind 15 to 18 mph, with gusts as high as 32 mph."
       },
       {
         "station": "burlington-vt",
@@ -119,7 +119,7 @@
         "temp": 65,
         "unit": "F",
         "short": "Slight Chance Rain Showers",
-        "detailed": "A slight chance of rain showers before 1pm. Partly sunny, with a high near 65. Southwest wind 9 to 14 mph. Chance of precipitation is 20%. New rainfall amounts less than a tenth of an inch possible."
+        "detailed": "A slight chance of rain showers before 1pm. Partly sunny, with a high near 65. Southwest wind 10 to 14 mph. Chance of precipitation is 20%. New rainfall amounts less than a tenth of an inch possible."
       },
       {
         "station": "portland-me",
@@ -135,15 +135,15 @@
         "temp": 71,
         "unit": "F",
         "short": "Mostly Sunny",
-        "detailed": "Mostly sunny, with a high near 71. Southwest wind 8 to 14 mph, with gusts as high as 26 mph."
+        "detailed": "Mostly sunny, with a high near 71. Southwest wind 10 to 14 mph, with gusts as high as 26 mph."
       },
       {
         "station": "scranton-pa",
         "weight": 0.088,
-        "temp": 71,
+        "temp": 72,
         "unit": "F",
-        "short": "Sunny",
-        "detailed": "Sunny, with a high near 71. Southwest wind 7 to 12 mph, with gusts as high as 24 mph."
+        "short": "Mostly Sunny",
+        "detailed": "Mostly sunny, with a high near 72. Southwest wind 8 to 14 mph, with gusts as high as 26 mph."
       }
     ]
   }
