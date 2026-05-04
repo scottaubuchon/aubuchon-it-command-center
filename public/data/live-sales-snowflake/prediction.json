@@ -1,43 +1,43 @@
 {
-  "updatedAt": "2026-05-04T16:21:27.849Z",
-  "updatedAtET": "May 4, 2026, 12:21 PM",
+  "updatedAt": "2026-05-04T17:56:44.805Z",
+  "updatedAtET": "May 4, 2026, 1:56 PM",
   "dateET": "2026-05-04",
   "dow": 1,
   "season": "spring",
   "source": "snowflake",
   "current": {
-    "ts": "2026-05-04T16:21:27.849Z",
-    "tsET": "May 4, 2026, 12:21 PM",
+    "ts": "2026-05-04T17:56:44.805Z",
+    "tsET": "May 4, 2026, 1:56 PM",
     "dateET": "2026-05-04",
-    "hourET": 12,
-    "minuteET": 21,
+    "hourET": 13,
+    "minuteET": 56,
     "dow": 1,
-    "sales": 493311.07,
+    "sales": 681668.92,
     "plan": 1261509.67,
-    "pctToPlan": 39.10481875259823,
-    "gp": 206580.6979,
-    "gpPct": 41.876355602561276,
-    "txns": 13580,
-    "customers": 12399,
+    "pctToPlan": 54.03596470251394,
+    "gp": 287133.282,
+    "gpPct": 42.12210261837961,
+    "txns": 19102,
+    "customers": 17650,
     "storeCount": 134,
     "asOf": null,
-    "asOfET": "May 4, 12:15 PM ET"
+    "asOfET": "May 4, 1:45 PM ET"
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.46 shape + 0.54 level)",
+    "method": "blended (w=0.73 shape + 0.27 level)",
     "confidence": "medium",
-    "projectedEOD": 1176542.9083127326,
-    "projectedPctToPlan": 93.26467614891392,
-    "projectedVariance": -84966.76168726734,
+    "projectedEOD": 1160980.1058444963,
+    "projectedPctToPlan": 92.03101121250195,
+    "projectedVariance": -100529.56415550364,
     "band": {
-      "low": 1024933.3487703319,
-      "high": 1328152.467855133
+      "low": 1037772.1101007718,
+      "high": 1284188.1015882208
     },
-    "pctOfDayElapsed": 0.4273535854873485,
+    "pctOfDayElapsed": 0.5936069903998021,
     "level_EOD": 1195491.4432132402,
-    "shape_EOD": 1154339.3731854022,
-    "blendWeight": 0.46045156143274263,
+    "shape_EOD": 1148350.5602602272,
+    "blendWeight": 0.7320893289831372,
     "factors": {
       "plan": 1261509.67,
       "recencyFactor": 0.9393,
@@ -49,23 +49,23 @@
       "weatherSummary": "concord-nh: 71F Sunny | worcester-ma: 69F Sunny | burlington-vt: 65F Slight Chance Rain Showers | portland-me: 62F Mostly Sunny | albany-ny: 71F Mostly Sunny | scranton-pa: 72F Sunny"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.439913,
+      "basePaceFromCurve": 0.6099266666666666,
       "observedPaceCount": 2,
-      "blendedPaceAtNow": 0.4273535854873485,
+      "blendedPaceAtNow": 0.5936069903998021,
       "historyDays": 2,
       "avgHistoricalEOD": 1143909.0900000003
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 18293.724933956924,
+      "estimatedCurrent": 25410.53443804433,
       "estimatedEOD": 42807,
-      "paceUsed": 0.4273535854873485,
+      "paceUsed": 0.5936069903998021,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 28199,
-          "estimatedCurrent": 12050.94375715774,
+          "estimatedCurrent": 16739.12352228402,
           "estimatedEOD": 28199,
           "stdev": 0.2923
         },
@@ -73,16 +73,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 14608,
-          "estimatedCurrent": 6242.781176799186,
+          "estimatedCurrent": 8671.410915760309,
           "estimatedEOD": 14608,
           "stdev": 0.1658
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1219349.9083127326,
-    "combinedCurrentSales": 511604.79493395693,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $18,294 so far, +$42,807 to EOD."
+    "combinedProjectedEOD": 1203787.1058444963,
+    "combinedCurrentSales": 707079.4544380443,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $25,411 so far, +$42,807 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 23,
@@ -111,7 +111,7 @@
         "temp": 69,
         "unit": "F",
         "short": "Sunny",
-        "detailed": "Sunny, with a high near 69. Southwest wind 15 to 18 mph, with gusts as high as 32 mph."
+        "detailed": "Sunny, with a high near 69. Southwest wind 15 to 18 mph, with gusts as high as 37 mph."
       },
       {
         "station": "burlington-vt",
