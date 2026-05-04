@@ -1,43 +1,43 @@
 {
-  "updatedAt": "2026-05-04T20:41:13.516Z",
-  "updatedAtET": "May 4, 2026, 4:41 PM",
+  "updatedAt": "2026-05-04T21:44:20.879Z",
+  "updatedAtET": "May 4, 2026, 5:44 PM",
   "dateET": "2026-05-04",
   "dow": 1,
   "season": "spring",
   "source": "snowflake",
   "current": {
-    "ts": "2026-05-04T20:41:13.516Z",
-    "tsET": "May 4, 2026, 4:41 PM",
+    "ts": "2026-05-04T21:44:20.879Z",
+    "tsET": "May 4, 2026, 5:44 PM",
     "dateET": "2026-05-04",
-    "hourET": 16,
-    "minuteET": 41,
+    "hourET": 17,
+    "minuteET": 44,
     "dow": 1,
-    "sales": 1009319.44,
+    "sales": 1123122.19,
     "plan": 1261509.67,
-    "pctToPlan": 80.00885478745478,
-    "gp": 423009.848,
-    "gpPct": 41.91040331096764,
-    "txns": 28736,
-    "customers": 26860,
+    "pctToPlan": 89.03001036845005,
+    "gp": 468416.1895,
+    "gpPct": 41.70660981241943,
+    "txns": 31973,
+    "customers": 29921,
     "storeCount": 134,
     "asOf": null,
-    "asOfET": "May 4, 4:30 PM ET"
+    "asOfET": "May 4, 5:30 PM ET"
   },
   "prediction": {
     "available": true,
-    "method": "blended (w=0.95 shape + 0.05 level)",
+    "method": "blended (w=0.97 shape + 0.03 level)",
     "confidence": "high",
-    "projectedEOD": 1159643.3571912188,
-    "projectedPctToPlan": 91.92504701063598,
-    "projectedVariance": -101866.31280878116,
+    "projectedEOD": 1182128.94539388,
+    "projectedPctToPlan": 93.70748187716072,
+    "projectedVariance": -79380.72460612003,
     "band": {
-      "low": 1057764.8723632998,
-      "high": 1261521.842019138
+      "low": 1080292.503775229,
+      "high": 1283965.3870125308
     },
-    "pctOfDayElapsed": 0.8717776368894751,
+    "pctOfDayElapsed": 0.950407823563626,
     "level_EOD": 1195491.4432132402,
-    "shape_EOD": 1157771.657921024,
-    "blendWeight": 0.9503788461229349,
+    "shape_EOD": 1181726.583214318,
+    "blendWeight": 0.9707688868907011,
     "factors": {
       "plan": 1261509.67,
       "recencyFactor": 0.9393,
@@ -49,23 +49,23 @@
       "weatherSummary": "concord-nh: 71F Mostly Sunny | worcester-ma: 69F Sunny | burlington-vt: 66F Partly Sunny | portland-me: 67F Mostly Sunny | albany-ny: 71F Mostly Sunny | scranton-pa: 72F Sunny"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.8834443333333333,
+      "basePaceFromCurve": 0.9590006666666667,
       "observedPaceCount": 2,
-      "blendedPaceAtNow": 0.8717776368894751,
+      "blendedPaceAtNow": 0.950407823563626,
       "historyDays": 2,
       "avgHistoricalEOD": 1143909.0900000003
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 37318.18530232776,
+      "estimatedCurrent": 40684.10770328814,
       "estimatedEOD": 42807,
-      "paceUsed": 0.8717776368894751,
+      "paceUsed": 0.950407823563626,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 28199,
-          "estimatedCurrent": 24583.257582646307,
+          "estimatedCurrent": 26800.55021667069,
           "estimatedEOD": 28199,
           "stdev": 0.2923
         },
@@ -73,16 +73,16 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 14608,
-          "estimatedCurrent": 12734.927719681451,
+          "estimatedCurrent": 13883.557486617448,
           "estimatedEOD": 14608,
           "stdev": 0.1658
         }
       ],
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
-    "combinedProjectedEOD": 1202450.3571912188,
-    "combinedCurrentSales": 1046637.6253023277,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $37,318 so far, +$42,807 to EOD."
+    "combinedProjectedEOD": 1224935.94539388,
+    "combinedCurrentSales": 1163806.297703288,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $40,684 so far, +$42,807 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 23,
@@ -117,7 +117,7 @@
         "temp": 66,
         "unit": "F",
         "short": "Partly Sunny",
-        "detailed": "Partly sunny, with a high near 66. Southwest wind around 12 mph."
+        "detailed": "Partly sunny, with a high near 66. Southwest wind around 10 mph."
       },
       {
         "station": "portland-me",
