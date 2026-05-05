@@ -3,14 +3,14 @@
   "storeFilter": null,
   "dateFilter": "2026-05-03",
   "companyTotal": {
-    "sales": 1242169.79,
+    "sales": 1297213.03,
     "plan": 1429704.94,
-    "gp": 572375.43,
-    "gpPct": 46.07867898638881,
-    "txns": 31643,
+    "gp": 574475.77,
+    "gpPct": 44.28538387407348,
+    "txns": 31786,
     "customers": 0,
-    "storeCount": 134,
-    "pctToPlan": 86.88294733037714
+    "storeCount": 136,
+    "pctToPlan": 90.7329193392869
   },
   "topStores": [
     {
@@ -22,6 +22,16 @@
       "plan": 8629.6,
       "gp": 13248.93,
       "txns": 614
+    },
+    {
+      "store": "233",
+      "name": "ITHACA, NY - DOWNTOWN - (ACE)",
+      "city": "Ithaca",
+      "state": "NY",
+      "sales": 28607.47,
+      "plan": 34655.73,
+      "gp": 0,
+      "txns": 0
     },
     {
       "store": "192",
@@ -42,6 +52,16 @@
       "plan": 21003.61,
       "gp": 8999.77,
       "txns": 506
+    },
+    {
+      "store": "234",
+      "name": "ITHACA, NY - TRIPHAMMER - (ACE)",
+      "city": "Ithaca",
+      "state": "NY",
+      "sales": 21888.92,
+      "plan": 10345.71,
+      "gp": 0,
+      "txns": 0
     },
     {
       "store": "175",
@@ -192,48 +212,28 @@
       "plan": 13517.91,
       "gp": 7497.66,
       "txns": 336
-    },
-    {
-      "store": "153",
-      "name": "KINGSTON, MA - ACE",
-      "city": "Kingston",
-      "state": "MA",
-      "sales": 13821.38,
-      "plan": 11985.6,
-      "gp": 6337.13,
-      "txns": 292
-    },
-    {
-      "store": "230",
-      "name": "WOODBURY,  CT - ACE",
-      "city": "Woodbury",
-      "state": "CT",
-      "sales": 13707.71,
-      "plan": 8078.87,
-      "gp": 5630.98,
-      "txns": 273
     }
   ],
   "topProducts": [
     {
       "sku": "25",
       "product": "MIDWEST NUTS & BOLTS",
-      "sales": 18744.72
+      "sales": 18800.98
     },
     {
       "sku": "114960",
       "product": "BLACK SCOTTS MULCH",
-      "sales": 8322.11
+      "sales": 8359.72
     },
     {
       "sku": "102836",
       "product": "2CUFT/50QT MG POTTING MIX",
-      "sales": 8199.61
+      "sales": 8212.11
     },
     {
       "sku": "105",
       "product": "PROPANE, TANK, EX 20LB",
-      "sales": 7363.41
+      "sales": 7417.39
     },
     {
       "sku": "500808",
@@ -253,7 +253,7 @@
     {
       "sku": "161927",
       "product": "PROPANE,TANK, 20LB W/OPD VALVE",
-      "sales": 4816.37
+      "sales": 4881.2
     },
     {
       "sku": "116766",
@@ -288,7 +288,7 @@
     {
       "sku": "765126",
       "product": "1.5CF MG ORG BED/GARDEN SOIL",
-      "sales": 3441.74
+      "sales": 3456.74
     },
     {
       "sku": "763500",
@@ -328,7 +328,7 @@
     {
       "sku": "963314",
       "product": "POKEMON - PERFECT ORDER BOOST",
-      "sales": 2816.63
+      "sales": 2888.54
     },
     {
       "sku": "688849",
@@ -391,6 +391,11 @@
       "sales": 2134.21
     },
     {
+      "sku": "129991",
+      "product": "PELLET,GREEN SUPREME,BLEND40LB",
+      "sales": 2123.22
+    },
+    {
       "sku": "763506",
       "product": "GEN SP-S-325 LP GRILL",
       "sales": 2098
@@ -399,11 +404,6 @@
       "sku": "500816",
       "product": "REGAL,SLCT.MATTE,PSTL.1G#5481X",
       "sales": 2063.49
-    },
-    {
-      "sku": "129991",
-      "product": "PELLET,GREEN SUPREME,BLEND40LB",
-      "sales": 2051.31
     },
     {
       "sku": "102835",
@@ -471,6 +471,11 @@
       "sales": 1721.08
     },
     {
+      "sku": "126462",
+      "product": "SOIL,POTTING,BAR HARBOR 1CFT-",
+      "sales": 1634.03
+    },
+    {
       "sku": "126465",
       "product": "3CF NATURAL CEDAR MULCH",
       "sales": 1633.85
@@ -486,9 +491,9 @@
       "sales": 1600.09
     },
     {
-      "sku": "126462",
-      "product": "SOIL,POTTING,BAR HARBOR 1CFT-",
-      "sales": 1600.05
+      "sku": "191685",
+      "product": "SOIL,STONINGTON BLND 1.5CF",
+      "sales": 1596.33
     },
     {
       "sku": "791909",
@@ -519,11 +524,6 @@
       "sku": "103080",
       "product": "ANT BAITS, TERRO LIQUID, 6-PK",
       "sales": 1569.07
-    },
-    {
-      "sku": "191685",
-      "product": "SOIL,STONINGTON BLND 1.5CF",
-      "sales": 1560.34
     },
     {
       "sku": "139948",
@@ -561,19 +561,24 @@
       "sales": 1406.28
     },
     {
-      "sku": "759181",
-      "product": "DR5004WE SQ ELEC DRYER 5 YEAR",
+      "sku": "939011",
+      "product": "TR5006WN SPEED QUEEN TR5 WASH",
       "sales": 1399.95
     },
     {
-      "sku": "939011",
-      "product": "TR5006WN SPEED QUEEN TR5 WASH",
+      "sku": "759181",
+      "product": "DR5004WE SQ ELEC DRYER 5 YEAR",
       "sales": 1399.95
     },
     {
       "sku": "937707",
       "product": "GRILL GEN E-430LP STH BK",
       "sales": 1399
+    },
+    {
+      "sku": "126467",
+      "product": "3CF DARK BROWN CEDAR MULCH",
+      "sales": 1396.72
     },
     {
       "sku": "130735",
@@ -601,9 +606,9 @@
       "sales": 1312.8
     },
     {
-      "sku": "126467",
-      "product": "3CF DARK BROWN CEDAR MULCH",
-      "sales": 1308.66
+      "sku": "770545",
+      "product": "4M SCOTTS WEED&FEED",
+      "sales": 1309.37
     },
     {
       "sku": "194586",
@@ -621,19 +626,14 @@
       "sales": 1273.55
     },
     {
-      "sku": "770545",
-      "product": "4M SCOTTS WEED&FEED",
-      "sales": 1264.39
+      "sku": "901",
+      "product": "DUMP SKU 901",
+      "sales": 1268
     },
     {
       "sku": "130413",
       "product": "3CF BLACK CEDAR MULCH",
       "sales": 1259.63
-    },
-    {
-      "sku": "901",
-      "product": "DUMP SKU 901",
-      "sales": 1256
     },
     {
       "sku": "948706",
@@ -676,6 +676,11 @@
       "sales": 1156.95
     },
     {
+      "sku": "212779",
+      "product": "SAND,PLAY,PREMIUM,50-LB.BAG",
+      "sales": 1153.8
+    },
+    {
       "sku": "791908",
       "product": "GEN SA-E-330 LP INDIGO",
       "sales": 1149
@@ -689,11 +694,6 @@
       "sku": "15000",
       "product": "SCOTTS  4 STEP 15M",
       "sales": 1137.19
-    },
-    {
-      "sku": "212779",
-      "product": "SAND,PLAY,PREMIUM,50-LB.BAG",
-      "sales": 1136.82
     },
     {
       "sku": "413063",
@@ -1540,53 +1540,11 @@
       "state": "RI"
     }
   ],
-  "notReporting": [
-    {
-      "store": "233",
-      "name": "ITHACA, NY - DOWNTOWN - (ACE)",
-      "city": "Ithaca",
-      "state": "NY",
-      "plan": 34655.73
-    },
-    {
-      "store": "234",
-      "name": "ITHACA, NY - TRIPHAMMER - (ACE)",
-      "city": "Ithaca",
-      "state": "NY",
-      "plan": 10345.71
-    }
-  ],
-  "estimatedMissing": {
-    "paceAtNow": 1,
-    "sampleWeeks": 8,
-    "stores": [
-      {
-        "store": "233",
-        "dowAvg": 18084.8025,
-        "samples": 8,
-        "basis": "dowAvg",
-        "plan": 34655.73,
-        "estimatedCurrent": 18084.8025,
-        "estimatedEOD": 18084.8025
-      },
-      {
-        "store": "234",
-        "dowAvg": 12841.37,
-        "samples": 8,
-        "basis": "dowAvg",
-        "plan": 10345.71,
-        "estimatedCurrent": 12841.37,
-        "estimatedEOD": 12841.37
-      }
-    ],
-    "totalEstimatedCurrent": 30926.1725,
-    "totalEstimatedEOD": 30926.1725,
-    "projectedCompanyEOD": 1273095.9625000001,
-    "projectedCompanyCurrent": 1273095.9625000001
-  },
+  "notReporting": [],
+  "estimatedMissing": null,
   "asOfET": "End of day · 2026-05-03",
   "cached": true,
-  "refreshedAt": "2026-05-04T14:19:47.904Z",
+  "refreshedAt": "2026-05-05T00:05:38.658Z",
   "source": "snowflake",
-  "cachedAt": "2026-05-04T14:19:47.905Z"
+  "cachedAt": "2026-05-05T00:05:38.659Z"
 }
