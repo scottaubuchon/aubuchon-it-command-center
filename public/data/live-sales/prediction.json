@@ -1,16 +1,16 @@
 {
-  "updatedAt": "2026-05-05T18:11:10.999Z",
-  "updatedAtET": "May 5, 2026, 2:11 PM",
+  "updatedAt": "2026-05-05T19:51:22.296Z",
+  "updatedAtET": "May 5, 2026, 3:51 PM",
   "dateET": "2026-05-05",
   "dow": 2,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-05-05T18:11:10.999Z",
-    "tsET": "May 5, 2026, 2:11 PM",
+    "ts": "2026-05-05T19:51:22.296Z",
+    "tsET": "May 5, 2026, 3:51 PM",
     "dateET": "2026-05-05",
-    "hourET": 14,
-    "minuteET": 11,
+    "hourET": 15,
+    "minuteET": 51,
     "dow": 2,
     "sales": 0,
     "plan": 0,
@@ -20,8 +20,8 @@
     "txns": 0,
     "customers": 0,
     "storeCount": 0,
-    "asOf": "2026-05-05T18:11:10.988Z",
-    "asOfET": "May 5, 2026, 2:11 PM"
+    "asOf": "2026-05-05T19:51:22.287Z",
+    "asOfET": "May 5, 2026, 3:51 PM"
   },
   "prediction": {
     "available": true,
@@ -34,10 +34,10 @@
       "low": 0,
       "high": 0
     },
-    "pctOfDayElapsed": 0.606781030874668,
+    "pctOfDayElapsed": 0.7735598876373697,
     "level_EOD": 0,
     "shape_EOD": 0,
-    "blendWeight": 0.7497852374415199,
+    "blendWeight": 0.9059296897173447,
     "factors": {
       "plan": 0,
       "recencyFactor": 1.0035,
@@ -46,26 +46,26 @@
       "holidayMult": 1,
       "weatherKey": "rain_gt_0_5in",
       "weatherMult": 0.95,
-      "weatherSummary": "concord-nh: 80F Isolated Showers And Thunderstorms | worcester-ma: 82F Sunny | burlington-vt: 76F Showers And Thunderstorms | portland-me: 65F Sunny | albany-ny: 81F Slight Chance Rain Showers then Chance Showers And Thunderstorms | scranton-pa: 81F Slight Chance Rain Showers"
+      "weatherSummary": "concord-nh: 85F Isolated Showers And Thunderstorms | worcester-ma: 82F Sunny | burlington-vt: 74F Showers And Thunderstorms | portland-me: 64F Sunny | albany-ny: 84F Slight Chance Showers And Thunderstorms | scranton-pa: 81F Slight Chance Rain Showers"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.62074,
+      "basePaceFromCurve": 0.791785,
       "observedPaceCount": 2,
-      "blendedPaceAtNow": 0.606781030874668,
+      "blendedPaceAtNow": 0.7735598876373697,
       "historyDays": 2,
       "avgHistoricalEOD": 1148026.7049999998
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 25722.05467980805,
+      "estimatedCurrent": 32791.97719683574,
       "estimatedEOD": 42391,
-      "paceUsed": 0.606781030874668,
+      "paceUsed": 0.7735598876373697,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 28783,
-          "estimatedCurrent": 17464.97841166557,
+          "estimatedCurrent": 22265.374245866413,
           "estimatedEOD": 28783,
           "stdev": 0.4847
         },
@@ -73,7 +73,7 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 13608,
-          "estimatedCurrent": 8257.076268142482,
+          "estimatedCurrent": 10526.602950969327,
           "estimatedEOD": 13608,
           "stdev": 0.1026
         }
@@ -81,8 +81,8 @@
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
     "combinedProjectedEOD": 42391,
-    "combinedCurrentSales": 25722.05467980805,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $25,722 so far, +$42,391 to EOD."
+    "combinedCurrentSales": 32791.97719683574,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $32,792 so far, +$42,391 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 24,
@@ -90,20 +90,20 @@
     "mult": 0.95,
     "key": "rain_gt_0_5in",
     "season": "spring",
-    "summary": "concord-nh: 80F Isolated Showers And Thunderstorms | worcester-ma: 82F Sunny | burlington-vt: 76F Showers And Thunderstorms | portland-me: 65F Sunny | albany-ny: 81F Slight Chance Rain Showers then Chance Showers And Thunderstorms | scranton-pa: 81F Slight Chance Rain Showers",
+    "summary": "concord-nh: 85F Isolated Showers And Thunderstorms | worcester-ma: 82F Sunny | burlington-vt: 74F Showers And Thunderstorms | portland-me: 64F Sunny | albany-ny: 84F Slight Chance Showers And Thunderstorms | scranton-pa: 81F Slight Chance Rain Showers",
     "tagWeights": {
       "rain_gt_0_5in": 0.576,
       "sunny_gt_65F": 0.272,
-      "perfect_65_80F_dry": 0.152
+      "normal": 0.152
     },
     "forecasts": [
       {
         "station": "concord-nh",
         "weight": 0.144,
-        "temp": 80,
+        "temp": 85,
         "unit": "F",
         "short": "Isolated Showers And Thunderstorms",
-        "detailed": "Isolated showers and thunderstorms after 4pm. Sunny, with a high near 80. Southwest wind around 15 mph, with gusts as high as 35 mph. Chance of precipitation is 20%."
+        "detailed": "Isolated showers and thunderstorms after 4pm. Sunny, with a high near 85. Southwest wind 15 to 20 mph, with gusts as high as 35 mph. Chance of precipitation is 20%."
       },
       {
         "station": "worcester-ma",
@@ -111,31 +111,31 @@
         "temp": 82,
         "unit": "F",
         "short": "Sunny",
-        "detailed": "Sunny, with a high near 82. Southwest wind 13 to 21 mph, with gusts as high as 40 mph."
+        "detailed": "Sunny, with a high near 82. Southwest wind around 17 mph, with gusts as high as 37 mph."
       },
       {
         "station": "burlington-vt",
         "weight": 0.224,
-        "temp": 76,
+        "temp": 74,
         "unit": "F",
         "short": "Showers And Thunderstorms",
-        "detailed": "A chance of rain showers before 11am, then showers and thunderstorms. Mostly cloudy, with a high near 76. South wind 8 to 22 mph, with gusts as high as 35 mph. Chance of precipitation is 80%. New rainfall amounts between a quarter and half of an inch possible."
+        "detailed": "Showers and thunderstorms. Mostly cloudy. High near 74, with temperatures falling to around 66 in the afternoon. South wind 8 to 22 mph, with gusts as high as 33 mph. Chance of precipitation is 80%. New rainfall amounts between a tenth and quarter of an inch possible."
       },
       {
         "station": "portland-me",
         "weight": 0.152,
-        "temp": 65,
+        "temp": 64,
         "unit": "F",
         "short": "Sunny",
-        "detailed": "Sunny, with a high near 65. South wind 15 to 20 mph, with gusts as high as 40 mph."
+        "detailed": "Sunny, with a high near 64. South wind around 20 mph, with gusts as high as 40 mph."
       },
       {
         "station": "albany-ny",
         "weight": 0.12,
-        "temp": 81,
+        "temp": 84,
         "unit": "F",
-        "short": "Slight Chance Rain Showers then Chance Showers And Thunderstorms",
-        "detailed": "A slight chance of rain showers before 2pm, then a chance of showers and thunderstorms. Mostly sunny, with a high near 81. South wind 13 to 20 mph, with gusts as high as 33 mph. Chance of precipitation is 40%. New rainfall amounts less than a tenth of an inch possible."
+        "short": "Slight Chance Showers And Thunderstorms",
+        "detailed": "A slight chance of showers and thunderstorms after 5pm. Partly sunny, with a high near 84. Southwest wind around 20 mph, with gusts as high as 37 mph. Chance of precipitation is 20%. New rainfall amounts less than a tenth of an inch possible."
       },
       {
         "station": "scranton-pa",
