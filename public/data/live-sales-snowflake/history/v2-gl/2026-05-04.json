@@ -1,0 +1,1592 @@
+{
+  "status": "ok",
+  "storeFilter": null,
+  "dateFilter": "2026-05-04",
+  "companyTotal": {
+    "sales": 1231327.4,
+    "plan": 1261509.67,
+    "gp": 572328.05,
+    "gpPct": 46.480574540938505,
+    "txns": 32241,
+    "customers": 0,
+    "storeCount": 134,
+    "pctToPlan": 97.60744838364973
+  },
+  "topStores": [
+    {
+      "store": "209",
+      "name": "MOUNT JOY, PA - ACE",
+      "city": "Mount Joy",
+      "state": "PA",
+      "sales": 30365.09,
+      "plan": 32196.4,
+      "gp": 12741.94,
+      "txns": 727
+    },
+    {
+      "store": "210",
+      "name": "QUINCY, MA - ACE",
+      "city": "Quincy",
+      "state": "MA",
+      "sales": 29451.88,
+      "plan": 22845.76,
+      "gp": 12149.83,
+      "txns": 422
+    },
+    {
+      "store": "192",
+      "name": "BEVERLY, MA - ACE",
+      "city": "Beverly",
+      "state": "MA",
+      "sales": 29148.07,
+      "plan": 26510.4,
+      "gp": 14216.31,
+      "txns": 636
+    },
+    {
+      "store": "217",
+      "name": "NORTH SPRINGFIELD, VT - ACE",
+      "city": "North Springfield",
+      "state": "VT",
+      "sales": 27512.96,
+      "plan": 26196.25,
+      "gp": 10216.11,
+      "txns": 413
+    },
+    {
+      "store": "171",
+      "name": "BELFAST, ME - ACE",
+      "city": "Belfast",
+      "state": "ME",
+      "sales": 20247.03,
+      "plan": 22659.55,
+      "gp": 10033.16,
+      "txns": 382
+    },
+    {
+      "store": "190",
+      "name": "IPSWICH, MA - ACE",
+      "city": "Ipswich",
+      "state": "MA",
+      "sales": 20232.01,
+      "plan": 12500.5,
+      "gp": 9146.7,
+      "txns": 402
+    },
+    {
+      "store": "202",
+      "name": "EASTCHESTER, NY - (ACE)",
+      "city": "Eastchester",
+      "state": "NY",
+      "sales": 18626.16,
+      "plan": 15858.71,
+      "gp": 8626.07,
+      "txns": 474
+    },
+    {
+      "store": "006",
+      "name": "MOULTONBORO, NH - (IND)",
+      "city": "Moultonboro",
+      "state": "NH",
+      "sales": 18017.31,
+      "plan": 18648.37,
+      "gp": 7917.59,
+      "txns": 342
+    },
+    {
+      "store": "236",
+      "name": "DOVER, PA - ACE",
+      "city": "Dover",
+      "state": "PA",
+      "sales": 17942.81,
+      "plan": 15223.02,
+      "gp": 11439.16,
+      "txns": 508
+    },
+    {
+      "store": "172",
+      "name": "FALMOUTH, MA - (IND)",
+      "city": "Teaticket",
+      "state": "MA",
+      "sales": 17512.09,
+      "plan": 18354.23,
+      "gp": 7249.08,
+      "txns": 397
+    },
+    {
+      "store": "182",
+      "name": "COHASSET, MA - (IND)",
+      "city": "Cohasset",
+      "state": "MA",
+      "sales": 16652.59,
+      "plan": 13695.69,
+      "gp": 6912.49,
+      "txns": 389
+    },
+    {
+      "store": "175",
+      "name": "LEE, NH - ACE",
+      "city": "Lee",
+      "state": "NH",
+      "sales": 16511.88,
+      "plan": 13291.72,
+      "gp": 7980.07,
+      "txns": 378
+    },
+    {
+      "store": "090",
+      "name": "WELLS, ME - (ACE)",
+      "city": "Wells",
+      "state": "ME",
+      "sales": 16329.48,
+      "plan": 9885.85,
+      "gp": 6562.82,
+      "txns": 410
+    },
+    {
+      "store": "153",
+      "name": "KINGSTON, MA - ACE",
+      "city": "Kingston",
+      "state": "MA",
+      "sales": 16318.94,
+      "plan": 14328.77,
+      "gp": 6164.01,
+      "txns": 311
+    },
+    {
+      "store": "208",
+      "name": "BURTONSVILLE, MD - ACE",
+      "city": "Burtonsville",
+      "state": "MD",
+      "sales": 15846.17,
+      "plan": 24648.54,
+      "gp": 7926.32,
+      "txns": 360
+    },
+    {
+      "store": "198",
+      "name": "LYNDONVILLE, VT - ACE",
+      "city": "Lyndonville",
+      "state": "VT",
+      "sales": 15283.81,
+      "plan": 16877.9,
+      "gp": 6241.82,
+      "txns": 288
+    },
+    {
+      "store": "083",
+      "name": "VERGENNES, VT - ACE",
+      "city": "Vergennes",
+      "state": "VT",
+      "sales": 15027.54,
+      "plan": 15386.76,
+      "gp": 7145.35,
+      "txns": 364
+    },
+    {
+      "store": "211",
+      "name": "HANOVER, MA - ACE",
+      "city": "Hanover",
+      "state": "MA",
+      "sales": 14016.16,
+      "plan": 11701.4,
+      "gp": 6291.88,
+      "txns": 223
+    },
+    {
+      "store": "063",
+      "name": "MIDDLEBURY, VT - ACE",
+      "city": "Middlebury",
+      "state": "VT",
+      "sales": 13791.71,
+      "plan": 14169.22,
+      "gp": 7431.28,
+      "txns": 330
+    },
+    {
+      "store": "206",
+      "name": "WINSLOW, ME - ACE",
+      "city": "Winslow",
+      "state": "ME",
+      "sales": 13126.08,
+      "plan": 14497.69,
+      "gp": 6020.04,
+      "txns": 296
+    }
+  ],
+  "topProducts": [
+    {
+      "sku": "25",
+      "product": "MIDWEST NUTS & BOLTS",
+      "sales": 18272.31
+    },
+    {
+      "sku": "972131",
+      "product": "POKEMON ASCENDED HEROES PIN",
+      "sales": 9735.67
+    },
+    {
+      "sku": "736741",
+      "product": "LM2135SP 21\" SELECT CUT SP LAW",
+      "sales": 7130.51
+    },
+    {
+      "sku": "102836",
+      "product": "2CUFT/50QT MG POTTING MIX",
+      "sales": 6214.57
+    },
+    {
+      "sku": "500808",
+      "product": "REGAL,SLCT.EGSHL,PSTL 1G#5491X",
+      "sales": 5878.67
+    },
+    {
+      "sku": "114960",
+      "product": "BLACK SCOTTS MULCH",
+      "sales": 5612.92
+    },
+    {
+      "sku": "792745",
+      "product": "WOODLUXE WB D/S STN SLD B4 GL",
+      "sales": 5551.58
+    },
+    {
+      "sku": "105",
+      "product": "PROPANE, TANK, EX 20LB",
+      "sales": 5502.93
+    },
+    {
+      "sku": "791939",
+      "product": "GEN SA-E-325 LP INDIGO",
+      "sales": 5384.71
+    },
+    {
+      "sku": "825446",
+      "product": "SPIRIT E-210LP BLK",
+      "sales": 4784.55
+    },
+    {
+      "sku": "133666",
+      "product": "BROWN SCOTTS MULCH",
+      "sales": 4303.91
+    },
+    {
+      "sku": "825448",
+      "product": "SPIRIT E-325LP BLK",
+      "sales": 3962.06
+    },
+    {
+      "sku": "fee-50",
+      "product": "Screen Repair (50)",
+      "sales": 3679.46
+    },
+    {
+      "sku": "122413",
+      "product": "BEN,INT.EGSHL,PASTEL,1G #N6261",
+      "sales": 3590.67
+    },
+    {
+      "sku": "116766",
+      "product": "COMPOST,LBSTR,QUODDY 1CFT-",
+      "sales": 3418.79
+    },
+    {
+      "sku": "120852",
+      "product": "SOIL,POTTING,BAR HARBOR 2CFT",
+      "sales": 3238.26
+    },
+    {
+      "sku": "747195",
+      "product": "GEN E-315 LP BLK",
+      "sales": 3196
+    },
+    {
+      "sku": "fee-60",
+      "product": "Equipment Rental (60)",
+      "sales": 3101.13
+    },
+    {
+      "sku": "847115",
+      "product": "CAMBRIDGE HARVARD  SLATE",
+      "sales": 3069.81
+    },
+    {
+      "sku": "403966",
+      "product": "21465 22\" 6.25* B&S 150CC OHV,",
+      "sales": 2994
+    },
+    {
+      "sku": "125051",
+      "product": "HNGING BSKET,10IN COMBO",
+      "sales": 2958.86
+    },
+    {
+      "sku": "122385",
+      "product": "CEILING,WTRBORN,WHT.1G #N50809",
+      "sales": 2933.94
+    },
+    {
+      "sku": "225006",
+      "product": "PREMIUM TOP SOIL .75CF",
+      "sales": 2852.54
+    },
+    {
+      "sku": "765126",
+      "product": "1.5CF MG ORG BED/GARDEN SOIL",
+      "sales": 2812.76
+    },
+    {
+      "sku": "937435",
+      "product": ".75CU.FT MG GARDEN SOIL",
+      "sales": 2706.4
+    },
+    {
+      "sku": "128578",
+      "product": "REGAL,SLCT.PEARL,PSTL.1G#5501X",
+      "sales": 2692.77
+    },
+    {
+      "sku": "604998",
+      "product": "CRYSTALS,SOLAR SALT, 40LB",
+      "sales": 2609.54
+    },
+    {
+      "sku": "161927",
+      "product": "PROPANE,TANK, 20LB W/OPD VALVE",
+      "sales": 2534.49
+    },
+    {
+      "sku": "500833",
+      "product": "FRESHSTRT,SUPRIOR,WHT.1G#04600",
+      "sales": 2492.54
+    },
+    {
+      "sku": "736713",
+      "product": "LM2156SP 21\" SELECT CUT FLAGSH",
+      "sales": 2487
+    },
+    {
+      "sku": "193991",
+      "product": "RAISED BED MIX, CASTINE 2CUFT",
+      "sales": 2454.72
+    },
+    {
+      "sku": "133630",
+      "product": "MOORGARD,LLUST.PASTL,1G#W1031X",
+      "sales": 2439.87
+    },
+    {
+      "sku": "122386",
+      "product": "CEILING,WTRBORN,WHT.5G #050809",
+      "sales": 2437.33
+    },
+    {
+      "sku": "962690",
+      "product": "GAZEBO STEEL 10.25' 582#",
+      "sales": 2300
+    },
+    {
+      "sku": "791908",
+      "product": "GEN SA-E-330 LP INDIGO",
+      "sales": 2293.79
+    },
+    {
+      "sku": "944662",
+      "product": "1.5CF SCOTTS LAWN SOIL",
+      "sales": 2240.51
+    },
+    {
+      "sku": "792743",
+      "product": "WOODLUXE WB D/S STN SLD B3 GL",
+      "sales": 2115.92
+    },
+    {
+      "sku": "963314",
+      "product": "POKEMON - PERFECT ORDER BOOST",
+      "sales": 2094.93
+    },
+    {
+      "sku": "189542",
+      "product": "5/8 X 100' ZERO-G LIGHTWEIGHT",
+      "sales": 2082.46
+    },
+    {
+      "sku": "102835",
+      "product": "1CF/25QT MG POTTING MIX",
+      "sales": 1976.97
+    },
+    {
+      "sku": "688849",
+      "product": "GRS SED BLKBTY UTRA 25LB",
+      "sales": 1912.62
+    },
+    {
+      "sku": "792741",
+      "product": "WOODLUXE WB D/S STN SLD B2 GL",
+      "sales": 1911.16
+    },
+    {
+      "sku": "332710",
+      "product": "KIT LG EGG INTEGRATED NEST",
+      "sales": 1889.99
+    },
+    {
+      "sku": "825449",
+      "product": "S-SPIRIT E-425LP BLK",
+      "sales": 1882.26
+    },
+    {
+      "sku": "792739",
+      "product": "WOODLUXE WB D/S STN SLD B1 GL",
+      "sales": 1869.93
+    },
+    {
+      "sku": "847235",
+      "product": "5/8X4X8 CDX SYP PLYWOOD",
+      "sales": 1867.8
+    },
+    {
+      "sku": "103080",
+      "product": "ANT BAITS, TERRO LIQUID, 6-PK",
+      "sales": 1808.93
+    },
+    {
+      "sku": "705228",
+      "product": "TRUFUEL 50:1 2CYCLE 110 OZ",
+      "sales": 1805.24
+    },
+    {
+      "sku": "135730",
+      "product": "4.25IN PROVEN WINNER",
+      "sales": 1771.43
+    },
+    {
+      "sku": "215756",
+      "product": "KEY BLANK,SCHLAGE SC1-AUB",
+      "sales": 1748.41
+    },
+    {
+      "sku": "770743",
+      "product": "12M TB WEED&FEED",
+      "sales": 1745.75
+    },
+    {
+      "sku": "202284",
+      "product": "PP FOCUS SSS, SALMON 30#",
+      "sales": 1740.52
+    },
+    {
+      "sku": "385678",
+      "product": "RAPID GRASS, SUNSHADE 16LB",
+      "sales": 1714.81
+    },
+    {
+      "sku": "524688",
+      "product": "GRASS SEED, EZ-SEED 10LB",
+      "sales": 1708.1
+    },
+    {
+      "sku": "219022",
+      "product": "CONCRETE,MIX,80-LB.    #110180",
+      "sales": 1707.26
+    },
+    {
+      "sku": "202286",
+      "product": "PP FOCUS PUPPY,LAMB 34#",
+      "sales": 1693.48
+    },
+    {
+      "sku": "500816",
+      "product": "REGAL,SLCT.MATTE,PSTL.1G#5481X",
+      "sales": 1683.27
+    },
+    {
+      "sku": "500831",
+      "product": "FRESHSTRT,SUPRIOR,WHT.5G#04600",
+      "sales": 1650.99
+    },
+    {
+      "sku": "781035",
+      "product": "WILD BIRD FOOD 20# ACE",
+      "sales": 1646.5
+    },
+    {
+      "sku": "116769",
+      "product": "SCHOODIC COW COMPOST 1CF     8",
+      "sales": 1639.82
+    },
+    {
+      "sku": "139948",
+      "product": "5/8\" X 50' ZERO-G LIGHTWEIGHT",
+      "sales": 1629.31
+    },
+    {
+      "sku": "138818",
+      "product": "PAINT,POOL,WB,AQUAM,1G #WR1019",
+      "sales": 1609.86
+    },
+    {
+      "sku": "124766",
+      "product": "HANGING BASKET PREMIUM, 11IN",
+      "sales": 1597.95
+    },
+    {
+      "sku": "126465",
+      "product": "3CF NATURAL CEDAR MULCH",
+      "sales": 1574.02
+    },
+    {
+      "sku": "124769",
+      "product": "BASKET HANG 13 IN PREM. COMBO",
+      "sales": 1565.54
+    },
+    {
+      "sku": "126462",
+      "product": "SOIL,POTTING,BAR HARBOR 1CFT-",
+      "sales": 1533.1
+    },
+    {
+      "sku": "128508",
+      "product": "ADVANCE,INT.SATIN,PSTL.1G#7921",
+      "sales": 1528.86
+    },
+    {
+      "sku": "15000",
+      "product": "SCOTTS  4 STEP 15M",
+      "sales": 1499.94
+    },
+    {
+      "sku": "191685",
+      "product": "SOIL,STONINGTON BLND 1.5CF",
+      "sales": 1478.98
+    },
+    {
+      "sku": "126467",
+      "product": "3CF DARK BROWN CEDAR MULCH",
+      "sales": 1438.62
+    },
+    {
+      "sku": "737290",
+      "product": "LBPX8006-2 800CFM PP BACKPACK",
+      "sales": 1429.99
+    },
+    {
+      "sku": "100102",
+      "product": "20# LP TANK(NO EXCHANGE)",
+      "sales": 1419.42
+    },
+    {
+      "sku": "138546",
+      "product": "ANNUALS, 6 PACKS 606 FLOWERS",
+      "sales": 1410.5
+    },
+    {
+      "sku": "589137",
+      "product": "BEN INT LATEX MATTE PASTE GL",
+      "sales": 1410.16
+    },
+    {
+      "sku": "231209",
+      "product": "CONCRETE,FAST-SETTING,50-LB.",
+      "sales": 1395.39
+    },
+    {
+      "sku": "802624",
+      "product": "21485 22\" 163CC B&S",
+      "sales": 1387.99
+    },
+    {
+      "sku": "363930",
+      "product": "TON, PELLET AMBIANCE HW",
+      "sales": 1383.96
+    },
+    {
+      "sku": "133610",
+      "product": "MOORGLO,S.GLS.BRL.WH.1G#W09601",
+      "sales": 1367.92
+    },
+    {
+      "sku": "500800",
+      "product": "REGAL,SLCT.S.GLS,PSTL.1G#5511X",
+      "sales": 1357.76
+    },
+    {
+      "sku": "901",
+      "product": "DUMP SKU 901",
+      "sales": 1346.05
+    },
+    {
+      "sku": "972132",
+      "product": "POKEMON MINI PORTFOLIO",
+      "sales": 1345.37
+    },
+    {
+      "sku": "602170",
+      "product": "PROMIX BX 3.8CF",
+      "sales": 1309.32
+    },
+    {
+      "sku": "168187",
+      "product": "GRUB CNTRL,GRUBEX 5000 #99605",
+      "sales": 1300.02
+    },
+    {
+      "sku": "937701",
+      "product": "GRILL SPIRIT E-425C LP BLK",
+      "sales": 1283
+    },
+    {
+      "sku": "770545",
+      "product": "4M SCOTTS WEED&FEED",
+      "sales": 1274.22
+    },
+    {
+      "sku": "333100",
+      "product": "ELEMENT GUARD EXT LLUST ULTRGL",
+      "sales": 1272.72
+    },
+    {
+      "sku": "792735",
+      "product": "WOODLUXE WB STAIN SS TINT GAL",
+      "sales": 1241.96
+    },
+    {
+      "sku": "130735",
+      "product": "FS 56 R C-EZ LOOP HNDL TRIMMER",
+      "sales": 1234.95
+    },
+    {
+      "sku": "217794",
+      "product": "SALT,F/SOFTENR,IRON FIGHT,40LB",
+      "sales": 1205.44
+    },
+    {
+      "sku": "211292",
+      "product": "KEY BLANK,KWIKSET KW1-AUB",
+      "sales": 1199.55
+    },
+    {
+      "sku": "136714",
+      "product": "FS 131 BIKE HANDLE TRIMMER",
+      "sales": 1196.98
+    },
+    {
+      "sku": "134239",
+      "product": "STEP 1 CRAB & FERT15000",
+      "sales": 1175.72
+    },
+    {
+      "sku": "637557",
+      "product": "SUN/SHADE 12006 25LB",
+      "sales": 1162.7
+    },
+    {
+      "sku": "265116",
+      "product": "PRIMER-SEALER,B-I-N,GAL.#00901",
+      "sales": 1159.61
+    },
+    {
+      "sku": "779028",
+      "product": "PAPR YARD BAG ACE 30G PK5",
+      "sales": 1158.87
+    },
+    {
+      "sku": "291088",
+      "product": "1G POOL SHOCK",
+      "sales": 1157.78
+    },
+    {
+      "sku": "847209",
+      "product": "WINTERGUARD HT ICE & WATER",
+      "sales": 1155.12
+    },
+    {
+      "sku": "743742",
+      "product": "BLACK MULCH/SCOOP",
+      "sales": 1129.88
+    },
+    {
+      "sku": "108475",
+      "product": "RED SCOTTS MULCH",
+      "sales": 1127.27
+    },
+    {
+      "sku": "823924",
+      "product": "MG ORG OUTDOOR 25QT",
+      "sales": 1114.14
+    }
+  ],
+  "allStores": [
+    {
+      "store": "001",
+      "name": "FITCHBURG,  MA - IND",
+      "city": "Fitchburg",
+      "state": "MA"
+    },
+    {
+      "store": "003",
+      "name": "MEREDITH, NH - (IND)",
+      "city": "Meredith",
+      "state": "NH"
+    },
+    {
+      "store": "004",
+      "name": "GARDNER, MA - ACE",
+      "city": "Gardner",
+      "state": "MA"
+    },
+    {
+      "store": "006",
+      "name": "MOULTONBORO, NH - (IND)",
+      "city": "Moultonboro",
+      "state": "NH"
+    },
+    {
+      "store": "007",
+      "name": "TEWKSBURY, MA - (IND)",
+      "city": "Tewksbury",
+      "state": "MA"
+    },
+    {
+      "store": "008",
+      "name": "CLINTON, MA - ACE",
+      "city": "Clinton",
+      "state": "MA"
+    },
+    {
+      "store": "010",
+      "name": "PERU, NY - ACE",
+      "city": "Peru",
+      "state": "NY"
+    },
+    {
+      "store": "016",
+      "name": "NORWAY, ME - ACE",
+      "city": "Norway",
+      "state": "ME"
+    },
+    {
+      "store": "017",
+      "name": "TURNERS FALLS, MA - (IND)",
+      "city": "Turners Falls",
+      "state": "MA"
+    },
+    {
+      "store": "018",
+      "name": "SHELBURNE FALLS, MA - ACE",
+      "city": "Shelburne Falls",
+      "state": "MA"
+    },
+    {
+      "store": "022",
+      "name": "LINCOLN, NH - ACE",
+      "city": "Lincoln",
+      "state": "NH"
+    },
+    {
+      "store": "025",
+      "name": "SAINT JOHNSBURY, VT - ACE",
+      "city": "Saint Johnsbury",
+      "state": "VT"
+    },
+    {
+      "store": "032",
+      "name": "FRANKLIN, MA - ACE",
+      "city": "Franklin",
+      "state": "MA"
+    },
+    {
+      "store": "033",
+      "name": "GREAT BARRINGTON, MA - (ACE)",
+      "city": "Great Barrington",
+      "state": "MA"
+    },
+    {
+      "store": "034",
+      "name": "STAFFORD SPRINGS, CT - ACE",
+      "city": "Stafford Springs",
+      "state": "CT"
+    },
+    {
+      "store": "037",
+      "name": "WEBSTER, MA - ACE",
+      "city": "Webster",
+      "state": "MA"
+    },
+    {
+      "store": "039",
+      "name": "WINDSOR, VT - (ACE)",
+      "city": "Windsor",
+      "state": "VT"
+    },
+    {
+      "store": "040",
+      "name": "BREWER, ME - (ACE)",
+      "city": "Brewer",
+      "state": "ME"
+    },
+    {
+      "store": "042",
+      "name": "LUDLOW, VT - ACE",
+      "city": "Ludlow",
+      "state": "VT"
+    },
+    {
+      "store": "044",
+      "name": "WALPOLE, NH - ACE",
+      "city": "Walpole",
+      "state": "NH"
+    },
+    {
+      "store": "045",
+      "name": "MONTPELIER, VT - ACE",
+      "city": "Montpelier",
+      "state": "VT"
+    },
+    {
+      "store": "049",
+      "name": "BARRE, VT - IND",
+      "city": "Barre",
+      "state": "VT"
+    },
+    {
+      "store": "051",
+      "name": "WATERBURY, VT - (ACE)",
+      "city": "Waterbury",
+      "state": "VT"
+    },
+    {
+      "store": "055",
+      "name": "NEWPORT, NH - ACE",
+      "city": "Newport",
+      "state": "NH"
+    },
+    {
+      "store": "056",
+      "name": "OLD TOWN, ME - ACE",
+      "city": "Old Town",
+      "state": "ME"
+    },
+    {
+      "store": "057",
+      "name": "MORRISVILLE, VT - (IND)",
+      "city": "Morrisville",
+      "state": "VT"
+    },
+    {
+      "store": "060",
+      "name": "GOUVERNEUR, NY - (IND)",
+      "city": "Gouverneur",
+      "state": "NY"
+    },
+    {
+      "store": "062",
+      "name": "HARDWICK, VT - (ACE)",
+      "city": "Hardwick",
+      "state": "VT"
+    },
+    {
+      "store": "063",
+      "name": "MIDDLEBURY, VT - ACE",
+      "city": "Middlebury",
+      "state": "VT"
+    },
+    {
+      "store": "064",
+      "name": "AUGUSTA, ME - (ACE)",
+      "city": "Augusta",
+      "state": "ME"
+    },
+    {
+      "store": "065",
+      "name": "LITTLETON, MA - (IND)",
+      "city": "Littleton",
+      "state": "MA"
+    },
+    {
+      "store": "069",
+      "name": "LUNENBURG, MA - (IND)",
+      "city": "Lunenburg",
+      "state": "MA"
+    },
+    {
+      "store": "070",
+      "name": "PUTNAM, CT - (ACE)",
+      "city": "Putnam",
+      "state": "CT"
+    },
+    {
+      "store": "074",
+      "name": "EASTHAMPTON, MA - ACE",
+      "city": "Easthampton",
+      "state": "MA"
+    },
+    {
+      "store": "075",
+      "name": "ELIZABETHTOWN, NY - ACE",
+      "city": "Elizabethtown",
+      "state": "NY"
+    },
+    {
+      "store": "076",
+      "name": "SWANTON, VT - (IND)",
+      "city": "Swanton",
+      "state": "VT"
+    },
+    {
+      "store": "079",
+      "name": "FAIR HAVEN, VT - (IND)",
+      "city": "Fair Haven",
+      "state": "VT"
+    },
+    {
+      "store": "080",
+      "name": "ALLENSTOWN, NH - ACE",
+      "city": "Allenstown",
+      "state": "NH"
+    },
+    {
+      "store": "083",
+      "name": "VERGENNES, VT - ACE",
+      "city": "Vergennes",
+      "state": "VT"
+    },
+    {
+      "store": "084",
+      "name": "TICONDEROGA, NY- ACE",
+      "city": "Ticonderoga",
+      "state": "NY"
+    },
+    {
+      "store": "089",
+      "name": "WAREHAM, MA - ACE",
+      "city": "Wareham",
+      "state": "MA"
+    },
+    {
+      "store": "090",
+      "name": "WELLS, ME - (ACE)",
+      "city": "Wells",
+      "state": "ME"
+    },
+    {
+      "store": "091",
+      "name": "MANCHESTER, VT - (ACE)",
+      "city": "Manchester Center",
+      "state": "VT"
+    },
+    {
+      "store": "092",
+      "name": "BERLIN, NH - (IND)",
+      "city": "Berlin",
+      "state": "NH"
+    },
+    {
+      "store": "094",
+      "name": "WILLIAMSTOWN, MA - ACE",
+      "city": "Williamstown",
+      "state": "MA"
+    },
+    {
+      "store": "097",
+      "name": "LISBON FALLS, ME - ACE",
+      "city": "Lisbon Falls",
+      "state": "ME"
+    },
+    {
+      "store": "100",
+      "name": "MILTON, VT - (IND)",
+      "city": "Milton",
+      "state": "VT"
+    },
+    {
+      "store": "101",
+      "name": "WINCHESTER, NH - (ACE)",
+      "city": "Winchester",
+      "state": "NH"
+    },
+    {
+      "store": "103",
+      "name": "RUMFORD, ME - (ACE)",
+      "city": "Rumford",
+      "state": "ME"
+    },
+    {
+      "store": "104",
+      "name": "SOUTHBRIDGE, MA - (ACE)",
+      "city": "Southbridge",
+      "state": "MA"
+    },
+    {
+      "store": "106",
+      "name": "LINCOLN, ME - (ACE)",
+      "city": "Lincoln",
+      "state": "ME"
+    },
+    {
+      "store": "107",
+      "name": "NORTH WINDHAM, ME - ACE",
+      "city": "Windham",
+      "state": "ME"
+    },
+    {
+      "store": "108",
+      "name": "FARMINGTON, ME - ACE",
+      "city": "Farmington",
+      "state": "ME"
+    },
+    {
+      "store": "113",
+      "name": "TUPPER LAKE, NY - ACE",
+      "city": "Tupper Lake",
+      "state": "NY"
+    },
+    {
+      "store": "118",
+      "name": "GREENFIELD, MA - (IND)",
+      "city": "Greenfield",
+      "state": "MA"
+    },
+    {
+      "store": "120",
+      "name": "PLATTSBURGH, NY - (IND)",
+      "city": "Plattsburgh",
+      "state": "NY"
+    },
+    {
+      "store": "124",
+      "name": "NEWPORT, ME - ACE",
+      "city": "Newport",
+      "state": "ME"
+    },
+    {
+      "store": "132",
+      "name": "EASTON, NY - ACE",
+      "city": "Greenwich",
+      "state": "NY"
+    },
+    {
+      "store": "133",
+      "name": "WATERVILLE, ME - ACE",
+      "city": "Waterville",
+      "state": "ME"
+    },
+    {
+      "store": "135",
+      "name": "NAPLES, ME - ACE",
+      "city": "Naples",
+      "state": "ME"
+    },
+    {
+      "store": "136",
+      "name": "LAKE PLACID, NY - ACE",
+      "city": "Lake Placid",
+      "state": "NY"
+    },
+    {
+      "store": "140",
+      "name": "WEST CARTHAGE, NY - (IND)",
+      "city": "Carthage",
+      "state": "NY"
+    },
+    {
+      "store": "141",
+      "name": "Z_CONCORD, NH",
+      "city": "Concord",
+      "state": "NH"
+    },
+    {
+      "store": "144",
+      "name": "HAVERHILL, MA - ACE",
+      "city": "Haverhill",
+      "state": "MA"
+    },
+    {
+      "store": "148",
+      "name": "AYER, MA - (IND)",
+      "city": "Ayer",
+      "state": "MA"
+    },
+    {
+      "store": "151",
+      "name": "MIDDLEBORO, MA - ACE",
+      "city": "Middleboro",
+      "state": "MA"
+    },
+    {
+      "store": "152",
+      "name": "CARVER, MA - ACE",
+      "city": "Carver",
+      "state": "MA"
+    },
+    {
+      "store": "153",
+      "name": "KINGSTON, MA - ACE",
+      "city": "Kingston",
+      "state": "MA"
+    },
+    {
+      "store": "155",
+      "name": "SANDWICH, MA - (IND)",
+      "city": "Sandwich",
+      "state": "MA"
+    },
+    {
+      "store": "156",
+      "name": "SO. SANDWICH, MA - (IND)",
+      "city": "Sandwich",
+      "state": "MA"
+    },
+    {
+      "store": "158",
+      "name": "POCASSET, MA - ACE",
+      "city": "Pocasset",
+      "state": "MA"
+    },
+    {
+      "store": "159",
+      "name": "COTUIT, MA - (ACE)",
+      "city": "Marstons Mills",
+      "state": "MA"
+    },
+    {
+      "store": "161",
+      "name": "JEFFERSONVILLE, VT - (ACE)",
+      "city": "Jeffersonville",
+      "state": "VT"
+    },
+    {
+      "store": "163",
+      "name": "WARNER, NH - (IND)",
+      "city": "Warner",
+      "state": "NH"
+    },
+    {
+      "store": "164",
+      "name": "BUXTON, ME - IND",
+      "city": "Buxton",
+      "state": "ME"
+    },
+    {
+      "store": "167",
+      "name": "ALTON, NH - ACE",
+      "city": "Alton",
+      "state": "NH"
+    },
+    {
+      "store": "168",
+      "name": "HILLSBORO, NH - (IND)",
+      "city": "Hillsboro",
+      "state": "NH"
+    },
+    {
+      "store": "171",
+      "name": "BELFAST, ME - ACE",
+      "city": "Belfast",
+      "state": "ME"
+    },
+    {
+      "store": "172",
+      "name": "FALMOUTH, MA - (IND)",
+      "city": "Teaticket",
+      "state": "MA"
+    },
+    {
+      "store": "173",
+      "name": "SHELBURNE, VT - (ACE)",
+      "city": "Shelburne",
+      "state": "VT"
+    },
+    {
+      "store": "175",
+      "name": "LEE, NH - ACE",
+      "city": "Lee",
+      "state": "NH"
+    },
+    {
+      "store": "176",
+      "name": "NEWMARKET, NH - (ACE)",
+      "city": "Newmarket",
+      "state": "NH"
+    },
+    {
+      "store": "177",
+      "name": "RICHFIELD SPRINGS, NY - ACE",
+      "city": "Richfield Springs",
+      "state": "NY"
+    },
+    {
+      "store": "178",
+      "name": "DOVER, NH - IND",
+      "city": "Dover",
+      "state": "NH"
+    },
+    {
+      "store": "181",
+      "name": "PLYMOUTH, MA - (ACE)",
+      "city": "Plymouth",
+      "state": "MA"
+    },
+    {
+      "store": "182",
+      "name": "COHASSET, MA - (IND)",
+      "city": "Cohasset",
+      "state": "MA"
+    },
+    {
+      "store": "183",
+      "name": "HINESBURG, VT - ACE",
+      "city": "Hinesburg",
+      "state": "VT"
+    },
+    {
+      "store": "187",
+      "name": "LANCASTER, NH - (IND)",
+      "city": "Lancaster",
+      "state": "NH"
+    },
+    {
+      "store": "188",
+      "name": "STOW, MA - IND",
+      "city": "Stow",
+      "state": "MA"
+    },
+    {
+      "store": "189",
+      "name": "OSSIPEE, NH - (ACE)",
+      "city": "Center Ossipee",
+      "state": "NH"
+    },
+    {
+      "store": "190",
+      "name": "IPSWICH, MA - ACE",
+      "city": "Ipswich",
+      "state": "MA"
+    },
+    {
+      "store": "191",
+      "name": "BRISTOL, NH - ACE",
+      "city": "Bristol",
+      "state": "NH"
+    },
+    {
+      "store": "192",
+      "name": "BEVERLY, MA - ACE",
+      "city": "Beverly",
+      "state": "MA"
+    },
+    {
+      "store": "193",
+      "name": "SUDBURY, MA - (IND)",
+      "city": "Sudbury",
+      "state": "MA"
+    },
+    {
+      "store": "194",
+      "name": "MONROE, CT - (ACE)",
+      "city": "Monroe",
+      "state": "CT"
+    },
+    {
+      "store": "195",
+      "name": "ALEXANDRIA, VA - (ACE)",
+      "city": "Alexandria",
+      "state": "VA"
+    },
+    {
+      "store": "196",
+      "name": "BLUE BELL, PA - ACE",
+      "city": "Blue Bell",
+      "state": "PA"
+    },
+    {
+      "store": "197",
+      "name": "DOYLESTOWN, PA - IND",
+      "city": "Doylestown",
+      "state": "PA"
+    },
+    {
+      "store": "198",
+      "name": "LYNDONVILLE, VT - ACE",
+      "city": "Lyndonville",
+      "state": "VT"
+    },
+    {
+      "store": "199",
+      "name": "RICHBORO, PA - IND",
+      "city": "Richboro",
+      "state": "PA"
+    },
+    {
+      "store": "200",
+      "name": "NEW HOPE, PA - ACE",
+      "city": "New Hope",
+      "state": "PA"
+    },
+    {
+      "store": "201",
+      "name": "SOUTH ROYALTON, VT - ACE",
+      "city": "South Royalton",
+      "state": "VT"
+    },
+    {
+      "store": "202",
+      "name": "EASTCHESTER, NY - (ACE)",
+      "city": "Eastchester",
+      "state": "NY"
+    },
+    {
+      "store": "203",
+      "name": "BRISTOL, VT - (ACE)",
+      "city": "Bristol",
+      "state": "VT"
+    },
+    {
+      "store": "204",
+      "name": "MADISON, ME - ACE",
+      "city": "Madison",
+      "state": "ME"
+    },
+    {
+      "store": "205",
+      "name": "SKOWHEGAN, ME - ACE",
+      "city": "Skowhegan",
+      "state": "ME"
+    },
+    {
+      "store": "206",
+      "name": "WINSLOW, ME - ACE",
+      "city": "Winslow",
+      "state": "ME"
+    },
+    {
+      "store": "207",
+      "name": "FARMINGDALE, ME - ACE",
+      "city": "Farmingdale",
+      "state": "ME"
+    },
+    {
+      "store": "208",
+      "name": "BURTONSVILLE, MD - ACE",
+      "city": "Burtonsville",
+      "state": "MD"
+    },
+    {
+      "store": "209",
+      "name": "MOUNT JOY, PA - ACE",
+      "city": "Mount Joy",
+      "state": "PA"
+    },
+    {
+      "store": "210",
+      "name": "QUINCY, MA - ACE",
+      "city": "Quincy",
+      "state": "MA"
+    },
+    {
+      "store": "211",
+      "name": "HANOVER, MA - ACE",
+      "city": "Hanover",
+      "state": "MA"
+    },
+    {
+      "store": "212",
+      "name": "BRUNSWICK, MD - ACE",
+      "city": "Brunswick",
+      "state": "MD"
+    },
+    {
+      "store": "213",
+      "name": "BRATTLEBORO, VT - ACE",
+      "city": "Brattleboro",
+      "state": "VT"
+    },
+    {
+      "store": "214",
+      "name": "BURLINGTON, VT - ACE",
+      "city": "Burlington",
+      "state": "VT"
+    },
+    {
+      "store": "215",
+      "name": "COLCHESTER, VT - ACE",
+      "city": "Colchester",
+      "state": "VT"
+    },
+    {
+      "store": "216",
+      "name": "ESSEX JUNCTION, VT - ACE",
+      "city": "Essex Junction",
+      "state": "VT"
+    },
+    {
+      "store": "217",
+      "name": "NORTH SPRINGFIELD, VT - ACE",
+      "city": "North Springfield",
+      "state": "VT"
+    },
+    {
+      "store": "218",
+      "name": "SOUTH BURLINGTON, VT - ACE",
+      "city": "South Burlington",
+      "state": "VT"
+    },
+    {
+      "store": "219",
+      "name": "WOODSTOCK, VT - ACE",
+      "city": "Woodstock",
+      "state": "VT"
+    },
+    {
+      "store": "220",
+      "name": "PENNSBURG, PA - ACE",
+      "city": "Pennsburg",
+      "state": "PA"
+    },
+    {
+      "store": "221",
+      "name": "PHOENIXVILLE, PA - ACE",
+      "city": "Phoenixville",
+      "state": "PA"
+    },
+    {
+      "store": "222",
+      "name": "ROYERSFORD, PA - ACE",
+      "city": "Royersford",
+      "state": "PA"
+    },
+    {
+      "store": "223",
+      "name": "DUBLIN, PA - ACE",
+      "city": "Dublin",
+      "state": "PA"
+    },
+    {
+      "store": "224",
+      "name": "VILLAS, NJ - ACE",
+      "city": "Villas",
+      "state": "NJ"
+    },
+    {
+      "store": "225",
+      "name": "CAMBRIDGE, NY - ACE",
+      "city": "Cambridge",
+      "state": "NY"
+    },
+    {
+      "store": "226",
+      "name": "COBLESKILL, NY - ACE",
+      "city": "Cobleskill",
+      "state": "NY"
+    },
+    {
+      "store": "227",
+      "name": "RUTLAND, VT - ACE",
+      "city": "Rutland",
+      "state": "VT"
+    },
+    {
+      "store": "228",
+      "name": "NEW BRITAIN, PA - ACE",
+      "city": "NEW BRITAIN",
+      "state": "PA"
+    },
+    {
+      "store": "229",
+      "name": "PLYMOUTH, NH - ACE",
+      "city": "Plymouth",
+      "state": "NH"
+    },
+    {
+      "store": "230",
+      "name": "WOODBURY,  CT - ACE",
+      "city": "Woodbury",
+      "state": "CT"
+    },
+    {
+      "store": "231",
+      "name": "WATERTOWN, CT - ACE",
+      "city": "Watertown",
+      "state": "CT"
+    },
+    {
+      "store": "232",
+      "name": "RICHMOND, RI - ACE",
+      "city": "Richmond",
+      "state": "RI"
+    },
+    {
+      "store": "233",
+      "name": "ITHACA, NY - DOWNTOWN - (ACE)",
+      "city": "Ithaca",
+      "state": "NY"
+    },
+    {
+      "store": "234",
+      "name": "ITHACA, NY - TRIPHAMMER - (ACE)",
+      "city": "Ithaca",
+      "state": "NY"
+    },
+    {
+      "store": "236",
+      "name": "DOVER, PA - ACE",
+      "city": "Dover",
+      "state": "PA"
+    },
+    {
+      "store": "237",
+      "name": "CUMBERLAND, RI - ACE",
+      "city": "Cumberland",
+      "state": "RI"
+    }
+  ],
+  "notReporting": [
+    {
+      "store": "233",
+      "name": "ITHACA, NY - DOWNTOWN - (ACE)",
+      "city": "Ithaca",
+      "state": "NY",
+      "plan": 30353.19
+    },
+    {
+      "store": "234",
+      "name": "ITHACA, NY - TRIPHAMMER - (ACE)",
+      "city": "Ithaca",
+      "state": "NY",
+      "plan": 24312.88
+    }
+  ],
+  "estimatedMissing": {
+    "paceAtNow": 1,
+    "sampleWeeks": 8,
+    "stores": [
+      {
+        "store": "233",
+        "dowAvg": 32525.56625,
+        "samples": 8,
+        "basis": "dowAvg",
+        "plan": 30353.19,
+        "estimatedCurrent": 32525.56625,
+        "estimatedEOD": 32525.56625
+      },
+      {
+        "store": "234",
+        "dowAvg": 15814.82875,
+        "samples": 8,
+        "basis": "dowAvg",
+        "plan": 24312.88,
+        "estimatedCurrent": 15814.82875,
+        "estimatedEOD": 15814.82875
+      }
+    ],
+    "totalEstimatedCurrent": 48340.395000000004,
+    "totalEstimatedEOD": 48340.395000000004,
+    "projectedCompanyEOD": 1279667.795,
+    "projectedCompanyCurrent": 1279667.795
+  },
+  "asOfET": "End of day · 2026-05-04",
+  "cached": true,
+  "refreshedAt": "2026-05-05T12:17:37.383Z",
+  "source": "snowflake",
+  "cachedAt": "2026-05-05T12:17:37.383Z"
+}
