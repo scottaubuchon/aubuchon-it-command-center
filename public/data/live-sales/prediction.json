@@ -1,16 +1,16 @@
 {
-  "updatedAt": "2026-05-05T20:49:37.154Z",
-  "updatedAtET": "May 5, 2026, 4:49 PM",
+  "updatedAt": "2026-05-05T21:48:53.873Z",
+  "updatedAtET": "May 5, 2026, 5:48 PM",
   "dateET": "2026-05-05",
   "dow": 2,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-05-05T20:49:37.154Z",
-    "tsET": "May 5, 2026, 4:49 PM",
+    "ts": "2026-05-05T21:48:53.873Z",
+    "tsET": "May 5, 2026, 5:48 PM",
     "dateET": "2026-05-05",
-    "hourET": 16,
-    "minuteET": 49,
+    "hourET": 17,
+    "minuteET": 48,
     "dow": 2,
     "sales": 0,
     "plan": 0,
@@ -20,8 +20,8 @@
     "txns": 0,
     "customers": 0,
     "storeCount": 0,
-    "asOf": "2026-05-05T20:49:37.109Z",
-    "asOfET": "May 5, 2026, 4:49 PM"
+    "asOf": "2026-05-05T21:48:53.868Z",
+    "asOfET": "May 5, 2026, 5:48 PM"
   },
   "prediction": {
     "available": true,
@@ -34,10 +34,10 @@
       "low": 0,
       "high": 0
     },
-    "pctOfDayElapsed": 0.8375539005507038,
+    "pctOfDayElapsed": 0.9009738229492592,
     "level_EOD": 0,
     "shape_EOD": 0,
-    "blendWeight": 0.9377822414501663,
+    "blendWeight": 0.9591764824891627,
     "factors": {
       "plan": 0,
       "recencyFactor": 1.0035,
@@ -49,23 +49,23 @@
       "weatherSummary": "concord-nh: 85F Isolated Showers And Thunderstorms | worcester-ma: 82F Sunny | burlington-vt: 74F Showers And Thunderstorms | portland-me: 64F Sunny | albany-ny: 84F Slight Chance Showers And Thunderstorms | scranton-pa: 81F Slight Chance Rain Showers"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.8660253333333333,
+      "basePaceFromCurve": 0.93604,
       "observedPaceCount": 2,
-      "blendedPaceAtNow": 0.8375539005507038,
+      "blendedPaceAtNow": 0.9009738229492592,
       "historyDays": 2,
       "avgHistoricalEOD": 1148026.7049999998
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 35504.74739824489,
+      "estimatedCurrent": 38193.181328642044,
       "estimatedEOD": 42391,
-      "paceUsed": 0.8375539005507038,
+      "paceUsed": 0.9009738229492592,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 28783,
-          "estimatedCurrent": 24107.313919550907,
+          "estimatedCurrent": 25932.72954594853,
           "estimatedEOD": 28783,
           "stdev": 0.4847
         },
@@ -73,7 +73,7 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 13608,
-          "estimatedCurrent": 11397.433478693976,
+          "estimatedCurrent": 12260.451782693519,
           "estimatedEOD": 13608,
           "stdev": 0.1026
         }
@@ -81,8 +81,8 @@
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
     "combinedProjectedEOD": 42391,
-    "combinedCurrentSales": 35504.74739824489,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $35,505 so far, +$42,391 to EOD."
+    "combinedCurrentSales": 38193.181328642044,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $38,193 so far, +$42,391 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 24,
@@ -103,7 +103,7 @@
         "temp": 85,
         "unit": "F",
         "short": "Isolated Showers And Thunderstorms",
-        "detailed": "Isolated showers and thunderstorms after 4pm. Sunny, with a high near 85. Southwest wind 15 to 20 mph, with gusts as high as 35 mph. Chance of precipitation is 20%."
+        "detailed": "Isolated showers and thunderstorms. Mostly sunny, with a high near 85. Southwest wind around 15 mph, with gusts as high as 35 mph. Chance of precipitation is 20%."
       },
       {
         "station": "worcester-ma",
@@ -111,7 +111,7 @@
         "temp": 82,
         "unit": "F",
         "short": "Sunny",
-        "detailed": "Sunny, with a high near 82. Southwest wind around 17 mph, with gusts as high as 37 mph."
+        "detailed": "Sunny, with a high near 82. South wind around 17 mph, with gusts as high as 37 mph."
       },
       {
         "station": "burlington-vt",
@@ -143,7 +143,7 @@
         "temp": 81,
         "unit": "F",
         "short": "Slight Chance Rain Showers",
-        "detailed": "A slight chance of rain showers after 5pm. Mostly sunny, with a high near 81. Southwest wind around 17 mph, with gusts as high as 31 mph. Chance of precipitation is 20%."
+        "detailed": "A slight chance of rain showers. Partly sunny, with a high near 81. Southwest wind around 16 mph, with gusts as high as 29 mph. Chance of precipitation is 20%."
       }
     ]
   }
