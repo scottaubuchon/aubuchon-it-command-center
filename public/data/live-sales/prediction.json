@@ -1,16 +1,16 @@
 {
-  "updatedAt": "2026-05-06T12:00:39.543Z",
-  "updatedAtET": "May 6, 2026, 8:00 AM",
+  "updatedAt": "2026-05-06T12:20:58.863Z",
+  "updatedAtET": "May 6, 2026, 8:20 AM",
   "dateET": "2026-05-06",
   "dow": 3,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-05-06T12:00:39.543Z",
-    "tsET": "May 6, 2026, 8:00 AM",
+    "ts": "2026-05-06T12:20:58.863Z",
+    "tsET": "May 6, 2026, 8:20 AM",
     "dateET": "2026-05-06",
     "hourET": 8,
-    "minuteET": 0,
+    "minuteET": 20,
     "dow": 3,
     "sales": 0,
     "plan": 0,
@@ -20,8 +20,8 @@
     "txns": 0,
     "customers": 0,
     "storeCount": 0,
-    "asOf": "2026-05-06T12:00:39.533Z",
-    "asOfET": "May 6, 2026, 8:00 AM"
+    "asOf": "2026-05-06T12:20:58.852Z",
+    "asOfET": "May 6, 2026, 8:20 AM"
   },
   "prediction": {
     "available": true,
@@ -34,10 +34,10 @@
       "low": 0,
       "high": 0
     },
-    "pctOfDayElapsed": 0.031869591480081325,
+    "pctOfDayElapsed": 0.05495113993906827,
     "level_EOD": 0,
     "shape_EOD": 0,
-    "blendWeight": 0.05083908687103363,
+    "blendWeight": 0.0592260159141309,
     "factors": {
       "plan": 0,
       "recencyFactor": 1.0035,
@@ -49,23 +49,23 @@
       "weatherSummary": "concord-nh: 73F Rain Showers | worcester-ma: 68F Cloudy then Rain Showers Likely | burlington-vt: 48F Rain | portland-me: 61F Mostly Cloudy then Rain Showers Likely | albany-ny: 66F Rain | scranton-pa: 68F Rain"
     },
     "shapeDetail": {
-      "basePaceFromCurve": 0.03717,
+      "basePaceFromCurve": 0.05983666666666666,
       "observedPaceCount": 2,
-      "blendedPaceAtNow": 0.031869591480081325,
+      "blendedPaceAtNow": 0.05495113993906827,
       "historyDays": 2,
       "avgHistoricalEOD": 1110919.5250000001
     },
     "note": "Plan-anchored forecast. Early in the day we trust plan × factors; later we trust the pace curve.",
     "offlineEstimate": {
-      "estimatedCurrent": 1333.0412724288417,
+      "estimatedCurrent": 2298.496281371348,
       "estimatedEOD": 41828,
-      "paceUsed": 0.031869591480081325,
+      "paceUsed": 0.05495113993906827,
       "perStore": [
         {
           "storeCd": "233",
           "name": "ITHACA, NY - DOWNTOWN",
           "dowEOD": 26994,
-          "estimatedCurrent": 860.2877524133153,
+          "estimatedCurrent": 1483.3510715152088,
           "estimatedEOD": 26994,
           "stdev": 0.4325
         },
@@ -73,7 +73,7 @@
           "storeCd": "234",
           "name": "ITHACA, NY - TRIPHAMMER",
           "dowEOD": 14834,
-          "estimatedCurrent": 472.75352001552636,
+          "estimatedCurrent": 815.1452098561388,
           "estimatedEOD": 14834,
           "stdev": 0.1986
         }
@@ -81,8 +81,8 @@
       "source": "RPT_SCORECARD_BY_DAY, 12 weeks (Jan 25 - Apr 17 2026) with 2x weight on last 28 days"
     },
     "combinedProjectedEOD": 41828,
-    "combinedCurrentSales": 1333.0412724288417,
-    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $1,333 so far, +$41,828 to EOD."
+    "combinedCurrentSales": 2298.496281371348,
+    "footnote": "Company total excludes 2 stores not on live feed (233, 234). Estimated contribution: $2,298 so far, +$41,828 to EOD."
   },
   "offlineStoresVersion": 2,
   "baselineVersion": 25,
@@ -134,7 +134,7 @@
         "temp": 66,
         "unit": "F",
         "short": "Rain",
-        "detailed": "Rain. Cloudy, with a high near 66. Southwest wind 5 to 13 mph, with gusts as high as 24 mph. Chance of precipitation is 100%. New rainfall amounts between a half and three quarters of an inch possible."
+        "detailed": "Rain. Cloudy, with a high near 66. Southwest wind 6 to 13 mph, with gusts as high as 24 mph. Chance of precipitation is 100%. New rainfall amounts between a half and three quarters of an inch possible."
       },
       {
         "station": "scranton-pa",
@@ -142,7 +142,7 @@
         "temp": 68,
         "unit": "F",
         "short": "Rain",
-        "detailed": "Rain between 7am and 2pm, then rain showers. Cloudy, with a high near 68. Southwest wind 8 to 12 mph, with gusts as high as 24 mph. Chance of precipitation is 100%. New rainfall amounts between a quarter and half of an inch possible."
+        "detailed": "Rain before 2pm, then rain showers. Cloudy, with a high near 68. Southwest wind around 12 mph, with gusts as high as 24 mph. Chance of precipitation is 100%. New rainfall amounts between a quarter and half of an inch possible."
       }
     ]
   }
