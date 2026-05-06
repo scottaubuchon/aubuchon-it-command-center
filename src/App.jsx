@@ -4996,8 +4996,10 @@ const YODA_DECOMMISSIONED_REPORTS = [
 
 
 /* ============================================================
-   LIVE SALES VIEW — reads pre-computed data from /api/live-sales
-   Refreshed every 10 min by a scheduled task. Loads instantly.
+   LIVE SALES VIEW — reads pre-computed data from
+   /api/snapshot?source=snowflake (writes from /api/log-live-sales?source=snowflake).
+   Switched off the YODA endpoint May 2026 because YODA went silent
+   mid-day; Snowflake stays available all day. Loads instantly.
    ============================================================ */
 
 function LiveSalesView({ goBack }) {
@@ -5062,7 +5064,9 @@ function LiveSalesView({ goBack }) {
   };
 
   var loadStatic = function () {
-    var url = "/api/snapshot?t=" + Date.now();
+    // Snowflake-sourced snapshot. The YODA endpoint stalled in May 2026;
+    // Snowflake refreshes every cron run and stays available all day.
+    var url = "/api/snapshot?source=snowflake&t=" + Date.now();
     return fetch(url, { cache: "no-store" }).then(function (r) {
       if (!r.ok) throw new Error("snapshot unavailable (" + r.status + ")");
       return r.json();
@@ -5070,8 +5074,9 @@ function LiveSalesView({ goBack }) {
   };
 
   var loadLive = function (force) {
-    var url = "/api/live-sales" + (force ? "?refresh=true" : "");
-    return fetch(url).then(function (r) { return r.json(); });
+    // Falls back to the live Snowflake query if the cached snapshot is missing.
+    var url = "/api/live-sales-snowflake?t=" + Date.now();
+    return fetch(url, { cache: "no-store" }).then(function (r) { return r.json(); });
   };
 
   useEffect(function () {
