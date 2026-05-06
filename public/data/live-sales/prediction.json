@@ -1,16 +1,16 @@
 {
-  "updatedAt": "2026-05-06T01:14:55.909Z",
-  "updatedAtET": "May 5, 2026, 9:14 PM",
+  "updatedAt": "2026-05-06T01:30:49.033Z",
+  "updatedAtET": "May 5, 2026, 9:30 PM",
   "dateET": "2026-05-05",
   "dow": 2,
   "season": "spring",
   "source": "yoda",
   "current": {
-    "ts": "2026-05-06T01:14:55.909Z",
-    "tsET": "May 5, 2026, 9:14 PM",
+    "ts": "2026-05-06T01:30:49.033Z",
+    "tsET": "May 5, 2026, 9:30 PM",
     "dateET": "2026-05-05",
     "hourET": 21,
-    "minuteET": 14,
+    "minuteET": 30,
     "dow": 2,
     "sales": 0,
     "plan": 0,
@@ -20,8 +20,8 @@
     "txns": 0,
     "customers": 0,
     "storeCount": 0,
-    "asOf": "2026-05-06T01:14:55.894Z",
-    "asOfET": "May 5, 2026, 9:14 PM"
+    "asOf": "2026-05-06T01:30:49.029Z",
+    "asOfET": "May 5, 2026, 9:30 PM"
   },
   "prediction": {
     "available": true,
@@ -103,7 +103,7 @@
         "temp": 55,
         "unit": "F",
         "short": "Chance Rain Showers then Mostly Cloudy",
-        "detailed": "A chance of rain showers before 11pm. Mostly cloudy, with a low around 55. South wind 5 to 10 mph. Chance of precipitation is 50%. New rainfall amounts less than a tenth of an inch possible."
+        "detailed": "A chance of rain showers between 8pm and 11pm. Mostly cloudy, with a low around 55. South wind 5 to 10 mph, with gusts as high as 25 mph. Chance of precipitation is 50%. New rainfall amounts less than a tenth of an inch possible."
       },
       {
         "station": "worcester-ma",
@@ -119,7 +119,7 @@
         "temp": 43,
         "unit": "F",
         "short": "Rain Showers",
-        "detailed": "Rain showers. Cloudy. Low around 43, with temperatures rising to around 50 overnight. West wind around 7 mph. Chance of precipitation is 90%. New rainfall amounts between a quarter and half of an inch possible."
+        "detailed": "Rain showers. Cloudy. Low around 43, with temperatures rising to around 50 overnight. West wind 5 to 8 mph, with gusts as high as 22 mph. Chance of precipitation is 90%. New rainfall amounts between a quarter and half of an inch possible."
       },
       {
         "station": "portland-me",
@@ -127,7 +127,7 @@
         "temp": 53,
         "unit": "F",
         "short": "Slight Chance Rain Showers then Mostly Cloudy",
-        "detailed": "A slight chance of rain showers before 11pm. Mostly cloudy, with a low around 53. Southwest wind 10 to 15 mph, with gusts as high as 30 mph. Chance of precipitation is 20%."
+        "detailed": "A slight chance of rain showers between 7pm and 11pm. Mostly cloudy, with a low around 53. South wind 10 to 20 mph, with gusts as high as 40 mph. Chance of precipitation is 20%."
       },
       {
         "station": "albany-ny",
