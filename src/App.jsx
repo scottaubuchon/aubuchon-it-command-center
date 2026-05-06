@@ -5357,6 +5357,7 @@ function LiveSalesView({ goBack }) {
           };
           var confClass = confStyles[conf] || confStyles["low"];
           var hasBand = p.band && (p.band.low || p.band.high);
+          var sd = p.shapeDetail || {};
           return (
             <div className={"rounded-xl border-2 mb-5 overflow-hidden " + pBg}>
               <button
@@ -5400,9 +5401,9 @@ function LiveSalesView({ goBack }) {
                   </div>
                   <div className="flex flex-wrap gap-x-4 sm:gap-x-6 gap-y-1 mt-3 pt-3 border-t border-slate-200 text-xs text-slate-500">
                     <span><strong className="text-slate-700">Method:</strong> {p.method}</span>
-                    <span><strong className="text-slate-700">History days:</strong> {p.historyDays}</span>
+                    <span><strong className="text-slate-700">History days:</strong> {sd.historyDays != null ? sd.historyDays : "—"}</span>
                     {p.pctOfDayElapsed != null ? <span><strong className="text-slate-700">Day elapsed:</strong> {(p.pctOfDayElapsed * 100).toFixed(0)}%</span> : null}
-                    {p.avgHistoricalEOD ? <span><strong className="text-slate-700">Avg prior EOD:</strong> {fmtD(p.avgHistoricalEOD)}</span> : null}
+                    {sd.avgHistoricalEOD ? <span><strong className="text-slate-700">Avg prior EOD:</strong> {fmtD(sd.avgHistoricalEOD)}</span> : null}
                   </div>
                   {p.note ? <div className="mt-2 text-xs text-slate-400 italic">{p.note}</div> : null}
                   {prediction.updatedAtET ? <div className="mt-1 text-xs text-slate-400 text-right">as of {prediction.updatedAtET}</div> : null}
