@@ -3,16 +3,26 @@
   "storeFilter": null,
   "dateFilter": "2026-05-05",
   "companyTotal": {
-    "sales": 1194688.84,
+    "sales": 1249456.49,
     "plan": 1297640.46,
     "gp": 552932.51,
-    "gpPct": 46.282554208843194,
+    "gpPct": 44.25384272484751,
     "txns": 31637,
     "customers": 0,
-    "storeCount": 134,
-    "pctToPlan": 92.06624460522757
+    "storeCount": 136,
+    "pctToPlan": 96.28680119915497
   },
   "topStores": [
+    {
+      "store": "233",
+      "name": "ITHACA, NY - DOWNTOWN - (ACE)",
+      "city": "Ithaca",
+      "state": "NY",
+      "sales": 38819.58,
+      "plan": 30865.96,
+      "gp": 0,
+      "txns": 0
+    },
     {
       "store": "209",
       "name": "MOUNT JOY, PA - ACE",
@@ -154,6 +164,16 @@
       "txns": 398
     },
     {
+      "store": "234",
+      "name": "ITHACA, NY - TRIPHAMMER - (ACE)",
+      "city": "Ithaca",
+      "state": "NY",
+      "sales": 15948.07,
+      "plan": 25758.71,
+      "gp": 0,
+      "txns": 0
+    },
+    {
       "store": "182",
       "name": "COHASSET, MA - (IND)",
       "city": "Cohasset",
@@ -192,26 +212,6 @@
       "plan": 13272.31,
       "gp": 6871.89,
       "txns": 352
-    },
-    {
-      "store": "065",
-      "name": "LITTLETON, MA - (IND)",
-      "city": "Littleton",
-      "state": "MA",
-      "sales": 13419.31,
-      "plan": 8895.19,
-      "gp": 6314.87,
-      "txns": 315
-    },
-    {
-      "store": "230",
-      "name": "WOODBURY,  CT - ACE",
-      "city": "Woodbury",
-      "state": "CT",
-      "sales": 13415.99,
-      "plan": 10348.22,
-      "gp": 5112.44,
-      "txns": 318
     }
   ],
   "topProducts": [
@@ -1540,53 +1540,11 @@
       "state": "RI"
     }
   ],
-  "notReporting": [
-    {
-      "store": "233",
-      "name": "ITHACA, NY - DOWNTOWN - (ACE)",
-      "city": "Ithaca",
-      "state": "NY",
-      "plan": 30865.96
-    },
-    {
-      "store": "234",
-      "name": "ITHACA, NY - TRIPHAMMER - (ACE)",
-      "city": "Ithaca",
-      "state": "NY",
-      "plan": 25758.71
-    }
-  ],
-  "estimatedMissing": {
-    "paceAtNow": 1,
-    "sampleWeeks": 8,
-    "stores": [
-      {
-        "store": "233",
-        "dowAvg": 36296.23857143,
-        "samples": 7,
-        "basis": "dowAvg",
-        "plan": 30865.96,
-        "estimatedCurrent": 36296.23857143,
-        "estimatedEOD": 36296.23857143
-      },
-      {
-        "store": "234",
-        "dowAvg": 14613.30125,
-        "samples": 8,
-        "basis": "dowAvg",
-        "plan": 25758.71,
-        "estimatedCurrent": 14613.30125,
-        "estimatedEOD": 14613.30125
-      }
-    ],
-    "totalEstimatedCurrent": 50909.53982143001,
-    "totalEstimatedEOD": 50909.53982143001,
-    "projectedCompanyEOD": 1245598.3798214302,
-    "projectedCompanyCurrent": 1245598.3798214302
-  },
+  "notReporting": [],
+  "estimatedMissing": null,
   "asOfET": "End of day · 2026-05-05",
   "cached": true,
-  "refreshedAt": "2026-05-06T14:13:02.196Z",
+  "refreshedAt": "2026-05-06T18:48:12.615Z",
   "source": "snowflake",
-  "cachedAt": "2026-05-06T14:13:02.197Z"
+  "cachedAt": "2026-05-06T18:48:12.616Z"
 }
